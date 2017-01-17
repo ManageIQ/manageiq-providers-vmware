@@ -14,3 +14,10 @@ before_install: bin/setup
 script:
 - bundle exec bin/rails app:test:providers:vmware:setup app:test:providers:vmware
 after_script: bundle exec codeclimate-test-reporter
+notifications:
+  webhooks:
+    urls:
+    - https://webhooks.gitter.im/e/e8962e1c2f26da9bc7d4
+    on_success: change
+    on_failure: always
+    on_start: never
