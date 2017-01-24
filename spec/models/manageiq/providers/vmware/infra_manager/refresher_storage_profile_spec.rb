@@ -1,4 +1,4 @@
-require Rails.root.join('spec/tools/vim_data/vim_data_test_helper')
+require ManageIQ::Providers::Vmware::Engine.root.join('spec/tools/vim_data/vim_data_test_helper.rb').to_s
 
 describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   let(:zone) { EvmSpecHelper.create_guid_miq_server_zone[2] }
