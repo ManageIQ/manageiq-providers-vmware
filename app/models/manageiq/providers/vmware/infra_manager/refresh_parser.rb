@@ -524,7 +524,7 @@ module ManageIQ::Providers
           unless dvportgroup_uid_ems.key?(uid)
             dvportgroup_uid_ems[uid] = {
               :uid_ems           => uid,
-              :name              => spec['name'],
+              :name              => URI.decode(spec['name']),
               :tag               => spec.fetch_path('defaultPortConfig', 'vlan', 'vlanId').to_s,
 
               :allow_promiscuous => security_policy.fetch_path('allowPromiscuous', 'value').to_s.casecmp('true') == 0,
