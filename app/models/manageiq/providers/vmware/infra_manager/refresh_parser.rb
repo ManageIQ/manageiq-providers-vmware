@@ -447,6 +447,7 @@ module ManageIQ::Providers
         dvswitch_inv.to_miq_a.each do |data|
           config = data.fetch('config', {})
           uid = data['MOR']
+          name              = config['name'] || data.fetch_path('summary', 'name')
           security_policy   = config.fetch('defaultPortConfig', {}).fetch('securityPolicy', {})
           allow_promiscuous = security_policy.fetch_path('allowPromiscuous', 'value')
           forged_transmits  = security_policy.fetch_path('forgedTransmits', 'value')
@@ -454,7 +455,7 @@ module ManageIQ::Providers
 
           dvswitch_uid_ems[uid] || dvswitch_uid_ems[uid] = {
             :uid_ems           => uid,
-            :name              => config['name'] || data.fetch_path('summary', 'name'),
+            :name              => URI.decode(name),
             :ports             => config['numPorts'] || 0,
 
             :allow_promiscuous => allow_promiscuous.nil? ? nil : allow_promiscuous.to_s.casecmp('true') == 0,
