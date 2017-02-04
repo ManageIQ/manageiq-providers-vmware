@@ -1,7 +1,7 @@
 describe EmsEvent do
   let(:data_dir) { File.join(File.dirname(__FILE__), 'event_data') }
 
-  context ".add_vc" do
+  context ".add" do
     before(:each) do
       @zone = FactoryGirl.create(:small_environment)
       @ems = @zone.ext_management_systems.first
@@ -14,7 +14,8 @@ describe EmsEvent do
       mock_raw_event_vm(raw_event)
       mock_raw_event_host(raw_event)
 
-      EmsEvent.add_vc(@ems.id, raw_event)
+      parsed_event = ManageIQ::Providers::Vmware::InfraManager::EventParser.event_to_hash(raw_event, @ems.id)
+      EmsEvent.add(@ems.id, parsed_event)
 
       expect(EmsEvent.count).to eq(1)
       event = EmsEvent.first
@@ -42,7 +43,8 @@ describe EmsEvent do
         raw_event = YAML.load_file(File.join(data_dir, 'event_ex.yml'))
         mock_raw_event_host(raw_event)
 
-        EmsEvent.add_vc(@ems.id, raw_event)
+        parsed_event = ManageIQ::Providers::Vmware::InfraManager::EventParser.event_to_hash(raw_event, @ems.id)
+        EmsEvent.add(@ems.id, parsed_event)
 
         expect(EmsEvent.count).to eq(1)
         event = EmsEvent.first
@@ -58,7 +60,8 @@ describe EmsEvent do
         raw_event = YAML.load_file(File.join(data_dir, 'event_ex_without_eventtypeid.yml'))
         mock_raw_event_host(raw_event)
 
-        EmsEvent.add_vc(@ems.id, raw_event)
+        parsed_event = ManageIQ::Providers::Vmware::InfraManager::EventParser.event_to_hash(raw_event, @ems.id)
+        EmsEvent.add(@ems.id, parsed_event)
 
         expect(EmsEvent.count).to eq(1)
         event = EmsEvent.first

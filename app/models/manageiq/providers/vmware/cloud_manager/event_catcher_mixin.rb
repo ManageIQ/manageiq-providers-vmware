@@ -54,14 +54,11 @@ module ManageIQ::Providers::Vmware::CloudManager::EventCatcherMixin
 
   def queue_event(event)
     _log.info "Caught event [#{event.type}]"
-    add_to_worker_queue(event)
+    event_hash = ManageIQ::Providers::Vmware::CloudManager::EventParser.event_to_hash(event, @cfg[:ems_id])
+    EmsEvent.add_queue('add', @cfg[:ems_id], event_hash)
   end
 
   def filtered?(event)
     filtered_events.include?(event.type)
-  end
-
-  def add_to_worker_queue(event)
-    EmsEvent.add_queue('add_vmware_vcloud', @cfg[:ems_id], event.to_hash)
   end
 end

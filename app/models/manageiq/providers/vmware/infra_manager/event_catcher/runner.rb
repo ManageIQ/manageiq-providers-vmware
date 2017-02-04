@@ -70,7 +70,8 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
   def queue_event(event)
     _sub_event_type, display_name = sub_type_and_name(event)
     _log.info("#{log_prefix} Queueing event [#{display_name}] chainId [#{event['chainId']}]")
-    EmsEvent.add_queue('add_vc', @cfg[:ems_id], event)
+    event_hash = ManageIQ::Providers::Vmware::InfraManager::EventParser.event_to_hash(event, @cfg[:ems_id])
+    EmsEvent.add_queue('add', @cfg[:ems_id], event_hash)
   end
 
   def sub_type_and_name(event)
