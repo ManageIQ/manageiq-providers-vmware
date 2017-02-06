@@ -72,6 +72,22 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
     groups
   end
 
+  def deployment_options(_manager_class = nil)
+    availability_opt = OrchestrationTemplate::OrchestrationParameter.new(
+      :name        => "availability_zone",
+      :label       => "Availability zone",
+      :data_type   => "string",
+      :description => "Availability zone where the stack will be deployed",
+      :constraints => [
+        OrchestrationTemplate::OrchestrationParameterAllowedDynamic.new(
+          :fqname => "/Cloud/Orchestration/Operations/Methods/Available_Availability_Zones"
+        )
+      ]
+    )
+
+    super << availability_opt
+  end
+
   def self.eligible_manager_types
     [ManageIQ::Providers::Vmware::CloudManager]
   end
