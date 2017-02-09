@@ -399,6 +399,11 @@ module ManageIQ::Providers
     end
     alias_method :vm_remote_console_mks_acquire_ticket, :vm_acquire_mks_ticket
 
+    def vm_acquire_ticket(vm, options = {})
+      invoke_vim_ws(:acquireTicket, vm, options[:user_event], options[:ticket_type])
+    end
+    alias_method :vm_remote_console_acquire_ticket, :vm_acquire_ticket
+
     def vm_add_miq_alarm(vm, _options = {})
       result = nil
       vm.with_provider_object do |vim_vm|
