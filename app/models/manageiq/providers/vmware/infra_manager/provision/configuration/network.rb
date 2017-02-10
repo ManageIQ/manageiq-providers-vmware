@@ -52,7 +52,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
     add_device_config_spec(vmcs, operation) do |vdcs|
       vdcs.device = vnicDev || create_vlan_device(network)
       _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
-      vdcs.device.backing.deviceName = network[:network]
+
+      vdcs.device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |vecnbi|
+        vecnbi.deviceName = network[:network]
+      end
+
       #
       # Manually assign MAC address to target VM.
       #
@@ -108,9 +112,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
         con.allowGuestControl = get_config_spec_value(network, 'true', nil, [:connectable, :allowguestcontrol])
         con.startConnected    = get_config_spec_value(network, 'true', nil, [:connectable, :startconnected])
         con.connected         = get_config_spec_value(network, 'true', nil, [:connectable, :connected])
-      end
-      vDev.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |bck|
-        bck.deviceName = network[:network]
       end
     end
   end
