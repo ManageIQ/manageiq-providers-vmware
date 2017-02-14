@@ -60,6 +60,10 @@ module ManageIQ::Providers
       true
     end
 
+    def validate_remote_console_webmks_support
+      raise(MiqException::RemoteConsoleNotSupportedError, "vCenter version #{api_version} does not support WebMKS remote console.") unless api_version >= "6.0"
+    end
+
     def self.use_vim_broker?
       return false unless MiqVimBrokerWorker.has_required_role?
       cfg = ::Settings.webservices.use_vim_broker
