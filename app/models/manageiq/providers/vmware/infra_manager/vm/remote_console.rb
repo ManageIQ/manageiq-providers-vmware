@@ -2,7 +2,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   require_dependency 'securerandom'
 
   def console_supported?(type)
-    %w(VMRC VNC MKS).include?(type.upcase)
+    %w(VMRC VNC MKS WEBMKS).include?(type.upcase)
   end
 
   def validate_remote_console_acquire_ticket(protocol, options = {})
@@ -56,6 +56,21 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   def validate_remote_console_vmrc_support
     validate_remote_console_acquire_ticket("vmrc")
     ext_management_system.validate_remote_console_vmrc_support
+    true
+  end
+
+  #
+  # WebMKS
+  #
+
+  def remote_console_webmks_acquire_ticket(_userid = nil, _originating_server = nil)
+    validate_remote_console_acquire_ticket("webmks")
+    ext_management_system.vm_remote_console_webmks_acquire_ticket
+  end
+
+  def validate_remote_console_webmks_support
+    validate_remote_console_acquire_ticket("webmks")
+    ext_management_system.validate_remote_console_webmks_support
     true
   end
 
