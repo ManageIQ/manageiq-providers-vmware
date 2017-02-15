@@ -79,21 +79,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   end
 
   context '#remote_console_webmks_acquire_ticket' do
-    it 'normal case' do
-      EvmSpecHelper.create_guid_miq_server_zone
-      ems.update_attributes(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14', :api_version => '6.0')
-      auth = FactoryGirl.create(:authentication,
-                                :userid   => 'dev1',
-                                :password => 'dev1pass',
-                                :authtype => 'default')
-      ems.authentications = [auth]
-      ticket = VCR.use_cassette(described_class.name.underscore) do
-        vm.remote_console_webmks_acquire_ticket
-      end
-      expect(ticket).to have_key(:ticket)
-      expect(ticket[:ticket]).to match(/^[0-9\-A-Z]{40}$/)
-    end
-
     it 'with vm off' do
       vm.update_attribute(:raw_power_state, 'poweredOff')
       expect { vm.remote_console_webmks_acquire_ticket }.to raise_error MiqException::RemoteConsoleNotSupportedError
