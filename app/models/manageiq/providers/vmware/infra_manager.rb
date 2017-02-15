@@ -411,7 +411,7 @@ module ManageIQ::Providers
     def vm_acquire_webmks_ticket(vm, options = {})
       vm_acquire_ticket(vm, options.merge(:ticket_type => 'webmks'))
     end
-    alias_method :vm_remote_console_acquire_webmks_ticket, :vm_acquire_webmks_ticket
+    alias_method :vm_remote_console_webmks_acquire_ticket, :vm_acquire_webmks_ticket
 
     def vm_add_miq_alarm(vm, _options = {})
       result = nil

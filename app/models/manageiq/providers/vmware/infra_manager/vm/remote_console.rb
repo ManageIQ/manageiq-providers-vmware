@@ -65,7 +65,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
 
   def remote_console_webmks_acquire_ticket(_userid = nil, _originating_server = nil)
     validate_remote_console_acquire_ticket("webmks")
-    ext_management_system.vm_remote_console_webmks_acquire_ticket
+    ext_management_system.vm_remote_console_webmks_acquire_ticket(self)
   end
 
   def validate_remote_console_webmks_support
