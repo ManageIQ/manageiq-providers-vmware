@@ -26,9 +26,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
     true
   end
 
-  def supports_snapshots?
-    true
-  end
-
+  supports :snapshots
   supports :quick_stats
 end
