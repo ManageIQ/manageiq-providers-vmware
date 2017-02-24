@@ -1,6 +1,50 @@
 describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
   context "filter_vc_data" do
-    let(:ems) { FactoryGirl.create(:ems_vmware) }
+    let(:ems)         { FactoryGirl.create(:ems_vmware) }
+    let(:dc)          { FactoryGirl.create(:vmware_datacenter) }
+    let(:root_folder) { FactoryGirl.create(:vmware_folder_root) }
+    let(:vm_folder)   { FactoryGirl.create(:vmware_folder_vm) }
+    let(:host_folder) { FactoryGirl.create(:vmware_folder_host) }
+    let(:host)        { FactoryGirl.create(:host_with_ref) }
+    let(:vm)          { FactoryGirl.create(:vm_with_ref) }
+
+    let(:vc_data) do
+      inv = Hash.new { |h, k| h[k] = {} }
+
+      inv[:vm][vm.ems_ref] = {
+        "MOR"     => vm.ems_ref,
+        "summary" => { "runtime" => { "host" => host.ems_ref } }
+      }
+
+      inv[:host][host.ems_ref] = {
+        "MOR"    => host.ems_ref,
+        "parent" => host_folder.ems_ref
+      }
+
+      inv[:dc][dc.ems_ref] = {
+        "MOR"    => dc.ems_ref,
+        "parent" => root_folder.ems_ref
+      }
+
+      inv[:folder][root_folder.ems_ref] = {
+        "MOR"         => root_folder.ems_ref,
+        "childEntity" => [dc.ems_ref]
+      }
+
+      inv[:folder][vm_folder.ems_ref] = {
+        "MOR"         => vm_folder.ems_ref,
+        "childEntity" => [vm.ems_ref],
+        "parent"      => dc.ems_ref
+      }
+
+      inv[:folder][host_folder.ems_ref] = {
+        "MOR"         => host_folder.ems_ref,
+        "childEntity" => [],
+        "parent"      => dc.ems_ref
+      }
+
+      inv
+    end
 
     before do
       @refresher = ems.refresher.new([ems])
@@ -8,20 +52,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
     end
 
     context "with 1 host and 1 vm" do
-      let(:vm)   { FactoryGirl.create(:vm_with_ref) }
-      let(:host) { FactoryGirl.create(:host_with_ref) }
-      let(:vc_data) do
-        inv = Hash.new { |h, k| h[k] = {} }
-
-        inv[:host][host.ems_ref] = { "MOR" => host.ems_ref }
-        inv[:vm][vm.ems_ref]     = {
-          "MOR"     => vm.ems_ref,
-          "summary" => { "runtime" => { "host" => host.ems_ref } }
-        }
-
-        inv
-      end
-
       context "targeting the ems" do
         it "returns the full inventory" do
           filtered_data = @refresher.filter_vc_data(ems, ems)
@@ -43,36 +73,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
     end
 
     context "with a vm and no host" do
-      let(:vm)          { FactoryGirl.create(:vm_with_ref) }
-      let(:dc)          { FactoryGirl.create(:datacenter, :ems_ref => "datacenter-1", :name => "dc1") }
-      let(:root_folder) { FactoryGirl.create(:ems_folder, :ems_ref => "group-d1",     :name => "Datacenters") }
-      let(:vm_folder)   { FactoryGirl.create(:ems_folder, :ems_ref => "group-v3",     :name => "vm") }
-
-      let(:vc_data) do
-        inv = Hash.new { |h, k| h[k] = {} }
-
-        inv[:vm][vm.ems_ref] = {
-          "MOR"     => vm.ems_ref,
-          "summary" => { "runtime" => { "host" => "host-1234" } }
-        }
-
-        inv[:dc][dc.ems_ref] = {
-          "MOR"    => dc.ems_ref,
-          "parent" => root_folder.ems_ref
-        }
-
-        inv[:folder][root_folder.ems_ref] = {
-          "MOR"         => root_folder.ems_ref,
-          "childEntity" => [dc.ems_ref]
-        }
-
-        inv[:folder][vm_folder.ems_ref] = {
-          "MOR"         => vm_folder.ems_ref,
-          "childEntity" => [vm.ems_ref],
-          "parent"      => dc.ems_ref
-        }
-
-        inv
+      before do
+        vc_data[:host] = {}
       end
 
       context "targeting a vm" do
@@ -81,6 +83,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
         it "returns the root folder" do
           filtered_data = @refresher.filter_vc_data(ems, vm)
 
+          expect(filtered_data[:host]).not_to include(host.ems_ref)
           expect(filtered_data[:folder]).to include(root_folder.ems_ref)
         end
       end
