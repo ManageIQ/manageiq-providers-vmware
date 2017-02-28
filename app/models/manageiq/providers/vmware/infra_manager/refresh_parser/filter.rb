@@ -43,6 +43,13 @@ class ManageIQ::Providers::Vmware::InfraManager
             storage_profile_inv_by_vm_inv(vm_data)
         end
 
+      when EmsFolder
+        filtered_data = Hash.new { |h, k| h[k] = {} }
+
+        folder_data = folder_inv_by_folder(target)
+        unless folder_data.nil?
+          filtered_data[:folder] = folder_data
+        end
       end
 
       filtered_counts = filtered_data.inject({}) { |h, (k, v)| h[k] = v.blank? ? 0 : v.length; h }
@@ -70,6 +77,10 @@ class ManageIQ::Providers::Vmware::InfraManager
 
     def vm_inv_by_vm(vm)
       inv_by_ar_object(@vc_data[:vm], vm)
+    end
+
+    def folder_inv_by_folder(folder)
+      inv_by_ar_object(@vc_data[:folder], folder)
     end
 
     ### Collection methods by Host inv
