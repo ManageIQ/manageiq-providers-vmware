@@ -8,10 +8,34 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
     end
 
     context "with 1 host and 1 vm" do
-      let(:vm)   { FactoryGirl.create(:vm_with_ref) }
-      let(:host) { FactoryGirl.create(:host_with_ref) }
+      let(:dc)          { FactoryGirl.create(:vmware_datacenter) }
+      let(:root_folder) { FactoryGirl.create(:vmware_folder_root) }
+      let(:vm_folder)   { FactoryGirl.create(:vmware_folder_vm) }
+      let(:host_folder) { FactoryGirl.create(:vmware_folder_vm) }
+      let(:vm)          { FactoryGirl.create(:vm_with_ref) }
+      let(:host)        { FactoryGirl.create(:host_with_ref) }
       let(:vc_data) do
         inv = Hash.new { |h, k| h[k] = {} }
+
+        inv[:dc][dc.ems_ref] = {
+          "MOR"         => dc.ems_ref,
+          "childEntity" => [vm_folder.ems_ref, host_folder.ems_ref]
+        }
+
+        inv[:folder][root_folder.ems_ref] = {
+          "MOR"         => root_folder.ems_ref,
+          "childEntity" => [dc.ems_ref]
+        }
+
+        inv[:folder][vm_folder.ems_ref] = {
+          "MOR"         => vm_folder.ems_ref,
+          "childEntity" => [vm.ems_ref]
+        }
+
+        inv[:folder][host_folder.ems_ref] = {
+          "MOR"         => host_folder.ems_ref,
+          "childEntity" => [host.ems_ref]
+        }
 
         inv[:host][host.ems_ref] = { "MOR" => host.ems_ref }
         inv[:vm][vm.ems_ref]     = {
@@ -38,6 +62,31 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
 
           expect(filtered_data[:vm].count).to   eq(1)
           expect(filtered_data[:vm]).to         include(vm.ems_ref)
+        end
+      end
+
+      context "targeting an empty folder" do
+        let(:empty_folder) { FactoryGirl.create(:vmware_folder) }
+        before do
+          vc_data[:folder][empty_folder.ems_ref] = {"MOR" => empty_folder.ems_ref}
+          vc_data[:folder][vm_folder.ems_ref]["childEntity"] << empty_folder.ems_ref
+        end
+
+        it "returns the target and its parents" do
+        end
+      end
+
+      context "targeting a datacenter" do
+        let(:dc2) { FactoryGirl.create(:vmware_datacenter) }
+        before do
+          vc_data[:dc][dc2.ems_ref] = {"MOR" => dc2.ems_ref, "childEntity" => []}
+          vc_data[:folder][root_folder.ems_ref]["childEntity"] << dc2.ems_ref
+        end
+
+        it "returns relevant parents and children" do
+        end
+
+        it "doesn't return a non-targeted datacenter" do
         end
       end
     end
