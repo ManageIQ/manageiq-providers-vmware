@@ -73,6 +73,26 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         expect { @vm_prov.build_config_network_adapters(vmcs) }.not_to raise_error
       end
 
+      it "should replace network card backing" do
+        requested_network = {:network => "Prod", :devicetype => "VirtualE1000"}
+        template_network  = VimHash.new("VirtualVmxnet3") do |vnic|
+          vnic.backing       = VimHash.new("VirtualEthernetCardDistributedVirtualPortBackingInfo") do |backing|
+            backing.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |dvs_port|
+              dvs_port.portKey      = "1"
+              dvs_port.portgroupKey = "dvportgroup-17"
+              dvs_port.switchUuid   = "50 3c b7 67 59 58 cf ce-75 16 2f e0 2b 6a d8 3c"
+            end
+          end
+        end
+
+        allow(@vm_prov).to receive(:normalize_network_adapter_settings).and_return([requested_network])
+        allow(@vm_prov).to receive(:get_network_adapters).and_return([template_network])
+
+        vmcs = VimHash.new("VirtualMachineConfigSpec")
+        @vm_prov.build_config_network_adapters(vmcs)
+        expect(vmcs["deviceChange"][0]["device"]["backing"].xsiType).to eq("VirtualEthernetCardNetworkBackingInfo")
+      end
+
       it "eligible_hosts" do
         host = FactoryGirl.create(:host, :ext_management_system => @ems)
         host_struct = [MiqHashStruct.new(:id => host.id, :evm_object_class => host.class.base_class.name.to_sym)]
