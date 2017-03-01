@@ -19,6 +19,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
 
         inv[:dc][dc.ems_ref] = {
           "MOR"         => dc.ems_ref,
+          "parent"      => root_folder.ems_ref,
           "childEntity" => [vm_folder.ems_ref, host_folder.ems_ref]
         }
 
@@ -29,11 +30,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
 
         inv[:folder][vm_folder.ems_ref] = {
           "MOR"         => vm_folder.ems_ref,
+          "parent"      => dc.ems_ref,
           "childEntity" => [vm.ems_ref]
         }
 
         inv[:folder][host_folder.ems_ref] = {
           "MOR"         => host_folder.ems_ref,
+          "parent"      => dc.ems_ref,
           "childEntity" => [host.ems_ref]
         }
 
@@ -68,25 +71,54 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       context "targeting an empty folder" do
         let(:empty_folder) { FactoryGirl.create(:vmware_folder) }
         before do
-          vc_data[:folder][empty_folder.ems_ref] = {"MOR" => empty_folder.ems_ref}
+          vc_data[:folder][empty_folder.ems_ref] = {
+            "MOR"    => empty_folder.ems_ref,
+            "parent" => vm_folder.ems_ref
+          }
+
           vc_data[:folder][vm_folder.ems_ref]["childEntity"] << empty_folder.ems_ref
         end
 
         it "returns the target and its parents" do
+          filtered_data = @refresher.filter_vc_data(ems, empty_folder)
+
+          expect(filtered_data[:folder]).to include(empty_folder.ems_ref,
+                                                    vm_folder.ems_ref,
+                                                    root_folder.ems_ref)
+          expect(filtered_data[:dc]).to     include(dc.ems_ref)
+        end
+
+        it "doesn't return unrelated inventory" do
+          filtered_data = @refresher.filter_vc_data(ems, empty_folder)
+
+          expect(filtered_data[:vm]).not_to   include(vm.ems_ref)
+          expect(filtered_data[:host]).not_to include(host.ems_ref)
         end
       end
 
       context "targeting a datacenter" do
         let(:dc2) { FactoryGirl.create(:vmware_datacenter) }
         before do
-          vc_data[:dc][dc2.ems_ref] = {"MOR" => dc2.ems_ref, "childEntity" => []}
+          vc_data[:dc][dc2.ems_ref] = {
+            "MOR"         => dc2.ems_ref,
+            "parent"      => root_folder.ems_ref,
+            "childEntity" => []
+          }
+
           vc_data[:folder][root_folder.ems_ref]["childEntity"] << dc2.ems_ref
         end
 
-        it "returns relevant parents and children" do
+        it "returns relevant parents" do
+          filtered_data = @refresher.filter_vc_data(ems, dc)
+
+          expect(filtered_data[:dc]).to     include(dc.ems_ref)
+          expect(filtered_data[:folder]).to include(root_folder.ems_ref)
         end
 
         it "doesn't return a non-targeted datacenter" do
+          filtered_data = @refresher.filter_vc_data(ems, dc)
+
+          expect(filtered_data[:dc]).not_to include(dc2.ems_ref)
         end
       end
     end
