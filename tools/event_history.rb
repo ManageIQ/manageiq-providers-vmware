@@ -41,15 +41,17 @@ connect_opts = {
 
 vim = RbVmomi::VIM.connect connect_opts
 
-eventCollector = vim.serviceContent.eventManager.CreateCollectorForEvents(
-  :filter => RbVmomi::VIM::EventFilterSpec.new(:eventTypeId => filter_events)
-)
+begin
+  eventCollector = vim.serviceContent.eventManager.CreateCollectorForEvents(
+    :filter => RbVmomi::VIM::EventFilterSpec.new(:eventTypeId => filter_events)
+  )
 
-eventCollector.RewindCollector()
-until (events = eventCollector.ReadNextEvents(:maxCount => 100)).empty?
-  events.each do |event|
-    puts "#{event.class.name} ID: #{event.key} Chain ID: #{event.chainId} Time: #{event.createdTime} #{event.fullFormattedMessage}"
+  eventCollector.RewindCollector()
+  until (events = eventCollector.ReadNextEvents(:maxCount => 100)).empty?
+    events.each do |event|
+      puts "#{event.class.name} ID: #{event.key} Chain ID: #{event.chainId} Time: #{event.createdTime} #{event.fullFormattedMessage}"
+    end
   end
+ensure
+  eventCollector.DestroyCollector() if eventCollector
 end
-
-eventCollector.DestroyCollector()
