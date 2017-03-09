@@ -64,6 +64,7 @@ module ManageIQ::Providers
             :free_space         => summary["freeSpace"],
             :uncommitted        => summary["uncommitted"],
             :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
+            :maintenance        => summary["maintenanceMode"] == "inMaintenance",
             :location           => loc,
           }
 
