@@ -121,6 +121,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
           expect(filtered_data[:dc]).not_to include(dc2.ems_ref)
         end
       end
+
+      context "targeting a folder containing a VM" do
+        it "returns the vm" do
+          filtered_data = @refresher.filter_vc_data(ems, vm_folder)
+          expect(filtered_data[:vm]).to include(vm.ems_ref)
+        end
+      end
     end
 
     context "with a vm and no host" do

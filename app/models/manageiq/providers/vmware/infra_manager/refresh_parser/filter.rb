@@ -49,7 +49,8 @@ class ManageIQ::Providers::Vmware::InfraManager
         folder_data = folder_inv_by_folder(target)
         unless folder_data.nil?
           filtered_data[:folder], filtered_data[:dc], filtered_data[:cluster], filtered_data[:host_res] =
-            ems_metadata_inv_by_folder_inv(folder_data)
+            ems_metadata_parents_by_folder_inv(folder_data)
+          child_inv_by_folder_inv(folder_data, filtered_data)
         end
       end
 
@@ -242,7 +243,7 @@ class ManageIQ::Providers::Vmware::InfraManager
       return inv[:folder], inv[:dc], inv[:cluster], inv[:host_res]
     end
 
-    def ems_metadata_inv_by_folder_inv(folder_inv)
+    def ems_metadata_parents_by_folder_inv(folder_inv)
       inv = {:folder => {}, :dc => {}, :cluster => {}, :host_res => {}}
 
       folder_inv.each do |folder_mor, folder_data|
@@ -255,6 +256,14 @@ class ManageIQ::Providers::Vmware::InfraManager
       end
 
       return inv[:folder], inv[:dc], inv[:cluster], inv[:host_res]
+    end
+
+    def child_inv_by_folder_inv(folder_inv, inv)
+      folder_inv.each do |folder_mor, folder_data|
+        child_inv_by_folder_mor(folder_mor, @vc_data).each do |type, mor, data|
+          inv[type][mor] ||= data
+        end
+      end
     end
 
     def rp_metadata_inv_by_vm_inv(vm_inv)
@@ -366,6 +375,16 @@ class ManageIQ::Providers::Vmware::InfraManager
       end
 
       ems_metadata
+    end
+
+    def child_inv_by_folder_mor(folder_mor, data_source)
+      inv = []
+
+      data_source.each_key do |type|
+        data_source[type].each do |mor, data|
+
+        end
+      end
     end
 
     def rp_metadata_inv_by_vm_mor(vm_mor, data_source)
