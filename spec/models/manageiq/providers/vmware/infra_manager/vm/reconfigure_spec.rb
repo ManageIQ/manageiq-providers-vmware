@@ -189,6 +189,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
       expect(subject.fetch_path("device", "backing", "diskMode")).to        eq("independent_nonpersistent")
       expect(subject.fetch_path("device", "backing", "fileName")).to        eq("[#{vm.storage.name}]")
     end
+
+    it 'with invalid diskMode' do
+      @options[:dependent]  = true
+      @options[:persistent] = false
+
+      expect { subject }.to raise_error(MiqException::MiqVmError, "Disk mode nonpersistent is not supported for virtual disk")
+    end
   end
 
   context '#remove_disk_config_spec' do
