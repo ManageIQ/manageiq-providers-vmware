@@ -153,6 +153,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       let(:s14) { FactoryGirl.create(:switch, :name => "DVS14", :shared => true) }
       let(:s15) { FactoryGirl.create(:switch, :name => "DVS15", :shared => true) }
       let(:s21) { FactoryGirl.create(:switch, :name => "DVS21", :shared => true) }
+      let(:s22) { FactoryGirl.create(:switch, :name => "DVS22", :shared => true) }
 
       before do
         @lan11 = FactoryGirl.create(:lan, :name => "lan_A",   :switch_id => s11.id)
@@ -161,6 +162,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         @lan14 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s14.id)
         @lan15 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s15.id)
         @lan21 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s21.id)
+        @lan22 = FactoryGirl.create(:lan, :name => "lan_A",   :switch_id => s22.id)
       end
 
       it '#allowed_vlans' do
@@ -190,6 +192,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         allow(workflow).to receive(:allowed_hosts).with(no_args).and_return(
           [workflow.host_to_hash_struct(@host1), workflow.host_to_hash_struct(@host2)]
         )
+
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         lan_keys = [@lan11.name, @lan13.name, @lan12.name, "dvs_#{@lan14.name}"]
         switches = [s14.name, s15.name, s21.name].sort.join('/')
@@ -229,6 +232,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         expect(vlans.keys).to match_array([])
         expect(vlans.values).to match_array([])
+      end
+
+      it 'Returns both dvportgroup and lan with the same name' do
+        @host1.switches = [s11, s22]
+        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(@host1)])
+        vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
+
+        lan_keys   = [@lan11.name, "dvs_#{@lan22.name}"]
+        lan_values = [@lan11.name, "#{@lan22.name} (#{s22.name})"]
+        expect(vlans.keys).to   match_array(lan_keys)
+        expect(vlans.values).to match_array(lan_values)
       end
     end
   end

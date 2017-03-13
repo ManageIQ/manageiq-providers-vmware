@@ -139,7 +139,6 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
       end
       dvlans.each do |l, v|
         vlans["dvs_#{l}"] = "#{l} (#{v.sort.uniq.join('/')})"
-        vlans.delete(l)
       end
     end
     return vlans, hosts
