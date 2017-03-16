@@ -162,6 +162,25 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
+  def validate_device_backing(backing)
+    case backing.xsiType
+    when 'VirtualDiskFlatVer2BackingInfo'
+      valid_flat_ver_2_backing_modes = [
+        VirtualDiskMode::Persistent,
+        VirtualDiskMode::Independent_persistent,
+        VirtualDiskMode::Independent_nonpersistent
+      ].freeze
+
+      unless valid_flat_ver_2_backing_modes.include?(backing.diskMode)
+        raise MiqException::MiqVmError, "Disk mode #{backing.diskMode} is not supported for virtual disk"
+      end
+    end
+  end
+
+  def validate_device(device)
+    validate_device_backing(device.backing)
+  end
+
   def add_disk_config_spec(vmcs, options)
     raise "#{__method__}: Disk size is required to add a new disk." unless options[:disk_size_in_mb]
 
@@ -187,6 +206,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
           bck.fileName        = backing_filename
         end
       end
+
+      validate_device(vdcs.device)
     end
   end
 
