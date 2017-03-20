@@ -81,6 +81,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
+  context "snapshotting_memory_allowed?" do
+    context "when powered on" do
+      let(:power_state) {{:raw_power_state => power_state_on}}
+
+      it "is allowed" do
+        vm.update_attributes(power_state)
+        expect(vm.snapshotting_memory_allowed?).to be_truthy
+      end
+    end
+
+    context "when powered off" do
+      let(:power_state) {{:raw_power_state => power_state_suspended}}
+      it "is not allowed" do
+        vm.update_attributes(power_state)
+        expect(vm.snapshotting_memory_allowed?).to be_falsy
+      end
+    end
+  end
+
   context "vim" do
     let(:ems) { FactoryGirl.create(:ems_vmware) }
     let(:provider_object) do
