@@ -5,8 +5,48 @@
       :event_groups:
         :addition:
           :critical:
+            - CreateFolder
+            - DatastoreDiscoveredEvent
+            - HostConnectedEvent
+            - VmCreatedEvent
+        :configuration:
+          :critical:
+            - MoveInto_Task
+            - MoveIntoFolder_Task
+        :console:
+          :critical:
+            - VmRemoteConsoleConnectedEvent
+        :deletion:
+          :detail:
+            - Destroy_Task
+          :critical:
+            - DestroyDatacenter_Task
+            - DestroyFolder_Task
+            - HostConnectionLostEvent
+            - HostDisconnectedEvent
+        :migration:
+          :critical:
+            - MigrateVM_Task
+            - VmRelocatedEvent
         :power:
           :critical:
+            - DrsVmPoweredOnEvent
+            - VmPoweredOffEvent
+            - VmPoweredOnEvent
+            - VmSuspendedEvent
+        :status:
+          :detail:
+            - VmRenamedEvent
+            - RenameCluster_Task
+            - Rename_Task
+            - RenameFolder_Task
+            - RenameResourcePool_Task
+        :snapshot:
+          :critical:
+            - CreateSnapshot_Task
+            - RevertToSnapshot_Task
+            - RemoveAllSnapshots_Task
+            - RemoveSnapshot_Task
 :ems_refresh:
   :vmware_cloud:
     :get_public_images: false
