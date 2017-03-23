@@ -48,8 +48,7 @@ class ManageIQ::Providers::Vmware::InfraManager
 
         folder_data = folder_inv_by_folder(target)
         unless folder_data.nil?
-          filtered_data[:folder], filtered_data[:dc], filtered_data[:cluster], filtered_data[:host_res] =
-            ems_metadata_inv_by_folder_inv(folder_data)
+          inv_by_folder_inv(folder_data, filtered_data)
         end
       end
 
@@ -242,9 +241,7 @@ class ManageIQ::Providers::Vmware::InfraManager
       return inv[:folder], inv[:dc], inv[:cluster], inv[:host_res]
     end
 
-    def ems_metadata_inv_by_folder_inv(folder_inv)
-      inv = {:folder => {}, :dc => {}, :cluster => {}, :host_res => {}}
-
+    def inv_by_folder_inv(folder_inv, inv)
       folder_inv.each do |folder_mor, _folder_data|
         # The parents of a folder/datacenter have to be either a folder or a datacenter
         # as well so we don't have to worry about other inventory types for a
@@ -252,9 +249,11 @@ class ManageIQ::Providers::Vmware::InfraManager
         ems_metadata_parents_by_folder_mor(folder_mor, @vc_data).each do |type, mor, data|
           inv[type][mor] ||= data
         end
-      end
 
-      return inv[:folder], inv[:dc], inv[:cluster], inv[:host_res]
+        inv_children_by_folder_mor(folder_mor, @vc_data).each do |type, mor, data|
+          inv[type][mor] ||= data
+        end
+      end
     end
 
     def rp_metadata_inv_by_vm_inv(vm_inv)
@@ -366,6 +365,30 @@ class ManageIQ::Providers::Vmware::InfraManager
       end
 
       ems_metadata
+    end
+
+    def inv_children_by_folder_mor(folder_mor, data_source)
+      inv = []
+
+      type, data = ems_metadata_target_by_mor(folder_mor, data_source)
+      return if data.nil?
+
+      children = if type == :dc
+                   [data["vmFolder"], data["networkFolder"], data["hostFolder"], data["datastoreFolder"]].compact
+                 else
+                   Array(data["childEntity"])
+                 end
+
+      children.each do |child_mor|
+        child_type, child = RefreshParser.inv_target_by_mor(child_mor, data_source)
+        inv << [child_type, child_mor, child]
+
+        if child.key?("childEntity")
+          inv.concat(inv_children_by_folder_mor(child_mor, data_source))
+        end
+      end
+
+      inv
     end
 
     def rp_metadata_inv_by_vm_mor(vm_mor, data_source)
