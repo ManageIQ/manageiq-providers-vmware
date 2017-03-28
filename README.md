@@ -5,7 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/coverage)
 [![Dependency Status](https://gemnasium.com/ManageIQ/manageiq-providers-vmware.svg)](https://gemnasium.com/ManageIQ/manageiq-providers-vmware)
-[![Security](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/master.svg)](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/master)
+[![Security](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/fine.svg)](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/fine)
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/manageiq-providers-vmware?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Translate](https://img.shields.io/badge/translate-zanata-blue.svg)](https://translate.zanata.org/zanata/project/view/manageiq-providers-vmware)
