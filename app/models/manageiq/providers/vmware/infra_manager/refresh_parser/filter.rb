@@ -48,7 +48,13 @@ class ManageIQ::Providers::Vmware::InfraManager
 
         folder_data = folder_inv_by_folder(target)
         unless folder_data.nil?
-          inv_by_folder_inv(folder_data, filtered_data)
+          _, target_data = folder_data.first
+          if folder_children(target_data).blank?
+            inv_by_folder_inv(folder_data, filtered_data)
+          else
+            filtered_data = @vc_data
+            target = ems
+          end
         end
       end
 
@@ -448,6 +454,16 @@ class ManageIQ::Providers::Vmware::InfraManager
 
     def ems_metadata_target_by_mor(*args)
       RefreshParser.inv_target_by_mor(*args)
+    end
+
+    def folder_children(folder_inv)
+      child_keys = if RefreshParser.get_mor_type(folder_inv["MOR"]) == "datacenter"
+                     %w(datastoreFolder networkFolder hostFolder vmFolder)
+                   else
+                     %w(childEntity)
+                   end
+
+      child_keys.collect { |key| get_mors(folder_inv, key) }.flatten
     end
   end
 end
