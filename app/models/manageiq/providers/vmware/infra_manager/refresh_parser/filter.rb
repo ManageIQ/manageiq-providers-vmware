@@ -57,7 +57,7 @@ class ManageIQ::Providers::Vmware::InfraManager
 
       EmsRefresh.log_inv_debug_trace(filtered_data, "#{_log.prefix} #{log_header} filtered_data:", 2)
 
-      filtered_data
+      return target, filtered_data
     end
 
     #

@@ -71,14 +71,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
 
       context "targeting the ems" do
         it "returns the full inventory" do
-          filtered_data = @refresher.filter_vc_data(ems, ems)
+          filtered_data = get_filtered_data(ems, ems)
           expect(filtered_data).to eq(vc_data)
         end
       end
 
       context "targeting a vm" do
         it "returns relevent data" do
-          filtered_data = @refresher.filter_vc_data(ems, vm)
+          filtered_data = get_filtered_data(ems, vm)
 
           expect(filtered_data[:host].count).to eq(1)
           expect(filtered_data[:host]).to       include(host.ems_ref)
@@ -89,7 +89,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       end
 
       context "targeting an empty folder" do
-        let(:filtered_data) { @refresher.filter_vc_data(ems, folder2) }
+        let(:filtered_data) { get_filtered_data(ems, folder2) }
 
         it "returns the target and its parents" do
           expect(filtered_data[:folder]).to include(folder2.ems_ref,
@@ -106,7 +106,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       end
 
       context "targeting a folder with one sub-folder" do
-        let(:filtered_data) { @refresher.filter_vc_data(ems, folder1) }
+        let(:filtered_data) { get_filtered_data(ems, folder1) }
 
         it "returns the target and its parents" do
           expect(filtered_data[:folder]).to include(folder1.ems_ref,
@@ -121,7 +121,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       end
 
       context "targeting a folder with a VM and sub-folders" do
-        let(:filtered_data) { @refresher.filter_vc_data(ems, vm_folder) }
+        let(:filtered_data) { get_filtered_data(ems, vm_folder) }
 
         it "returns the child VM" do
           expect(filtered_data[:vm]).to include(vm.ems_ref)
@@ -133,7 +133,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       end
 
       context "targeting a folder with a host" do
-        let(:filtered_data) { @refresher.filter_vc_data(ems, host_folder) }
+        let(:filtered_data) { get_filtered_data(ems, host_folder) }
 
         it "returns the child host" do
           expect(filtered_data[:host]).to include(host.ems_ref)
@@ -141,7 +141,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
       end
 
       context "targeting a datacenter" do
-        let(:filtered_data) { @refresher.filter_vc_data(ems, dc1) }
+        let(:filtered_data) { get_filtered_data(ems, dc1) }
 
         it "returns relevant parents" do
           expect(filtered_data[:dc]).to     include(dc1.ems_ref)
@@ -196,11 +196,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
         # Test to make sure that a targeted refresh of a VM with no host
         # in inventory still returns the root folder
         it "returns the root folder" do
-          filtered_data = @refresher.filter_vc_data(ems, vm)
+          filtered_data = get_filtered_data(ems, vm)
 
           expect(filtered_data[:folder]).to include(root_folder.ems_ref)
         end
       end
+    end
+
+    private
+
+    def get_filtered_data(ems, target)
+      _, filtered_data = @refresher.filter_vc_data(ems, target)
+      filtered_data
     end
   end
 end
