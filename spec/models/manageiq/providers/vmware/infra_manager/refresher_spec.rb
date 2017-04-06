@@ -186,6 +186,29 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(vm.host).to eq(vm2.host)
   end
 
+  it 'link_inventory handles folder deletion' do
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+
+    refresher = @ems.refresher.new([@ems])
+    target, inventory = refresher.collect_inventory_for_targets(@ems, [@ems])[0]
+
+    # Delete an empty folder "Discovered virtual machine
+    folder_mor = 'group-v12223'
+    parent_mor = inventory[:folder][folder_mor].parent
+
+    inventory[:folder].delete(folder_mor)
+    inventory[:folder][parent_mor].childEntity.delete(folder_mor)
+
+    hashes = refresher.parse_targeted_inventory(@ems, target, inventory)
+    refresher.save_inventory(@ems, target, hashes)
+
+    parent_folder = EmsFolder.find_by(:ems_id => @ems.id, :ems_ref => parent_mor)
+
+    # Make sure the folder that got deleted is no longer in the parent folder's children
+    expect(parent_folder.children.collect(&:ems_ref)).not_to include(folder_mor)
+  end
+
   def assert_table_counts
     expect(ExtManagementSystem.count).to eq(1)
     expect(Datacenter.count).to eq(3)
