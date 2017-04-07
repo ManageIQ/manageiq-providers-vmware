@@ -124,7 +124,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Cont
     end
 
     _log.info("Calling VM reconfiguration")
-    dumpObj(config_spec, "#{_log.prefix} Post-create Config spec: ", $log, :info)
+    dump_obj(config_spec, "#{_log.prefix} Post-create Config spec: ", $log, :info)
     vm.spec_reconfigure(config_spec)
   end
 end
