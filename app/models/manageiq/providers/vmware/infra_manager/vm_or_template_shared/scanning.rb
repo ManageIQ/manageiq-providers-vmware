@@ -19,7 +19,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
 
     args1 = ost.args[1]
     args1['ems'][:use_vim_broker]      = MiqServer.use_broker_for_embedded_proxy?(args1['ems']['connect_to'])
-    args1['ems'][:vim_broker_drb_port] = MiqVimBrokerWorker.drb_port if args1['ems'][:use_vim_broker]
+    args1['ems'][:vim_broker_drb_port] = ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.drb_port if args1['ems'][:use_vim_broker]
 
     begin
       @vm_cfg_file = vm_name

@@ -7,7 +7,7 @@ class ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker::Runner < MiqWo
     # Global Work Queue
     @queue = Queue.new
 
-    @initial_emses_to_monitor, invalid_emses = MiqVimBrokerWorker.emses_to_monitor.partition { |e| e.authentication_check.first }
+    @initial_emses_to_monitor, invalid_emses = ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.emses_to_monitor.partition { |e| e.authentication_check.first }
     start_broker_server(@initial_emses_to_monitor)
     @worker.update_attributes(:uri => DRb.uri)
     _log.info("#{log_prefix} DRb URI: #{DRb.uri}")
@@ -21,7 +21,7 @@ class ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker::Runner < MiqWo
   end
 
   def self.emses_and_hosts_to_monitor
-    emses = MiqVimBrokerWorker.emses_to_monitor
+    emses = ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.emses_to_monitor
     MiqPreloader.preload(emses, :hosts => :authentications)
     hosts = emses.collect(&:hosts).flatten.uniq.select(&:authentication_status_ok?)
     emses + hosts
@@ -66,7 +66,7 @@ class ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker::Runner < MiqWo
       $log.log_hashes(@exclude_props)
     end
 
-    @ems_ids_for_notify = MiqVimBrokerWorker.emses_to_monitor.each_with_object({}) { |e, h| h[[e.address, e.authentication_userid]] = e.id }
+    @ems_ids_for_notify = ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.emses_to_monitor.each_with_object({}) { |e, h| h[[e.address, e.authentication_userid]] = e.id }
 
     # Set notify method at the class level for new connections, and at the
     #   instance level for existing connections.
