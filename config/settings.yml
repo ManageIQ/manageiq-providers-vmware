@@ -45,4 +45,12 @@
         :ems_refresh_worker_vmware: {}
         :ems_refresh_worker_vmware_cloud: {}
         :ems_refresh_worker_vmware_cloud_network: {}
-
+    :vim_broker_worker_vmware:
+      :memory_threshold: 2.gigabytes
+      :nice_delta: 3
+      :poll: 1.seconds
+      :reconnect_retry_interval: 5.minutes
+      :vim_broker_status_interval: 15.minutes
+      :vim_broker_update_interval: 0.seconds
+      :vim_broker_max_wait: 60
+      :vim_broker_max_objects: 250
