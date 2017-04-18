@@ -99,10 +99,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
     cust_dump = clone_options[:customization].try(:dup)
     cust_dump.try(:delete, 'encryptionKey')
 
-    dumpObj(clone_options[:transform], "#{_log.prefix} Transform: ",          $log, :info)
-    dumpObj(clone_options[:config],    "#{_log.prefix} Config spec: ",        $log, :info)
-    dumpObj(cust_dump,                 "#{_log.prefix} Customization spec: ", $log, :info, :protected => {:path => /[Pp]assword\]\[value\]/})
-    dumpObj(options,                   "#{_log.prefix} Prov Options: ",       $log, :info, :protected => {:path => workflow_class.encrypted_options_field_regs})
+    dump_obj(clone_options[:transform], "#{_log.prefix} Transform: ",          $log, :info)
+    dump_obj(clone_options[:config],    "#{_log.prefix} Config spec: ",        $log, :info)
+    dump_obj(cust_dump,                 "#{_log.prefix} Customization spec: ", $log, :info, :protected => {:path => /[Pp]assword\]\[value\]/})
+    dump_obj(options,                   "#{_log.prefix} Prov Options: ",       $log, :info, :protected => {:path => workflow_class.encrypted_options_field_regs})
   end
 
   def start_clone(clone_options)
