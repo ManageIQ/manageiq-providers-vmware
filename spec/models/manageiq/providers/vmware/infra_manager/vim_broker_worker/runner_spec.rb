@@ -10,7 +10,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker::Runner do
 
     # General stubbing for testing any worker (methods called during initialize)
     @worker_guid = MiqUUID.new_guid
-    @worker_record = FactoryGirl.create(:miq_vim_broker_worker, :guid => @worker_guid, :miq_server_id => server.id)
+    @worker_record = FactoryGirl.create(:vim_broker_worker, :guid => @worker_guid, :miq_server_id => server.id)
     @drb_uri = "drb://127.0.0.1:12345"
     allow(DRb).to receive(:uri).and_return(@drb_uri)
     allow_any_instance_of(described_class).to receive(:sync_active_roles)
