@@ -188,6 +188,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(vm.host).to eq(vm2.host)
   end
 
+  it 'handles refresh of new target without deleting other inventory' do
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+
+    # This is an existing folder so we can confirm the counts for
+    # other inventory don't change
+    hash, klass, find = @ems.class::EventParser.obj_update_to_hash(:objType => 'Folder', :mor => 'group-v12223')
+    EmsRefresh.refresh_new_target(@ems.id, hash, klass, find)
+
+    assert_table_counts
+  end
+
   it 'link_inventory handles folder deletion' do
     EmsRefresh.refresh(@ems)
     @ems.reload
