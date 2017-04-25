@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Fine RC-1
+## Fine Beta-2
 
 ### Added
 - Allow folder as refresh target [(#32)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/32)
