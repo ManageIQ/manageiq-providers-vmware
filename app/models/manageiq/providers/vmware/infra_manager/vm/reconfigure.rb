@@ -92,10 +92,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
 
       if options[:disk_remove] || options[:disk_add]
         with_provider_object do |vim_obj|
-          options[:disk_remove].each { |d| remove_disk_config_spec(vim_obj, vmcs, d) } if options[:disk_remove]
-          add_disks(vim_obj, vmcs, options[:disk_add]) if options[:disk_add]
+          remove_disks(vim_obj, vmcs, options[:disk_remove]) if options[:disk_remove]
+          add_disks(vim_obj, vmcs, options[:disk_add])       if options[:disk_add]
         end
       end
+    end
+  end
+
+  def remove_disks(vim_obj, vmcs, disks)
+    disks.each do |disk|
+      remove_disk_config_spec(vim_obj, vmcs, disk)
     end
   end
 
