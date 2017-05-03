@@ -1077,6 +1077,32 @@
     str: group-v673
     "@vimType": :Folder
     "@xsiType": :ManagedObjectReference
+  childEntity: !seq:VimArray 
+    - !str:VimString 
+      str: group-v674
+      "@vimType": :Folder
+      "@xsiType": :ManagedObjectReference
+
+  __iv__@vimType: 
+  __iv__@xsiType: :ObjectContent
+
+? !str:VimString 
+  str: group-v674
+  "@vimType": :Folder
+  "@xsiType": :ManagedObjectReference
+: !map:VimHash 
+  name: !str:VimString 
+    str: Test %2f Folder
+    "@vimType": 
+    "@xsiType": :"xsd:string"
+  parent: !str:VimString 
+    str: datacenter-672
+    "@vimType": :Datacenter
+    "@xsiType": :ManagedObjectReference
+  MOR: !str:VimString 
+    str: group-v674
+    "@vimType": :Folder
+    "@xsiType": :ManagedObjectReference
   childEntity: !seq:VimArray []
 
   __iv__@vimType: 

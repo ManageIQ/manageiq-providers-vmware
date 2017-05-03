@@ -5,7 +5,7 @@
   "@xsiType": :ManagedObjectReference
 : !map:VimHash 
   name: !str:VimString 
-    str: New Datacenter
+    str: New %2f Datacenter
     "@vimType": 
     "@xsiType": :"xsd:string"
   hostFolder: !str:VimString 
