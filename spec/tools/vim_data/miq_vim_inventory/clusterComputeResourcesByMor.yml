@@ -5,7 +5,7 @@
   "@xsiType": :ManagedObjectReference
 : !map:VimHash 
   name: !str:VimString 
-    str: Testing-Production Cluster
+    str: Testing%2fProduction Cluster
     "@vimType": 
     "@xsiType": :"xsd:string"
   resourcePool: !str:VimString 

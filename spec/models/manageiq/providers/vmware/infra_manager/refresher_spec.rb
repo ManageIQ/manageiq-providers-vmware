@@ -269,12 +269,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   end
 
   def assert_specific_cluster
-    @cluster = EmsCluster.find_by(:name => "Testing-Production Cluster")
+    @cluster = EmsCluster.find_by(:ems_id => @ems.id, :ems_ref => "domain-c871")
     expect(@cluster).to have_attributes(
       :ems_ref                 => "domain-c871",
       :ems_ref_obj             => VimString.new("domain-c871", :ClusterComputeResource, :ManagedObjectReference),
       :uid_ems                 => "domain-c871",
-      :name                    => "Testing-Production Cluster",
+      :name                    => "Testing/Production Cluster",
       :ha_enabled              => false,
       :ha_admit_control        => true,
       :ha_max_failures         => 1,
@@ -288,7 +288,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref               => "resgroup-872",
       :ems_ref_obj           => VimString.new("resgroup-872", :ResourcePool, :ManagedObjectReference),
       :uid_ems               => "resgroup-872",
-      :name                  => "Default for Cluster / Deployment Role Testing-Production Cluster",
+      :name                  => "Default for Cluster / Deployment Role Testing/Production Cluster",
       :memory_reserve        => 102298,
       :memory_reserve_expand => true,
       :memory_limit          => 102298,
@@ -838,8 +838,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         },
         [Datacenter, "Prod"]           => {
           [EmsFolder, "host", {:hidden => true}] => {
-            [EmsCluster, "Testing-Production Cluster"] => {
-              [ResourcePool, "Default for Cluster / Deployment Role Testing-Production Cluster",
+            [EmsCluster, "Testing/Production Cluster"] => {
+              [ResourcePool, "Default for Cluster / Deployment Role Testing/Production Cluster",
                {:is_default => true}] => {
                  [ResourcePool, "Citrix", {:is_default => false}]                      => {
                    [ManageIQ::Providers::Vmware::InfraManager::Vm, "Citrix 5"] => {}
