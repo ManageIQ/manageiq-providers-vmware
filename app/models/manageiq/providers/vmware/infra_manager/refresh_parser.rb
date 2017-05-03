@@ -1233,7 +1233,7 @@ module ManageIQ::Providers
             :ems_ref     => mor,
             :ems_ref_obj => mor,
             :uid_ems     => mor,
-            :name        => data["name"],
+            :name        => URI.decode(data["name"]),
             :child_uids  => child_mors,
             :hidden      => false
           }
@@ -1256,7 +1256,7 @@ module ManageIQ::Providers
             :ems_ref     => mor,
             :ems_ref_obj => mor,
             :uid_ems     => mor,
-            :name        => data["name"],
+            :name        => URI.decode(data["name"]),
             :child_uids  => child_mors,
             :hidden      => false
           }
