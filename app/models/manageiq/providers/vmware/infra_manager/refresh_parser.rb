@@ -1194,7 +1194,7 @@ module ManageIQ::Providers
           :uid_ems     => create_time_ems,
           :uid         => create_time.iso8601(6),
           :parent_uid  => parent_uid,
-          :name        => inv['name'],
+          :name        => URI.decode(inv['name']),
           :description => description,
           :create_time => create_time,
           :current     => inv['snapshot'] == current,
@@ -1314,7 +1314,7 @@ module ManageIQ::Providers
             :ems_ref                 => mor,
             :ems_ref_obj             => mor,
             :uid_ems                 => mor,
-            :name                    => data["name"],
+            :name                    => URI.decode(data["name"]),
             :effective_cpu           => effective_cpu,
             :effective_memory        => effective_memory,
 
