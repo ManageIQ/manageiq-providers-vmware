@@ -92,7 +92,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
 
       if options[:disk_remove] || options[:disk_add]
         with_provider_object do |vim_obj|
-          hardware = vim_obj.send(:getHardware)
+          hardware = vim_obj.getHardware
 
           remove_disks(vim_obj, vmcs, hardware, options[:disk_remove]) if options[:disk_remove]
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
@@ -108,8 +108,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   end
 
   def add_disks(vim_obj, vmcs, hardware, disks)
-    available_units         = vim_obj.send(:available_scsi_units, hardware)
-    available_scsi_buses    = vim_obj.send(:available_scsi_buses, hardware)
+    available_units         = vim_obj.available_scsi_units(hardware)
+    available_scsi_buses    = vim_obj.available_scsi_buses(hardware)
     new_scsi_controller_key = -99
 
     disks.each do |d|
@@ -159,7 +159,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def get_new_scsi_controller_device_type(vim_obj, hardware)
     default_scsi_type = 'VirtualLsiLogicController'
 
-    scsi_controllers = vim_obj.send(:getScsiControllers, hardware)
+    scsi_controllers = vim_obj.getScsiControllers(hardware)
 
     last_scsi_controller = scsi_controllers.sort_by { |c| c["key"].to_i }.last
     device_type = last_scsi_controller.try(:xsiType) || default_scsi_type
@@ -234,7 +234,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     raise "remove_disk_config_spec: disk filename is required." unless options[:disk_name]
 
     options.reverse_merge!(:delete_backing => false)
-    controller_key, key = vim_obj.send(:getDeviceKeysByBacking, options[:disk_name], hardware)
+    controller_key, key = vim_obj.getDeviceKeysByBacking(options[:disk_name], hardware)
     raise "remove_disk_config_spec: no virtual device associated with: #{options[:disk_name]}" unless key
 
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
