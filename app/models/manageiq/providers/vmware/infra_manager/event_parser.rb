@@ -126,6 +126,11 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
   end
 
   def self.obj_update_to_hash(event)
+    hash, = parse_new_target(event)
+    hash
+  end
+
+  def self.parse_new_target(event)
     obj_type = event[:objType]
 
     method = "#{obj_type.downcase}_update_to_hash"
