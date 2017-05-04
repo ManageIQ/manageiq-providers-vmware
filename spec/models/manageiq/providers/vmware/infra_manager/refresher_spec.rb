@@ -188,7 +188,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(vm.host).to eq(vm2.host)
   end
 
-  it 'handles refresh of new target without deleting other inventory' do
+  xit 'handles refresh of new target without deleting other inventory' do
     EmsRefresh.refresh(@ems)
     @ems.reload
 
