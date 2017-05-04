@@ -42,7 +42,7 @@ module ManageIQ::Providers
 
       def self.storage_inv_to_hashes(inv)
         result = []
-        result_uids = {:storage_id => {}}
+        result_uids = {}
         return result, result_uids if inv.nil?
 
         inv.each do |mor, storage_inv|
@@ -77,7 +77,6 @@ module ManageIQ::Providers
 
           result << new_result
           result_uids[mor] = new_result
-          result_uids[:storage_id][uid] = new_result
         end
         return result, result_uids
       end
