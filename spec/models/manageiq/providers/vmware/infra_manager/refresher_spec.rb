@@ -28,6 +28,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
     assert_table_counts
     assert_ems
+    assert_specific_datacenter
+    assert_specific_folder
     assert_specific_cluster
     assert_specific_storage
     assert_specific_storage_cluster
@@ -212,7 +214,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   def assert_table_counts
     expect(ExtManagementSystem.count).to eq(1)
     expect(Datacenter.count).to eq(3)
-    expect(EmsFolder.count).to eq(31)
+    expect(EmsFolder.count).to eq(32)
     expect(EmsCluster.count).to eq(1)
     expect(Host.count).to eq(4)
     expect(ResourcePool.count).to eq(17)
@@ -236,7 +238,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(Switch.count).to eq(9)
     expect(SystemService.count).to eq(29)
 
-    expect(Relationship.count).to eq(246)
+    expect(Relationship.count).to eq(247)
     expect(MiqQueue.count).to eq(101)
   end
 
@@ -246,7 +248,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :uid_ems     => "EF53782F-6F1A-4471-B338-72B27774AFDD"
     )
 
-    expect(@ems.ems_folders.size).to eq(31)
+    expect(@ems.ems_folders.size).to eq(32)
     expect(@ems.ems_clusters.size).to eq(1)
     expect(@ems.resource_pools.size).to eq(17)
     expect(@ems.storages.size).to eq(47)
@@ -268,13 +270,31 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(cspec.spec.keys).to match_array(%w(identity encryptionKey nicSettingMap globalIPSettings options))
   end
 
+  def assert_specific_datacenter
+    @datacenter = Datacenter.find_by(:ems_id => @ems.id, :ems_ref => "datacenter-672")
+    expect(@datacenter).to have_attributes(
+      :ems_ref     => "datacenter-672",
+      :ems_ref_obj => VimString.new("datacenter-672", :Datacenter, :ManagedObjectReference),
+      :name        => "New / Datacenter"
+    )
+  end
+
+  def assert_specific_folder
+    @folder = EmsFolder.find_by(:ems_id => @ems.id, :ems_ref => "group-v674")
+    expect(@folder).to have_attributes(
+      :ems_ref     => "group-v674",
+      :ems_ref_obj => VimString.new("group-v674", :Folder, :ManagedObjectReference),
+      :name        => "Test / Folder"
+    )
+  end
+
   def assert_specific_cluster
-    @cluster = EmsCluster.find_by(:name => "Testing-Production Cluster")
+    @cluster = EmsCluster.find_by(:ems_id => @ems.id, :ems_ref => "domain-c871")
     expect(@cluster).to have_attributes(
       :ems_ref                 => "domain-c871",
       :ems_ref_obj             => VimString.new("domain-c871", :ClusterComputeResource, :ManagedObjectReference),
       :uid_ems                 => "domain-c871",
-      :name                    => "Testing-Production Cluster",
+      :name                    => "Testing/Production Cluster",
       :ha_enabled              => false,
       :ha_admit_control        => true,
       :ha_max_failures         => 1,
@@ -288,7 +308,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref               => "resgroup-872",
       :ems_ref_obj           => VimString.new("resgroup-872", :ResourcePool, :ManagedObjectReference),
       :uid_ems               => "resgroup-872",
-      :name                  => "Default for Cluster / Deployment Role Testing-Production Cluster",
+      :name                  => "Default for Cluster / Deployment Role Testing/Production Cluster",
       :memory_reserve        => 102298,
       :memory_reserve_expand => true,
       :memory_limit          => 102298,
@@ -832,14 +852,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             [ManageIQ::Providers::Vmware::InfraManager::Vm, "test3"]                                => {}
           }
         },
-        [Datacenter, "New Datacenter"] => {
+        [Datacenter, "New / Datacenter"] => {
           [EmsFolder, "host", {:hidden => true}] => {},
-          [EmsFolder, "vm", {:hidden => true}]   => {}
+          [EmsFolder, "vm", {:hidden => true}]   => {
+            [EmsFolder, "Test / Folder", {:hidden => false}] => {},
+          }
         },
         [Datacenter, "Prod"]           => {
           [EmsFolder, "host", {:hidden => true}] => {
-            [EmsCluster, "Testing-Production Cluster"] => {
-              [ResourcePool, "Default for Cluster / Deployment Role Testing-Production Cluster",
+            [EmsCluster, "Testing/Production Cluster"] => {
+              [ResourcePool, "Default for Cluster / Deployment Role Testing/Production Cluster",
                {:is_default => true}] => {
                  [ResourcePool, "Citrix", {:is_default => false}]                      => {
                    [ManageIQ::Providers::Vmware::InfraManager::Vm, "Citrix 5"] => {}
