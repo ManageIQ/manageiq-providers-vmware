@@ -16,7 +16,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::StateMachine
     update_and_notify_parent(:message => "Starting Clone of #{clone_direction}")
 
     # Use this ID to validate the VM when we check in the post-provision method
-    phase_context[:new_vm_validation_guid] = MiqUUID.new_guid
+    phase_context[:new_vm_validation_guid] = SecureRandom.uuid
 
     clone_options = prepare_for_clone_task
     log_clone_options(clone_options)
