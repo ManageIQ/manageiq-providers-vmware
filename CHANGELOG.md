@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 **Note**: All PRs from Sprint 59 were backported to Fine.
 
-## Fine Beta-2
+## Unreleased as of Sprint 60 ending 2017-05-08
+
+### Fixed
+- Decode slashes in more VMware inventory type names [(#53)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/53)
+
+## Fine Release Candidate
 
 ### Added
 - Allow folder as refresh target [(#32)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/32)
