@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Fine Beta-2
+## Fine-1
 
 ### Added
 - Allow folder as refresh target [(#32)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/32)
@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Removed supports_snapshots? methods defined independently without using supportsFeatureMixin plugin [(#14)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/14)
 
 ### Fixed
+- Retrieve host storage devices host-by-host [(#26)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/26)
 - Changes sysprep field to be a hash [(#35)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/35)
 - Queue initial refresh if the Broker is available [(#41)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/41)
 - Comment out GlobalVars to prevent it from breaking the rubocop config [(#38)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/38)
