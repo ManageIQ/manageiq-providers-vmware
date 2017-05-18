@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = "Vmware Provider for ManageIQ"
   s.licenses    = ["Apache-2.0"]
 
-  s.files = Dir["{app,config.lib}/**/*"]
+  s.files = Dir["{app,config,lib}/**/*"]
 
   s.add_dependency("fog-vcloud-director", ["~> 0.1.8"])
 
