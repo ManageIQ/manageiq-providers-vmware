@@ -64,7 +64,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
         end
 
         begin
-          require 'miq_fault_tolerant_vim'
+          require 'VMwareWebService/miq_fault_tolerant_vim'
           # TODO: Should this move to the EMS?
           ost.miqVim = MiqFaultTolerantVim.new(:ip => miqVimHost[:address], :user => miqVimHost[:username], :pass => password_decrypt, :use_broker => use_broker, :vim_broker_drb_port => ost.scanData['ems'][:vim_broker_drb_port])
           # ost.snapId = opts.snapId if opts.snapId
