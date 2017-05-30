@@ -14,6 +14,7 @@ class ManageIQ::Providers::Vmware::InfraManager
 
         host_data = host_inv_by_host(target)
         unless host_data.nil?
+          filtered_data[:about] = ems_inv_by_about_inv
           filtered_data[:host] = host_data
           filtered_data[:storage] = storage_inv_by_host_inv(host_data)
           filtered_data[:vm] = vm_data = vm_inv_by_host_inv(host_data)
@@ -32,6 +33,7 @@ class ManageIQ::Providers::Vmware::InfraManager
         filtered_data = Hash.new { |h, k| h[k] = {} }
         vm_data = vm_inv_by_vm(target)
         unless vm_data.nil?
+          filtered_data[:about] = ems_inv_by_about_inv
           filtered_data[:vm] = vm_data
           filtered_data[:host] = host_inv_by_vm_inv(vm_data)
           filtered_data[:storage] = storage_inv_by_host_inv(filtered_data[:host])
@@ -50,6 +52,8 @@ class ManageIQ::Providers::Vmware::InfraManager
         unless folder_data.nil?
           _, target_data = folder_data.first
           if folder_children(target_data).blank?
+            filtered_data[:about] = ems_inv_by_about_inv
+
             inv_by_folder_inv(folder_data, filtered_data)
           else
             filtered_data = @vc_data
@@ -93,6 +97,10 @@ class ManageIQ::Providers::Vmware::InfraManager
 
       _type, target = RefreshParser.inv_target_by_mor(mor, @vc_data)
       target.nil? ? nil : {mor => target}
+    end
+
+    def ems_inv_by_about_inv
+      @vc_data[:about]
     end
 
     ### Collection methods by Host inv

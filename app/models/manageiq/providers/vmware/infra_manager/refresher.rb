@@ -20,7 +20,6 @@ module ManageIQ::Providers
       end
 
       def collect_inventory_for_targets(ems, targets)
-        Benchmark.realtime_block(:get_ems_data) { get_ems_data(ems) }
         Benchmark.realtime_block(:get_vc_data) { get_vc_data(ems) }
 
         Benchmark.realtime_block(:get_vc_data_ems_customization_specs) { get_vc_data_ems_customization_specs(ems) } if targets.include?(ems)
@@ -52,14 +51,6 @@ module ManageIQ::Providers
         _log.debug "#{log_header} Parsing VC inventory...Complete"
 
         hashes
-      end
-
-      def save_inventory(ems, target, hashes)
-        Benchmark.realtime_block(:db_save_inventory) do
-          # TODO: really wanna kill this @ems_data instance var
-          ems.update_attributes(@ems_data) unless @ems_data.nil?
-          EmsRefresh.save_ems_inventory(ems, hashes, target)
-        end
       end
 
       def post_refresh(ems, start_time)
@@ -99,6 +90,8 @@ module ManageIQ::Providers
 
         retrieve_from_vc(ems, cleanup_callback) do
           @vc_data = Hash.new { |h, k| h[k] = {} }
+
+          @vc_data[:about] = get_ems_data(ems)
 
           accessors.each do |type, accessor|
             _log.info("#{log_header} Retrieving #{type.to_s.titleize} inventory...")
@@ -183,16 +176,13 @@ module ManageIQ::Providers
       def get_ems_data(ems)
         log_header = format_ems_for_logging(ems)
 
-        cleanup_callback = proc { @ems_data = nil }
+        _log.info("#{log_header} Retrieving EMS information...")
+        about = @vi.about
+        _log.info("#{log_header} Retrieving EMS information...Complete")
 
-        retrieve_from_vc(ems, cleanup_callback) do
-          _log.info("#{log_header} Retrieving EMS information...")
-          about = @vi.about
-          @ems_data = {:api_version => about['apiVersion'], :uid_ems => about['instanceUuid']}
-          _log.info("#{log_header} Retrieving EMS information...Complete")
-        end
+        EmsRefresh.log_inv_debug_trace(about, "#{_log.prefix} #{log_header} ext_management_system_inv:")
 
-        EmsRefresh.log_inv_debug_trace(@ems_data, "#{_log.prefix} #{log_header} ext_management_system_inv:")
+        about
       end
 
       MAX_RETRIES = 5
