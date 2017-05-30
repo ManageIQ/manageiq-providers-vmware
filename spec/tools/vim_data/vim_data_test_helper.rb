@@ -53,13 +53,6 @@ end
 class FakeMiqVimHandle < FakeMiqVimHandleBase
   DATA_DIR = "miq_vim_inventory"
 
-  def about
-    {
-      "apiVersion"   => "4.1",
-      "instanceUuid" => "EF53782F-6F1A-4471-B338-72B27774AFDD"
-    }
-  end
-
   def method_missing(m, *args)
     m = m.to_s
     byMor = (m[-5..-1] == "ByMor" && m[-6, 1] != "s")
