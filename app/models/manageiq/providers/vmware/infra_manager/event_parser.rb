@@ -126,6 +126,11 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
   end
 
   def self.obj_update_to_hash(event)
+    hash, = parse_new_target(event)
+    hash
+  end
+
+  def self.parse_new_target(event)
     obj_type = event[:objType]
 
     method = "#{obj_type.downcase}_update_to_hash"
@@ -134,13 +139,16 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
 
   def self.folder_update_to_hash(event)
     mor = event[:mor]
-    {
+    klass = 'EmsFolder'
+    hash = {
       :folder => {
-        :type        => 'EmsFolder',
+        :type        => klass,
         :ems_ref     => mor,
         :ems_ref_obj => mor,
         :uid_ems     => mor
       }
     }
+
+    return hash, klass, :uid_ems => mor
   end
 end
