@@ -14,6 +14,7 @@ module ManageIQ::Providers
     require_nested :ProvisionWorkflow
     require_nested :SelectorSpec
     require_nested :Template
+    require_nested :VimBrokerWorker
     require_nested :Vm
 
     include VimConnectMixin
@@ -66,7 +67,7 @@ module ManageIQ::Providers
     end
 
     def self.use_vim_broker?
-      return false unless MiqVimBrokerWorker.has_required_role?
+      return false unless self::VimBrokerWorker.has_required_role?
       cfg = ::Settings.webservices.use_vim_broker
       return true if cfg == "force"
       return true if cfg && Sys::Platform::OS == :unix

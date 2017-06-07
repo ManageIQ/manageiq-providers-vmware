@@ -148,7 +148,7 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
     rescue => err
       _log.log_backtrace(err)
     rescue MiqException::MiqVimBrokerUnavailable => err
-      MiqVimBrokerWorker.broker_unavailable(err.class.name,  err.to_s)
+      ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.broker_unavailable(err.class.name,  err.to_s)
       _log.warn("Reported the broker unavailable")
     rescue Timeout::Error
       _log.warn "Timeout encountered during log collection for Host [#{name}]"

@@ -7,6 +7,6 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     # This will be done by the VimBrokerWorker, when he is ready.
     #
     # If the VimBrokerWorker is running already then queue up an initial refresh
-    super if MiqVimBrokerWorker.available?
+    super if ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker.available?
   end
 end
