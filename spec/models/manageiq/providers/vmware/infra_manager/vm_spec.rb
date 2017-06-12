@@ -81,6 +81,44 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
+  context "supports_reboot_guest?" do
+    let(:op) { 'reboot_guest' }
+
+    context "when powered off" do
+      let(:vm_status) { {:raw_power_state => power_state_suspended} }
+
+      it 'is not available if tools is not installed' do
+        vm_status[:tools_status] = 'toolsNotInstalled'
+        vm.update_attributes(vm_status)
+        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+
+      it 'is not available even if tools is installed' do
+        vm_status[:tools_status] = nil
+        vm.update_attributes(vm_status)
+        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+    end
+
+    context "when powered on" do
+      let(:vm_status) { {:raw_power_state => power_state_on} }
+
+      it 'is not available if tools not installed' do
+        vm_status[:tools_status] = 'toolsNotInstalled'
+        vm.update_attributes(vm_status)
+        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.unsupported_reason(op)).to include("tools")
+      end
+
+      it 'is available if tools installed' do
+        vm_status[:tools_status] = nil
+        expect(vm.public_send("supports_#{op}?")).to be true
+      end
+    end
+  end
+
   context "snapshotting_memory_allowed?" do
     context "when powered on" do
       let(:power_state) {{:raw_power_state => power_state_on}}
