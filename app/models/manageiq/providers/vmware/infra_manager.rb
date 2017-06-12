@@ -517,5 +517,33 @@ module ManageIQ::Providers
       # Return list of VMs that we found create events for
       found
     end
+
+    def get_files_on_datastore(datastore)
+      with_provider_connection do |vim|
+        begin
+          vim_ds = vim.getVimDataStore(datastore.name)
+          return vim_ds.dsFolderFileList
+        rescue Handsoap::Fault, StandardError, Timeout::Error, DRb::DRbConnError => err
+          _log.log_backtrace(err)
+          raise MiqException::MiqStorageError, "Error communicating with EMS: [#{name}]"
+        ensure
+          begin
+            vim_ds.release if vim_ds
+          rescue
+            # TODO: specify what to rescue
+            # TODO: log it
+            nil
+          end
+        end
+      end
+
+      nil
+    end
+
+    def refresh_files_on_datastore(datastore)
+      hashes = ManageIQ::Providers::Vmware::InfraManager::RefreshParser.datastore_file_inv_to_hashes(
+        get_files_on_datastore(datastore), datastore.vm_ids_by_path)
+      EmsRefresh.save_storage_files_inventory(datastore, hashes)
+    end
   end
 end
