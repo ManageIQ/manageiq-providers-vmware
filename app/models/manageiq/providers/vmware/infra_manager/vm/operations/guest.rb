@@ -4,7 +4,13 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Guest
   included do
     supports :reboot_guest do
       unsupported_reason_add(:reboot_guest, unsupported_reason(:control)) unless supports_control?
-      unsupported_reason_add(:reboot_guest, _("The VM is not powered on")) unless current_state == "on"
+      if current_state == "on"
+        if tools_status == 'toolsNotInstalled'
+          unsupported_reason_add(:reboot_guest, _("The VM tools is not installed"))
+        end
+      else
+        unsupported_reason_add(:reboot_guest, _("The VM is not powered on"))
+      end
     end
 
     supports :shutdown_guest do
