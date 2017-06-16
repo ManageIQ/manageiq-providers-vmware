@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased as of Sprint 63 ending 2017-06-19
+
+### Fixed
+- Vm restart guest check fixed [(#64)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/64)
+
 ## Unreleased as of Sprint 61 ending 2017-05-22
 
 ### Added
