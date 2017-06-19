@@ -23,7 +23,6 @@
     :user:
 #:log:
 #  :level_vim: warn
-#  :level_vim_in_evm: error
 :workers:
   :worker_base:
     :event_catcher:
