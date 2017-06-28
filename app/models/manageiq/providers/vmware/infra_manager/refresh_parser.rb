@@ -50,7 +50,7 @@ module ManageIQ::Providers
         parse_storage_pods(persister, inv[:storage_pod])
         parse_hosts(persister, inv[:host])
         parse_resource_pools(persister, inv[:rp])
-
+        parse_vms(persister, inv[:vm])
 
         persister.inventory_collections
       end
@@ -349,6 +349,7 @@ module ManageIQ::Providers
       def self.parse_hosts(persister, inv)
         inv.each do |_mor, host_inv|
           mor, new_result = parse_host(host_inv)
+          next if new_result.nil? || new_result[:invalid]
 
           persister.collections[:hosts].build(new_result)
         end
@@ -1002,6 +1003,137 @@ module ManageIQ::Providers
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_vms(persister, inv)
+        inv.each do |_mor, data|
+          _mor, new_result = parse_vm(data)
+          next if new_result.nil? || new_result[:invalid]
+
+          persister.collections[:vms_and_templates].build(new_result)
+        end
+      end
+
+      def self.parse_vm(vm_inv)
+        mor = vm_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        summary = vm_inv["summary"]
+        summary_config = summary["config"] unless summary.nil?
+        pathname = summary_config["vmPathName"] unless summary_config.nil?
+
+        config = vm_inv["config"]
+
+        # Determine if the data from VC is valid.
+        invalid, err = if summary_config.nil? || config.nil?
+                         type = ['summary_config', 'config'].find_all { |t| eval(t).nil? }.join(", ")
+                         [true, "Missing configuration for VM [#{mor}]: #{type}."]
+                       elsif summary_config["uuid"].blank?
+                         [true, "Missing UUID for VM [#{mor}]."]
+                       elsif pathname.blank?
+                         _log.debug "vmPathname class: [#{pathname.class}] inspect: [#{pathname.inspect}]"
+                         [true, "Missing pathname location for VM [#{mor}]."]
+                       else
+                         false
+                       end
+
+        if invalid
+          _log.warn "#{err} Skipping."
+
+          new_result = {
+            :invalid     => true,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor
+          }
+
+          return mor, new_result
+        end
+
+        runtime         = summary['runtime']
+        template        = summary_config["template"].to_s.downcase == "true"
+        raw_power_state = template ? "never" : runtime['powerState']
+
+        begin
+          storage_name, location = VmOrTemplate.repository_parse_path(pathname)
+        rescue => err
+          _log.warn("Warning: [#{err.message}]")
+          _log.debug("Problem processing location for VM [#{summary_config["name"]}] location: [#{pathname}]")
+          location = VmOrTemplate.location2uri(pathname)
+        end
+
+        affinity_set = config.fetch_path('cpuAffinity', 'affinitySet')
+        # The affinity_set will be an array of integers if set
+        cpu_affinity = nil
+        cpu_affinity = affinity_set.kind_of?(Array) ? affinity_set.join(",") : affinity_set.to_s if affinity_set
+
+        tools_status = summary.fetch_path('guest', 'toolsStatus')
+        tools_status = nil if tools_status.blank?
+        # tools_installed = case tools_status
+        # when 'toolsNotRunning', 'toolsOk', 'toolsOld' then true
+        # when 'toolsNotInstalled' then false
+        # when nil then nil
+        # else false
+        # end
+
+        boot_time = runtime['bootTime'].blank? ? nil : runtime['bootTime']
+
+        standby_act = nil
+        power_options = config["defaultPowerOps"]
+        unless power_options.blank?
+          standby_act = power_options["standbyAction"] if power_options["standbyAction"]
+          # Other possible keys to look at:
+          #   defaultPowerOffType, defaultResetType, defaultSuspendType
+          #   powerOffType, resetType, suspendType
+        end
+
+        # Other items to possibly include:
+        #   boot_delay = config.fetch_path("bootOptions", "bootDelay")
+        #   virtual_mmu_usage = config.fetch_path("flags", "virtualMmuUsage")
+
+        # Collect the reservation information
+        resource_config = vm_inv["resourceConfig"]
+        memory = resource_config && resource_config["memoryAllocation"]
+        cpu    = resource_config && resource_config["cpuAllocation"]
+
+        hardware = vm_inv_to_hardware_hash(vm_inv)
+        uid = hardware[:bios]
+
+        new_result = {
+          :type                  => template ? ManageIQ::Providers::Vmware::InfraManager::Template.name : ManageIQ::Providers::Vmware::InfraManager::Vm.name,
+          :ems_ref               => mor,
+          :ems_ref_obj           => mor,
+          :uid_ems               => uid,
+          :name                  => URI.decode(summary_config["name"]),
+          :vendor                => "vmware",
+          :raw_power_state       => raw_power_state,
+          :location              => location,
+          :tools_status          => tools_status,
+          :boot_time             => boot_time,
+          :standby_action        => standby_act,
+          :connection_state      => runtime['connectionState'],
+          :cpu_affinity          => cpu_affinity,
+          :template              => template,
+          :linked_clone          => vm_inv_to_linked_clone(vm_inv),
+          :fault_tolerance       => vm_inv_to_fault_tolerance(vm_inv),
+          :memory_reserve        => memory && memory["reservation"],
+          :memory_reserve_expand => memory && memory["expandableReservation"].to_s.downcase == "true",
+          :memory_limit          => memory && memory["limit"],
+          :memory_shares         => memory && memory.fetch_path("shares", "shares"),
+          :memory_shares_level   => memory && memory.fetch_path("shares", "level"),
+
+          :cpu_reserve           => cpu && cpu["reservation"],
+          :cpu_reserve_expand    => cpu && cpu["expandableReservation"].to_s.downcase == "true",
+          :cpu_limit             => cpu && cpu["limit"],
+          :cpu_shares            => cpu && cpu.fetch_path("shares", "shares"),
+          :cpu_shares_level      => cpu && cpu.fetch_path("shares", "level"),
+
+          :cpu_hot_add_enabled      => config['cpuHotAddEnabled'],
+          :cpu_hot_remove_enabled   => config['cpuHotRemoveEnabled'],
+          :memory_hot_add_enabled   => config['memoryHotAddEnabled'],
+          :memory_hot_add_limit     => config['hotPlugMemoryLimit'],
+          :memory_hot_add_increment => config['hotPlugMemoryIncrementSize'],
+        }
+
+        return mor, new_result
       end
 
       # The next 3 methods determine shared VMs (linked clones or fault tolerance).

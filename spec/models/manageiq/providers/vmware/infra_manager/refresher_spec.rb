@@ -52,6 +52,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
     EmsRefresh.refresh(@ems)
     @ems.reload
+
+    assert_table_counts
   end
 
   it 'handles switch deletion' do
