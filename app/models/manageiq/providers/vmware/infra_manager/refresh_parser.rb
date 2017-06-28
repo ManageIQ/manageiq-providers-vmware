@@ -49,6 +49,7 @@ module ManageIQ::Providers
         parse_folders(persister, inv[:folder])
         parse_storage_pods(persister, inv[:storage_pod])
         parse_hosts(persister, inv[:host])
+        parse_resource_pools(persister, inv[:rp])
 
 
         persister.inventory_collections
@@ -1449,45 +1450,59 @@ module ManageIQ::Providers
         return mor, new_result
       end
 
+      def self.parse_resource_pool(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = data.fetch_path("summary", "config")
+        memory = config["memoryAllocation"]
+        cpu = config["cpuAllocation"]
+
+        # :is_default will be set later as we don't know until we find out who the parent is.
+
+        new_result = {
+          :ems_ref               => mor,
+          :ems_ref_obj           => mor,
+          :uid_ems               => mor,
+          :name                  => URI.decode(data["name"].to_s),
+          :vapp                  => mor.vimType == "VirtualApp",
+
+          :memory_reserve        => memory["reservation"],
+          :memory_reserve_expand => memory["expandableReservation"].to_s.downcase == "true",
+          :memory_limit          => memory["limit"],
+          :memory_shares         => memory.fetch_path("shares", "shares"),
+          :memory_shares_level   => memory.fetch_path("shares", "level"),
+
+          :cpu_reserve           => cpu["reservation"],
+          :cpu_reserve_expand    => cpu["expandableReservation"].to_s.downcase == "true",
+          :cpu_limit             => cpu["limit"],
+          :cpu_shares            => cpu.fetch_path("shares", "shares"),
+          :cpu_shares_level      => cpu.fetch_path("shares", "level"),
+
+          :child_uids            => get_mors(data, 'resourcePool') + get_mors(data, 'vm')
+        }
+
+        return mor, new_result
+      end
+
       def self.rp_inv_to_hashes(inv)
         result = []
         result_uids = {}
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+          mor, new_result = parse_resource_pool(data)
 
-          config = data.fetch_path("summary", "config")
-          memory = config["memoryAllocation"]
-          cpu = config["cpuAllocation"]
-
-          # :is_default will be set later as we don't know until we find out who the parent is.
-
-          new_result = {
-            :ems_ref               => mor,
-            :ems_ref_obj           => mor,
-            :uid_ems               => mor,
-            :name                  => URI.decode(data["name"].to_s),
-            :vapp                  => mor.vimType == "VirtualApp",
-
-            :memory_reserve        => memory["reservation"],
-            :memory_reserve_expand => memory["expandableReservation"].to_s.downcase == "true",
-            :memory_limit          => memory["limit"],
-            :memory_shares         => memory.fetch_path("shares", "shares"),
-            :memory_shares_level   => memory.fetch_path("shares", "level"),
-
-            :cpu_reserve           => cpu["reservation"],
-            :cpu_reserve_expand    => cpu["expandableReservation"].to_s.downcase == "true",
-            :cpu_limit             => cpu["limit"],
-            :cpu_shares            => cpu.fetch_path("shares", "shares"),
-            :cpu_shares_level      => cpu.fetch_path("shares", "level"),
-
-            :child_uids            => get_mors(data, 'resourcePool') + get_mors(data, 'vm')
-          }
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_resource_pools(persister, inv)
+        inv.each do |_mor, data|
+          _mor, new_result = parse_resource_pool(data)
+          persister.collections[:resource_pools].build(new_result)
+        end
       end
 
       def self.customization_spec_inv_to_hashes(inv)
