@@ -12,7 +12,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
   def inventory_collection_names
     %i(vms_and_templates disks nics guest_devices hardwares snapshots operating_systems
        custom_attributes ems_folders resource_pools ems_clusters storages hosts
-       host_storage switches lans storage_profiles)
+       host_storage switches lans storage_profiles customization_specs)
   end
 
   def inventory_collection_options

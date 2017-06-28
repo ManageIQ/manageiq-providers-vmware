@@ -52,6 +52,7 @@ module ManageIQ::Providers
         parse_hosts(persister, inv[:host])
         parse_resource_pools(persister, inv[:rp])
         parse_vms(persister, inv[:vm])
+        parse_customization_specs(persister, inv[:customization_specs])
 
         persister.inventory_collections
       end
@@ -1655,15 +1656,25 @@ module ManageIQ::Providers
         return result if inv.nil?
 
         inv.each do |spec_inv|
-          result << {
-            :name             => spec_inv["name"].to_s,
-            :typ              => spec_inv["type"].to_s,
-            :description      => spec_inv["description"].to_s,
-            :last_update_time => spec_inv["lastUpdateTime"].to_s,
-            :spec             => spec_inv["spec"]
-          }
+          result << parse_customization_spec(spec_inv)
         end
         result
+      end
+
+      def self.parse_customization_specs(persister, inv)
+        inv.each do |spec_inv|
+          persister.collections[:customization_specs].build(parse_customization_spec(spec_inv))
+        end
+      end
+
+      def self.parse_customization_spec(spec_inv)
+        {
+          :name             => spec_inv["name"].to_s,
+          :typ              => spec_inv["type"].to_s,
+          :description      => spec_inv["description"].to_s,
+          :last_update_time => spec_inv["lastUpdateTime"].to_s,
+          :spec             => spec_inv["spec"]
+        }
       end
 
       def self.link_ems_metadata(data, inv)
