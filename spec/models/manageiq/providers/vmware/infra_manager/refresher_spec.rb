@@ -41,6 +41,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     assert_relationship_tree
   end
 
+  it "will perform a full graph refresh" do
+    stub_settings_merge(
+      :ems_refresh => {
+        :vmwarews => {
+          :inventory_object_refresh => true
+        }
+      }
+    )
+
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+  end
+
   it 'handles switch deletion' do
     EmsRefresh.refresh(@ems)
     @ems.reload

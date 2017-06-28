@@ -40,45 +40,67 @@ module ManageIQ::Providers
         result
       end
 
+      def self.ems_inv_to_collections(ems, inv)
+        persister = ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister.new(ems)
+
+        parse_storages(persister, inv[:storage])
+        parse_clusters(persister, inv[:cluster])
+
+        persister.inventory_collections
+      end
+
+      def self.parse_storages(persister, inv)
+        inv.each do |_mor, storage_inv|
+          _, new_result = parse_storage(storage_inv)
+          persister.collections[:storages].build(new_result)
+        end
+      end
+
       def self.storage_inv_to_hashes(inv)
         result = []
         result_uids = {}
         return result, result_uids if inv.nil?
 
-        inv.each do |mor, storage_inv|
-          mor = storage_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
-          summary = storage_inv["summary"]
-          next if summary.nil?
-
-          capability = storage_inv["capability"]
-
-          loc = uid = normalize_storage_uid(storage_inv)
-
-          new_result = {
-            :ems_ref            => mor,
-            :ems_ref_obj        => mor,
-            :name               => summary["name"],
-            :store_type         => summary["type"].to_s.upcase,
-            :total_space        => summary["capacity"],
-            :free_space         => summary["freeSpace"],
-            :uncommitted        => summary["uncommitted"],
-            :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
-            :location           => loc,
-          }
-
-          unless capability.nil?
-            new_result.merge!(
-              :directory_hierarchy_supported => capability['directoryHierarchySupported'].blank? ? nil : capability['directoryHierarchySupported'].to_s.downcase == 'true',
-              :thin_provisioning_supported   => capability['perFileThinProvisioningSupported'].blank? ? nil : capability['perFileThinProvisioningSupported'].to_s.downcase == 'true',
-              :raw_disk_mappings_supported   => capability['rawDiskMappingsSupported'].blank? ? nil : capability['rawDiskMappingsSupported'].to_s.downcase == 'true'
-            )
-          end
+        inv.each do |_mor, storage_inv|
+          mor, new_result = parse_storage(storage_inv)
 
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_storage(storage_inv)
+        mor = storage_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        summary = storage_inv["summary"]
+        return if summary.nil?
+
+        capability = storage_inv["capability"]
+
+        loc = uid = normalize_storage_uid(storage_inv)
+
+        new_result = {
+          :ems_ref            => mor,
+          :ems_ref_obj        => mor,
+          :name               => summary["name"],
+          :store_type         => summary["type"].to_s.upcase,
+          :total_space        => summary["capacity"],
+          :free_space         => summary["freeSpace"],
+          :uncommitted        => summary["uncommitted"],
+          :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
+          :location           => loc,
+        }
+
+        unless capability.nil?
+          new_result.merge!(
+            :directory_hierarchy_supported => capability['directoryHierarchySupported'].blank? ? nil : capability['directoryHierarchySupported'].to_s.downcase == 'true',
+            :thin_provisioning_supported   => capability['perFileThinProvisioningSupported'].blank? ? nil : capability['perFileThinProvisioningSupported'].to_s.downcase == 'true',
+            :raw_disk_mappings_supported   => capability['rawDiskMappingsSupported'].blank? ? nil : capability['rawDiskMappingsSupported'].to_s.downcase == 'true'
+          )
+        end
+
+        return mor, new_result
       end
 
       def self.storage_profile_inv_to_hashes(profile_inv, storage_uids, placement_inv)
@@ -1296,41 +1318,56 @@ module ManageIQ::Providers
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+          mor, new_result = parse_cluster(data)
 
-          config = data["configuration"]
-          next if config.nil?
-
-          das_config = config["dasConfig"]
-          drs_config = config["drsConfig"]
-
-          effective_cpu = data.fetch_path("summary", "effectiveCpu")
-          effective_cpu = effective_cpu.blank? ? nil : effective_cpu.to_i
-          effective_memory = data.fetch_path("summary", "effectiveMemory")
-          effective_memory = effective_memory.blank? ? nil : effective_memory.to_i.megabytes
-
-          new_result = {
-            :ems_ref                 => mor,
-            :ems_ref_obj             => mor,
-            :uid_ems                 => mor,
-            :name                    => URI.decode(data["name"]),
-            :effective_cpu           => effective_cpu,
-            :effective_memory        => effective_memory,
-
-            :ha_enabled              => das_config["enabled"].to_s.downcase == "true",
-            :ha_admit_control        => das_config["admissionControlEnabled"].to_s.downcase == "true",
-            :ha_max_failures         => das_config["failoverLevel"],
-
-            :drs_enabled             => drs_config["enabled"].to_s.downcase == "true",
-            :drs_automation_level    => drs_config["defaultVmBehavior"],
-            :drs_migration_threshold => drs_config["vmotionRate"],
-
-            :child_uids              => get_mors(data, 'resourcePool')
-          }
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_clusters(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_cluster(data)
+
+          persister.collections[:ems_clusters].build(new_result)
+        end
+      end
+
+      def self.parse_cluster(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = data["configuration"]
+        return if config.nil?
+
+        das_config = config["dasConfig"]
+        drs_config = config["drsConfig"]
+
+        effective_cpu = data.fetch_path("summary", "effectiveCpu")
+        effective_cpu = effective_cpu.blank? ? nil : effective_cpu.to_i
+        effective_memory = data.fetch_path("summary", "effectiveMemory")
+        effective_memory = effective_memory.blank? ? nil : effective_memory.to_i.megabytes
+
+        new_result = {
+          :ems_ref                 => mor,
+          :ems_ref_obj             => mor,
+          :uid_ems                 => mor,
+          :name                    => URI.decode(data["name"]),
+          :effective_cpu           => effective_cpu,
+          :effective_memory        => effective_memory,
+
+          :ha_enabled              => das_config["enabled"].to_s.downcase == "true",
+          :ha_admit_control        => das_config["admissionControlEnabled"].to_s.downcase == "true",
+          :ha_max_failures         => das_config["failoverLevel"],
+
+          :drs_enabled             => drs_config["enabled"].to_s.downcase == "true",
+          :drs_automation_level    => drs_config["defaultVmBehavior"],
+          :drs_migration_threshold => drs_config["vmotionRate"],
+
+          :child_uids              => get_mors(data, 'resourcePool')
+        }
+
+        return mor, new_result
       end
 
       def self.rp_inv_to_hashes(inv)
