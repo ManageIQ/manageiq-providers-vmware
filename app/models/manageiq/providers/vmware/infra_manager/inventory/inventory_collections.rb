@@ -12,6 +12,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes.merge!(extra_attributes)
     end
 
+    def storage_profiles(extra_attributes = {})
+      attributes = {
+        :model_class    => ::StorageProfile,
+        :association    => :storage_profiles,
+        :builder_params => {
+          :ems_id => ->(persister) { persister.manager.id },
+        },
+      }
+
+      attributes.merge!(extra_attributes)
+    end
+
     def hosts(extra_attributes = {})
       attributes = {:model_class => ManageIQ::Providers::Vmware::InfraManager::HostEsx}
       super(attributes.merge(extra_attributes))

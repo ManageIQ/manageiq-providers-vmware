@@ -45,6 +45,7 @@ module ManageIQ::Providers
 
         parse_storages(persister, inv[:storage])
         parse_clusters(persister, inv[:cluster])
+        parse_storage_profiles(persister, inv[:storage_profile], inv[:storage_profile_datastore])
         parse_datacenters(persister, inv[:dc])
         parse_folders(persister, inv[:folder])
         parse_storage_pods(persister, inv[:storage_pod])
@@ -131,6 +132,18 @@ module ManageIQ::Providers
         end unless profile_inv.nil?
 
         return result, result_uids
+      end
+
+      def self.parse_storage_profiles(persister, profiles, placements)
+        profiles.each do |uid, profile|
+          new_result = {
+            :ems_ref                  => uid,
+            :name                     => profile.name,
+            :profile_type             => profile.profileCategory,
+          }
+
+          persister.collections[:storage_profiles].build(new_result)
+        end
       end
 
       def self.group_dvswitch_by_host(dvswitch_inv)
