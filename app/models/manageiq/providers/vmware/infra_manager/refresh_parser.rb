@@ -48,6 +48,8 @@ module ManageIQ::Providers
         parse_datacenters(persister, inv[:dc])
         parse_folders(persister, inv[:folder])
         parse_storage_pods(persister, inv[:storage_pod])
+        parse_hosts(persister, inv[:host])
+
 
         persister.inventory_collections
       end
@@ -177,62 +179,12 @@ module ManageIQ::Providers
         dvportgroup_uid_ems = {}
 
         inv.each do |mor, host_inv|
-          mor = host_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
-          config = host_inv["config"]
-          dns_config = config.fetch_path('network', 'dnsConfig') unless config.nil?
-          hostname = dns_config["hostName"] unless dns_config.nil?
-          domain_name = dns_config["domainName"] unless dns_config.nil?
-
-          summary = host_inv["summary"]
-          product = summary.fetch_path('config', 'product') unless summary.nil?
-
-          # Check connection state and log potential issues
-          connection_state = summary.fetch_path("runtime", "connectionState") unless summary.nil?
-          maintenance_mode = summary.fetch_path("runtime", "inMaintenanceMode") unless summary.nil?
-          if ['disconnected', 'notResponding', nil, ''].include?(connection_state)
-            _log.warn "Host [#{mor}] connection state is [#{connection_state.inspect}].  Inventory data may be missing."
-          end
-
-          # Determine if the data from VC is valid.
-          invalid, err = if config.nil? || product.nil? || summary.nil?
-                           type = ['config', 'product', 'summary'].find_all { |t| eval(t).nil? }.join(", ")
-                           [true, "Missing configuration for Host [#{mor}]: [#{type}]."]
-                         elsif hostname.blank?
-                           [true, "Missing hostname information for Host [#{mor}]: dnsConfig: #{dns_config.inspect}."]
-                         elsif domain_name.blank?
-                           # Use the name or the summary-config-name as the hostname if either appears to be a FQDN
-                           fqdn = host_inv["name"]
-                           fqdn = summary.fetch_path('config', 'name') unless fqdn =~ /^#{hostname}\./
-                           hostname = fqdn if fqdn =~ /^#{hostname}\./
-                           false
-                         else
-                           hostname = "#{hostname}.#{domain_name}"
-                           false
-                         end
-
-          if invalid
-            _log.warn "#{err} Skipping."
-
-            new_result = {
-              :invalid     => true,
-              :ems_ref     => mor,
-              :ems_ref_obj => mor
-            }
+          mor, new_result = parse_host(host_inv)
+          if new_result[:invalid]
             result << new_result
             result_uids[mor] = new_result
             next
           end
-
-          # Remove the domain suffix if it is included in the hostname
-          hostname = hostname.split(',').first
-          # Get the IP address
-          ipaddress = host_inv_to_ip(host_inv, hostname) || hostname
-
-          vendor = product["vendor"].split(",").first.to_s.downcase
-          vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
-
-          product_name = product["name"].nil? ? nil : product["name"].to_s.gsub(/^VMware\s*/i, "")
 
           # Collect the hardware, networking, and scsi inventories
           switches, switch_uids[mor] = host_inv_to_switch_hashes(host_inv, dvswitch_by_host[mor], dvswitch_uid_ems)
@@ -267,52 +219,18 @@ module ManageIQ::Providers
             failover = failover_hosts && failover_hosts.include?(mor)
           end
 
+
           # Link up the storages
           storages = get_mors(host_inv, 'datastore').collect { |s| storage_uids[s] }.compact
 
           # Find the host->storage mount info
           host_storages = host_inv_to_host_storages_hashes(host_inv, ems_inv[:storage], storage_uids)
 
-          # Store the host 'name' value as uid_ems to use as the lookup value with MiqVim
-          uid_ems = summary.nil? ? nil : summary.fetch_path('config', 'name')
-
-          # Get other information
-          asset_tag = service_tag = nil
-          host_inv.fetch_path("hardware", "systemInfo", "otherIdentifyingInfo").to_miq_a.each do |info|
-            next unless info.kind_of?(Hash)
-
-            value = info["identifierValue"].to_s.strip
-            value = nil if value.blank?
-
-            case info.fetch_path("identifierType", "key")
-            when "AssetTag"   then asset_tag   = value
-            when "ServiceTag" then service_tag = value
-            end
-          end
-
-          new_result = {
-            :type             => %w(esx esxi).include?(product_name.to_s.downcase) ? "ManageIQ::Providers::Vmware::InfraManager::HostEsx" : "ManageIQ::Providers::Vmware::InfraManager::Host",
-            :ems_ref          => mor,
-            :ems_ref_obj      => mor,
-            :name             => hostname,
-            :hostname         => hostname,
-            :ipaddress        => ipaddress,
-            :uid_ems          => uid_ems,
-            :vmm_vendor       => vendor,
-            :vmm_version      => product["version"],
-            :vmm_product      => product_name,
-            :vmm_buildnumber  => product["build"],
-            :connection_state => connection_state,
-            :power_state      => connection_state != "connected" ? "off" : (maintenance_mode.to_s.downcase == "true" ? "maintenance" : "on"),
-            :admin_disabled   => config["adminDisabled"].to_s.downcase == "true",
-            :maintenance      => maintenance_mode.to_s.downcase == "true",
-            :asset_tag        => asset_tag,
-            :service_tag      => service_tag,
+          new_result.merge!(
             :failover         => failover,
-            :hyperthreading   => config.fetch_path("hyperThread", "active").to_s.downcase == "true",
 
             :ems_cluster      => cluster_uids_by_host[mor],
-            :operating_system => host_inv_to_os_hash(host_inv, hostname),
+            :operating_system => host_inv_to_os_hash(host_inv, new_result[:hostname]),
             :system_services  => host_inv_to_system_service_hashes(host_inv),
 
             :hardware         => hardware,
@@ -321,11 +239,118 @@ module ManageIQ::Providers
             :host_storages    => host_storages,
 
             :child_uids       => rp_uids,
-          }
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids, cluster_uids_by_host, lan_uids, switch_uids, guest_device_uids, scsi_lun_uids
+      end
+
+      def self.parse_host(host_inv)
+        mor = host_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = host_inv["config"]
+        dns_config = config.fetch_path('network', 'dnsConfig') unless config.nil?
+        hostname = dns_config["hostName"] unless dns_config.nil?
+        domain_name = dns_config["domainName"] unless dns_config.nil?
+
+        summary = host_inv["summary"]
+        product = summary.fetch_path('config', 'product') unless summary.nil?
+
+        # Check connection state and log potential issues
+        connection_state = summary.fetch_path("runtime", "connectionState") unless summary.nil?
+        maintenance_mode = summary.fetch_path("runtime", "inMaintenanceMode") unless summary.nil?
+        if ['disconnected', 'notResponding', nil, ''].include?(connection_state)
+          _log.warn "Host [#{mor}] connection state is [#{connection_state.inspect}].  Inventory data may be missing."
+        end
+
+        # Determine if the data from VC is valid.
+        invalid, err = if config.nil? || product.nil? || summary.nil?
+                         type = ['config', 'product', 'summary'].find_all { |t| eval(t).nil? }.join(", ")
+                         [true, "Missing configuration for Host [#{mor}]: [#{type}]."]
+                       elsif hostname.blank?
+                         [true, "Missing hostname information for Host [#{mor}]: dnsConfig: #{dns_config.inspect}."]
+                       elsif domain_name.blank?
+                         # Use the name or the summary-config-name as the hostname if either appears to be a FQDN
+                         fqdn = host_inv["name"]
+                         fqdn = summary.fetch_path('config', 'name') unless fqdn =~ /^#{hostname}\./
+                         hostname = fqdn if fqdn =~ /^#{hostname}\./
+                         false
+                       else
+                         hostname = "#{hostname}.#{domain_name}"
+                         false
+                       end
+
+        if invalid
+          _log.warn "#{err} Skipping."
+
+          new_result = {
+            :invalid     => true,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor
+          }
+
+          return mor, new_result
+        end
+
+        # Remove the domain suffix if it is included in the hostname
+        hostname = hostname.split(',').first
+        # Get the IP address
+        ipaddress = host_inv_to_ip(host_inv, hostname) || hostname
+
+        vendor = product["vendor"].split(",").first.to_s.downcase
+        vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
+
+        product_name = product["name"].nil? ? nil : product["name"].to_s.gsub(/^VMware\s*/i, "")
+
+        # Store the host 'name' value as uid_ems to use as the lookup value with MiqVim
+        uid_ems = summary.nil? ? nil : summary.fetch_path('config', 'name')
+
+        # Get other information
+        asset_tag = service_tag = nil
+        host_inv.fetch_path("hardware", "systemInfo", "otherIdentifyingInfo").to_miq_a.each do |info|
+          next unless info.kind_of?(Hash)
+
+          value = info["identifierValue"].to_s.strip
+          value = nil if value.blank?
+
+          case info.fetch_path("identifierType", "key")
+          when "AssetTag"   then asset_tag   = value
+          when "ServiceTag" then service_tag = value
+          end
+        end
+
+        new_result = {
+          :type             => %w(esx esxi).include?(product_name.to_s.downcase) ? "ManageIQ::Providers::Vmware::InfraManager::HostEsx" : "ManageIQ::Providers::Vmware::InfraManager::Host",
+          :ems_ref          => mor,
+          :ems_ref_obj      => mor,
+          :name             => hostname,
+          :hostname         => hostname,
+          :ipaddress        => ipaddress,
+          :uid_ems          => uid_ems,
+          :vmm_vendor       => vendor,
+          :vmm_version      => product["version"],
+          :vmm_product      => product_name,
+          :vmm_buildnumber  => product["build"],
+          :connection_state => connection_state,
+          :power_state      => connection_state != "connected" ? "off" : (maintenance_mode.to_s.downcase == "true" ? "maintenance" : "on"),
+          :admin_disabled   => config["adminDisabled"].to_s.downcase == "true",
+          :maintenance      => maintenance_mode.to_s.downcase == "true",
+          :asset_tag        => asset_tag,
+          :service_tag      => service_tag,
+          :hyperthreading   => config.fetch_path("hyperThread", "active").to_s.downcase == "true",
+        }
+
+        return mor, new_result
+      end
+
+      def self.parse_hosts(persister, inv)
+        inv.each do |_mor, host_inv|
+          mor, new_result = parse_host(host_inv)
+
+          persister.collections[:hosts].build(new_result)
+        end
       end
 
       def self.host_inv_to_ip(inv, hostname = nil)
