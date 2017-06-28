@@ -45,6 +45,9 @@ module ManageIQ::Providers
 
         parse_storages(persister, inv[:storage])
         parse_clusters(persister, inv[:cluster])
+        parse_datacenters(persister, inv[:dc])
+        parse_folders(persister, inv[:folder])
+        parse_storage_pods(persister, inv[:storage_pod])
 
         persister.inventory_collections
       end
@@ -1241,23 +1244,32 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
+      def self.parse_folder(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        new_result = {
+          :ems_ref     => mor,
+          :ems_ref_obj => mor,
+          :uid_ems     => mor,
+          :name        => URI.decode(data["name"]),
+          :hidden      => false
+        }
+
+        return mor, new_result
+      end
+
       def self.folder_inv_to_hashes(inv, result, result_uids)
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
           child_mors = get_mors(data, 'childEntity')
 
-          new_result = {
-            :type        => EmsFolder.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
-            :child_uids  => child_mors,
-            :hidden      => false
-          }
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => EmsFolder.name,
+            :child_uids => child_mors,
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
@@ -1272,15 +1284,12 @@ module ManageIQ::Providers
 
           child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
 
-          new_result = {
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
             :type        => Datacenter.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
             :child_uids  => child_mors,
-            :hidden      => false
-          }
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
@@ -1310,6 +1319,51 @@ module ManageIQ::Providers
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_folders(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => 'EmsFolder',
+            :child_uids => get_mors(data, 'childEntity')
+          )
+
+          persister.collections[:ems_folders].build(new_result)
+        end
+      end
+
+      def self.parse_datacenters(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => 'Datacenter',
+            :child_uids => get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
+          )
+
+          persister.collections[:ems_folders].build(new_result)
+        end
+      end
+
+      def self.parse_storage_pods(persister, inv)
+        inv.each do |mor, data|
+          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+          child_mors = get_mors(data, 'childEntity')
+          name       = data.fetch_path('summary', 'name')
+
+          new_result = {
+            :type        => StorageCluster.name,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor,
+            :uid_ems     => mor,
+            :name        => name,
+            :child_uids  => child_mors,
+            :hidden      => false
+          }
+
+          persister.collections[:ems_folders].build(new_result)
+        end
       end
 
       def self.cluster_inv_to_hashes(inv)
