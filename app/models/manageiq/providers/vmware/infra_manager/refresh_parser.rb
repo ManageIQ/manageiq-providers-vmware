@@ -60,7 +60,7 @@ module ManageIQ::Providers
       def self.parse_storages(persister, inv)
         inv.each do |_mor, storage_inv|
           _, new_result = parse_storage(storage_inv)
-          persister.collections[:storages].build(new_result)
+          persister.storages.build(new_result)
         end
       end
 
@@ -143,7 +143,7 @@ module ManageIQ::Providers
             :profile_type             => profile.profileCategory,
           }
 
-          persister.collections[:storage_profiles].build(new_result)
+          persister.storage_profiles.build(new_result)
         end
       end
 
@@ -365,7 +365,7 @@ module ManageIQ::Providers
           mor, new_result = parse_host(host_inv)
           next if new_result.nil? || new_result[:invalid]
 
-          persister.collections[:hosts].build(new_result)
+          persister.hosts.build(new_result)
         end
       end
 
@@ -1024,7 +1024,7 @@ module ManageIQ::Providers
           _mor, new_result = parse_vm(data)
           next if new_result.nil? || new_result[:invalid]
 
-          persister.collections[:vms_and_templates].build(new_result)
+          persister.vms_and_templates.build(new_result)
         end
       end
 
@@ -1498,10 +1498,10 @@ module ManageIQ::Providers
           mor, new_result = parse_folder(data)
           new_result.merge!(
             :type       => 'EmsFolder',
-            :child_uids => get_mors(data, 'childEntity')
+            #:child_uids => get_mors(data, 'childEntity')
           )
 
-          persister.collections[:ems_folders].build(new_result)
+          persister.ems_folders.build(new_result)
         end
       end
 
@@ -1510,10 +1510,10 @@ module ManageIQ::Providers
           mor, new_result = parse_folder(data)
           new_result.merge!(
             :type       => 'Datacenter',
-            :child_uids => get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
+            #:child_uids => get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
           )
 
-          persister.collections[:ems_folders].build(new_result)
+          persister.ems_folders.build(new_result)
         end
       end
 
@@ -1530,11 +1530,10 @@ module ManageIQ::Providers
             :ems_ref_obj => mor,
             :uid_ems     => mor,
             :name        => name,
-            :child_uids  => child_mors,
             :hidden      => false
           }
 
-          persister.collections[:ems_folders].build(new_result)
+          persister.ems_folders.build(new_result)
         end
       end
 
@@ -1555,8 +1554,9 @@ module ManageIQ::Providers
       def self.parse_clusters(persister, inv)
         inv.each do |_mor, data|
           mor, new_result = parse_cluster(data)
+          child_uids = new_result.delete(:child_uids)
 
-          persister.collections[:ems_clusters].build(new_result)
+          persister.ems_clusters.build(new_result)
         end
       end
 
@@ -1647,7 +1647,9 @@ module ManageIQ::Providers
       def self.parse_resource_pools(persister, inv)
         inv.each do |_mor, data|
           _mor, new_result = parse_resource_pool(data)
-          persister.collections[:resource_pools].build(new_result)
+          child_uids = new_result.delete(:child_uids)
+
+          persister.resource_pools.build(new_result)
         end
       end
 
@@ -1663,7 +1665,7 @@ module ManageIQ::Providers
 
       def self.parse_customization_specs(persister, inv)
         inv.each do |spec_inv|
-          persister.collections[:customization_specs].build(parse_customization_spec(spec_inv))
+          persister.customization_specs.build(parse_customization_spec(spec_inv))
         end
       end
 
