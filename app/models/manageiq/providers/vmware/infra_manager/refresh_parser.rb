@@ -1024,7 +1024,11 @@ module ManageIQ::Providers
           _mor, new_result = parse_vm(data)
           next if new_result.nil? || new_result[:invalid]
 
-          persister.vms_and_templates.build(new_result)
+          vm = persister.vms_and_templates.build(new_result)
+
+          parse_vm_hardware(persister, vm, data)
+          parse_vm_operating_system(persister, vm, data)
+          parse_vm_custom_attributes(persister, vm, data)
         end
       end
 
@@ -1148,6 +1152,42 @@ module ManageIQ::Providers
         }
 
         return mor, new_result
+      end
+
+      def self.parse_vm_hardware(persister, vm, data)
+        hardware_inv = vm_inv_to_hardware_hash(data)
+        return if hardware_inv.nil?
+
+        hardware_inv[:vm_or_template] = vm
+
+        hardware = persister.hardwares.build(hardware_inv)
+      end
+
+      def self.parse_vm_operating_system(persister, vm, data)
+        os_inv = vm_inv_to_os_hash(data)
+        return if os_inv.nil?
+
+        os_inv[:vm_or_template] = vm
+
+        persister.operating_systems.build(os_inv)
+      end
+
+      def self.parse_vm_custom_attributes(persister, vm, data)
+        custom_values = data.fetch_path('summary', 'customValue')
+        available_fields = data['availableField']
+
+        key_to_name = {}
+        available_fields.to_a.each { |af| key_to_name[af['key']] = af['name'] }
+
+        custom_values.to_a.each do |cv|
+          persister.custom_attributes.build(
+            :resource => vm,
+            :section  => 'custom_field',
+            :name     => key_to_name[cv['key']],
+            :value    => cv['value'],
+            :source   => "VC"
+          )
+        end
       end
 
       # The next 3 methods determine shared VMs (linked clones or fault tolerance).
