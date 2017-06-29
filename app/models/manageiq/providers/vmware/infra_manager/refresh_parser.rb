@@ -1161,6 +1161,9 @@ module ManageIQ::Providers
         hardware_inv[:vm_or_template] = vm
 
         hardware = persister.hardwares.build(hardware_inv)
+
+        parse_vm_disks(persister, hardware, data)
+        parse_vm_guest_devices(persister, hardware, data)
       end
 
       def self.parse_vm_operating_system(persister, vm, data)
@@ -1187,6 +1190,92 @@ module ManageIQ::Providers
             :value    => cv['value'],
             :source   => "VC"
           )
+        end
+      end
+
+      def self.parse_vm_disks(persister, hardware, data)
+        devices = data.fetch_path('config', 'hardware', 'device').to_a
+
+        devices.each do |device|
+          case device.xsiType
+          when 'VirtualDisk'   then device_type = 'disk'
+          when 'VirtualFloppy' then device_type = 'floppy'
+          when 'VirtualCdrom'  then device_type = 'cdrom'
+          else next
+          end
+
+          backing = device['backing']
+          device_type << (backing['fileName'].nil? ? "-raw" : "-image") if device_type == 'cdrom'
+
+          controller = devices.detect { |d| d['key'] == device['controllerKey'] }
+          controller_type = case controller.xsiType
+                            when /IDE/ then 'ide'
+                            when /SIO/ then 'sio'
+                            else 'scsi'
+                            end
+
+          storage_mor = backing['datastore']
+
+          new_result = {
+            :hardware        => hardware,
+            :device_name     => device.fetch_path('deviceInfo', 'label'),
+            :device_type     => device_type,
+            :controller_type => controller_type,
+            :present         => true,
+            :filename        => backing['fileName'] || backing['deviceName'],
+            :location        => "#{controller['busNumber']}:#{device['unitNumber']}",
+          }
+
+          if device_type == 'disk'
+            new_result.merge!(
+              :size            => device['capacityInKB'].to_i.kilobytes,
+              :mode            => backing['diskMode'],
+              # TODO: :storage_profile => storage_profile_by_disk_mor["#{vm_mor}:#{device['key']}"]
+            )
+            new_result[:disk_type] = if backing.key?('compatibilityMode')
+                                       "rdm-#{backing['compatibilityMode'].to_s[0...-4]}"  # physicalMode or virtualMode
+                                     else
+                                       (backing['thinProvisioned'].to_s.downcase == 'true') ? 'thin' : 'thick'
+                                     end
+          else
+            new_result[:start_connected] = device.fetch_path('connectable', 'startConnected').to_s.downcase == 'true'
+          end
+
+          new_result[:storage] = persister.storages.lazy_find(storage_mor) unless storage_mor.nil?
+
+          persister.disks.build(new_result)
+        end
+      end
+
+      def self.parse_vm_guest_devices(persister, hardware, data)
+        inv = data.fetch_path('config', 'hardware', 'device').to_a
+
+        inv.find_all { |d| d.key?('macAddress') }.each do |data|
+          uid = address = data['macAddress']
+          name = data.fetch_path('deviceInfo', 'label')
+
+          backing = data['backing']
+          lan_uid = case backing.xsiType
+                    when "VirtualEthernetCardDistributedVirtualPortBackingInfo"
+                      backing.fetch_path('port', 'portgroupKey')
+                    else
+                      backing['deviceName']
+                    end unless backing.nil?
+
+          new_result = {
+            :hardware        => hardware,
+            :uid_ems         => uid,
+            :device_name     => name,
+            :device_type     => 'ethernet',
+            :controller_type => 'ethernet',
+            :present         => data.fetch_path('connectable', 'connected').to_s.downcase == 'true',
+            :start_connected => data.fetch_path('connectable', 'startConnected').to_s.downcase == 'true',
+            :address         => address,
+          }
+
+          new_result[:lan] = persister.lans.lazy_find(lan_uid) unless lan_uid.nil?
+
+          persister.guest_devices.build(new_result)
         end
       end
 
