@@ -24,7 +24,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       ems_clusters
       storages
       hosts
-      host_storage
+      host_storages
       switches
       lans
       storage_profiles
