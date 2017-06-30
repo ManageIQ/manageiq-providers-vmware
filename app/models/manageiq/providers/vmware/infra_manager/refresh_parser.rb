@@ -40,45 +40,75 @@ module ManageIQ::Providers
         result
       end
 
+      def self.ems_inv_to_collections(ems, inv)
+        persister = ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister.new(ems)
+
+        parse_storages(persister, inv[:storage])
+        parse_clusters(persister, inv[:cluster])
+        parse_storage_profiles(persister, inv[:storage_profile], inv[:storage_profile_datastore])
+        parse_datacenters(persister, inv[:dc])
+        parse_folders(persister, inv[:folder])
+        parse_storage_pods(persister, inv[:storage_pod])
+        parse_hosts(persister, inv[:host])
+        parse_resource_pools(persister, inv[:rp])
+        parse_vms(persister, inv[:vm])
+        parse_customization_specs(persister, inv[:customization_specs])
+
+        persister.inventory_collections
+      end
+
+      def self.parse_storages(persister, inv)
+        inv.each do |_mor, storage_inv|
+          _, new_result = parse_storage(storage_inv)
+          persister.storages.build(new_result)
+        end
+      end
+
       def self.storage_inv_to_hashes(inv)
         result = []
         result_uids = {}
         return result, result_uids if inv.nil?
 
-        inv.each do |mor, storage_inv|
-          mor = storage_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
-          summary = storage_inv["summary"]
-          next if summary.nil?
-
-          capability = storage_inv["capability"]
-
-          loc = uid = normalize_storage_uid(storage_inv)
-
-          new_result = {
-            :ems_ref            => mor,
-            :ems_ref_obj        => mor,
-            :name               => summary["name"],
-            :store_type         => summary["type"].to_s.upcase,
-            :total_space        => summary["capacity"],
-            :free_space         => summary["freeSpace"],
-            :uncommitted        => summary["uncommitted"],
-            :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
-            :location           => loc,
-          }
-
-          unless capability.nil?
-            new_result.merge!(
-              :directory_hierarchy_supported => capability['directoryHierarchySupported'].blank? ? nil : capability['directoryHierarchySupported'].to_s.downcase == 'true',
-              :thin_provisioning_supported   => capability['perFileThinProvisioningSupported'].blank? ? nil : capability['perFileThinProvisioningSupported'].to_s.downcase == 'true',
-              :raw_disk_mappings_supported   => capability['rawDiskMappingsSupported'].blank? ? nil : capability['rawDiskMappingsSupported'].to_s.downcase == 'true'
-            )
-          end
+        inv.each do |_mor, storage_inv|
+          mor, new_result = parse_storage(storage_inv)
 
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_storage(storage_inv)
+        mor = storage_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        summary = storage_inv["summary"]
+        return if summary.nil?
+
+        capability = storage_inv["capability"]
+
+        loc = uid = normalize_storage_uid(storage_inv)
+
+        new_result = {
+          :ems_ref            => mor,
+          :ems_ref_obj        => mor,
+          :name               => summary["name"],
+          :store_type         => summary["type"].to_s.upcase,
+          :total_space        => summary["capacity"],
+          :free_space         => summary["freeSpace"],
+          :uncommitted        => summary["uncommitted"],
+          :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
+          :location           => loc,
+        }
+
+        unless capability.nil?
+          new_result.merge!(
+            :directory_hierarchy_supported => capability['directoryHierarchySupported'].blank? ? nil : capability['directoryHierarchySupported'].to_s.downcase == 'true',
+            :thin_provisioning_supported   => capability['perFileThinProvisioningSupported'].blank? ? nil : capability['perFileThinProvisioningSupported'].to_s.downcase == 'true',
+            :raw_disk_mappings_supported   => capability['rawDiskMappingsSupported'].blank? ? nil : capability['rawDiskMappingsSupported'].to_s.downcase == 'true'
+          )
+        end
+
+        return mor, new_result
       end
 
       def self.storage_profile_inv_to_hashes(profile_inv, storage_uids, placement_inv)
@@ -103,6 +133,18 @@ module ManageIQ::Providers
         end unless profile_inv.nil?
 
         return result, result_uids
+      end
+
+      def self.parse_storage_profiles(persister, profiles, placements)
+        profiles.each do |uid, profile|
+          new_result = {
+            :ems_ref                  => uid,
+            :name                     => profile.name,
+            :profile_type             => profile.profileCategory,
+          }
+
+          persister.storage_profiles.build(new_result)
+        end
       end
 
       def self.group_dvswitch_by_host(dvswitch_inv)
@@ -152,62 +194,12 @@ module ManageIQ::Providers
         dvportgroup_uid_ems = {}
 
         inv.each do |mor, host_inv|
-          mor = host_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
-          config = host_inv["config"]
-          dns_config = config.fetch_path('network', 'dnsConfig') unless config.nil?
-          hostname = dns_config["hostName"] unless dns_config.nil?
-          domain_name = dns_config["domainName"] unless dns_config.nil?
-
-          summary = host_inv["summary"]
-          product = summary.fetch_path('config', 'product') unless summary.nil?
-
-          # Check connection state and log potential issues
-          connection_state = summary.fetch_path("runtime", "connectionState") unless summary.nil?
-          maintenance_mode = summary.fetch_path("runtime", "inMaintenanceMode") unless summary.nil?
-          if ['disconnected', 'notResponding', nil, ''].include?(connection_state)
-            _log.warn "Host [#{mor}] connection state is [#{connection_state.inspect}].  Inventory data may be missing."
-          end
-
-          # Determine if the data from VC is valid.
-          invalid, err = if config.nil? || product.nil? || summary.nil?
-                           type = ['config', 'product', 'summary'].find_all { |t| eval(t).nil? }.join(", ")
-                           [true, "Missing configuration for Host [#{mor}]: [#{type}]."]
-                         elsif hostname.blank?
-                           [true, "Missing hostname information for Host [#{mor}]: dnsConfig: #{dns_config.inspect}."]
-                         elsif domain_name.blank?
-                           # Use the name or the summary-config-name as the hostname if either appears to be a FQDN
-                           fqdn = host_inv["name"]
-                           fqdn = summary.fetch_path('config', 'name') unless fqdn =~ /^#{hostname}\./
-                           hostname = fqdn if fqdn =~ /^#{hostname}\./
-                           false
-                         else
-                           hostname = "#{hostname}.#{domain_name}"
-                           false
-                         end
-
-          if invalid
-            _log.warn "#{err} Skipping."
-
-            new_result = {
-              :invalid     => true,
-              :ems_ref     => mor,
-              :ems_ref_obj => mor
-            }
+          mor, new_result = parse_host(host_inv)
+          if new_result[:invalid]
             result << new_result
             result_uids[mor] = new_result
             next
           end
-
-          # Remove the domain suffix if it is included in the hostname
-          hostname = hostname.split(',').first
-          # Get the IP address
-          ipaddress = host_inv_to_ip(host_inv, hostname) || hostname
-
-          vendor = product["vendor"].split(",").first.to_s.downcase
-          vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
-
-          product_name = product["name"].nil? ? nil : product["name"].to_s.gsub(/^VMware\s*/i, "")
 
           # Collect the hardware, networking, and scsi inventories
           switches, switch_uids[mor] = host_inv_to_switch_hashes(host_inv, dvswitch_by_host[mor], dvswitch_uid_ems)
@@ -242,52 +234,18 @@ module ManageIQ::Providers
             failover = failover_hosts && failover_hosts.include?(mor)
           end
 
+
           # Link up the storages
           storages = get_mors(host_inv, 'datastore').collect { |s| storage_uids[s] }.compact
 
           # Find the host->storage mount info
           host_storages = host_inv_to_host_storages_hashes(host_inv, ems_inv[:storage], storage_uids)
 
-          # Store the host 'name' value as uid_ems to use as the lookup value with MiqVim
-          uid_ems = summary.nil? ? nil : summary.fetch_path('config', 'name')
-
-          # Get other information
-          asset_tag = service_tag = nil
-          host_inv.fetch_path("hardware", "systemInfo", "otherIdentifyingInfo").to_miq_a.each do |info|
-            next unless info.kind_of?(Hash)
-
-            value = info["identifierValue"].to_s.strip
-            value = nil if value.blank?
-
-            case info.fetch_path("identifierType", "key")
-            when "AssetTag"   then asset_tag   = value
-            when "ServiceTag" then service_tag = value
-            end
-          end
-
-          new_result = {
-            :type             => %w(esx esxi).include?(product_name.to_s.downcase) ? "ManageIQ::Providers::Vmware::InfraManager::HostEsx" : "ManageIQ::Providers::Vmware::InfraManager::Host",
-            :ems_ref          => mor,
-            :ems_ref_obj      => mor,
-            :name             => hostname,
-            :hostname         => hostname,
-            :ipaddress        => ipaddress,
-            :uid_ems          => uid_ems,
-            :vmm_vendor       => vendor,
-            :vmm_version      => product["version"],
-            :vmm_product      => product_name,
-            :vmm_buildnumber  => product["build"],
-            :connection_state => connection_state,
-            :power_state      => connection_state != "connected" ? "off" : (maintenance_mode.to_s.downcase == "true" ? "maintenance" : "on"),
-            :admin_disabled   => config["adminDisabled"].to_s.downcase == "true",
-            :maintenance      => maintenance_mode.to_s.downcase == "true",
-            :asset_tag        => asset_tag,
-            :service_tag      => service_tag,
+          new_result.merge!(
             :failover         => failover,
-            :hyperthreading   => config.fetch_path("hyperThread", "active").to_s.downcase == "true",
 
             :ems_cluster      => cluster_uids_by_host[mor],
-            :operating_system => host_inv_to_os_hash(host_inv, hostname),
+            :operating_system => host_inv_to_os_hash(host_inv, new_result[:hostname]),
             :system_services  => host_inv_to_system_service_hashes(host_inv),
 
             :hardware         => hardware,
@@ -296,11 +254,119 @@ module ManageIQ::Providers
             :host_storages    => host_storages,
 
             :child_uids       => rp_uids,
-          }
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids, cluster_uids_by_host, lan_uids, switch_uids, guest_device_uids, scsi_lun_uids
+      end
+
+      def self.parse_host(host_inv)
+        mor = host_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = host_inv["config"]
+        dns_config = config.fetch_path('network', 'dnsConfig') unless config.nil?
+        hostname = dns_config["hostName"] unless dns_config.nil?
+        domain_name = dns_config["domainName"] unless dns_config.nil?
+
+        summary = host_inv["summary"]
+        product = summary.fetch_path('config', 'product') unless summary.nil?
+
+        # Check connection state and log potential issues
+        connection_state = summary.fetch_path("runtime", "connectionState") unless summary.nil?
+        maintenance_mode = summary.fetch_path("runtime", "inMaintenanceMode") unless summary.nil?
+        if ['disconnected', 'notResponding', nil, ''].include?(connection_state)
+          _log.warn "Host [#{mor}] connection state is [#{connection_state.inspect}].  Inventory data may be missing."
+        end
+
+        # Determine if the data from VC is valid.
+        invalid, err = if config.nil? || product.nil? || summary.nil?
+                         type = ['config', 'product', 'summary'].find_all { |t| eval(t).nil? }.join(", ")
+                         [true, "Missing configuration for Host [#{mor}]: [#{type}]."]
+                       elsif hostname.blank?
+                         [true, "Missing hostname information for Host [#{mor}]: dnsConfig: #{dns_config.inspect}."]
+                       elsif domain_name.blank?
+                         # Use the name or the summary-config-name as the hostname if either appears to be a FQDN
+                         fqdn = host_inv["name"]
+                         fqdn = summary.fetch_path('config', 'name') unless fqdn =~ /^#{hostname}\./
+                         hostname = fqdn if fqdn =~ /^#{hostname}\./
+                         false
+                       else
+                         hostname = "#{hostname}.#{domain_name}"
+                         false
+                       end
+
+        if invalid
+          _log.warn "#{err} Skipping."
+
+          new_result = {
+            :invalid     => true,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor
+          }
+
+          return mor, new_result
+        end
+
+        # Remove the domain suffix if it is included in the hostname
+        hostname = hostname.split(',').first
+        # Get the IP address
+        ipaddress = host_inv_to_ip(host_inv, hostname) || hostname
+
+        vendor = product["vendor"].split(",").first.to_s.downcase
+        vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
+
+        product_name = product["name"].nil? ? nil : product["name"].to_s.gsub(/^VMware\s*/i, "")
+
+        # Store the host 'name' value as uid_ems to use as the lookup value with MiqVim
+        uid_ems = summary.nil? ? nil : summary.fetch_path('config', 'name')
+
+        # Get other information
+        asset_tag = service_tag = nil
+        host_inv.fetch_path("hardware", "systemInfo", "otherIdentifyingInfo").to_miq_a.each do |info|
+          next unless info.kind_of?(Hash)
+
+          value = info["identifierValue"].to_s.strip
+          value = nil if value.blank?
+
+          case info.fetch_path("identifierType", "key")
+          when "AssetTag"   then asset_tag   = value
+          when "ServiceTag" then service_tag = value
+          end
+        end
+
+        new_result = {
+          :type             => %w(esx esxi).include?(product_name.to_s.downcase) ? "ManageIQ::Providers::Vmware::InfraManager::HostEsx" : "ManageIQ::Providers::Vmware::InfraManager::Host",
+          :ems_ref          => mor,
+          :ems_ref_obj      => mor,
+          :name             => hostname,
+          :hostname         => hostname,
+          :ipaddress        => ipaddress,
+          :uid_ems          => uid_ems,
+          :vmm_vendor       => vendor,
+          :vmm_version      => product["version"],
+          :vmm_product      => product_name,
+          :vmm_buildnumber  => product["build"],
+          :connection_state => connection_state,
+          :power_state      => connection_state != "connected" ? "off" : (maintenance_mode.to_s.downcase == "true" ? "maintenance" : "on"),
+          :admin_disabled   => config["adminDisabled"].to_s.downcase == "true",
+          :maintenance      => maintenance_mode.to_s.downcase == "true",
+          :asset_tag        => asset_tag,
+          :service_tag      => service_tag,
+          :hyperthreading   => config.fetch_path("hyperThread", "active").to_s.downcase == "true",
+        }
+
+        return mor, new_result
+      end
+
+      def self.parse_hosts(persister, inv)
+        inv.each do |_mor, host_inv|
+          mor, new_result = parse_host(host_inv)
+          next if new_result.nil? || new_result[:invalid]
+
+          persister.hosts.build(new_result)
+        end
       end
 
       def self.host_inv_to_ip(inv, hostname = nil)
@@ -953,6 +1019,266 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
+      def self.parse_vms(persister, inv)
+        inv.each do |_mor, data|
+          _mor, new_result = parse_vm(data)
+          next if new_result.nil? || new_result[:invalid]
+
+          vm = persister.vms_and_templates.build(new_result)
+
+          parse_vm_hardware(persister, vm, data)
+          parse_vm_operating_system(persister, vm, data)
+          parse_vm_custom_attributes(persister, vm, data)
+        end
+      end
+
+      def self.parse_vm(vm_inv)
+        mor = vm_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        summary = vm_inv["summary"]
+        summary_config = summary["config"] unless summary.nil?
+        pathname = summary_config["vmPathName"] unless summary_config.nil?
+
+        config = vm_inv["config"]
+
+        # Determine if the data from VC is valid.
+        invalid, err = if summary_config.nil? || config.nil?
+                         type = ['summary_config', 'config'].find_all { |t| eval(t).nil? }.join(", ")
+                         [true, "Missing configuration for VM [#{mor}]: #{type}."]
+                       elsif summary_config["uuid"].blank?
+                         [true, "Missing UUID for VM [#{mor}]."]
+                       elsif pathname.blank?
+                         _log.debug "vmPathname class: [#{pathname.class}] inspect: [#{pathname.inspect}]"
+                         [true, "Missing pathname location for VM [#{mor}]."]
+                       else
+                         false
+                       end
+
+        if invalid
+          _log.warn "#{err} Skipping."
+
+          new_result = {
+            :invalid     => true,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor
+          }
+
+          return mor, new_result
+        end
+
+        runtime         = summary['runtime']
+        template        = summary_config["template"].to_s.downcase == "true"
+        raw_power_state = template ? "never" : runtime['powerState']
+
+        begin
+          storage_name, location = VmOrTemplate.repository_parse_path(pathname)
+        rescue => err
+          _log.warn("Warning: [#{err.message}]")
+          _log.debug("Problem processing location for VM [#{summary_config["name"]}] location: [#{pathname}]")
+          location = VmOrTemplate.location2uri(pathname)
+        end
+
+        affinity_set = config.fetch_path('cpuAffinity', 'affinitySet')
+        # The affinity_set will be an array of integers if set
+        cpu_affinity = nil
+        cpu_affinity = affinity_set.kind_of?(Array) ? affinity_set.join(",") : affinity_set.to_s if affinity_set
+
+        tools_status = summary.fetch_path('guest', 'toolsStatus')
+        tools_status = nil if tools_status.blank?
+        # tools_installed = case tools_status
+        # when 'toolsNotRunning', 'toolsOk', 'toolsOld' then true
+        # when 'toolsNotInstalled' then false
+        # when nil then nil
+        # else false
+        # end
+
+        boot_time = runtime['bootTime'].blank? ? nil : runtime['bootTime']
+
+        standby_act = nil
+        power_options = config["defaultPowerOps"]
+        unless power_options.blank?
+          standby_act = power_options["standbyAction"] if power_options["standbyAction"]
+          # Other possible keys to look at:
+          #   defaultPowerOffType, defaultResetType, defaultSuspendType
+          #   powerOffType, resetType, suspendType
+        end
+
+        # Other items to possibly include:
+        #   boot_delay = config.fetch_path("bootOptions", "bootDelay")
+        #   virtual_mmu_usage = config.fetch_path("flags", "virtualMmuUsage")
+
+        # Collect the reservation information
+        resource_config = vm_inv["resourceConfig"]
+        memory = resource_config && resource_config["memoryAllocation"]
+        cpu    = resource_config && resource_config["cpuAllocation"]
+
+        hardware = vm_inv_to_hardware_hash(vm_inv)
+        uid = hardware[:bios]
+
+        new_result = {
+          :type                  => template ? ManageIQ::Providers::Vmware::InfraManager::Template.name : ManageIQ::Providers::Vmware::InfraManager::Vm.name,
+          :ems_ref               => mor,
+          :ems_ref_obj           => mor,
+          :uid_ems               => uid,
+          :name                  => URI.decode(summary_config["name"]),
+          :vendor                => "vmware",
+          :raw_power_state       => raw_power_state,
+          :location              => location,
+          :tools_status          => tools_status,
+          :boot_time             => boot_time,
+          :standby_action        => standby_act,
+          :connection_state      => runtime['connectionState'],
+          :cpu_affinity          => cpu_affinity,
+          :template              => template,
+          :linked_clone          => vm_inv_to_linked_clone(vm_inv),
+          :fault_tolerance       => vm_inv_to_fault_tolerance(vm_inv),
+          :memory_reserve        => memory && memory["reservation"],
+          :memory_reserve_expand => memory && memory["expandableReservation"].to_s.downcase == "true",
+          :memory_limit          => memory && memory["limit"],
+          :memory_shares         => memory && memory.fetch_path("shares", "shares"),
+          :memory_shares_level   => memory && memory.fetch_path("shares", "level"),
+
+          :cpu_reserve           => cpu && cpu["reservation"],
+          :cpu_reserve_expand    => cpu && cpu["expandableReservation"].to_s.downcase == "true",
+          :cpu_limit             => cpu && cpu["limit"],
+          :cpu_shares            => cpu && cpu.fetch_path("shares", "shares"),
+          :cpu_shares_level      => cpu && cpu.fetch_path("shares", "level"),
+
+          :cpu_hot_add_enabled      => config['cpuHotAddEnabled'],
+          :cpu_hot_remove_enabled   => config['cpuHotRemoveEnabled'],
+          :memory_hot_add_enabled   => config['memoryHotAddEnabled'],
+          :memory_hot_add_limit     => config['hotPlugMemoryLimit'],
+          :memory_hot_add_increment => config['hotPlugMemoryIncrementSize'],
+        }
+
+        return mor, new_result
+      end
+
+      def self.parse_vm_hardware(persister, vm, data)
+        hardware_inv = vm_inv_to_hardware_hash(data)
+        return if hardware_inv.nil?
+
+        hardware_inv[:vm_or_template] = vm
+
+        hardware = persister.hardwares.build(hardware_inv)
+
+        parse_vm_disks(persister, hardware, data)
+        parse_vm_guest_devices(persister, hardware, data)
+      end
+
+      def self.parse_vm_operating_system(persister, vm, data)
+        os_inv = vm_inv_to_os_hash(data)
+        return if os_inv.nil?
+
+        os_inv[:vm_or_template] = vm
+
+        persister.operating_systems.build(os_inv)
+      end
+
+      def self.parse_vm_custom_attributes(persister, vm, data)
+        custom_values = data.fetch_path('summary', 'customValue')
+        available_fields = data['availableField']
+
+        key_to_name = {}
+        available_fields.to_a.each { |af| key_to_name[af['key']] = af['name'] }
+
+        custom_values.to_a.each do |cv|
+          persister.custom_attributes.build(
+            :resource => vm,
+            :section  => 'custom_field',
+            :name     => key_to_name[cv['key']],
+            :value    => cv['value'],
+            :source   => "VC"
+          )
+        end
+      end
+
+      def self.parse_vm_disks(persister, hardware, data)
+        devices = data.fetch_path('config', 'hardware', 'device').to_a
+
+        devices.each do |device|
+          case device.xsiType
+          when 'VirtualDisk'   then device_type = 'disk'
+          when 'VirtualFloppy' then device_type = 'floppy'
+          when 'VirtualCdrom'  then device_type = 'cdrom'
+          else next
+          end
+
+          backing = device['backing']
+          device_type << (backing['fileName'].nil? ? "-raw" : "-image") if device_type == 'cdrom'
+
+          controller = devices.detect { |d| d['key'] == device['controllerKey'] }
+          controller_type = case controller.xsiType
+                            when /IDE/ then 'ide'
+                            when /SIO/ then 'sio'
+                            else 'scsi'
+                            end
+
+          storage_mor = backing['datastore']
+
+          new_result = {
+            :hardware        => hardware,
+            :device_name     => device.fetch_path('deviceInfo', 'label'),
+            :device_type     => device_type,
+            :controller_type => controller_type,
+            :present         => true,
+            :filename        => backing['fileName'] || backing['deviceName'],
+            :location        => "#{controller['busNumber']}:#{device['unitNumber']}",
+          }
+
+          if device_type == 'disk'
+            new_result.merge!(
+              :size            => device['capacityInKB'].to_i.kilobytes,
+              :mode            => backing['diskMode'],
+              # TODO: :storage_profile => storage_profile_by_disk_mor["#{vm_mor}:#{device['key']}"]
+            )
+            new_result[:disk_type] = if backing.key?('compatibilityMode')
+                                       "rdm-#{backing['compatibilityMode'].to_s[0...-4]}"  # physicalMode or virtualMode
+                                     else
+                                       (backing['thinProvisioned'].to_s.downcase == 'true') ? 'thin' : 'thick'
+                                     end
+          else
+            new_result[:start_connected] = device.fetch_path('connectable', 'startConnected').to_s.downcase == 'true'
+          end
+
+          new_result[:storage] = persister.storages.lazy_find(storage_mor) unless storage_mor.nil?
+
+          persister.disks.build(new_result)
+        end
+      end
+
+      def self.parse_vm_guest_devices(persister, hardware, data)
+        inv = data.fetch_path('config', 'hardware', 'device').to_a
+
+        inv.find_all { |d| d.key?('macAddress') }.each do |data|
+          uid = address = data['macAddress']
+          name = data.fetch_path('deviceInfo', 'label')
+
+          backing = data['backing']
+          lan_uid = case backing.xsiType
+                    when "VirtualEthernetCardDistributedVirtualPortBackingInfo"
+                      backing.fetch_path('port', 'portgroupKey')
+                    else
+                      backing['deviceName']
+                    end unless backing.nil?
+
+          new_result = {
+            :hardware        => hardware,
+            :uid_ems         => uid,
+            :device_name     => name,
+            :device_type     => 'ethernet',
+            :controller_type => 'ethernet',
+            :present         => data.fetch_path('connectable', 'connected').to_s.downcase == 'true',
+            :start_connected => data.fetch_path('connectable', 'startConnected').to_s.downcase == 'true',
+            :address         => address,
+          }
+
+          new_result[:lan] = persister.lans.lazy_find(lan_uid) unless lan_uid.nil?
+
+          persister.guest_devices.build(new_result)
+        end
+      end
+
       # The next 3 methods determine shared VMs (linked clones or fault tolerance).
       # Information found at http://www.vmdev.info/?p=546
       def self.vm_inv_to_shared(inv)
@@ -1219,23 +1545,32 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
+      def self.parse_folder(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        new_result = {
+          :ems_ref     => mor,
+          :ems_ref_obj => mor,
+          :uid_ems     => mor,
+          :name        => URI.decode(data["name"]),
+          :hidden      => false
+        }
+
+        return mor, new_result
+      end
+
       def self.folder_inv_to_hashes(inv, result, result_uids)
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
-
           child_mors = get_mors(data, 'childEntity')
 
-          new_result = {
-            :type        => EmsFolder.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
-            :child_uids  => child_mors,
-            :hidden      => false
-          }
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => EmsFolder.name,
+            :child_uids => child_mors,
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
@@ -1250,15 +1585,12 @@ module ManageIQ::Providers
 
           child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
 
-          new_result = {
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
             :type        => Datacenter.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
             :child_uids  => child_mors,
-            :hidden      => false
-          }
+          )
+
           result << new_result
           result_uids[mor] = new_result
         end
@@ -1290,47 +1622,141 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
+      def self.parse_folders(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => 'EmsFolder',
+            #:child_uids => get_mors(data, 'childEntity')
+          )
+
+          persister.ems_folders.build(new_result)
+        end
+      end
+
+      def self.parse_datacenters(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_folder(data)
+          new_result.merge!(
+            :type       => 'Datacenter',
+            #:child_uids => get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
+          )
+
+          persister.ems_folders.build(new_result)
+        end
+      end
+
+      def self.parse_storage_pods(persister, inv)
+        inv.each do |mor, data|
+          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+          child_mors = get_mors(data, 'childEntity')
+          name       = data.fetch_path('summary', 'name')
+
+          new_result = {
+            :type        => StorageCluster.name,
+            :ems_ref     => mor,
+            :ems_ref_obj => mor,
+            :uid_ems     => mor,
+            :name        => name,
+            :hidden      => false
+          }
+
+          persister.ems_folders.build(new_result)
+        end
+      end
+
       def self.cluster_inv_to_hashes(inv)
         result = []
         result_uids = {}
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+          mor, new_result = parse_cluster(data)
 
-          config = data["configuration"]
-          next if config.nil?
-
-          das_config = config["dasConfig"]
-          drs_config = config["drsConfig"]
-
-          effective_cpu = data.fetch_path("summary", "effectiveCpu")
-          effective_cpu = effective_cpu.blank? ? nil : effective_cpu.to_i
-          effective_memory = data.fetch_path("summary", "effectiveMemory")
-          effective_memory = effective_memory.blank? ? nil : effective_memory.to_i.megabytes
-
-          new_result = {
-            :ems_ref                 => mor,
-            :ems_ref_obj             => mor,
-            :uid_ems                 => mor,
-            :name                    => URI.decode(data["name"]),
-            :effective_cpu           => effective_cpu,
-            :effective_memory        => effective_memory,
-
-            :ha_enabled              => das_config["enabled"].to_s.downcase == "true",
-            :ha_admit_control        => das_config["admissionControlEnabled"].to_s.downcase == "true",
-            :ha_max_failures         => das_config["failoverLevel"],
-
-            :drs_enabled             => drs_config["enabled"].to_s.downcase == "true",
-            :drs_automation_level    => drs_config["defaultVmBehavior"],
-            :drs_migration_threshold => drs_config["vmotionRate"],
-
-            :child_uids              => get_mors(data, 'resourcePool')
-          }
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_clusters(persister, inv)
+        inv.each do |_mor, data|
+          mor, new_result = parse_cluster(data)
+          child_uids = new_result.delete(:child_uids)
+
+          persister.ems_clusters.build(new_result)
+        end
+      end
+
+      def self.parse_cluster(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = data["configuration"]
+        return if config.nil?
+
+        das_config = config["dasConfig"]
+        drs_config = config["drsConfig"]
+
+        effective_cpu = data.fetch_path("summary", "effectiveCpu")
+        effective_cpu = effective_cpu.blank? ? nil : effective_cpu.to_i
+        effective_memory = data.fetch_path("summary", "effectiveMemory")
+        effective_memory = effective_memory.blank? ? nil : effective_memory.to_i.megabytes
+
+        new_result = {
+          :ems_ref                 => mor,
+          :ems_ref_obj             => mor,
+          :uid_ems                 => mor,
+          :name                    => URI.decode(data["name"]),
+          :effective_cpu           => effective_cpu,
+          :effective_memory        => effective_memory,
+
+          :ha_enabled              => das_config["enabled"].to_s.downcase == "true",
+          :ha_admit_control        => das_config["admissionControlEnabled"].to_s.downcase == "true",
+          :ha_max_failures         => das_config["failoverLevel"],
+
+          :drs_enabled             => drs_config["enabled"].to_s.downcase == "true",
+          :drs_automation_level    => drs_config["defaultVmBehavior"],
+          :drs_migration_threshold => drs_config["vmotionRate"],
+
+          :child_uids              => get_mors(data, 'resourcePool')
+        }
+
+        return mor, new_result
+      end
+
+      def self.parse_resource_pool(data)
+        mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+
+        config = data.fetch_path("summary", "config")
+        memory = config["memoryAllocation"]
+        cpu = config["cpuAllocation"]
+
+        # :is_default will be set later as we don't know until we find out who the parent is.
+
+        new_result = {
+          :ems_ref               => mor,
+          :ems_ref_obj           => mor,
+          :uid_ems               => mor,
+          :name                  => URI.decode(data["name"].to_s),
+          :vapp                  => mor.vimType == "VirtualApp",
+
+          :memory_reserve        => memory["reservation"],
+          :memory_reserve_expand => memory["expandableReservation"].to_s.downcase == "true",
+          :memory_limit          => memory["limit"],
+          :memory_shares         => memory.fetch_path("shares", "shares"),
+          :memory_shares_level   => memory.fetch_path("shares", "level"),
+
+          :cpu_reserve           => cpu["reservation"],
+          :cpu_reserve_expand    => cpu["expandableReservation"].to_s.downcase == "true",
+          :cpu_limit             => cpu["limit"],
+          :cpu_shares            => cpu.fetch_path("shares", "shares"),
+          :cpu_shares_level      => cpu.fetch_path("shares", "level"),
+
+          :child_uids            => get_mors(data, 'resourcePool') + get_mors(data, 'vm')
+        }
+
+        return mor, new_result
       end
 
       def self.rp_inv_to_hashes(inv)
@@ -1339,39 +1765,21 @@ module ManageIQ::Providers
         return result, result_uids if inv.nil?
 
         inv.each do |mor, data|
-          mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
+          mor, new_result = parse_resource_pool(data)
 
-          config = data.fetch_path("summary", "config")
-          memory = config["memoryAllocation"]
-          cpu = config["cpuAllocation"]
-
-          # :is_default will be set later as we don't know until we find out who the parent is.
-
-          new_result = {
-            :ems_ref               => mor,
-            :ems_ref_obj           => mor,
-            :uid_ems               => mor,
-            :name                  => URI.decode(data["name"].to_s),
-            :vapp                  => mor.vimType == "VirtualApp",
-
-            :memory_reserve        => memory["reservation"],
-            :memory_reserve_expand => memory["expandableReservation"].to_s.downcase == "true",
-            :memory_limit          => memory["limit"],
-            :memory_shares         => memory.fetch_path("shares", "shares"),
-            :memory_shares_level   => memory.fetch_path("shares", "level"),
-
-            :cpu_reserve           => cpu["reservation"],
-            :cpu_reserve_expand    => cpu["expandableReservation"].to_s.downcase == "true",
-            :cpu_limit             => cpu["limit"],
-            :cpu_shares            => cpu.fetch_path("shares", "shares"),
-            :cpu_shares_level      => cpu.fetch_path("shares", "level"),
-
-            :child_uids            => get_mors(data, 'resourcePool') + get_mors(data, 'vm')
-          }
           result << new_result
           result_uids[mor] = new_result
         end
         return result, result_uids
+      end
+
+      def self.parse_resource_pools(persister, inv)
+        inv.each do |_mor, data|
+          _mor, new_result = parse_resource_pool(data)
+          child_uids = new_result.delete(:child_uids)
+
+          persister.resource_pools.build(new_result)
+        end
       end
 
       def self.customization_spec_inv_to_hashes(inv)
@@ -1379,15 +1787,25 @@ module ManageIQ::Providers
         return result if inv.nil?
 
         inv.each do |spec_inv|
-          result << {
-            :name             => spec_inv["name"].to_s,
-            :typ              => spec_inv["type"].to_s,
-            :description      => spec_inv["description"].to_s,
-            :last_update_time => spec_inv["lastUpdateTime"].to_s,
-            :spec             => spec_inv["spec"]
-          }
+          result << parse_customization_spec(spec_inv)
         end
         result
+      end
+
+      def self.parse_customization_specs(persister, inv)
+        inv.each do |spec_inv|
+          persister.customization_specs.build(parse_customization_spec(spec_inv))
+        end
+      end
+
+      def self.parse_customization_spec(spec_inv)
+        {
+          :name             => spec_inv["name"].to_s,
+          :typ              => spec_inv["type"].to_s,
+          :description      => spec_inv["description"].to_s,
+          :last_update_time => spec_inv["lastUpdateTime"].to_s,
+          :spec             => spec_inv["spec"]
+        }
       end
 
       def self.link_ems_metadata(data, inv)
