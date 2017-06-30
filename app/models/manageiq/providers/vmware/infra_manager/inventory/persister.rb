@@ -14,10 +14,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       vms_and_templates
       disks
       nics
+      host_nics
       guest_devices
       hardwares
+      host_hardwares
       snapshots
       operating_systems
+      host_operating_systems
       custom_attributes
       ems_folders
       resource_pools
