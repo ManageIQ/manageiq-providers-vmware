@@ -1,15 +1,18 @@
 require 'rbvmomi/vim'
 
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
+  include InventoryCache
   include PropertyCollector
   include Vmdb::Logging
 
-  attr_reader :ems, :exit_requested
-  private     :ems, :exit_requested
+  attr_accessor :inventory_cache
+  attr_reader   :ems, :exit_requested
+  private       :ems, :exit_requested, :inventory_cache
 
   def initialize(ems)
-    @ems            = ems
-    @exit_requested = false
+    @ems             = ems
+    @exit_requested  = false
+    @inventory_cache = initialize_inventory_cache
   end
 
   def run
@@ -112,21 +115,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     managed_object = object_update.obj
 
     case object_update.kind
-    when "enter"
-      process_object_update_enter(managed_object, object_update.changeSet)
-    when "modify"
+    when "enter", "modify"
       process_object_update_modify(managed_object, object_update.changeSet)
     when "leave"
       process_object_update_leave(managed_object)
     end
   end
 
-  def process_object_update_enter(obj, change_set, missing_set = [])
-    process_object_update_modify(obj, change_set, missing_set)
-  end
+  def process_object_update_modify(obj, change_set, _missing_set = [])
+    obj_type = obj.class.wsdl_name
+    obj_ref  = obj._ref
 
-  def process_object_update_modify(_obj, change_set, _missing_set = [])
-    props = {}
+    props = inventory_cache[obj_type][obj_ref].dup
 
     change_set.each do |property_change|
       next if property_change.nil?
@@ -140,9 +140,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         process_property_change_assign(props, property_change)
       end
     end
+
+    update_inventory_cache(obj_type, obj_ref, props)
+
+    props
   end
 
-  def process_object_update_leave(_obj)
+  def process_object_update_leave(obj)
+    obj_type = obj.class.wsdl_name
+    obj_ref  = obj._ref
+
+    inventory_cache[obj_type].delete(obj_ref)
+
+    nil
   end
 
   def process_property_change_add(props, property_change)
