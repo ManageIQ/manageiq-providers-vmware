@@ -1,11 +1,9 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
-  attr_reader :persister, :ems
-  private     :persister, :ems
+  attr_reader :persister
+  private     :persister
 
-  def initialize(ems)
-    persister_class = ems.class::Inventory::Persister
-    @ems       = ems
-    @persister = persister_class.new(ems)
+  def initialize(persister)
+    @persister = persister
   end
 
   def parse(object, props)
@@ -99,6 +97,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :type    => "ManageIQ::Providers::Vmware::InfraManager::HostEsx",
     }
 
+    if props.include?("config.network.dnsConfig.hostName")
+      host_hash[:name]     = props["config.network.dnsConfig.hostName"]
+      host_hash[:hostname] = props["config.network.dnsConfig.hostName"]
+    end
+
     persister.hosts.build(host_hash)
   end
 
@@ -130,6 +133,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     vm_hash = {
       :ems_ref => object._ref,
+      :vendor  => "vmware",
     }
 
     if props.include?("summary.config.uuid")
@@ -144,7 +148,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     if props.include?("summary.config.template")
       vm_hash[:template] = props["summary.config.template"].to_s.downcase == "true"
 
-      type = "#{ems.class.name}::#{vm_hash[:template] ? "Template" : "Vm"}"
+      type = "ManageIQ::Providers::Vmware::InfraManager::#{vm_hash[:template] ? "Template" : "Vm"}"
       vm_hash[:type] = type
     end
 
