@@ -5,6 +5,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Folder
   include HostSystem
   include ResourcePool
+  include VirtualMachine
 
   attr_reader :persister
   private     :persister
@@ -177,22 +178,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :vendor  => "vmware",
     }
 
-    if props.include?("summary.config.uuid")
-      vm_hash[:uid_ems] = props["summary.config.uuid"]
-    end
-    if props.include?("summary.config.name")
-      vm_hash[:name] = URI.decode(props["summary.config.name"])
-    end
-    if props.include?("summary.config.vmPathName")
-      vm_hash[:location] = props["summary.config.vmPathName"]
-    end
-    if props.include?("summary.config.template")
-      vm_hash[:template] = props["summary.config.template"].to_s.downcase == "true"
+    parse_virtual_machine_config(vm_hash, props)
+    parse_virtual_machine_resource_config(vm_hash, props)
+    parse_virtual_machine_summary(vm_hash, props)
 
-      type = "ManageIQ::Providers::Vmware::InfraManager::#{vm_hash[:template] ? "Template" : "Vm"}"
-      vm_hash[:type] = type
-    end
+    vm = persister.vms_and_templates.build(vm_hash)
 
-    persister.vms_and_templates.build(vm_hash)
+    parse_virtual_machine_operating_system(vm, props)
+    parse_virtual_machine_hardware(vm, props)
+    parse_virtual_machine_custom_attributes(vm, props)
+    parse_virtual_machine_snapshots(vm, props)
   end
 end
