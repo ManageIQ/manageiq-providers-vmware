@@ -1,6 +1,7 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Cluster
   include Datacenter
+  include Datastore
   include Folder
   include HostSystem
   include ResourcePool
@@ -71,14 +72,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref => object._ref,
     }
 
-    if props.include?("summary.name")
-      storage_hash[:name] = props["summary.name"]
-    end
-    if props.include?("summary.url")
-      storage_hash[:location] = props["summary.url"]
-    end
+    parse_datastore_summary(storage_hash, props)
+    parse_datastore_capability(storage_hash, props)
 
-    persister.storages.build(storage_hash)
+    storage = persister.storages.build(storage_hash)
+
+    parse_datastore_host_mount(storage, object._ref, props)
   end
 
   def parse_distributed_virtual_switch(object, props)
