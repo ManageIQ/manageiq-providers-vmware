@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Cluster
+  include HostSystem
   include ResourcePool
 
   attr_reader :persister
@@ -102,15 +103,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     host_hash = {
       :ems_ref => object._ref,
-      :type    => "ManageIQ::Providers::Vmware::InfraManager::HostEsx",
     }
 
-    if props.include?("config.network.dnsConfig.hostName")
-      host_hash[:name]     = props["config.network.dnsConfig.hostName"]
-      host_hash[:hostname] = props["config.network.dnsConfig.hostName"]
-    end
+    parse_host_config(host_hash, props)
+    parse_host_product(host_hash, props)
+    parse_host_network(host_hash, props)
+    parse_host_runtime(host_hash, props)
+    parse_host_system_info(host_hash, props)
+    parse_host_children(host_hash, props)
 
-    persister.hosts.build(host_hash)
+    host_hash[:type] = if host_hash.include?(:vmm_product) && !%w(esx esxi).include?(host_hash[:vmm_product].to_s.downcase)
+                         "ManageIQ::Providers::Vmware::InfraManager::Host"
+                       else
+                         "ManageIQ::Providers::Vmware::InfraManager::HostEsx"
+                       end
+
+    host = persister.hosts.build(host_hash)
+
+    parse_host_operating_system(host, props)
+    parse_host_system_services(host, props)
+    parse_host_hardware(host, props)
+    parse_host_switches(host, props)
   end
 
   def parse_network(object, props)
