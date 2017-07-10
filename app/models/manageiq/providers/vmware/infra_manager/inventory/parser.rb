@@ -1,5 +1,7 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Cluster
+  include Datacenter
+  include Folder
   include HostSystem
   include ResourcePool
 
@@ -41,6 +43,26 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_cluster_compute_resource parse_compute_resource
 
+  def parse_datacenter(object, props)
+    persister.ems_folders.manager_uuids << object._ref
+    return if props.nil?
+
+    dc_hash = {
+      :ems_ref      => object._ref,
+      :uid_ems      => object._ref,
+      :type         => "EmsFolder",
+      :ems_children => {},
+    }
+
+    if props.include?("name")
+      dc_hash[:name] = URI.decode(props["name"])
+    end
+
+    parse_datacenter_children(dc_hash, props)
+
+    persister.ems_folders.build(dc_hash)
+  end
+
   def parse_datastore(object, props)
     persister.storages.manager_uuids << object._ref
     return if props.nil?
@@ -76,26 +98,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.manager_uuids << object._ref
     return if props.nil?
 
-    type = case object
-           when RbVmomi::VIM::Datacenter
-             "Datacenter"
-           when RbVmomi::VIM::Folder
-             "EmsFolder"
-           end
-
     folder_hash = {
-      :ems_ref => object._ref,
-      :uid_ems => object._ref,
-      :type    => type,
+      :ems_ref      => object._ref,
+      :uid_ems      => object._ref,
+      :type         => "EmsFolder",
+      :ems_children => {},
     }
 
     if props.include?("name")
       folder_hash[:name] = URI.decode(props["name"])
     end
 
+    parse_folder_children(folder_hash, props)
+
     persister.ems_folders.build(folder_hash)
   end
-  alias parse_datacenter parse_folder
 
   def parse_host_system(object, props)
     persister.hosts.manager_uuids << object._ref
