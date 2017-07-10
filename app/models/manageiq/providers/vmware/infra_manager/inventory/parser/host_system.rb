@@ -21,8 +21,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         _domain_name = props["config.network.dnsConfig.domainName"]
       end
 
-      # TODO: host_inv_to_ip
-
       default_gw = if props.include?("config.network.ipRouteConfig.defaultGateway")
                      require 'ipaddr'
                      IPAddr.new(props["config.network.ipRouteConfig.defaultGateway"])
@@ -184,7 +182,70 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:memory_usage] = props["summary.quickStats.overallMemoryUsage"]
       end
 
-      persister.host_hardwares.build(hardware_hash)
+      hardware = persister.host_hardwares.build(hardware_hash)
+
+      parse_host_guest_devices(hardware, props)
+    end
+
+    def parse_host_guest_devices(hardware, props)
+      if props.include?("config.network.pnic")
+        props["config.network.pnic"].to_a.each do |pnic|
+          name = uid = pnic.device
+
+          persister.guest_devices.build(
+            :hardware        => hardware,
+            :uid_ems         => uid,
+            :device_name     => name,
+            :device_type     => 'ethernet',
+            :location        => pnic.pci,
+            :present         => true,
+            :controller_type => 'ethernet',
+            :address         => pnic.mac,
+            :switch          => persister.switches.lazy_find(pnic.key)
+          )
+        end
+      end
+
+      if props.include?("config.storageDevice.hostBusAdapter")
+        props["config.storageDevice.hostBusAdapter"].to_a.each do |hba|
+          name = uid = hba.device
+          location = hba.pci
+          model = hba.model
+
+          if hba.kind_of?(RbVmomi::VIM::HostInternetScsiHba)
+            iscsi_name = hba.iScsiName
+            iscsi_alias = hba.iScsiAlias
+            chap_auth_enabled = hba.authenticationProperties.chapAuthEnabled
+          end
+
+          controller_type = case hba
+                            when RbVmomi::VIM::HostBlockHba
+                              "Block"
+                            when RbVmomi::VIM::HostFibreChannelHba
+                              "Fibre"
+                            when RbVmomi::VIM::HostInternetScsiHba
+                              "iSCSI"
+                            when RbVmomi::VIM::HostParallelScsiHba
+                              "SCSI"
+                            else
+                              "HBA"
+                            end
+
+          persister.guest_devices.build(
+            :hardware          => hardware,
+            :uid_ems           => uid,
+            :device_name       => name,
+            :device_type       => 'storage',
+            :present           => true,
+            :iscsi_name        => iscsi_name,
+            :iscsi_alias       => iscsi_alias,
+            :location          => location,
+            :model             => model,
+            :chap_auth_enabled => chap_auth_enabled,
+            :controller_type   => controller_type,
+          )
+        end
+      end
     end
 
     def parse_host_switches(host, props)
