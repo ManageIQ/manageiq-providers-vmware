@@ -177,7 +177,76 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:virtual_hw_version] = config_version.to_s.split('-').last unless config_version.blank?
       end
 
-      persister.hardwares.build(hardware_hash)
+      hardware = persister.hardwares.build(hardware_hash)
+
+      parse_virtual_machine_disks(hardware, props)
+    end
+
+    def parse_virtual_machine_disks(hardware, props)
+      return unless props.include?("config.hardware.device")
+
+      devices = props["config.hardware.device"].to_a
+
+      devices.each do |device|
+        case device
+        when RbVmomi::VIM::VirtualDisk   then device_type = 'disk'
+        when RbVmomi::VIM::VirtualFloppy then device_type = 'floppy'
+        when RbVmomi::VIM::VirtualCdrom  then device_type = 'cdrom'
+        else next
+        end
+
+        backing = device.backing
+        next if backing.nil?
+
+        if device_type == 'cdrom'
+          device_type << if backing.kind_of?(RbVmomi::VIM::VirtualCdromIsoBackingInfo)
+                           "-image"
+                         else
+                           "-raw"
+                         end
+        end
+
+        controller = devices.detect { |d| d.key == device.controllerKey }
+        next if controller.nil?
+
+        controller_type = case controller.class.wsdl_name
+                          when /IDE/ then 'ide'
+                          when /SIO/ then 'sio'
+                          else 'scsi'
+                          end
+        disk_hash = {
+          :hardware        => hardware,
+          :device_name     => device.deviceInfo.label,
+          :device_type     => device_type,
+          :controller_type => controller_type,
+          :present         => true,
+          :location        => "#{controller.busNumber}:#{device.unitNumber}"
+        }
+
+        case backing
+        when RbVmomi::VIM::VirtualDeviceFileBackingInfo
+          disk_hash[:filename] = backing.fileName
+          disk_hash[:mode] = backing.diskMode
+          disk_hash[:storage] = persister.storages.lazy_find(backing.datastore._ref) unless backing.datastore.nil?
+        when RbVmomi::VIM::VirtualDeviceRemoteDeviceBackingInfo
+          disk_hash[:filename] = backing.deviceName
+        end
+
+        if device_type == "disk"
+          disk_hash[:size] = device.capacityInKB.to_i.kilobytes
+          disk_hash[:disk_type] = if backing.kind_of?(RbVmomi::VIM::VirtualDiskRawDiskMappingVer1BackingInfo)
+                                    "rdm-#{backing.compatibilityMode.to_s[0...-4]}" # physicalMode or virtualMode
+                                  elsif backing.kind_of?(RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo)
+                                    backing.thinProvisioned.to_s.downcase == 'true' ? "thin" : "thick"
+                                  else
+                                    "thick"
+                                  end
+        else
+          disk_hash[:start_connected] = device.connectable.startConnected
+        end
+
+        persister.disks.build(disk_hash)
+      end
     end
 
     def parse_virtual_machine_custom_attributes(vm, props)
