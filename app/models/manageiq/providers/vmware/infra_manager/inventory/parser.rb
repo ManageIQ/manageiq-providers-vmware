@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  include Cluster
+
   attr_reader :persister
   private     :persister
 
@@ -27,6 +29,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     if props.include?("name")
       cluster_hash[:name] = URI.decode(props["name"])
     end
+
+    parse_cluster_summary(cluster_hash, props)
+    parse_cluster_das_config(cluster_hash, props)
+    parse_cluster_drs_config(cluster_hash, props)
+    parse_cluster_children(cluster_hash, props)
 
     persister.ems_clusters.build(cluster_hash)
   end
