@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Cluster
+  include ResourcePool
 
   attr_reader :persister
   private     :persister
@@ -129,6 +130,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     if props.include?("name")
       rp_hash[:name] = URI.decode(props["name"])
     end
+
+    parse_resource_pool_memory_allocation(rp_hash, props)
+    parse_resource_pool_cpu_allocation(rp_hash, props)
+    parse_resource_pool_children(rp_hash, props)
 
     persister.resource_pools.build(rp_hash)
   end
