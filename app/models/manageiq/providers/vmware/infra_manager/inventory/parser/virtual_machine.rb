@@ -180,6 +180,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       hardware = persister.hardwares.build(hardware_hash)
 
       parse_virtual_machine_disks(hardware, props)
+      parse_virtual_machine_guest_devices(hardware, props)
     end
 
     def parse_virtual_machine_disks(hardware, props)
@@ -246,6 +247,46 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         end
 
         persister.disks.build(disk_hash)
+      end
+    end
+
+    def parse_virtual_machine_guest_devices(hardware, props)
+      return unless props.include?("config.hardware.device")
+
+      devices = props["config.hardware.device"].to_a
+
+      veth_devices = devices.select { |dev| dev.kind_of?(RbVmomi::VIM::VirtualEthernetCard) }
+      veth_devices.each do |device|
+        next if device.macAddress.nil?
+        uid = address = device.macAddress
+
+        name = device.deviceInfo.label
+        backing = device.backing
+
+        present = device.connectable.connected
+        start_connected = device.connectable.startConnected
+
+        guest_device_hash = {
+          :hardware        => hardware,
+          :uid_ems         => uid,
+          :device_name     => name,
+          :device_type     => 'ethernet',
+          :controller_type => 'ethernet',
+          :present         => present,
+          :start_connected => start_connected,
+          :address         => address,
+        }
+
+        unless backing.nil?
+          lan_uid = if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
+                      backing.port.portgroupKey
+                    else
+                      backing.deviceName
+                    end
+          guest_device_hash[:lan] = persister.lans.lazy_find(lan_uid)
+        end
+
+        persister.guest_devices.build(guest_device_hash)
       end
     end
 
