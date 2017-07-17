@@ -31,6 +31,48 @@ describe ManageIQ::Providers::Vmware::CloudManager do
     )
   end
 
+  context ".raw_connect" do
+    let(:params) do
+      {
+        :vcloud_director_username      => "username",
+        :vcloud_director_password      => "encrypted",
+        :vcloud_director_host          => "server",
+        :vcloud_director_show_progress => false,
+        :port                          => "port",
+        :connection_options            => {
+          :ssl_verify_peer => false # for development
+        }
+      }
+    end
+
+    before do
+      require 'fog/vcloud_director'
+    end
+
+    it "decrypts the vcloud password" do
+      encrypted = MiqPassword.encrypt("encrypted")
+      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+
+      described_class.raw_connect("server", "port", "username", encrypted)
+    end
+
+    it "validates the password if validate is true if specified" do
+      expect(described_class).to receive(:validate_connection).and_raise(Fog::Compute::VcloudDirector::Unauthorized)
+      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+
+      expect do
+        described_class.raw_connect("server", "port", "username", "encrypted", true)
+      end.to raise_error(MiqException::MiqInvalidCredentialsError, "Login failed due to a bad username or password.")
+    end
+
+    it "does not validate the password unless specified" do
+      expect(described_class).to_not receive(:validate_connection)
+      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+
+      described_class.raw_connect("server", "port", "username", "encrypted")
+    end
+  end
+
   it ".ems_type" do
     expect(described_class.ems_type).to eq('vmware_cloud')
   end
