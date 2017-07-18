@@ -244,6 +244,34 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         expect(vlans.keys).to   match_array(lan_keys)
         expect(vlans.values).to match_array(lan_values)
       end
+
+      context '#allowed_hosts_obj' do
+        before do
+          allow(workflow).to receive(:find_all_ems_of_type).and_return([@host1, @host2])
+          allow(Rbac).to receive(:search) do |hash|
+            [Array.wrap(hash[:targets])]
+          end
+        end
+
+        it 'finds all hosts with no selected network' do
+          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id)
+          expect(workflow.allowed_hosts_obj).to match_array([@host1, @host2])
+        end
+
+        it 'finds only the hosts that can access the selected vSwitch network' do
+          @host1.switches = [s11]
+          @host2.switches = [s22]
+          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :vlan => [@lan11.name, @lan11.name])
+          expect(workflow.allowed_hosts_obj).to match_array([@host1])
+        end
+
+        it 'finds only the hosts that can access the selected dvSwitch network' do
+          @host1.switches = [s11]
+          @host2.switches = [s22]
+          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :vlan => ["dvs_#{@lan22.name}", @lan22.name])
+          expect(workflow.allowed_hosts_obj).to match_array([@host2])
+        end
+      end
     end
   end
 end
