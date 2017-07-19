@@ -1,6 +1,7 @@
 ---
 :ems:
   :ems_vmware:
+    :blacklisted_event_names: []
     :event_handling:
       :event_groups:
         :addition:
