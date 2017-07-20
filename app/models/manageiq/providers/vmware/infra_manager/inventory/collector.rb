@@ -1,5 +1,3 @@
-require 'rbvmomi/vim'
-
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include InventoryCache
   include PropertyCollector
@@ -21,7 +19,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       begin
         wait_for_updates(vim)
-      rescue RbVmomi::Fault
+      rescue RbVmomi::Fault => err
+        _log.err("Caught exception #{err.message}")
+        _log.log_backtrace(err)
+      ensure
         vim.serviceContent.sessionManager.Logout
         vim = nil
       end
@@ -50,6 +51,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :user     => username,
       :password => password,
     }
+
+    require 'rbvmomi/vim'
 
     vim = RbVmomi::VIM.connect(vim_opts)
 
