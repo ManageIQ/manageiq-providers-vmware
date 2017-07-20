@@ -22,6 +22,7 @@ module ManageIQ::Providers
       def collect_inventory_for_targets(ems, targets)
         Benchmark.realtime_block(:get_ems_data) { get_ems_data(ems) }
         Benchmark.realtime_block(:get_vc_data) { get_vc_data(ems) }
+        Benchmark.realtime_block(:get_vc_data_storage_profile) { get_vc_data_storage_profile(ems) }
 
         Benchmark.realtime_block(:get_vc_data_ems_customization_specs) { get_vc_data_ems_customization_specs(ems) } if targets.include?(ems)
 
@@ -76,10 +77,22 @@ module ManageIQ::Providers
       # VC data collection methods
       #
 
+      def collect_and_log_inventory(ems, type)
+        log_header = format_ems_for_logging(ems)
+
+        _log.info("#{log_header} Retrieving #{type.to_s.titleize} inventory...")
+
+        inv_hash = yield
+
+        inv_count = inv_hash.blank? ? 0 : inv_hash.length
+        @vc_data[type] = inv_hash unless inv_hash.blank?
+
+        _log.info("#{log_header} Retrieving #{type.to_s.titleize} inventory...Complete - Count: [#{inv_count}]")
+      end
+
       VC_ACCESSORS_HASH = {
         :storage         => :dataStoresByMor,
         :storage_pod     => :storagePodsByMor,
-        :storage_profile => :pbmProfilesByUid,
         :dvportgroup     => :dvPortgroupsByMor,
         :dvswitch        => :dvSwitchesByMor,
         :host            => :hostSystemsByMor,
@@ -115,10 +128,6 @@ module ManageIQ::Providers
             @vc_data[type] = inv_hash unless inv_hash.blank?
             _log.info("#{log_header} Retrieving #{type.to_s.titleize} inventory...Complete - Count: [#{inv_hash.blank? ? 0 : inv_hash.length}]")
           end
-
-          storage_profile_ids = @vc_data[:storage_profile].collect { |uid, _profile| uid }
-          @vc_data[:storage_profile_datastore] = @vi.pbmQueryMatchingHub(storage_profile_ids)
-          @vc_data[:storage_profile_entity]    = @vi.pbmQueryAssociatedEntity(storage_profile_ids)
         end
 
         # Merge Virtual Apps into Resource Pools
@@ -128,6 +137,21 @@ module ManageIQ::Providers
         end
 
         EmsRefresh.log_inv_debug_trace(@vc_data, "#{_log.prefix} #{log_header} @vc_data:", 2)
+      end
+
+      def get_vc_data_storage_profile(ems)
+        cleanup_callback = proc { @vc_data = nil }
+
+        retrieve_from_vc(ems, cleanup_callback) do
+          collect_and_log_inventory(ems, :storage_profile) { @vi.pbmProfilesByUid }
+
+          unless @vc_data[:storage_profile].blank?
+            storage_profile_ids = @vc_data[:storage_profile].keys
+
+            collect_and_log_inventory(ems, :storage_profile_datastore) { @vi.pbmQueryMatchingHub(storage_profile_ids) }
+            collect_and_log_inventory(ems, :storage_profile_entity)    { @vi.pbmQueryAssociatedEntity(storage_profile_ids) }
+          end
+        end
       end
 
       def get_vc_data_ems_customization_specs(ems)
