@@ -1,11 +1,11 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
-  include Cluster
-  include Datacenter
-  include Datastore
-  include Folder
-  include HostSystem
-  include ResourcePool
-  include VirtualMachine
+  include_concern :ComputeResource
+  include_concern :Datacenter
+  include_concern :Datastore
+  include_concern :Folder
+  include_concern :HostSystem
+  include_concern :ResourcePool
+  include_concern :VirtualMachine
 
   attr_reader :persister
   private     :persister
@@ -36,10 +36,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       cluster_hash[:name] = URI.decode(props["name"])
     end
 
-    parse_cluster_summary(cluster_hash, props)
-    parse_cluster_das_config(cluster_hash, props)
-    parse_cluster_drs_config(cluster_hash, props)
-    parse_cluster_children(cluster_hash, props)
+    parse_compute_resource_summary(cluster_hash, props)
+    parse_compute_resource_das_config(cluster_hash, props)
+    parse_compute_resource_drs_config(cluster_hash, props)
+    parse_compute_resource_children(cluster_hash, props)
 
     persister.ems_clusters.build(cluster_hash)
   end
@@ -122,12 +122,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref => object._ref,
     }
 
-    parse_host_config(host_hash, props)
-    parse_host_product(host_hash, props)
-    parse_host_network(host_hash, props)
-    parse_host_runtime(host_hash, props)
-    parse_host_system_info(host_hash, props)
-    parse_host_children(host_hash, props)
+    parse_host_system_config(host_hash, props)
+    parse_host_system_product(host_hash, props)
+    parse_host_system_network(host_hash, props)
+    parse_host_system_runtime(host_hash, props)
+    parse_host_system_system_info(host_hash, props)
+    parse_host_system_children(host_hash, props)
 
     host_hash[:type] = if host_hash.include?(:vmm_product) && !%w(esx esxi).include?(host_hash[:vmm_product].to_s.downcase)
                          "ManageIQ::Providers::Vmware::InfraManager::Host"
@@ -137,10 +137,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     host = persister.hosts.build(host_hash)
 
-    parse_host_operating_system(host, props)
-    parse_host_system_services(host, props)
-    parse_host_hardware(host, props)
-    parse_host_switches(host, props)
+    parse_host_system_operating_system(host, props)
+    parse_host_system_system_services(host, props)
+    parse_host_system_hardware(host, props)
+    parse_host_system_switches(host, props)
   end
 
   def parse_network(object, props)

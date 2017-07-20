@@ -1,6 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
-  module Cluster
-    def parse_cluster_summary(cluster_hash, props)
+  module ComputeResource
+    def parse_compute_resource_summary(cluster_hash, props)
       if props.include?("summary.effectiveCpu")
         effective_cpu = props["summary.effectiveCpu"]
         cluster_hash[:effective_cpu] = effective_cpu.blank? ? nil : effective_cpu.to_i
@@ -11,7 +11,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_cluster_das_config(cluster_hash, props)
+    def parse_compute_resource_das_config(cluster_hash, props)
       if props.include?("configuration.dasConfig.enabled")
         enabled = props["configuration.dasConfig.enabled"]
         cluster_hash[:ha_enabled] = enabled.to_s.downcase == "true"
@@ -26,7 +26,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_cluster_drs_config(cluster_hash, props)
+    def parse_compute_resource_drs_config(cluster_hash, props)
       if props.include?("configuration.drsConfig.enabled")
         enabled = props["configuration.drsConfig.enabled"]
         cluster_hash[:drs_enabled] = enabled.to_s.downcase == "true"
@@ -39,7 +39,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_cluster_children(cluster_hash, props)
+    def parse_compute_resource_children(cluster_hash, props)
       cluster_hash[:ems_children] = {:rp => []}
 
       if props.include?("resourcePool")

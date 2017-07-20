@@ -1,6 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module HostSystem
-    def parse_host_config(host_hash, props)
+    def parse_host_system_config(host_hash, props)
       if props.include?("config.name")
         host_hash[:uid_ems] = props["config.name"]
       end
@@ -12,7 +12,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_network(host_hash, props)
+    def parse_host_system_network(host_hash, props)
       if props.include?("config.network.dnsConfig.hostName")
         hostname = props["config.network.dnsConfig.hostName"]
         host_hash[:name] = host_hash[:hostname] = hostname
@@ -49,7 +49,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_product(host_hash, props)
+    def parse_host_system_product(host_hash, props)
       if props.include?("summary.config.product.vendor")
         vendor = props["summary.config.product.vendor"].split(",").first.to_s.downcase
         vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
@@ -68,7 +68,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_runtime(host_hash, props)
+    def parse_host_system_runtime(host_hash, props)
       if props.include?("summary.runtime.connectionState")
         connection_state = props["summary.runtime.connectionState"]
 
@@ -92,7 +92,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_system_info(host_hash, props)
+    def parse_host_system_system_info(host_hash, props)
       return unless props.include?("hardware.systemInfo.otherIdentifyingInfo")
 
       asset_tag = service_tag = nil
@@ -110,11 +110,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       host_hash[:service_tag] = service_tag
     end
 
-    def parse_host_children(host_hash, props)
+    def parse_host_system_children(host_hash, props)
       # TODO
     end
 
-    def parse_host_operating_system(host, props)
+    def parse_host_system_operating_system(host, props)
       persister.host_operating_systems.build(
         :host         => host,
         :name         => host.data[:hostname],
@@ -125,11 +125,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       )
     end
 
-    def parse_host_system_services(host, props)
+    def parse_host_system_system_services(host, props)
       # TODO
     end
 
-    def parse_host_hardware(host, props)
+    def parse_host_system_hardware(host, props)
       hardware_hash = {:host => host}
 
       if props.include?("summary.hardware.cpuMhz")
@@ -184,10 +184,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       hardware = persister.host_hardwares.build(hardware_hash)
 
-      parse_host_guest_devices(hardware, props)
+      parse_host_system_guest_devices(hardware, props)
     end
 
-    def parse_host_guest_devices(hardware, props)
+    def parse_host_system_guest_devices(hardware, props)
       if props.include?("config.network.pnic")
         props["config.network.pnic"].to_a.each do |pnic|
           name = uid = pnic.device
@@ -248,7 +248,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_switches(host, props)
+    def parse_host_system_switches(host, props)
       # TODO
     end
   end
