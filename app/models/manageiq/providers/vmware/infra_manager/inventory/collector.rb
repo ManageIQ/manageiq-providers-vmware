@@ -137,7 +137,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         process_object_update_leave(managed_object)
       end
 
-    yield managed_object, props
+    yield managed_object, props if block_given?
+
+    return managed_object, props
   end
 
   def process_object_update_modify(obj, change_set, _missing_set = [])

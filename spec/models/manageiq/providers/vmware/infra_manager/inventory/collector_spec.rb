@@ -21,7 +21,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ]
         )
 
-        props = collector.send(:process_object_update, object_update)
+        _obj, props = collector.send(:process_object_update, object_update)
 
         expect(props).to have_attributes(
           "name"        => "Datacenters",
@@ -33,7 +33,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "VirtualMachine" do
         object_update = virtual_machine_enter_object_update
 
-        props = collector.send(:process_object_update, object_update)
+        _obj, props = collector.send(:process_object_update, object_update)
         expect(props).to have_attributes(
           "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
           "summary.config.name"       => "vm1",
@@ -59,7 +59,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
 
-          props = collector.send(:process_object_update, object_update)
+          _obj, props = collector.send(:process_object_update, object_update)
           expect(props).to have_attributes(
             "summary.config.name" => "vm2"
           )
@@ -74,7 +74,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
 
-          props = collector.send(:process_object_update, object_update)
+          _obj, props = collector.send(:process_object_update, object_update)
           expect(props).to have_attributes(
             "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
             "summary.config.name"       => "vm2",
