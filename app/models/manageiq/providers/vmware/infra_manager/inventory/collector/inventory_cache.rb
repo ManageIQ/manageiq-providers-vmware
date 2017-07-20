@@ -1,9 +1,12 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   module InventoryCache
-    def initialize_inventory_cache
-      Hash.new do |h, k|
-        h[k] = Hash.new { |h1, k1| h1[k1] = {} }
-      end
+    private
+
+    def inventory_cache
+      @inventory_cache ||=
+        Hash.new do |h, k|
+          h[k] = Hash.new { |h1, k1| h1[k1] = Hash.new }
+        end
     end
 
     INVENTORY_CACHE_PROPERTIES = {

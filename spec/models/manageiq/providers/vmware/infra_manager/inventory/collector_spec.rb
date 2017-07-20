@@ -1,8 +1,10 @@
+require 'rbvmomi/vim'
+
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
   let(:ems) { FactoryGirl.create(:ems_vmware_with_authentication) }
   let(:collector) { described_class.new(ems) }
 
-  context "#process_object_update" do
+  context "#process_object_update (private)" do
     let(:root_folder)     { RbVmomi::VIM::Folder(nil, "group-d1") }
     let(:datacenter)      { RbVmomi::VIM::Datacenter(nil, "datacenter-1") }
     let(:virtual_machine) { RbVmomi::VIM::VirtualMachine(nil, "vm-1") }
@@ -19,7 +21,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ]
         )
 
-        props = collector.process_object_update(object_update)
+        props = collector.send(:process_object_update, object_update)
 
         expect(props).to have_attributes(
           "name"        => "Datacenters",
@@ -31,7 +33,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "VirtualMachine" do
         object_update = virtual_machine_enter_object_update
 
-        props = collector.process_object_update(object_update)
+        props = collector.send(:process_object_update, object_update)
         expect(props).to have_attributes(
           "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
           "summary.config.name"       => "vm1",
@@ -45,7 +47,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       context "Change the name of an existing vm" do
         before do
           object_update = virtual_machine_enter_object_update
-          collector.process_object_update(object_update)
+          collector.send(:process_object_update, object_update)
         end
 
         it "Returns the changed name" do
@@ -57,7 +59,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
 
-          props = collector.process_object_update(object_update)
+          props = collector.send(:process_object_update, object_update)
           expect(props).to have_attributes(
             "summary.config.name" => "vm2"
           )
@@ -72,7 +74,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
 
-          props = collector.process_object_update(object_update)
+          props = collector.send(:process_object_update, object_update)
           expect(props).to have_attributes(
             "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
             "summary.config.name"       => "vm2",

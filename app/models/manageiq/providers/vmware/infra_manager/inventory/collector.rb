@@ -3,14 +3,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  attr_accessor :inventory_cache
-  attr_reader   :ems, :exit_requested
-  private       :ems, :exit_requested, :inventory_cache
+  attr_reader :ems, :exit_requested
+  private     :ems, :exit_requested
 
   def initialize(ems)
     @ems             = ems
     @exit_requested  = false
-    @inventory_cache = initialize_inventory_cache
   end
 
   def run
@@ -38,6 +36,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     @exit_requested = true
   end
 
+  private
+
   def connect(host, username, password)
     _log.info("Connecting to #{username}@#{host}...")
 
@@ -63,9 +63,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def wait_for_updates(vim)
     property_filter = create_property_filter(vim)
 
-    # Return if we don't receive any updates for 10 seconds break
+    # Return if we don't receive any updates for 60 seconds break
     # so that we can check if we are supposed to exit
-    options = RbVmomi::VIM.WaitOptions(:maxWaitSeconds => 10)
+    options = RbVmomi::VIM.WaitOptions(:maxWaitSeconds => 60)
 
     # Send the "special initial data version" i.e. an empty string
     # so that we get all inventory back in the first update set
@@ -161,7 +161,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def process_property_change_add(props, property_change)
     name = property_change.name
 
-    props[name] = [] if props[name].nil?
+    props[name] ||= []
     props[name] << property_change.val
   end
 
