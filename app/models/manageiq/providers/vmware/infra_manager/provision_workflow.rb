@@ -144,6 +144,17 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
     return vlans, hosts
   end
 
+  def filter_hosts_by_vlan_name(all_hosts)
+    vlan_name = get_value(@values[:vlan])
+    return all_hosts unless vlan_name
+
+    _log.info("Filtering hosts with the following network: <#{vlan_name}>")
+    shared = !vlan_name.match(/dvs_/).nil?
+    vlan_name.sub!(/^dvs_/, '') if shared
+    MiqPreloader.preload(all_hosts, :lans => :switches)
+    all_hosts.select { |h| h.lans.any? { |lan| lan.name == vlan_name && !lan.switch.shared.blank? == shared } }
+  end
+
   def allowed_storage_profiles(_options = {})
     return [] if (src = resources_for_ui).blank? || src[:vm].nil?
     @values[:placement_storage_profile] ||=
