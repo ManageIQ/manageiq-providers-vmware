@@ -1,0 +1,61 @@
+--- !ruby/hash-with-ivars:VimHash
+elements:
+  name: !ruby/string:VimString
+    str: VMware vCenter Server
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  fullName: !ruby/string:VimString
+    str: VMware vCenter Server 4.1.0 build-5318154
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  vendor: !ruby/string:VimString
+    str: VMware, Inc.
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  version: !ruby/string:VimString
+    str: 6.5.0
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  build: !ruby/string:VimString
+    str: '5318154'
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  localeVersion: !ruby/string:VimString
+    str: INTL
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  localeBuild: !ruby/string:VimString
+    str: '000'
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  osType: !ruby/string:VimString
+    str: linux-x64
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  productLineId: !ruby/string:VimString
+    str: vpx
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  apiType: !ruby/string:VimString
+    str: VirtualCenter
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  apiVersion: !ruby/string:VimString
+    str: '4.1'
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  instanceUuid: !ruby/string:VimString
+    str: EF53782F-6F1A-4471-B338-72B27774AFDD
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  licenseProductName: !ruby/string:VimString
+    str: VMware VirtualCenter Server
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  licenseProductVersion: !ruby/string:VimString
+    str: '4.1'
+    xsiType: :SOAP::SOAPString
+    vimType: 
+ivars:
+  :@xsiType: :AboutInfo
+  :@vimType: 
