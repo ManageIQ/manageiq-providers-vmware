@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+##Fine-3
+
+### Fixed
+- Vm restart guest check fixed [(#64)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/64)
+
 ## Fine-1
 
 ### Added
