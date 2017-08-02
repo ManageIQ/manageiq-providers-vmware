@@ -21,7 +21,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         _log.err("Caught exception #{err.message}")
         _log.log_backtrace(err)
       ensure
-        vim.serviceContent.sessionManager.Logout
+        vim.close unless vim.nil?
         vim = nil
       end
     end
@@ -48,19 +48,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :insecure => true,
       :path     => '/sdk',
       :port     => 443,
-      :user     => username,
-      :password => password,
+      :rev      => '6.5',
     }
 
     require 'rbvmomi/vim'
-
-    vim = RbVmomi::VIM.connect(vim_opts)
+    conn = RbVmomi::VIM.new(vim_opts).tap do |vim|
+      vim.rev = vim.serviceContent.about.apiVersion
+      vim.serviceContent.sessionManager.Login(:userName => username, :password => password)
+    end
 
     _log.info("Connected")
-    vim
+    conn
   end
 
-  def wait_for_updates(vim)
+  def wait_for_updates(vim, run_once: false)
     property_filter = create_property_filter(vim)
 
     # Return if we don't receive any updates for 60 seconds break
@@ -111,6 +112,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       _log.info("Refreshing initial inventory...Complete")
       initial = false
+
+      break if run_once
     end
   ensure
     property_filter.DestroyPropertyFilter unless property_filter.nil?
