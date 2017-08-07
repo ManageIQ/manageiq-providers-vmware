@@ -227,13 +227,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         case backing
         when RbVmomi::VIM::VirtualDeviceFileBackingInfo
           disk_hash[:filename] = backing.fileName
-          disk_hash[:mode] = backing.diskMode
           disk_hash[:storage] = persister.storages.lazy_find(backing.datastore._ref) unless backing.datastore.nil?
         when RbVmomi::VIM::VirtualDeviceRemoteDeviceBackingInfo
           disk_hash[:filename] = backing.deviceName
         end
 
         if device_type == "disk"
+          disk_hash[:mode] = backing.diskMode
           disk_hash[:size] = device.capacityInKB.to_i.kilobytes
           disk_hash[:disk_type] = if backing.kind_of?(RbVmomi::VIM::VirtualDiskRawDiskMappingVer1BackingInfo)
                                     "rdm-#{backing.compatibilityMode.to_s[0...-4]}" # physicalMode or virtualMode
