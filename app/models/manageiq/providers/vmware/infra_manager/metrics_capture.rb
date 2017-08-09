@@ -94,8 +94,13 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       stats    = c['statsType'].to_s.downcase
       unit_key = c.fetch_path('unitInfo', 'key').to_s.downcase
 
+      counter_key = "#{group}_#{name}_#{stats}_#{rollup}"
+
+      # Filter the metrics for only the cols we will use
+      next unless Metric::Capture.capture_cols.include?(counter_key.to_sym)
+
       h[id] = {
-        :counter_key => "#{group}_#{name}_#{stats}_#{rollup}",
+        :counter_key => counter_key,
         :group       => group,
         :name        => name,
         :rollup      => rollup,
@@ -108,53 +113,11 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     phr.store_path(:counter_info_by_id, ems.id, results)
   end
 
-  def self.avail_metrics_for_entity(ems, vim_hist, mor, interval, interval_name)
-    return {} if interval.nil?
-
-    phr = perf_history_results
-    results = phr.fetch_path(:avail_metrics_for_entity, ems.id, mor, interval)
-    return results unless results.nil?
-
-    begin
-      avail_metrics = vim_hist.availMetricsForEntity(mor, :intervalId => interval)
-    rescue Handsoap::Fault, StandardError => err
-      _log.error("EMS: [#{ems.hostname}] The following error occurred: [#{err}]")
-      raise
-    end
-
-    info = counter_info_by_counter_id(ems, vim_hist)
-
-    results = avail_metrics.to_miq_a.each_with_object({}) do |metric, h|
-      counter = info[metric["counterId"]]
-      next if counter.nil?
-
-      # Filter the metrics for only the cols we will use
-      next unless Metric::Capture.capture_cols.include?(counter[:counter_key].to_sym)
-
-      vim_key      = metric["counterId"].to_s
-      instance     = metric["instance"].to_s
-      full_vim_key = "#{vim_key}_#{instance}"
-
-      h[full_vim_key] = {
-        :counter_key           => counter[:counter_key],
-        :rollup                => counter[:rollup],
-        :precision             => counter[:precision],
-        :unit_key              => counter[:unit_key],
-        :vim_key               => vim_key,
-        :instance              => instance,
-        :capture_interval      => interval.to_s,
-        :capture_interval_name => interval_name.to_s
-      }
-    end
-
-    phr.store_path(:avail_metrics_for_entity, ems.id, mor, interval, results)
-  end
-
   #
   # Processing/Converting methods
   #
 
-  def self.preprocess_data(data, counter_values_by_mor_and_ts = {})
+  def self.preprocess_data(data, counter_info = {}, counters_by_mor = {}, counter_values_by_mor_and_ts = {})
     # First process the results into a format we can consume
     processed_res = perf_raw_data_to_hashes(data)
     return unless processed_res.kind_of?(Array)
@@ -163,6 +126,22 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     processed_res.each do |res|
       full_vim_key = "#{res[:counter_id]}_#{res[:instance]}"
       _log.debug { "Processing [#{res[:results].length / 2}] results for MOR: [#{res[:mor]}], instance: [#{res[:instance]}], capture interval [#{res[:interval]}], counter vim key: [#{res[:counter_id]}]" }
+
+      counter = counter_info[res[:counter_id]]
+      next if counter.nil?
+
+      counter_data = {
+        :counter_key           => counter[:counter_key],
+        :rollup                => counter[:rollup],
+        :precision             => counter[:precision],
+        :unit_key              => counter[:unit_key],
+        :vim_key               => res[:counter_id].to_s,
+        :instance              => res[:instance],
+        :capture_interval      => res[:interval],
+        :capture_interval_name => res[:interval] == "20" ? "realtime" : "hourly"
+      }
+
+      counters_by_mor.store_path(res[:mor], full_vim_key, counter_data)
 
       hashes = perf_vim_data_to_hashes(res[:results])
       next if hashes.nil?
@@ -296,10 +275,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       Benchmark.realtime_block(:vim_connect) { perf_init_vim }
 
       objects_by_mor   = objects.each_with_object({}) { |o, h| h[o.ems_ref_obj] = o }
+      counter_info,    = Benchmark.realtime_block(:counter_info)       { self.class.counter_info_by_counter_id(target.ext_management_system, @perf_vim_hist) }
       interval_by_mor, = Benchmark.realtime_block(:capture_intervals)  { perf_capture_intervals(objects_by_mor.keys, interval_name) }
-      counters_by_mor, = Benchmark.realtime_block(:capture_counters)   { perf_capture_counters(interval_by_mor) }
-      query_params,    = Benchmark.realtime_block(:build_query_params) { perf_build_query_params(interval_by_mor, counters_by_mor, start_time, end_time) }
-      counter_values_by_mor_and_ts = perf_query(query_params, interval_name)
+      query_params,    = Benchmark.realtime_block(:build_query_params) { perf_build_query_params(interval_by_mor, counter_info, start_time, end_time) }
+      counters_by_mor, counter_values_by_mor_and_ts = perf_query(query_params, counter_info, interval_name)
 
       return counters_by_mor, counter_values_by_mor_and_ts
     rescue HTTPClient::ReceiveTimeoutError => err
@@ -350,29 +329,25 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     interval_by_mor
   end
 
-  def perf_capture_counters(interval_by_mor)
-    _log.info("Capturing counters...")
-
-    counters_by_mor = {}
-
-    # Query Vim for all of the available metrics and their associated counter info
-    interval_by_mor.each do |mor, interval|
-      counters_by_mor[mor] = self.class.avail_metrics_for_entity(target.ext_management_system, @perf_vim_hist, mor, interval, @perf_intervals[interval.to_s])
-    end
-
-    _log.info("Capturing counters...Complete")
-    counters_by_mor
-  end
-
-  def perf_build_query_params(interval_by_mor, counters_by_mor, start_time, end_time)
+  def perf_build_query_params(interval_by_mor, counter_info, start_time, end_time)
     _log.info("Building query parameters...")
 
     params = []
     interval_by_mor.each do |mor, interval|
-      counters = counters_by_mor[mor]
-      next if counters.empty?
-
       st, et = Metric::Helper.sanitize_start_end_time(interval, @perf_intervals[interval.to_s], start_time, end_time)
+
+      perf_metric_id_set = []
+      counter_info.map do |counter_id, _counter_info|
+        aggregate_instances = "".freeze
+        all_instances       = "*".freeze
+
+        [aggregate_instances, all_instances].each do |instance|
+          perf_metric_id_set << {
+            :counterId => counter_id.to_s,
+            :instance  => instance,
+          }
+        end
+      end
 
       param = {
         :entity     => mor,
@@ -380,7 +355,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
         :startTime  => st,
         :endTime    => et,
         :format     => "csv",
-        :metricId   => counters.values.collect { |counter| {:counterId => counter[:vim_key], :instance => counter[:instance]} }
+        :metricId   => perf_metric_id_set,
       }
       _log.debug { "Adding query params: #{param.inspect}" }
       params << param
@@ -391,7 +366,8 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     params
   end
 
-  def perf_query(params, interval_name)
+  def perf_query(params, counter_info, interval_name)
+    counters_by_mor = {}
     counter_values_by_mor_and_ts = {}
     return counter_values_by_mor_and_ts if params.blank?
 
@@ -407,11 +383,13 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       data, = Benchmark.realtime_block(:vim_execute_time) { @perf_vim_hist.queryPerfMulti(query) }
       _log.debug { "Finished request for [#{query.length}] item(s)" }
 
-      Benchmark.realtime_block(:perf_processing) { self.class.preprocess_data(data, counter_values_by_mor_and_ts) }
+      Benchmark.realtime_block(:perf_processing) do
+        self.class.preprocess_data(data, counter_info, counters_by_mor, counter_values_by_mor_and_ts)
+      end
     end
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
-    counter_values_by_mor_and_ts
+    return counters_by_mor, counter_values_by_mor_and_ts
   end
 
   class << self
