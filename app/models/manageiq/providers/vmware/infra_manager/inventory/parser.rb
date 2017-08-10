@@ -52,7 +52,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     dc_hash = {
       :ems_ref      => object._ref,
       :uid_ems      => object._ref,
-      :type         => "EmsFolder",
+      :type         => "Datacenter",
       :ems_children => {},
     }
 
@@ -168,6 +168,23 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.resource_pools.build(rp_hash)
   end
   alias parse_virtual_app parse_resource_pool
+
+  def parse_storage_pod(object, props)
+    persister.ems_folders.manager_uuids << object._ref
+    return if props.nil?
+
+    pod_hash = {
+      :ems_ref => object._ref,
+      :uid_ems => object._ref,
+      :type    => "StorageCluster",
+    }
+
+    if props.include?("summary.name")
+      pod_hash[:name] = URI.decode(props["summary.name"])
+    end
+
+    persister.ems_folders.build(pod_hash)
+  end
 
   def parse_virtual_machine(object, props)
     persister.vms_and_templates.manager_uuids << object._ref
