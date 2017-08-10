@@ -1,8 +1,44 @@
 require 'rbvmomi/vim'
 
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
-  let(:ems) { FactoryGirl.create(:ems_vmware_with_authentication) }
+  let(:ems) do
+    _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
+    hostname = Rails.application.secrets.vmware.try(:[], "hostname") || "VMWARE_HOSTNAME"
+    FactoryGirl.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
+      username = Rails.application.secrets.vmware.try(:[], "username") || "VMWARE_USERNAME"
+      password = Rails.application.secrets.vmware.try(:[], "password") || "VMWARE_PASSWORD"
+
+      ems.update_authentication(:default => {:userid => username, :password => password})
+    end
+  end
   let(:collector) { described_class.new(ems) }
+
+  context "#wait_for_updates" do
+    it "Performs a full refresh" do
+      2.times do
+        VCR.use_cassette(described_class.name.underscore, :allow_unused_http_interactions => true) do
+          vim = collector.send(:connect, ems.hostname, ems.authentication_userid, ems.authentication_password)
+          collector.send(:wait_for_updates, vim, :run_once => true)
+
+          ems.reload
+
+          assert_table_counts(ems)
+        end
+      end
+    end
+
+    def assert_table_counts(ems)
+      expect(ems.vms_and_templates.count).to eq(512)
+      expect(ems.hosts.count).to eq(32)
+      expect(ems.ems_clusters.count).to eq(8)
+      expect(ems.resource_pools.count).to eq(72)
+      expect(ems.hardwares.count).to eq(512)
+      expect(ems.disks.count).to eq(512)
+      expect(ems.guest_devices.count).to eq(512)
+      expect(ems.operating_systems.count).to eq(512)
+      expect(ems.host_operating_systems.count).to eq(32)
+    end
+  end
 
   context "#process_object_update (private)" do
     let(:root_folder)     { RbVmomi::VIM::Folder(nil, "group-d1") }
