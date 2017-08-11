@@ -36,7 +36,28 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
     )
   end
 
+  def complete
+    true
+  end
+
+  def saver_strategy
+    :default
+  end
+
+  def strategy
+    nil
+  end
+
+  def targeted
+    false
+  end
+
   def inventory_collection_options
-    {}
+    {
+      :complete       => complete,
+      :saver_strategy => saver_strategy,
+      :strategy       => strategy,
+      :targeted       => targeted,
+    }
   end
 end
