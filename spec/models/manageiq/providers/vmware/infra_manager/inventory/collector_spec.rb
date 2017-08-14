@@ -33,6 +33,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def assert_table_counts(ems)
+      expect(ems.ems_folders.count).to eq(21)
+      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
       expect(ems.vms_and_templates.count).to eq(512)
       expect(ems.hosts.count).to eq(32)
       expect(ems.ems_clusters.count).to eq(8)
