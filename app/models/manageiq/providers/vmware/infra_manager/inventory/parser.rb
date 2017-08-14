@@ -52,7 +52,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     dc_hash = {
       :ems_ref      => object._ref,
       :uid_ems      => object._ref,
-      :type         => "EmsFolder",
+      :type         => "Datacenter",
       :ems_children => {},
     }
 
