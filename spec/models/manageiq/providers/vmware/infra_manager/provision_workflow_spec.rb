@@ -270,6 +270,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
           @host2.switches = [s22]
           workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :vlan => ["dvs_#{@lan22.name}", @lan22.name])
           expect(workflow.allowed_hosts_obj).to match_array([@host2])
+          expect(workflow.instance_variable_get(:@values)[:vlan]).to match_array(["dvs_#{@lan22.name}", @lan22.name])
         end
       end
     end
