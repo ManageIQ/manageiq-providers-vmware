@@ -2,13 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## Sprint 67 ending 2017-08-21
+## Unreleased as of Sprint 67 ending 2017-08-21
 - Fix the issue where dvs_ prefix is removed from :vlan in provision's options hash. [(#100)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/100)
 - If there is no vnicDev passed in don't call edit_vlan_device [(#96)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/96)
 - Add a batch inventory persister [(#93)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/93)
 - Only collect storage profile datastores on full refresh [(#83)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/83)
 - Configurably use the RbVmomi Inventory Collector [(#76)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/76)
-
 
 ## Unreleased as of Sprint 66 ending 2017-08-07
 
@@ -31,11 +30,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fix the VM Provisioning issue with auto replacement in selected dvPortGroup network. [(#78)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/78)
 
-## Unreleased as of Sprint 63 ending 2017-06-19
-
-### Fixed
-- Vm restart guest check fixed [(#64)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/64)
-
 ## Unreleased as of Sprint 61 ending 2017-05-22
 
 ### Added
@@ -45,6 +39,11 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Decode slashes in more VMware inventory type names [(#53)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/53)
+
+## Fine-3
+
+### Fixed
+- Vm restart guest check fixed [(#64)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/64)
 
 ## Fine-1
 
