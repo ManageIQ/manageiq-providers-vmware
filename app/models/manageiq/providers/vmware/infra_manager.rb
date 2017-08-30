@@ -121,26 +121,9 @@ module ManageIQ::Providers
     end
 
     def verify_credentials(auth_type = nil, _options = {})
-      raise "no credentials defined" if self.missing_credentials?(auth_type)
-
-      begin
+      self.class.validate_connection do
         with_provider_connection(:use_broker => false, :auth_type => auth_type) {}
-      rescue SocketError, Errno::EHOSTUNREACH, Errno::ENETUNREACH
-        _log.warn($!.inspect)
-        raise MiqException::MiqUnreachableError, $!.message
-      rescue Handsoap::Fault
-        _log.warn($!.inspect)
-        if $!.respond_to?(:reason)
-          raise MiqException::MiqInvalidCredentialsError, $!.reason if $!.reason =~ /Authorize Exception|incorrect user name or password/
-          raise $!.reason
-        end
-        raise $!.message
-      rescue Exception
-        _log.warn($!.inspect)
-        raise "Unexpected response returned from #{ui_lookup(:table => "ext_management_systems")}, see log for details"
       end
-
-      true
     end
 
     def reset_vim_cache
