@@ -20,19 +20,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         storage_hash[:uncommitted] = props["summary.uncommitted"]
       end
       if props.include?("summary.multipleHostAccess")
-        storage_hash[:multiplehostaccess] = props["summary.multipleHostAccess"].to_s.downcase == "true"
+        storage_hash[:multiplehostaccess] = props["summary.multipleHostAccess"] ? 1 : 0 # TODO: why is this an integer?
       end
     end
 
     def parse_datastore_capability(storage_hash, props)
       if props.include?("capability.directoryHierarchySupported")
-        storage_hash[:directory_hierarchy_supported] = props["capability.directoryHierarchySupported"].to_s.downcase == 'true'
+        storage_hash[:directory_hierarchy_supported] = props["capability.directoryHierarchySupported"]
       end
       if props.include?("capability.perFileThinProvisioningSupported")
-        storage_hash[:thin_provisioning_supported] = props["capability.perFileThinProvisioningSupported"].to_s.downcase == 'true'
+        storage_hash[:thin_provisioning_supported] = props["capability.perFileThinProvisioningSupported"]
       end
       if props.include?("capability.rawDiskMappingsSupported")
-        storage_hash[:raw_disk_mappings_supported] = props["capability.rawDiskMappingsSupported"].to_s.downcase == 'true'
+        storage_hash[:raw_disk_mappings_supported] = props["capability.rawDiskMappingsSupported"]
       end
     end
 
