@@ -74,10 +74,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("Refreshing initial inventory...")
 
-    # Use the full refresh persister for the initial UpdateSet from WaitForUpdates
-    # After the initial UpdateSet this will change to a targeted persister
-    persister = ems.class::Inventory::Persister.new(ems)
-
     initial = true
     until exit_requested
       update_set = vim.propertyCollector.WaitForUpdatesEx(:version => version, :options => options)
@@ -89,8 +85,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       property_filter_update_set = update_set.filterSet
       next if property_filter_update_set.blank?
 
-      # After the initial UpdateSet switch to a targeted persister
-      persister ||= ems.class::Inventory::Persister::Targeted.new(ems)
+      persister ||= ems.class::Inventory::Persister::Batch.new(ems)
       parser    ||= ems.class::Inventory::Parser.new(persister)
 
       property_filter_update_set.each do |property_filter_update|
@@ -102,11 +97,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         process_object_update_set(object_update_set) { |obj, props| parser.parse(obj, props) }
       end
 
-      next if update_set.truncated
-
       ManagerRefresh::SaveInventory.save_inventory(ems, persister.inventory_collections)
       persister = nil
       parser = nil
+
+      next if update_set.truncated
 
       next unless initial
 
