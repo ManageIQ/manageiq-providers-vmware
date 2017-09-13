@@ -1,5 +1,3 @@
-require "csv"
-
 class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Providers::BaseManager::MetricsCapture
   VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME = {'hourly' => 'Past Month'}
   MIQ_INTERVAL_NAME_BY_VIM_INTERVAL_NAME = VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME.invert
@@ -238,12 +236,12 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     end
 
     values = data['value'].to_miq_a
-    samples = CSV.parse(data['sampleInfoCSV'].to_s).first.to_miq_a
+    samples = data['sampleInfoCSV'].to_s.split(",")
 
     ret = []
     values.each do |v|
       id, v = v.values_at('id', 'value')
-      v = CSV.parse(v.to_s).first.to_miq_a
+      v = v.to_s.split(",")
 
       nh = {}.merge!(base)
       nh[:counter_id] = id['counterId']
