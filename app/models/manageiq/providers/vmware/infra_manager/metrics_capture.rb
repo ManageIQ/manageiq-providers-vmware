@@ -56,7 +56,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     _log.info("Parsing metrics...")
     metrics_payload = entity_metrics.collect do |metric|
       counters       = {}
-      counter_values = Hash.new { |h, k| h[k] = {} }
+      counter_values = {}
 
       processed_res = parse_metric(metric)
       processed_res.each do |res|
@@ -76,6 +76,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
         }
 
         Array(res[:results]).each_slice(2) do |timestamp, value|
+          counter_values[timestamp] ||= {}
           counter_values[timestamp][full_vim_key] = value
         end
       end

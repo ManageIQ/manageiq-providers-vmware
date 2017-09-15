@@ -13,5 +13,16 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCollectorWorker::Runner 
     metrics = @metrics_capture.perf_collect_metrics(@start_time)
 
     @start_time = Time.now
+
+    MiqQueue.put(
+      :class_name => @ems.class.name,
+      :method_name => "perf_save_metrics",
+      :instance_id => @ems.id,
+      :zone        => @ems.my_zone,
+      :role        => 'ems_metrics_processor',
+      :queue_name  => 'ems_metrics_processor',
+      :priority    => MiqQueue::NORMAL_PRIORITY,
+      :data        => metrics,
+    )
   end
 end
