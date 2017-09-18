@@ -1,3 +1,5 @@
+require "csv"
+
 class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Providers::BaseManager::MetricsCapture
   VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME = {'hourly' => 'Past Month'}
   MIQ_INTERVAL_NAME_BY_VIM_INTERVAL_NAME = VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME.invert
@@ -236,20 +238,21 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     end
 
     values = data['value'].to_miq_a
-    samples = data['sampleInfo'].to_miq_a
+    samples = CSV.parse(data['sampleInfoCSV'].to_s).first.to_miq_a
 
     ret = []
     values.each do |v|
       id, v = v.values_at('id', 'value')
+      v = CSV.parse(v.to_s).first.to_miq_a
 
       nh = {}.merge!(base)
       nh[:counter_id] = id['counterId']
       nh[:instance]   = id['instance']
 
       nh[:results] = []
-      samples.each_with_index do |s, i|
-        nh[:interval] ||= s['interval']
-        nh[:results] << s['timestamp']
+      samples.each_slice(2).with_index do |(interval, timestamp), i|
+        nh[:interval] ||= interval
+        nh[:results] << timestamp
         nh[:results] << v[i].to_i
       end
 
@@ -383,6 +386,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
         :intervalId => interval,
         :startTime  => st,
         :endTime    => et,
+        :format     => "csv",
         :metricId   => counters.values.collect { |counter| {:counterId => counter[:vim_key], :instance => counter[:instance]} }
       }
       _log.debug("Adding query params: #{param.inspect}")
