@@ -87,12 +87,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     context "modify" do
-      context "Change the name of an existing vm" do
-        before do
-          object_update = virtual_machine_enter_object_update
-          collector.send(:process_object_update, object_update)
-        end
+      before do
+        collector.send(:process_object_update, virtual_machine_enter_object_update)
+      end
 
+      context "Change the name of an existing vm" do
         it "Returns the changed name" do
           object_update = RbVmomi::VIM::ObjectUpdate(
             :obj       => virtual_machine,
@@ -124,6 +123,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
             "summary.config.template"   => false,
           )
+        end
+      end
+
+      context "Removing a disk from a vm" do
+        let(:object_update) do
+          RbVmomi::VIM::ObjectUpdate(
+            :obj       => virtual_machine,
+            :kind      => "modify",
+            :changeSet => [
+              RbVmomi::VIM::PropertyChange(:name => "config.hardware.device[1000].device", :op=>"assign", :val=>[2000]),
+              RbVmomi::VIM::PropertyChange(:name=>"config.hardware.device[2001]", :op=>"remove"),
+              RbVmomi::VIM::PropertyChange(:name=>"summary.storage.committed", :op=>"assign", :val=>2218450501),
+              RbVmomi::VIM::PropertyChange(:name=>"summary.storage.unshared", :op=>"assign", :val=>2218439231),
+            ]
+          )
+        end
+
+        it "Parses the removed disk" do
+          persister = ems.class::Inventory::Persister::Targeted.new(ems)
+          parser    = ems.class::Inventory::Parser.new(persister)
+
+          collector.send(:process_object_update, object_update) { |obj, props| parser.parse(obj, props) }
         end
       end
     end
