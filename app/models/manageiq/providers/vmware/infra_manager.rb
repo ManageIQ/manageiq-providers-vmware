@@ -124,6 +124,7 @@ module ManageIQ::Providers
       self.class.validate_connection do
         with_provider_connection(:use_broker => false, :auth_type => auth_type) {}
       end
+      true
     end
 
     def reset_vim_cache
