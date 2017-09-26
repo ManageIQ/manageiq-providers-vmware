@@ -20,10 +20,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     raise "Missing parser for #{object_type}" unless respond_to?(parse_method)
 
-    send(parse_method, object, props)
+    send(parse_method, object, props[:update])
   end
 
-  def parse_compute_resource(object, props)
+  def parse_compute_resource(object, props, remove_props = [])
     persister.ems_clusters.manager_uuids << object._ref
     return if props.nil?
 
@@ -45,7 +45,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_cluster_compute_resource parse_compute_resource
 
-  def parse_datacenter(object, props)
+  def parse_datacenter(object, props, remove_props = [])
     persister.ems_folders.manager_uuids << object._ref
     return if props.nil?
 
@@ -65,7 +65,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(dc_hash)
   end
 
-  def parse_datastore(object, props)
+  def parse_datastore(object, props, remove_props = [])
     persister.storages.manager_uuids << object._ref
     return if props.nil?
 
@@ -81,7 +81,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_datastore_host_mount(storage, object._ref, props)
   end
 
-  def parse_distributed_virtual_switch(object, props)
+  def parse_distributed_virtual_switch(object, props, remove_props = [])
     persister.switches.manager_uuids << object._ref
     return if props.nil?
 
@@ -94,7 +94,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
-  def parse_folder(object, props)
+  def parse_folder(object, props, remove_props = [])
     persister.ems_folders.manager_uuids << object._ref
     return if props.nil?
 
@@ -114,7 +114,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(folder_hash)
   end
 
-  def parse_host_system(object, props)
+  def parse_host_system(object, props, remove_props = [])
     persister.hosts.manager_uuids << object._ref
     return if props.nil?
 
@@ -143,11 +143,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_switches(host, props)
   end
 
-  def parse_network(object, props)
+  def parse_network(object, props, remove_props = [])
   end
   alias parse_distributed_virtual_portgroup parse_network
 
-  def parse_resource_pool(object, props)
+  def parse_resource_pool(object, props, remove_props = [])
     persister.resource_pools.manager_uuids << object._ref
     return if props.nil?
 
@@ -169,7 +169,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_virtual_app parse_resource_pool
 
-  def parse_storage_pod(object, props)
+  def parse_storage_pod(object, props, remove_props = [])
     persister.ems_folders.manager_uuids << object._ref
     return if props.nil?
 
@@ -186,7 +186,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(pod_hash)
   end
 
-  def parse_virtual_machine(object, props)
+  def parse_virtual_machine(object, props, remove_props = [])
     persister.vms_and_templates.manager_uuids << object._ref
     return if props.nil?
 

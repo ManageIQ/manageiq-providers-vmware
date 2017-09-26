@@ -131,7 +131,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def process_object_update(object_update)
     managed_object = object_update.obj
-
     props =
       case object_update.kind
       when "enter", "modify"
@@ -150,6 +149,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     obj_ref  = obj._ref
 
     props = inventory_cache[obj_type][obj_ref].dup
+    remove_props = []
 
     change_set.each do |property_change|
       next if property_change.nil?
@@ -158,15 +158,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       when 'add'
         process_property_change_add(props, property_change)
       when 'remove', 'indirectRemove'
-        process_property_change_remove(props, property_change)
+        process_property_change_remove(props, remove_props, property_change)
       when 'assign'
         process_property_change_assign(props, property_change)
       end
     end
 
-    update_inventory_cache(obj_type, obj_ref, props)
+    change_props = {
+      :update => props,
+      :remove => remove_props,
+    }
 
-    props
+    update_inventory_cache(obj_type, obj_ref, props)
+    change_props
   end
 
   def process_object_update_leave(obj)
@@ -185,8 +189,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     props[name] << property_change.val
   end
 
-  def process_property_change_remove(props, property_change)
-    props[property_change.name] = nil
+  def process_property_change_remove(props, remove_props, property_change)
+    props.delete(property_change.name)
+    remove_props.push(property_change.name)
   end
 
   def process_property_change_assign(props, property_change)

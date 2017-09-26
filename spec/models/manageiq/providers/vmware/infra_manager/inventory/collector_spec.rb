@@ -139,16 +139,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
         end
-        let(:update_props) do
+        let(:built_props) do
           {
             "config.hardware.device[1000].device" => [2000],
             "summary.config.name"                 => "vm1",
             "summary.config.template"             => false,
             "summary.config.uuid"                 => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
+            "summary.runtime.powerState"          => "poweredOff",
             "summary.config.vmPathName"           => "[datastore1] vm1/vm1.vmx",
             "summary.storage.committed"           => 2218450501,
             "summary.storage.unshared"            => 2218439231,
-            "config.hardware.device[2001]"        => nil,
           }
         end
 
@@ -156,6 +156,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           persister = ems.class::Inventory::Persister::Targeted.new(ems)
           parser    = ems.class::Inventory::Parser.new(persister)
 
+          update_props = {
+            :update => built_props,
+            :remove => ["config.hardware.device[2001]"]
+          }
           collector.send(:process_object_update, object_update, ) { |obj, props| parser.parse(obj, props)
             expect(props).to eq(update_props)
           }
