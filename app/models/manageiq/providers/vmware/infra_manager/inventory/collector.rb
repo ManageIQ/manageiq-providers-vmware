@@ -186,7 +186,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def process_property_change_remove(props, property_change)
-    props.delete(property_change.name)
+    props[property_change.name] = nil
   end
 
   def process_property_change_assign(props, property_change)

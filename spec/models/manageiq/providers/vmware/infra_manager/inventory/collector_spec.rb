@@ -139,7 +139,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ]
           )
         end
-        let(:props) do
+        let(:update_props) do
           {
             "config.hardware.device[1000].device" => [2000],
             "summary.config.name"                 => "vm1",
@@ -148,6 +148,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             "summary.config.vmPathName"           => "[datastore1] vm1/vm1.vmx",
             "summary.storage.committed"           => 2218450501,
             "summary.storage.unshared"            => 2218439231,
+            "config.hardware.device[2001]"        => nil,
           }
         end
 
@@ -156,7 +157,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           parser    = ems.class::Inventory::Parser.new(persister)
 
           collector.send(:process_object_update, object_update, ) { |obj, props| parser.parse(obj, props)
-            expect(props).to eq(props)
+            expect(props).to eq(update_props)
           }
         end
       end
