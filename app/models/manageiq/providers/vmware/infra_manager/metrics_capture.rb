@@ -1,3 +1,5 @@
+require "csv"
+
 class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Providers::BaseManager::MetricsCapture
   VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME = {'hourly' => 'Past Month'}
   MIQ_INTERVAL_NAME_BY_VIM_INTERVAL_NAME = VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME.invert
@@ -236,12 +238,12 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     end
 
     values = data['value'].to_miq_a
-    samples = data['sampleInfoCSV'].to_s.split(",")
+    samples = parse_csv_safe(data['sampleInfoCSV'].to_s)
 
     ret = []
     values.each do |v|
       id, v = v.values_at('id', 'value')
-      v = v.to_s.split(",")
+      v = parse_csv_safe(v.to_s)
 
       nh = {}.merge!(base)
       nh[:counter_id] = id['counterId']
@@ -417,5 +419,17 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     counter_values_by_mor_and_ts
+  end
+
+  class << self
+    private
+
+    def parse_csv_safe(str)
+      if str.include?("\"")
+        CSV.parse(str).first.to_miq_a
+      else
+        str.split(",")
+      end
+    end
   end
 end
