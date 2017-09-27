@@ -6,7 +6,8 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     # This will be done by the VimBrokerWorker, when he is ready.
 
     if Settings.prototype.ems_vmware.update_driven_refresh
-      @collector = ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(@ems)
+      ems = @emss.first
+      @collector = ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems)
       @collector_thread = start_inventory_collector(@collector)
     end
   end
