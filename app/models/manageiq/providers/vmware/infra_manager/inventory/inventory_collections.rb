@@ -41,5 +41,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes = {:model_class => ManageIQ::Providers::Vmware::InfraManager::HostEsx}
       super(attributes.merge(extra_attributes))
     end
+
+    def hardwares(extra_attributes = {})
+      attributes = {:parent_inventory_collections => [:vms_and_templates]}
+      super(attributes.merge(extra_attributes))
+    end
+
+    def disks(extra_attributes = {})
+      attributes = {:parent_inventory_collections => [:vms_and_templates]}
+      super(attributes.merge(extra_attributes))
+    end
   end
 end
