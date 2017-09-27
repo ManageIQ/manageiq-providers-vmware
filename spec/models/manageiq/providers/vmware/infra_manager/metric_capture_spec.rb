@@ -96,7 +96,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
 
           it "should have collected performances" do
             # Check Vm record was updated
-            expect(@vm.last_perf_capture_on.utc.iso8601).to eq("2011-08-12T21:33:00Z")
+            expect(@vm.reload.last_perf_capture_on.utc.iso8601).to eq("2011-08-12T21:33:00Z")
 
             # Check performances
             expect(Metric.count).to eq(180)
