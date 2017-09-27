@@ -160,6 +160,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             :update => built_props,
             :remove => ["config.hardware.device[2001]"]
           }
+          expect(collector).to receive(:update_inventory_cache).with("VirtualMachine", "vm-1", built_props)
           collector.send(:process_object_update, object_update, ) { |obj, props| parser.parse(obj, props)
             expect(props).to eq(update_props)
           }
