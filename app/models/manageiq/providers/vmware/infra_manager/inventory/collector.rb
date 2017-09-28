@@ -154,6 +154,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     change_set.each do |property_change|
       next if property_change.nil?
 
+      props = build_prop_hash(props, property_change.name)
+
       case property_change.op
       when 'add'
         process_property_change_add(props, property_change)
@@ -196,5 +198,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def process_property_change_assign(props, property_change)
     props[property_change.name] = property_change.val
+  end
+
+  def build_prop_hash(props, prop_name)
+  # 1. slice prop_name by boundary of `[]`
+  # 2. create the [] in props and make the next slice as children of the []
+  # 'config.hardware.device[1000].device[1000].name'
+  # {
+  #   'config.hardware.device' => [
+  #     {
+  #       :key => 1000
+  #       ...
+  #     },
+  #     {
+  #       :key => 400
+  #       :device => [
+  #         :key => 8000
+  #         ...
+  #       ]
+  #     }
+  #    ]
+  # }
+    {}
   end
 end

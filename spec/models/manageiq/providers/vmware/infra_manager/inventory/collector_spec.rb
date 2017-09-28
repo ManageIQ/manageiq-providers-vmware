@@ -91,6 +91,31 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         collector.send(:process_object_update, virtual_machine_enter_object_update)
       end
 
+      context "#build_prop_hash" do
+        it "expands on array" do
+          result_hash = collector.send(:build_prop_hash, {}, 'config.hardware.device[400]')
+          expect(result_hash).to eq(
+            'config.hardware.device' => [
+              {
+                :key => 400
+              }
+            ])
+        end
+
+        it "expands on nested array" do
+          result_hash = collector.send(:build_prop_hash, {}, 'config.hardware.device[400].device[8000]')
+          expect(result_hash).to eq(
+            'config.hardware.device' => [
+              {
+                :key    => 400,
+                :device => [
+                  :key => 8000,
+                ]
+              }
+            ])
+        end
+      end
+
       context "Change the name of an existing vm" do
         it "Returns the changed name" do
           object_update = RbVmomi::VIM::ObjectUpdate(
