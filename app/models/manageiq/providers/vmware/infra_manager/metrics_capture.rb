@@ -238,12 +238,12 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     end
 
     values = data['value'].to_miq_a
-    samples = CSV.parse(data['sampleInfoCSV'].to_s).first.to_miq_a
+    samples = parse_csv_safe(data['sampleInfoCSV'].to_s)
 
     ret = []
     values.each do |v|
       id, v = v.values_at('id', 'value')
-      v = CSV.parse(v.to_s).first.to_miq_a
+      v = parse_csv_safe(v.to_s)
 
       nh = {}.merge!(base)
       nh[:counter_id] = id['counterId']
@@ -419,5 +419,17 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     counter_values_by_mor_and_ts
+  end
+
+  class << self
+    private
+
+    def parse_csv_safe(str)
+      if str.include?("\"")
+        CSV.parse(str).first.to_miq_a
+      else
+        str.split(",")
+      end
+    end
   end
 end
