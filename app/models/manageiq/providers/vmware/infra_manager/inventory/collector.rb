@@ -131,7 +131,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def process_object_update(object_update)
     managed_object = object_update.obj
-
     props =
       case object_update.kind
       when "enter", "modify"
@@ -150,23 +149,30 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     obj_ref  = obj._ref
 
     props = inventory_cache[obj_type][obj_ref].dup
+    remove_props = []
 
     change_set.each do |property_change|
       next if property_change.nil?
+
+      props = build_prop_hash(props, property_change.name)
 
       case property_change.op
       when 'add'
         process_property_change_add(props, property_change)
       when 'remove', 'indirectRemove'
-        process_property_change_remove(props, property_change)
+        process_property_change_remove(props, remove_props, property_change)
       when 'assign'
         process_property_change_assign(props, property_change)
       end
     end
 
-    update_inventory_cache(obj_type, obj_ref, props)
+    change_props = {
+      :update => props,
+      :remove => remove_props,
+    }
 
-    props
+    update_inventory_cache(obj_type, obj_ref, props)
+    change_props
   end
 
   def process_object_update_leave(obj)
@@ -185,11 +191,34 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     props[name] << property_change.val
   end
 
-  def process_property_change_remove(props, property_change)
+  def process_property_change_remove(props, remove_props, property_change)
     props.delete(property_change.name)
+    remove_props.push(property_change.name)
   end
 
   def process_property_change_assign(props, property_change)
     props[property_change.name] = property_change.val
+  end
+
+  def build_prop_hash(props, prop_name)
+  # 1. slice prop_name by boundary of `[]`
+  # 2. create the [] in props and make the next slice as children of the []
+  # 'config.hardware.device[1000].device[1000].name'
+  # {
+  #   'config.hardware.device' => [
+  #     {
+  #       :key => 1000
+  #       ...
+  #     },
+  #     {
+  #       :key => 400
+  #       :device => [
+  #         :key => 8000
+  #         ...
+  #       ]
+  #     }
+  #    ]
+  # }
+    {}
   end
 end

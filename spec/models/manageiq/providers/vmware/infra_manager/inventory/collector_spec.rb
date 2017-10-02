@@ -87,12 +87,36 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     context "modify" do
-      context "Change the name of an existing vm" do
-        before do
-          object_update = virtual_machine_enter_object_update
-          collector.send(:process_object_update, object_update)
+      before do
+        collector.send(:process_object_update, virtual_machine_enter_object_update)
+      end
+
+      context "#build_prop_hash" do
+        it "expands on array" do
+          result_hash = collector.send(:build_prop_hash, {}, 'config.hardware.device[400]')
+          expect(result_hash).to eq(
+            'config.hardware.device' => [
+              {
+                :key => 400
+              }
+            ])
         end
 
+        it "expands on nested array" do
+          result_hash = collector.send(:build_prop_hash, {}, 'config.hardware.device[400].device[8000]')
+          expect(result_hash).to eq(
+            'config.hardware.device' => [
+              {
+                :key    => 400,
+                :device => [
+                  :key => 8000,
+                ]
+              }
+            ])
+        end
+      end
+
+      context "Change the name of an existing vm" do
         it "Returns the changed name" do
           object_update = RbVmomi::VIM::ObjectUpdate(
             :obj       => virtual_machine,
@@ -124,6 +148,47 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
             "summary.config.template"   => false,
           )
+        end
+      end
+
+      context "Removing a disk from a vm" do
+        let(:object_update) do
+          RbVmomi::VIM::ObjectUpdate(
+            :obj       => virtual_machine,
+            :kind      => "modify",
+            :changeSet => [
+              RbVmomi::VIM::PropertyChange(:name => "config.hardware.device[1000].device", :op=>"assign", :val=>[2000]),
+              RbVmomi::VIM::PropertyChange(:name=>"config.hardware.device[2001]", :op=>"remove"),
+              RbVmomi::VIM::PropertyChange(:name=>"summary.storage.committed", :op=>"assign", :val=>2218450501),
+              RbVmomi::VIM::PropertyChange(:name=>"summary.storage.unshared", :op=>"assign", :val=>2218439231),
+            ]
+          )
+        end
+        let(:built_props) do
+          {
+            "config.hardware.device[1000].device" => [2000],
+            "summary.config.name"                 => "vm1",
+            "summary.config.template"             => false,
+            "summary.config.uuid"                 => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
+            "summary.runtime.powerState"          => "poweredOff",
+            "summary.config.vmPathName"           => "[datastore1] vm1/vm1.vmx",
+            "summary.storage.committed"           => 2218450501,
+            "summary.storage.unshared"            => 2218439231,
+          }
+        end
+
+        it "Parses the removed disk" do
+          persister = ems.class::Inventory::Persister::Targeted.new(ems)
+          parser    = ems.class::Inventory::Parser.new(persister)
+
+          update_props = {
+            :update => built_props,
+            :remove => ["config.hardware.device[2001]"]
+          }
+          expect(collector).to receive(:update_inventory_cache).with("VirtualMachine", "vm-1", built_props)
+          collector.send(:process_object_update, object_update, ) { |obj, props| parser.parse(obj, props)
+            expect(props).to eq(update_props)
+          }
         end
       end
     end
