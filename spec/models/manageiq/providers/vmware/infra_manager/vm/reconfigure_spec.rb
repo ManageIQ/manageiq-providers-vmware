@@ -300,7 +300,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
         allow(vim).to receive(:available_scsi_units).and_return([])
         allow(vim).to receive(:available_scsi_buses).and_return([0, 1, 2, 3])
 
-        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, 0, -99).once
+        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, nil, 0, -99).once
+        expect(vm).to receive(:add_disk_config_spec).with(vmcs, disk).once
+        vm.add_disks(vim, vmcs, hardware, [disk])
+      end
+
+      it 'with a defined new controller type' do
+        sas_controller = 'VirtualLsiLogicSASController'
+        disk[:new_controller_type] = sas_controller
+
+        allow(vim).to receive(:available_scsi_units).and_return([])
+        allow(vim).to receive(:available_scsi_buses).and_return([0, 1, 2, 3])
+
+        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, sas_controller, 0, -99).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, disk).once
         vm.add_disks(vim, vmcs, hardware, [disk])
       end
@@ -350,7 +362,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
           disks[1].merge(:controller_key => -99,  :unit_number => 0)
         ]
 
-        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, 1, -99).once
+        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, nil, 1, -99).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[0]).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[1]).once
 
@@ -366,7 +378,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
           disks[1].merge(:controller_key => -99,  :unit_number => 0)
         ]
 
-        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, 2, -99).once
+        expect(vm).to receive(:add_scsi_controller).with(vim, vmcs, hardware, nil, 2, -99).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[0]).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[1]).once
 

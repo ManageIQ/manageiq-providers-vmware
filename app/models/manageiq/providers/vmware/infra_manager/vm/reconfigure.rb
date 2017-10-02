@@ -120,8 +120,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
         new_scsi_bus_number = available_scsi_buses.shift
         break if new_scsi_bus_number.nil? # No more scsi controllers can be added
 
+        # Use the controller type passed in if it is available
+        new_scsi_type = d[:new_controller_type]
+
         # Add a new controller with this reconfig task
-        add_scsi_controller(vim_obj, vmcs, hardware, new_scsi_bus_number, new_scsi_controller_key)
+        add_scsi_controller(vim_obj, vmcs, hardware, new_scsi_type, new_scsi_bus_number, new_scsi_controller_key)
 
         # Add all units on the new controller as available
         new_scsi_units = scsi_controller_units(new_scsi_controller_key)
@@ -145,8 +148,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-  def add_scsi_controller(vim_obj, vmcs, hardware, bus_number, dev_key)
-    device_type = get_new_scsi_controller_device_type(vim_obj, hardware)
+  def add_scsi_controller(vim_obj, vmcs, hardware, device_type, bus_number, dev_key)
+    device_type ||= get_new_scsi_controller_device_type(vim_obj, hardware)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
       vdcs.device = VimHash.new(device_type) do |dev|
         dev.sharedBus = VimString.new('noSharing', 'VirtualSCSISharing')
