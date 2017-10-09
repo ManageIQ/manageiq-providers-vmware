@@ -336,16 +336,16 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
   def perf_build_query_params(interval_by_mor, counter_info, start_time, end_time)
     _log.info("Building query parameters...")
 
+    perf_metric_id_set = counter_info.map do |counter_id, _counter_info|
+      {
+        :counterId => counter_id.to_s,
+        :instance  => VIM_PERF_METRIC_ALL_INSTANCES,
+      }
+    end
+
     params = []
     interval_by_mor.each do |mor, interval|
       st, et = Metric::Helper.sanitize_start_end_time(interval, @perf_intervals[interval.to_s], start_time, end_time)
-
-      perf_metric_id_set = counter_info.map do |counter_id, _counter_info|
-        {
-          :counterId => counter_id.to_s,
-          :instance  => VIM_PERF_METRIC_ALL_INSTANCES,
-        }
-      end
 
       param = {
         :entity     => mor,
