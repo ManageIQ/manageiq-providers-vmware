@@ -4,6 +4,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
   VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME = {'hourly' => 'Past Month'}
   MIQ_INTERVAL_NAME_BY_VIM_INTERVAL_NAME = VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME.invert
 
+  # Per VMware Documentation Large-Scale Performance Data Retrieval:
+  # For the instance property, specify an asterisk ("*") to retrieve instance and aggregate data
+  VIM_PERF_METRIC_ALL_INSTANCES = "*".freeze
+
   #
   # MiqVimPerfHistory methods (with caching)
   #
@@ -336,17 +340,11 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     interval_by_mor.each do |mor, interval|
       st, et = Metric::Helper.sanitize_start_end_time(interval, @perf_intervals[interval.to_s], start_time, end_time)
 
-      perf_metric_id_set = []
-      counter_info.map do |counter_id, _counter_info|
-        aggregate_instances = "".freeze
-        all_instances       = "*".freeze
-
-        [aggregate_instances, all_instances].each do |instance|
-          perf_metric_id_set << {
-            :counterId => counter_id.to_s,
-            :instance  => instance,
-          }
-        end
+      perf_metric_id_set = counter_info.map do |counter_id, _counter_info|
+        {
+          :counterId => counter_id.to_s,
+          :instance  => VIM_PERF_METRIC_ALL_INSTANCES,
+        }
       end
 
       param = {
