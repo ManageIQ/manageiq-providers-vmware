@@ -34,7 +34,7 @@ module ManageIQ::Providers
     end
 
     def remote_console_vmrc_acquire_ticket
-      vim = connect
+      vim = connect(:auth_type => :console)
       ticket = vim.acquireCloneTicket
 
       # The ticket received is valid for 30 seconds, but we can't disconnect the
