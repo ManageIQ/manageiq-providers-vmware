@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## Fine-4
+
+## Fixed
+- Fix the issue where dvs prefix is removed from vlan in provisions options hash. [(#100)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/100)
+- If there is no vnicDev passed in don't call edit_vlan_device [(#96)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/96)
+- Dealing with disks which have no controller key [(#77)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/77)
+- Don't queue a refresh on RefreshWorker start [(#75)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/75)
+- Fix the VM Provisioning issue with auto replacement in selected dvPortGroup network. [(#78)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/78)
+
 ##Fine-3
 
 ### Fixed
