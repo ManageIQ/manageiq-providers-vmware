@@ -159,13 +159,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-  def get_new_scsi_controller_device_type(vim_obj, hardware)
-    default_scsi_type = 'VirtualLsiLogicController'
+  def scsi_controller_types
+    %w(VirtualLsiLogicController ParaVirtualSCSIController VirtualBusLogicController VirtualLsiLogicSASController)
+  end
 
+  def scsi_controller_default_type
+    'VirtualLsiLogicController'
+  end
+
+  def get_new_scsi_controller_device_type(vim_obj, hardware)
     scsi_controllers = vim_obj.getScsiControllers(hardware)
 
     last_scsi_controller = scsi_controllers.sort_by { |c| c["key"].to_i }.last
-    device_type = last_scsi_controller.try(:xsiType) || default_scsi_type
+    device_type = last_scsi_controller.try(:xsiType) || scsi_controller_default_type
 
     device_type
   end
