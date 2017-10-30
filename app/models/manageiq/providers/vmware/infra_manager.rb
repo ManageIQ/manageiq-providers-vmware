@@ -33,6 +33,14 @@ module ManageIQ::Providers
       @description ||= "VMware vCenter".freeze
     end
 
+    def supported_auth_types
+      %w(default console)
+    end
+
+    def supports_authentication?(authtype)
+      supported_auth_types.include?(authtype.to_s)
+    end
+
     def remote_console_vmrc_acquire_ticket
       vim = connect(:auth_type => :console)
       ticket = vim.acquireCloneTicket
