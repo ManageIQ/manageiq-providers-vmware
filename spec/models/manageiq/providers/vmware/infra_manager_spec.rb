@@ -81,6 +81,48 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
+  context "#remote_console_vmrc_acquire_ticket" do
+    let(:ems) do
+      _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
+      FactoryGirl.create(:ems_vmware, :zone => zone)
+    end
+
+    context "with console credentials" do
+      before do
+        ems.authentications << FactoryGirl.create(:authentication, :userid => "root", :password => "vmware")
+        ems.authentications << FactoryGirl.create(:authentication, :authtype => "console", :userid => "readonly", :password => "1234")
+      end
+
+      it "uses the console credentials" do
+        require 'VMwareWebService/MiqVim'
+
+        vim = mock_vim_broker_connection
+
+        expect(MiqVim).to receive(:new).with(ems.hostname, "readonly", "1234").and_return(vim)
+        expect(vim).to receive(:acquireCloneTicket)
+
+        ems.remote_console_vmrc_acquire_ticket
+      end
+    end
+
+    context "without console credentials" do
+      before do
+        ems.authentications << FactoryGirl.create(:authentication, :userid => "root", :password => "vmware")
+      end
+
+      it "uses the default credentials" do
+        require 'VMwareWebService/MiqVim'
+
+        vim = mock_vim_broker_connection
+
+        expect(MiqVim).to receive(:new).with(ems.hostname, "root", "vmware").and_return(vim)
+        expect(vim).to receive(:acquireCloneTicket)
+
+        ems.remote_console_vmrc_acquire_ticket
+      end
+    end
+  end
+
   context "handling changes that may require EventCatcher restart" do
     before(:each) do
       guid, server, zone = EvmSpecHelper.create_guid_miq_server_zone
@@ -122,5 +164,13 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     expect(q[0].class_name).to eq("ManageIQ::Providers::Vmware::InfraManager")
     expect(q[0].instance_id).to eq(@ems.id)
     expect(q[0].role).to eq("event")
+  end
+
+  def mock_vim_broker_connection
+    vim = double(vim)
+    allow(vim).to receive(:server).and_return(ems.hostname)
+    allow(vim).to receive(:isVirtualCenter?).and_return(true)
+    allow(vim).to receive(:apiVersion).and_return(6.0)
+    vim
   end
 end
