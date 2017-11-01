@@ -15,6 +15,7 @@ module ManageIQ::Providers
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
+        tagged = tag_inv_to_hashes(inv[:tag], inv[:tagged_entity])
 
         result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters])
         result[:vms], uids[:vms] = vm_inv_to_hashes(
@@ -25,7 +26,8 @@ module ManageIQ::Providers
           uids[:storage_profiles],
           uids[:hosts],
           uids[:clusters_by_host],
-          uids[:lans]
+          uids[:lans],
+          tagged
         )
 
         result[:folders], uids[:folders] = inv_to_ems_folder_hashes(inv)
@@ -111,6 +113,29 @@ module ManageIQ::Providers
         end unless profile_inv.nil?
 
         return result, result_uids
+      end
+
+      def self.tag_inv_to_hashes(tag_inv, tagged_entity_inv)
+        tagged = {}
+        return tagged if tag_inv.nil?
+
+        tags = {}
+        tagged_entity_inv.each do |t_id, entities|
+          tag = tag_inv[t_id][0]
+          category = tag_inv[t_id][1]
+          entities.each do |e|
+            tagged[e.type] ||= {}
+            tagged[e.type][e.id] ||= []
+            tags[t_id] ||= {
+              :ems_ref       => t_id,
+              :name          => tag.name,
+              :category_id   => category.id,
+              :category_name => category.name
+            }
+            tagged[e.type][e.id].push(tags[t_id])
+          end
+        end
+        tagged
       end
 
       def self.group_dvswitch_by_host(dvswitch_inv)
@@ -805,7 +830,8 @@ module ManageIQ::Providers
         storage_profile_uids,
         host_uids,
         cluster_uids_by_host,
-        lan_uids
+        lan_uids,
+        tagged
       )
         result = []
         result_uids = {}
@@ -908,45 +934,46 @@ module ManageIQ::Providers
           hardware[:networks] = vm_inv_to_network_hashes(vm_inv, guest_device_uids[mor])
           uid = hardware[:bios]
 
+          tags = tagged.fetch_path('VirtualMachine', mor) || []
           new_result = {
-            :type                  => template ? ManageIQ::Providers::Vmware::InfraManager::Template.name : ManageIQ::Providers::Vmware::InfraManager::Vm.name,
-            :ems_ref               => mor,
-            :ems_ref_obj           => mor,
-            :uid_ems               => uid,
-            :name                  => URI.decode(summary_config["name"]),
-            :vendor                => "vmware",
-            :raw_power_state       => raw_power_state,
-            :location              => location,
-            :tools_status          => tools_status,
-            :boot_time             => boot_time,
-            :standby_action        => standby_act,
-            :connection_state      => runtime['connectionState'],
-            :cpu_affinity          => cpu_affinity,
-            :template              => template,
-            :linked_clone          => vm_inv_to_linked_clone(vm_inv),
-            :fault_tolerance       => vm_inv_to_fault_tolerance(vm_inv),
+            :type                     => template ? ManageIQ::Providers::Vmware::InfraManager::Template.name : ManageIQ::Providers::Vmware::InfraManager::Vm.name,
+            :ems_ref                  => mor,
+            :ems_ref_obj              => mor,
+            :uid_ems                  => uid,
+            :name                     => URI.decode(summary_config["name"]),
+            :vendor                   => "vmware",
+            :raw_power_state          => raw_power_state,
+            :location                 => location,
+            :tools_status             => tools_status,
+            :boot_time                => boot_time,
+            :standby_action           => standby_act,
+            :connection_state         => runtime['connectionState'],
+            :cpu_affinity             => cpu_affinity,
+            :template                 => template,
+            :linked_clone             => vm_inv_to_linked_clone(vm_inv),
+            :fault_tolerance          => vm_inv_to_fault_tolerance(vm_inv),
 
-            :memory_reserve        => memory && memory["reservation"],
-            :memory_reserve_expand => memory && memory["expandableReservation"].to_s.downcase == "true",
-            :memory_limit          => memory && memory["limit"],
-            :memory_shares         => memory && memory.fetch_path("shares", "shares"),
-            :memory_shares_level   => memory && memory.fetch_path("shares", "level"),
+            :memory_reserve           => memory && memory["reservation"],
+            :memory_reserve_expand    => memory && memory["expandableReservation"].to_s.downcase == "true",
+            :memory_limit             => memory && memory["limit"],
+            :memory_shares            => memory && memory.fetch_path("shares", "shares"),
+            :memory_shares_level      => memory && memory.fetch_path("shares", "level"),
 
-            :cpu_reserve           => cpu && cpu["reservation"],
-            :cpu_reserve_expand    => cpu && cpu["expandableReservation"].to_s.downcase == "true",
-            :cpu_limit             => cpu && cpu["limit"],
-            :cpu_shares            => cpu && cpu.fetch_path("shares", "shares"),
-            :cpu_shares_level      => cpu && cpu.fetch_path("shares", "level"),
+            :cpu_reserve              => cpu && cpu["reservation"],
+            :cpu_reserve_expand       => cpu && cpu["expandableReservation"].to_s.downcase == "true",
+            :cpu_limit                => cpu && cpu["limit"],
+            :cpu_shares               => cpu && cpu.fetch_path("shares", "shares"),
+            :cpu_shares_level         => cpu && cpu.fetch_path("shares", "level"),
 
-            :host                  => host_uids[host_mor],
-            :ems_cluster           => cluster_uids_by_host[host_mor],
-            :storages              => storages,
-            :storage               => storage,
-            :storage_profile       => storage_profile_by_vm_mor[mor],
-            :operating_system      => vm_inv_to_os_hash(vm_inv),
-            :hardware              => hardware,
-            :custom_attributes     => vm_inv_to_custom_attribute_hashes(vm_inv),
-            :snapshots             => vm_inv_to_snapshot_hashes(vm_inv),
+            :host                     => host_uids[host_mor],
+            :ems_cluster              => cluster_uids_by_host[host_mor],
+            :storages                 => storages,
+            :storage                  => storage,
+            :storage_profile          => storage_profile_by_vm_mor[mor],
+            :operating_system         => vm_inv_to_os_hash(vm_inv),
+            :hardware                 => hardware,
+            :custom_attributes        => vm_inv_to_custom_attribute_hashes(vm_inv, tags),
+            :snapshots                => vm_inv_to_snapshot_hashes(vm_inv),
 
             :cpu_hot_add_enabled      => config['cpuHotAddEnabled'],
             :cpu_hot_remove_enabled   => config['cpuHotRemoveEnabled'],
@@ -1156,7 +1183,7 @@ module ManageIQ::Providers
         result
       end
 
-      def self.vm_inv_to_custom_attribute_hashes(inv)
+      def self.vm_inv_to_custom_attribute_hashes(inv, tags)
         custom_values = inv.fetch_path('summary', 'customValue')
         available_fields = inv['availableField']
 
@@ -1175,6 +1202,14 @@ module ManageIQ::Providers
           result << new_result
         end
 
+        tags.each do |tag|
+          new_result = {
+            :section => tag[:category_name],
+            :name    => tag[:name],
+            :source  => "VC",
+          }
+          result << new_result
+        end
         result
       end
 
