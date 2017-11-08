@@ -28,21 +28,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
   end
 
   def normalize_network_adapter_settings
-    if options[:networks].blank?
-      vlan = get_option(:vlan)
-      _log.info("vlan: #{vlan.inspect}")
-      unless vlan.nil?
-        options[:networks] = [] << net = {:network => vlan, :mac_address => get_option_last(:mac_address)}
-        if vlan[0, 4] == 'dvs_'
-          # Remove the "dvs_" prefix on the name
-          net[:network] = vlan[4..-1]
-          net[:is_dvs]  = true
-        end
-      end
+    options[:networks] = Array(options[:networks])
+
+    if options[:networks].first.blank?
+      convert_vlan_options_to_network_hash
     else
-      # When using advanced network settings update the options hash to reflect the selected vlan
-      net = options[:networks].first
-      options[:vlan] = [net[:is_dvs] == true ? "dvs_#{net[:network]}" : net[:network], net[:network]]
+      convert_network_hash_to_vlan_options
     end
     options[:networks]
   end
@@ -171,5 +162,26 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
         raise MiqException::MiqProvisionError, "Source template does not have a nic defined."
       end
     end
+  end
+
+  private def convert_vlan_options_to_network_hash
+    vlan = get_option(:vlan)
+    _log.info("vlan: #{vlan.inspect}")
+    return unless vlan
+
+    options[:networks][0] = {:network => vlan}.tap do |net|
+      net[:mac_address] = get_option_last(:mac_address) if get_option_last(:mac_address)
+
+      if vlan[0, 4] == 'dvs_'
+        # Remove the "dvs_" prefix on the name
+        net[:network] = vlan[4..-1]
+        net[:is_dvs]  = true
+      end
+    end
+  end
+
+  private def convert_network_hash_to_vlan_options
+    net = options[:networks].first
+    options[:vlan] = [net[:is_dvs] == true ? "dvs_#{net[:network]}" : net[:network], net[:network]]
   end
 end
