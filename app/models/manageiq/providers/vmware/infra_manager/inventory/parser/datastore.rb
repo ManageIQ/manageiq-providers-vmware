@@ -51,7 +51,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     private
 
-    def normalize_storage_uid(inv)
+    def normalize_storage_uid(summary_url)
       ############################################################################
       # For VMFS, we will use the GUID as the identifier
       ############################################################################
@@ -60,7 +60,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       #   From VC4:  sanfs://vmfs_uuid:49861d7d-25f008ac-ffbf-001b212bed24/
       #   From VC5:  ds:///vmfs/volumes/49861d7d-25f008ac-ffbf-001b212bed24/
       #   From ESX4: /vmfs/volumes/49861d7d-25f008ac-ffbf-001b212bed24
-      url = inv["summary.url"].to_s.downcase
+      url = summary_url.to_s.downcase
       return $1 if url =~ /([0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{12})/
 
       ############################################################################
@@ -75,11 +75,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       # NFS on VC has a path in the url:
       #   netfs://192.168.254.80//shares/public/
       return url[8..-1].gsub('//', '/').chomp('/') if url[0, 8] == "netfs://"
-
-      # NFS on ESX has the path in the datastore instead:
-      #   192.168.254.80:/shares/public
-      datastore = inv["summary.datastore"].to_s.downcase
-      return datastore.gsub(':/', '/') if datastore =~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
 
       # For anything else, we return the url
       url
