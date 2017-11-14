@@ -11,7 +11,6 @@ module ManageIQ::Providers
         uids = {}
         result = {:uid_lookup => uids}
 
-        result[:ems] = about_inv_to_hashes(inv[:about])
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
@@ -39,13 +38,6 @@ module ManageIQ::Providers
         set_default_rps(result)
 
         result
-      end
-
-      def self.about_inv_to_hashes(about)
-        {
-          :api_version => about['apiVersion'],
-          :uid_ems     => about['instanceUuid']
-        }
       end
 
       def self.storage_inv_to_hashes(inv)
