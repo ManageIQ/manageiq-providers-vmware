@@ -99,7 +99,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         object_update_set = property_filter_update.objectSet
         next if object_update_set.blank?
 
-        process_object_update_set(object_update_set) { |obj, props| parser.parse(obj, props) }
+        _log.info("Processing #{object_update_set.count} updates...")
+        object_update_set.compact.each { |object_update| parser.parse(object_update) }
+        _log.info("Processing #{object_update_set.count} updates...Complete")
       end
 
       next if update_set.truncated
@@ -117,79 +119,5 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     end
   ensure
     property_filter.DestroyPropertyFilter unless property_filter.nil?
-  end
-
-  def process_object_update_set(object_update_set, &block)
-    _log.info("Processing #{object_update_set.count} updates...")
-
-    object_update_set.each do |object_update|
-      process_object_update(object_update, &block)
-    end
-
-    _log.info("Processing #{object_update_set.count} updates...Complete")
-  end
-
-  def process_object_update(object_update)
-    managed_object = object_update.obj
-
-    props =
-      case object_update.kind
-      when "enter", "modify"
-        process_object_update_modify(managed_object, object_update.changeSet)
-      when "leave"
-        process_object_update_leave(managed_object)
-      end
-
-    yield managed_object, props if block_given?
-
-    return managed_object, props
-  end
-
-  def process_object_update_modify(obj, change_set, _missing_set = [])
-    obj_type = obj.class.wsdl_name
-    obj_ref  = obj._ref
-
-    props = inventory_cache[obj_type][obj_ref].dup
-
-    change_set.each do |property_change|
-      next if property_change.nil?
-
-      case property_change.op
-      when 'add'
-        process_property_change_add(props, property_change)
-      when 'remove', 'indirectRemove'
-        process_property_change_remove(props, property_change)
-      when 'assign'
-        process_property_change_assign(props, property_change)
-      end
-    end
-
-    update_inventory_cache(obj_type, obj_ref, props)
-
-    props
-  end
-
-  def process_object_update_leave(obj)
-    obj_type = obj.class.wsdl_name
-    obj_ref  = obj._ref
-
-    inventory_cache[obj_type].delete(obj_ref)
-
-    nil
-  end
-
-  def process_property_change_add(props, property_change)
-    name = property_change.name
-
-    props[name] ||= []
-    props[name] << property_change.val
-  end
-
-  def process_property_change_remove(props, property_change)
-    props.delete(property_change.name)
-  end
-
-  def process_property_change_assign(props, property_change)
-    props[property_change.name] = property_change.val
   end
 end
