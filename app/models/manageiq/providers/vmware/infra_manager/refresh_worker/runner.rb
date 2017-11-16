@@ -12,7 +12,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     end
   end
 
-  def before_exit
+  def before_exit(_message, _exit_code)
     if Settings.prototype.ems_vmware.update_driven_refresh
       stop_inventory_collector(@collector)
 
