@@ -49,6 +49,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "datastore.ManagedObjectReference",
       "hardware.systemInfo.otherIdentifyingInfo[*].identifierValue",
       "hardware.systemInfo.otherIdentifyingInfo[*].identifierType.key",
+      "hardware.systemInfo.uuid",
       "name",
       "summary.config.name",
       "summary.config.product.build",
