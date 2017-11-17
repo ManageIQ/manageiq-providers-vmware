@@ -373,6 +373,7 @@ module ManageIQ::Providers
       end
 
       def self.host_inv_to_hardware_hash(inv)
+        hardware_serial = inv.fetch_path('hardware', 'systemInfo', 'uuid')
         console = inv.fetch_path('config', 'consoleReservation')
         inv = inv['summary']
         return nil if inv.nil?
@@ -397,6 +398,7 @@ module ManageIQ::Providers
           result[:cpu_total_cores] = hdw["numCpuCores"] unless hdw["numCpuCores"].blank?
           # Calculate the number of cores per socket by dividing total numCpuCores by numCpuPkgs
           result[:cpu_cores_per_socket] = (result[:cpu_total_cores].to_f / result[:cpu_sockets].to_f).to_i unless hdw["numCpuCores"].blank? || hdw["numCpuPkgs"].blank?
+          result[:serial_number] = hardware_serial
         end
 
         config = inv["config"]
