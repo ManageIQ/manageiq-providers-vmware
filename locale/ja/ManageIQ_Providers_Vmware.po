@@ -1,36 +1,41 @@
-# Japanese translations for ManageIQ_Providers_Vmware package.
-# Copyright (C) 2017 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the ManageIQ_Providers_Vmware package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
-#
+# asasaki <asasaki@redhat.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-04-21 10:23+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2017-04-21 10:19+0200\n"
+"PO-Revision-Date: 2017-11-13 05:08-0500\n"
+"Last-Translator: asasaki <asasaki@redhat.com>\n"
 "Language-Team: Japanese\n"
-"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 3.9.6\n"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
-msgstr ""
+msgstr "Non-DRS が有効なクラスター向け %{field_required}"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
-msgstr ""
+msgstr "クローン操作がサポートされていません"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
-msgstr ""
+msgstr "ホスト名またはクラスター名が必要です"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:7
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:17
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
 msgid "The VM is not powered on"
-msgstr ""
+msgstr "仮想マシンの電源がオンになっていません"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:14
 msgid "The VM tools is not installed"
-msgstr ""
+msgstr "仮想マシンツールがインストールされていません"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
-msgstr ""
+msgstr "EMS に接続されていません"
