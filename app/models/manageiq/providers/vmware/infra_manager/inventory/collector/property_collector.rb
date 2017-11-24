@@ -1,9 +1,14 @@
 module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::PropertyCollector
   EmsRefreshPropMap = {
-    :ManagedEntity => [
+    :ManagedEntity  => [
       "name",
       "parent",
-    ]
+    ],
+    :VirtualMachine => [
+      "summary.config.template",
+      "summary.config.uuid",
+      "summary.runtime.powerState",
+    ],
   }.freeze
 
   def create_property_filter(vim)

@@ -56,7 +56,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::ManagedEntit
   end
 
   def parse_property_change(name, _op, val)
-    result = {}
+    result = base_result_hash
 
     case name
     when "name"
