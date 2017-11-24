@@ -1,6 +1,5 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   require_nested :ComputeResource
-  require_nested :Datacenter
   require_nested :Datastore
   require_nested :Folder
   require_nested :HostSystem

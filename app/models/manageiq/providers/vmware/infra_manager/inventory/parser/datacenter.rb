@@ -4,4 +4,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::Datacenter <
   def inventory_collection
     persister.ems_folders
   end
+
+  def base_result_hash
+    super.merge(:type => "Datacenter")
+  end
 end

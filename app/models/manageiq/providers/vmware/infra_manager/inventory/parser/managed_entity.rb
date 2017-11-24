@@ -33,14 +33,38 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::ManagedEntit
   end
 
   def parse_modify
-    nil
-  end
-  alias parse_enter parse_modify
+    result = base_result_hash
 
-  def process_change_set
     change_set.each do |property_change|
-      hash = yield(property_change.name, property_change.op, property_change.val)
+      name = property_change.name
+      op   = property_change.op
+      val  = property_change.val
+
+      parsed = parse_property_change(name, op, val)
+      result.merge!(parsed)
     end
+
+    result
+  end
+
+  def parse_enter
+    parse_modify
+  end
+
+  def base_result_hash
+    {}
+  end
+
+  def parse_property_change(name, _op, val)
+    result = {}
+
+    case name
+    when "name"
+      name = URI.decode(val) unless val.nil?
+      result[:name] = name
+    end
+
+    result
   end
 
   def parse_kind_method

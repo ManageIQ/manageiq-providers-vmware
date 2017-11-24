@@ -18,7 +18,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
         :model_class    => ::VmOrTemplate,
         :association    => :vms_and_templates,
         :builder_params => {
-          :ems_id => ->(persister) { persister.manager.id },
+          :ems_id   => ->(persister) { persister.manager.id },
+          :vendor   => "vmware",
+          :location => "unknown",
         },
       }
 
