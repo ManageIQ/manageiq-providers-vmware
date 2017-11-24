@@ -23,6 +23,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
       result[:type] = type
     when "summary.config.uuid"
       result[:uid_ems] = val
+    when "summary.config.vmPathName"
+      pathname = val
+      _, location = VmOrTemplate.repository_parse_path(pathname) unless pathname.nil?
+      result[:location] = location
     when "summary.runtime.powerState"
       result[:raw_power_state] = val
     end

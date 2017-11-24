@@ -17,7 +17,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       begin
         wait_for_updates(vim)
       rescue RbVmomi::Fault => err
-        _log.err("Caught exception #{err.message}")
+        _log.error("Caught exception #{err.message}")
         _log.log_backtrace(err)
       ensure
         vim.close unless vim.nil?

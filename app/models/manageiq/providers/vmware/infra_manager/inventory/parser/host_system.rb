@@ -10,4 +10,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::HostSystem <
       :ems_ref => manager_ref,
     }
   end
+
+  def parse_property_change(name, op, val)
+    result = super
+
+    case name
+    when "hardware.systemInfo.uuid"
+      result[:uid_ems] = val
+    end
+
+    result
+  end
 end

@@ -1,5 +1,16 @@
 module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::PropertyCollector
   EmsRefreshPropMap = {
+    :Datastore      => [
+      "summary.capacity",
+      "summary.freeSpace",
+      "summary.multipleHostAccess",
+      "summary.type",
+      "summary.uncommitted",
+      "summary.url",
+    ],
+    :HostSystem     => [
+      "hardware.systemInfo.uuid",
+    ],
     :ManagedEntity  => [
       "name",
       "parent",
@@ -7,6 +18,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     :VirtualMachine => [
       "summary.config.template",
       "summary.config.uuid",
+      "summary.config.vmPathName",
       "summary.runtime.powerState",
     ],
   }.freeze
