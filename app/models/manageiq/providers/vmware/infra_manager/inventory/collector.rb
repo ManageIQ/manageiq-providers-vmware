@@ -1,5 +1,4 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
-  include InventoryCache
   include PropertyCollector
   include Vmdb::Logging
 
