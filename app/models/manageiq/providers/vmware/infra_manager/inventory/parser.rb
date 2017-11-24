@@ -22,7 +22,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parser_klass = parser_for_object(object)
     return if parser_klass.nil?
 
-    parser = parser_klass.new(ems, persister, object_update)
+    parser_klass.new(ems, persister, object_update).parse
   end
 
   private
