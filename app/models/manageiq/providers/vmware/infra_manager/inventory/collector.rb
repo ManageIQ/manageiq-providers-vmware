@@ -91,7 +91,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       # After the initial UpdateSet switch to a targeted persister
       persister ||= ems.class::Inventory::Persister::Targeted.new(ems)
-      parser    ||= ems.class::Inventory::Parser.new(persister)
+      parser    ||= ems.class::Inventory::Parser.new(ems, persister)
 
       property_filter_update_set.each do |property_filter_update|
         next if property_filter_update.filter != property_filter
