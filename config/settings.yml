@@ -1,4 +1,6 @@
 ---
+:development:
+  :use_vim_broker_in_console: false
 :ems:
   :ems_vmware:
     :blacklisted_event_names: []
@@ -48,4 +50,3 @@
         :ems_refresh_worker_vmware: {}
         :ems_refresh_worker_vmware_cloud: {}
         :ems_refresh_worker_vmware_cloud_network: {}
-
