@@ -8,11 +8,8 @@ module ManageIQ::Providers
       include InfraManager::RefreshParser::Filter
 
       # Development helper method for setting up the selector specs for VC
-      def self.init_console(use_vim_broker = false)
+      def self.init_console(*_)
         return @initialized_console unless @initialized_console.nil?
-        provider = parent
-        provider.instance_variable_set(:@__use_vim_broker, use_vim_broker)
-        def provider.use_vim_broker?; @__use_vim_broker; end
         klass = use_vim_broker ? MiqVimBroker : MiqVimInventory
         klass.cacheScope = :cache_scope_ems_refresh
         klass.setSelector(parent::SelectorSpec::VIM_SELECTOR_SPEC)

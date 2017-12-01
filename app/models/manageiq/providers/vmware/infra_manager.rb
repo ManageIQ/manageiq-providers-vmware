@@ -75,11 +75,8 @@ module ManageIQ::Providers
     end
 
     def self.use_vim_broker?
-      return false unless MiqVimBrokerWorker.has_required_role?
-      cfg = ::Settings.webservices.use_vim_broker
-      return true if cfg == "force"
-      return true if cfg && Sys::Platform::OS == :unix
-      false
+      return false if defined?(Rails::Console) && !::Settings.development.use_vim_broker_in_console
+      MiqVimBrokerWorker.has_required_role?
     end
 
     delegate :use_vim_broker?, :to => :class
