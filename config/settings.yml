@@ -8,8 +8,101 @@
       :event_groups:
         :addition:
           :critical:
+            - CreateFolder
+            - ClusterCreatedEvent
+            - DatacenterCreatedEvent
+            - DatastoreDiscoveredEvent
+            - HostConnectedEvent
+            - ResourcePoolCreatedEvent
+            - VmCreatedEvent
+            - VmConnectedEvent
+            - VmDeployedEvent
+            - VmRegisteredEvent
+          :detail:
+            - VmBeingClonedEvent
+            - VmBeingCreatedEvent
+            - VmBeingDeployedEvent
+        :configuration:
+          :critical:
+            - ClusterReconfiguredEvent
+            - MoveInto_Task
+            - MoveIntoFolder_Task
+            - ResourcePoolReconfiguredEvent
+            - VmReconfiguredEvent
+            - VmResourcePoolMovedEvent
+          :detail:
+            - VmMacAssignedEvent
+            - VmResourceReallocatedEvent
+            - VmUuidAssignedEvent
+        :console:
+          :critical:
+            - VmRemoteConsoleConnectedEvent
+            - UserLoginSessionEvent
+            - UserLogoutSessionEvent
+            - VmAcquiredMksTicketEvent
+        :deletion:
+          :critical:
+            - ClusterDestroyedEvent
+            - DestroyDatacenter_Task
+            - DestroyFolder_Task
+            - HostConnectionLostEvent
+            - HostDisconnectedEvent
+            - ResourcePoolDestroyedEvent
+            - VmDisconnectedEvent
+            - VmRemovedEvent
+          :detail:
+            - Destroy_Task
+        :general:
+          :critical:
+            - ScheduledTaskStartedEvent
+            - TaskTimeoutEvent
+        :migration:
+          :critical:
+            - DatastoreFileMovedEvent
+            - MigrateVM_Task
+            - VmRelocatedEvent
+            - VmMigratedEvent
+          :detail:
+            - MigrationHostWarningEvent
+            - VmBeingRelocatedEvent
         :power:
           :critical:
+            - DrsVmPoweredOnEvent
+            - VmPoweredOffEvent
+            - VmPoweredOnEvent
+            - VmSuspendedEvent
+            - VmGuestRebootEvent
+            - VmGuestShutdownEvent
+            - VmResumingEvent
+          :detail:
+            - VmStartingEvent
+            - VmStoppingEvent
+            - VmSuspendingEvent
+        :status:
+          :critical:
+            - AlarmCreatedEvent
+            - AlarmRemovedEvent
+            - ClusterStatusChangedEvent
+            - DasHostFailedEvent
+            - DuplicateIpDetectedEvent
+            - GeneralHostWarningEvent
+            - HostDasErrorEvent
+            - VmConfigMissingEvent
+          :detail:
+            - DatacenterRenamedEvent
+            - GeneralUserEvent
+            - LicenseServerUnavailableEvent
+            - VmRenamedEvent
+            - RenameCluster_Task
+            - Rename_Task
+            - RenameFolder_Task
+            - RenameResourcePool_Task
+        :snapshot:
+          :critical:
+            - CreateSnapshot_Task
+            - RevertToSnapshot_Task
+            - RemoveAllSnapshots_Task
+            - RemoveSnapshot_Task
 :ems_refresh:
   :vmware_cloud:
     :get_public_images: false
