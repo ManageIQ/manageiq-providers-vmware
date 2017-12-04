@@ -1083,5 +1083,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       described_class.init_console
       expect(described_class.instance_variable_get(:@initialized_console)).to be_truthy
     end
+
+    after { described_class.instance_variable_set(:@initialized_console, nil) }
   end
 end
