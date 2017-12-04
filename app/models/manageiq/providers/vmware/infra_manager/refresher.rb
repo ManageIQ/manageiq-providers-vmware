@@ -10,7 +10,7 @@ module ManageIQ::Providers
       # Development helper method for setting up the selector specs for VC
       def self.init_console(*_)
         return @initialized_console unless @initialized_console.nil?
-        klass = use_vim_broker ? MiqVimBroker : MiqVimInventory
+        klass = ManageIQ::Providers::Vmware::InfraManager.use_vim_broker? ? MiqVimBroker : MiqVimInventory
         klass.cacheScope = :cache_scope_ems_refresh
         klass.setSelector(parent::SelectorSpec::VIM_SELECTOR_SPEC)
         @initialized_console = true
