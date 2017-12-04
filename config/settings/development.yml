@@ -1,0 +1,3 @@
+---
+:development:
+  :use_vim_broker_in_console: false
