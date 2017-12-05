@@ -63,9 +63,22 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   # WebMKS
   #
 
-  def remote_console_webmks_acquire_ticket(_userid = nil, _originating_server = nil)
+  def remote_console_webmks_acquire_ticket(userid, originating_server = nil)
     validate_remote_console_acquire_ticket("webmks")
-    ext_management_system.vm_remote_console_webmks_acquire_ticket(self)
+    ticket = ext_management_system.vm_remote_console_webmks_acquire_ticket(self)
+
+    SystemConsole.force_vm_invalid_token(id)
+
+    console_args = {
+      :user       => User.find_by(:userid => userid),
+      :vm_id      => id,
+      :ssl        => true,
+      :protocol   => 'webmks',
+      :secret     => ticket['ticket'],
+      :url_secret => SecureRandom.hex,
+    }
+
+    SystemConsole.launch_proxy_if_not_local(console_args, originating_server, ticket['host'], ticket['port'].to_i)
   end
 
   def validate_remote_console_webmks_support

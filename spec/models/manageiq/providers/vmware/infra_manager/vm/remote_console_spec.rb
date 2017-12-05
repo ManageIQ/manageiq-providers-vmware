@@ -81,13 +81,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   context '#remote_console_webmks_acquire_ticket' do
     it 'with vm off' do
       vm.update_attribute(:raw_power_state, 'poweredOff')
-      expect { vm.remote_console_webmks_acquire_ticket }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      expect { vm.remote_console_webmks_acquire_ticket(user.userid) }.to raise_error MiqException::RemoteConsoleNotSupportedError
     end
 
     it 'with vm with no ems' do
       vm.ext_management_system = nil
       vm.save!
-      expect { vm.remote_console_webmks_acquire_ticket }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      expect { vm.remote_console_webmks_acquire_ticket(user.userid) }.to raise_error MiqException::RemoteConsoleNotSupportedError
     end
   end
 
