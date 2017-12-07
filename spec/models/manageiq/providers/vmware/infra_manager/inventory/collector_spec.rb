@@ -34,7 +34,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
     def assert_table_counts(ems)
       expect(ems.ems_folders.count).to eq(21)
-      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
+      pending(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
       expect(ems.vms_and_templates.count).to eq(512)
       expect(ems.hosts.count).to eq(32)
       expect(ems.ems_clusters.count).to eq(8)
@@ -42,7 +42,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       pending(ems.hardwares.count).to eq(512)
       pending(ems.disks.count).to eq(512)
       pending(ems.guest_devices.count).to eq(512)
-      pending(ems.operating_systems.count).to eq(512)
+      expect(ems.operating_systems.count).to eq(512)
       pending(ems.host_operating_systems.count).to eq(32)
     end
   end

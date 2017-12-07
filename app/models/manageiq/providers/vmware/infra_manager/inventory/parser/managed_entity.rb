@@ -12,13 +12,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::ManagedEntit
     inventory_collection.manager_uuids << manager_ref
 
     parsed_hash = send(parse_kind_method)
+    return if parsed_hash.nil?
 
-    inventory_collection.build(parsed_hash) unless parsed_hash.nil?
+    inventory_object.assign_attributes(parsed_hash)
   end
 
   private
 
-  attr_reader :ems, :persister, :object, :kind, :change_set, :missing_set
+  attr_reader :ems, :persister, :object, :kind, :change_set, :missing_set, :inventory_object
 
   def manager_ref
     object._ref
@@ -26,6 +27,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::ManagedEntit
 
   def inventory_collection
     raise NotImplementedError, "must be implemented in subclass"
+  end
+
+  def inventory_object
+    @inventory_object ||= inventory_collection.find_or_build(manager_ref)
   end
 
   def parse_leave

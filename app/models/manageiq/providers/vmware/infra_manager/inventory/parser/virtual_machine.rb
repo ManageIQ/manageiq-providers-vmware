@@ -11,10 +11,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
     }
   end
 
+  def operating_system
+    @operating_system ||= persister.operating_systems.find_or_build(inventory_object)
+  end
+
   def parse_property_change(name, op, val)
     result = super
 
     case name
+    when "summary.config.guestFullName"
+      guest_full_name = val.nil? ? "Other" : val
+      operating_system.assign_attributes(:product_name => guest_full_name)
     when "summary.config.template"
       template = val
       result[:template] = template

@@ -17,6 +17,26 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes = {
         :model_class    => ::VmOrTemplate,
         :association    => :vms_and_templates,
+        :inventory_object_attributes => [
+          :type,
+          :ems_ref,
+          :ems_ref_obj,
+          :uid_ems,
+          :connection_state,
+          :vendor,
+          :name,
+          :location,
+          :template,
+          :memory_limit,
+          :memory_reserve,
+          :raw_power_state,
+          :boot_time,
+          :host,
+          :ems_cluster,
+          :storages,
+          :storage,
+          :snapshots
+        ],
         :builder_params => {
           :ems_id   => ->(persister) { persister.manager.id },
           :vendor   => "vmware",
