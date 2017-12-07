@@ -3,6 +3,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
     add_inventory_collections(
       default_inventory_collections, inventory_collection_names, inventory_collection_options
     )
+
+    add_inventory_collection(
+      default_inventory_collections.datacenters(
+        :arel => manager.ems_folders.where(:type => "Datacenter"),
+      )
+    )
   end
 
   def default_inventory_collections

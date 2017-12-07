@@ -28,22 +28,39 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ems.reload
 
           assert_table_counts(ems)
+          assert_specific_vm(ems)
         end
       end
     end
 
     def assert_table_counts(ems)
       expect(ems.ems_folders.count).to eq(21)
-      pending(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
+      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
       expect(ems.vms_and_templates.count).to eq(512)
       expect(ems.hosts.count).to eq(32)
       expect(ems.ems_clusters.count).to eq(8)
       expect(ems.resource_pools.count).to eq(72)
-      pending(ems.hardwares.count).to eq(512)
-      pending(ems.disks.count).to eq(512)
-      pending(ems.guest_devices.count).to eq(512)
+      expect(ems.hardwares.count).to eq(512)
+      # TODO: expect(ems.disks.count).to eq(512)
+      # TODO: expect(ems.guest_devices.count).to eq(512)
       expect(ems.operating_systems.count).to eq(512)
-      pending(ems.host_operating_systems.count).to eq(32)
+      # TODO: expect(ems.host_operating_systems.count).to eq(32)
+    end
+
+    def assert_specific_vm(ems)
+      vm = ems.vms.find_by(:ems_ref => "vm-17")
+
+      expect(vm).to have_attributes(
+        :vendor   => "vmware",
+        :name     => "DC0_C0_RP0_VM1",
+        :location => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
+        :uid_ems  => "423d8331-b640-489f-e3be-61d33a04a258",
+      )
+
+      expect(vm.hardware).to have_attributes(
+        :virtual_hw_version => "07",
+        :memory_mb          => 64,
+      )
     end
   end
 end

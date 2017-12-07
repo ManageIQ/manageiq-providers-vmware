@@ -2,7 +2,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::Datacenter <
   private
 
   def inventory_collection
-    persister.ems_folders
+    persister.datacenters
   end
 
   def base_result_hash
