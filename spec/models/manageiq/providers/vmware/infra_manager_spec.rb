@@ -156,6 +156,13 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
+  context "catalog types" do
+    it "#supported_catalog_types" do
+      ems = FactoryGirl.create(:ems_vmware)
+      expect(ems.supported_catalog_types).to eq(%w(vmware))
+    end
+  end
+
   private
 
   def assert_event_catcher_restart_queued
