@@ -11,20 +11,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::Datastore < 
     }
   end
 
+  alias storage inventory_object
+
   def parse_property_change(name, op, val)
-    result = super
+    super
 
     case name
     when "summary.capacity"
-      result[:total_space] = val
+      storage.total_space = val
     when "summary.freeSpace"
-      result[:free_space] = val
+      storage.free_space = val
     when "summary.uncommitted"
-      result[:uncommitted] = val
+      storage.uncommitted = val
     when "summary.url"
-      result[:location] = val
+      storage.location = val
     end
-
-    result
   end
 end

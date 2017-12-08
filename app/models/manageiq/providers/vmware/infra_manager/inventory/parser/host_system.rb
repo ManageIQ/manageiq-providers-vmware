@@ -11,14 +11,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::HostSystem <
     }
   end
 
+  alias host inventory_object
+
   def parse_property_change(name, op, val)
-    result = super
+    super
 
     case name
     when "hardware.systemInfo.uuid"
-      result[:uid_ems] = val
+      host.uid_ems = val
     end
-
-    result
   end
 end

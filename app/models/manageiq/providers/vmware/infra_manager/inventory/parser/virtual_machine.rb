@@ -22,7 +22,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
   alias vm_or_template inventory_object
 
   def parse_property_change(name, op, val)
-    result = super
+    super
 
     case name
     when "config.version"
@@ -37,9 +37,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
       hardware.assign_attributes(:memory_mb => val)
     when "summary.config.template"
       template = val
-      result[:template] = template
-
       type = template ? ems.class::Template.name : ems.class::Vm.name
+
+      vm_or_template.template = template
       vm_or_template.type = type
     when "summary.config.uuid"
       vm_or_template.uid_ems = val
@@ -47,14 +47,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
       pathname = val
       _, location = VmOrTemplate.repository_parse_path(pathname) unless pathname.nil?
       vm_or_template.location = location
+    when "summary.runtime.bootTime"
+      vm_or_template.boot_time = val
     when "summary.runtime.host"
       host_ref = val._ref unless val.nil?
       vm_or_template.host = persister.hosts.find_or_build(host_ref)
     when "summary.runtime.powerState"
       vm_or_template.raw_power_state = val
     end
-
-    result
   end
 
   def parse_resource_config(name, _op, val)

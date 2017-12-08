@@ -51,10 +51,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       vm = ems.vms.find_by(:ems_ref => "vm-17")
 
       expect(vm).to have_attributes(
-        :vendor   => "vmware",
-        :name     => "DC0_C0_RP0_VM1",
-        :location => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
-        :uid_ems  => "423d8331-b640-489f-e3be-61d33a04a258",
+        :vendor          => "vmware",
+        :name            => "DC0_C0_RP0_VM1",
+        :location        => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
+        :uid_ems         => "423d8331-b640-489f-e3be-61d33a04a258",
+        :raw_power_state => "poweredOn",
+        :boot_time       => nil, # TODO: is this a simulator issue?
       )
 
       expect(vm.hardware).to have_attributes(
