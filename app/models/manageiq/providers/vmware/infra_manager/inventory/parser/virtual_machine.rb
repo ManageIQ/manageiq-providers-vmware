@@ -28,6 +28,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
     when "config.version"
       virtual_hw_version = val.to_s.split('-').last
       hardware.assign_attributes(:virtual_hw_version => virtual_hw_version)
+    when /resourceConfig/
+      parse_resource_config(name, op, val)
     when "summary.config.guestFullName"
       guest_full_name = val.nil? ? "Other" : val
       operating_system.assign_attributes(:product_name => guest_full_name)
@@ -50,5 +52,30 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
     end
 
     result
+  end
+
+  def parse_resource_config(name, _op, val)
+    case name
+    when 'resourceConfig.cpuAllocation.expandableReservation'
+      vm_or_template.cpu_reserve_expand = val
+    when 'resourceConfig.cpuAllocation.limit'
+      vm_or_template.cpu_limit = val
+    when 'resourceConfig.cpuAllocation.reservation'
+      vm_or_template.cpu_reserve = val
+    when 'resourceConfig.cpuAllocation.shares.level'
+      vm_or_template.cpu_shares_level = val
+    when 'resourceConfig.cpuAllocation.shares.shares'
+      vm_or_template.cpu_shares = val
+    when 'resourceConfig.memoryAllocation.expandableReservation'
+      vm_or_template.memory_reserve_expand = val
+    when 'resourceConfig.memoryAllocation.limit'
+      vm_or_template.memory_limit = val
+    when 'resourceConfig.memoryAllocation.reservation'
+      vm_or_template.memory_reserve = val
+    when 'resourceConfig.memoryAllocation.shares.level'
+      vm_or_template.memory_shares_level = val
+    when 'resourceConfig.memoryAllocation.shares.shares'
+      vm_or_template.memory_shares = val
+    end
   end
 end
