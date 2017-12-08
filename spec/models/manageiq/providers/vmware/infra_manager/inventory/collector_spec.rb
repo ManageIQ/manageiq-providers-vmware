@@ -61,6 +61,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :virtual_hw_version => "07",
         :memory_mb          => 64,
       )
+
+      expect(vm.host).to_not be_nil
+      expect(vm.host.ems_ref).to eq("host-12")
     end
   end
 end

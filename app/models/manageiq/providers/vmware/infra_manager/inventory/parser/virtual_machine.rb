@@ -47,6 +47,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::VirtualMachi
       pathname = val
       _, location = VmOrTemplate.repository_parse_path(pathname) unless pathname.nil?
       vm_or_template.location = location
+    when "summary.runtime.host"
+      host_ref = val._ref unless val.nil?
+      vm_or_template.host = persister.hosts.find_or_build(host_ref)
     when "summary.runtime.powerState"
       vm_or_template.raw_power_state = val
     end
