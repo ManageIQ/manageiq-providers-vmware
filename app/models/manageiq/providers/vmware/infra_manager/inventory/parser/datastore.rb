@@ -17,6 +17,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::Datastore < 
     super
 
     case name
+    when "host"
+      val.each do |host_mount|
+        read_only = host_mount.mountInfo.accessMode == "readOnly"
+        host_ref  = host_mount.key._ref
+
+        persister.host_storages.find_or_build_by(
+          :host    => persister.hosts.find_or_build(host_ref),
+          :storage => persister.storages.find_or_build(manager_ref),
+        ).assign_attributes(
+          :read_only => read_only,
+          :ems_ref   => manager_ref
+        )
+      end
     when "summary.capacity"
       storage.total_space = val
     when "summary.freeSpace"
@@ -24,7 +37,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser::Datastore < 
     when "summary.uncommitted"
       storage.uncommitted = val
     when "summary.url"
-      storage.location = val
+      storage.location = manager_ref # TODO: set to val when manager_ref is fixed
     end
   end
 end

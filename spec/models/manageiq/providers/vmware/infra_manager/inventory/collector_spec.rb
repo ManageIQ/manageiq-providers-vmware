@@ -28,7 +28,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ems.reload
 
           assert_table_counts(ems)
-          assert_specific_vm(ems)
+          assert_specific_vm(ems.vms.find_by(:ems_ref => "vm-17"))
+          assert_specific_host(ems.hosts.find_by(:ems_ref => "host-12"))
         end
       end
     end
@@ -47,10 +48,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       # TODO: expect(ems.host_operating_systems.count).to eq(32)
     end
 
-    def assert_specific_vm(ems)
-      vm = ems.vms.find_by(:ems_ref => "vm-17")
-
+    def assert_specific_vm(vm)
       expect(vm).to have_attributes(
+        :ems_ref         => "vm-17",
         :vendor          => "vmware",
         :name            => "DC0_C0_RP0_VM1",
         :location        => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
@@ -66,6 +66,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(vm.host).to_not be_nil
       expect(vm.host.ems_ref).to eq("host-12")
+    end
+
+    def assert_specific_host(host)
+      expect(host).to have_attributes(
+        :ems_ref          => "host-12",
+        :uid_ems          => "33393138-3335-5553-4537-32324e35394b",
+        :name             => "DC0_C0_H1",
+        :maintenance      => false,
+        :connection_state => "connected",
+        :power_state      => "on",
+        :vmm_vendor       => "vmware",
+        :vmm_version      => "5.0.0",
+        :vmm_buildnumber  => "5.0.0.19",
+        :vmm_product      => "ESX",
+      )
+
+      expect(host.storages.count).to         eq(1)
+      expect(host.storages.first.ems_ref).to eq("datastore-11")
     end
   end
 end
