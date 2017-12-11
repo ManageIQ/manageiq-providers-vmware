@@ -41,6 +41,10 @@ module ManageIQ::Providers
       supported_auth_types.include?(authtype.to_s)
     end
 
+    def supported_catalog_types
+      %w(vmware)
+    end
+
     def remote_console_vmrc_acquire_ticket
       vim = connect(:auth_type => :console)
       ticket = vim.acquireCloneTicket
