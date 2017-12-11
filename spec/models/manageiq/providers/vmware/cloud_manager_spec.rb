@@ -97,4 +97,8 @@ describe ManageIQ::Providers::Vmware::CloudManager do
         MiqException::MiqInvalidCredentialsError, 'Login failed due to a bad username or password.')
     end
   end
+
+  it "#supported_catalog_types" do
+    expect(@ems.supported_catalog_types).to eq(%w(vmware))
+  end
 end
