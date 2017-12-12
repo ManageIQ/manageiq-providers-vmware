@@ -43,7 +43,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         persister.host_storages.build(
           :storage   => storage,
           :host      => persister.hosts.lazy_find(host_mount.key._ref),
-          :ems_ref   => datastore_ref,
           :read_only => host_mount.mountInfo.accessMode == "readOnly",
         )
       end

@@ -773,7 +773,6 @@ module ManageIQ::Providers
           result << {
             :storage   => storage_uids[s_mor],
             :read_only => read_only,
-            :ems_ref   => s_mor
           }
         end
 
