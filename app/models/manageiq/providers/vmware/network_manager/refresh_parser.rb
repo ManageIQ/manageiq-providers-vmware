@@ -16,12 +16,12 @@ module ManageIQ::Providers
     def ems_inv_to_hashes
       log_header = "MIQ(#{self.class.name}.#{__method__}) Collecting data for EMS name: [#{@ems.name}] id: [#{@ems.id}]"
 
-      $log.info("#{log_header}...")
+      $vcloud_log.info("#{log_header}...")
 
       get_networks
       get_network_ports
 
-      $log.info("#{log_header}...Complete")
+      $vcloud_log.info("#{log_header}...Complete")
 
       @data
     end

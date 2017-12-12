@@ -62,7 +62,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
       yield
     rescue => err
       miq_exception = translate_exception(err)
-      _log.error("Error Class=#{err.class.name}, Message=#{err.message}")
+      $vcloud_log.error("Error Class=#{err.class.name}, Message=#{err.message}")
       raise miq_exception
     end
 

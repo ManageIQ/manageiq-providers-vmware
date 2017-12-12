@@ -45,15 +45,15 @@ module ManageIQ::Providers::Vmware::CloudManager::EventCatcherMixin
   def stop_event_monitor
     @event_monitor_handle.stop unless @event_monitor_handle.nil?
   rescue StandardException => err
-    _log.warn("Event Monitor Stop errored because [#{err.message}]")
-    _log.warn("Error details: [#{err.details}]")
-    _log.log_backtrace(err)
+    $vcloud_log.warn("Event Monitor Stop errored because [#{err.message}]")
+    $vcloud_log.warn("Error details: [#{err.details}]")
+    $vcloud_log.log_backtrace(err)
   ensure
     reset_event_monitor_handle
   end
 
   def queue_event(event)
-    _log.info "Caught event [#{event.type}]"
+    $vcloud_log.info("Caught event [#{event.type}]")
     event_hash = ManageIQ::Providers::Vmware::CloudManager::EventParser.event_to_hash(event, @cfg[:ems_id])
     EmsEvent.add_queue('add', @cfg[:ems_id], event_hash)
   end
