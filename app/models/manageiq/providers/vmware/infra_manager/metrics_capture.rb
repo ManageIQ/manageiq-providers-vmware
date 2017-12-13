@@ -17,15 +17,14 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     results = phr.fetch_path(:intervals, ems.id)
     return results unless results.nil?
 
-    log_header = "EMS: [#{ems.hostname}]"
     begin
       results = vim_hist.intervals
     rescue Handsoap::Fault, StandardError => err
-      _log.error("#{log_header} The following error occurred: [#{err}]")
+      _log.error("EMS: [#{ems.hostname}] The following error occurred: [#{err}]")
       raise
     end
 
-    _log.debug("#{log_header} Available sampling intervals: [#{results.length}]")
+    _log.debug { "EMS: [#{ems.hostname}] Available sampling intervals: [#{results.length}]" }
     phr.store_path(:intervals, ems.id, results)
   end
 
@@ -34,21 +33,19 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     results = phr.fetch_path(:realtime_interval, ems.id, mor)
     return results unless results.nil?
 
-    log_header = "EMS: [#{ems.hostname}]"
-
     begin
       summary = vim_hist.queryProviderSummary(mor)
     rescue Handsoap::Fault, StandardError => err
-      _log.error("#{log_header} The following error occurred: [#{err}]")
+      _log.error("EMS: [#{ems.hostname}] The following error occurred: [#{err}]")
       raise
     end
 
     if summary.kind_of?(Hash) && summary['currentSupported'].to_s == "true"
       interval = summary['refreshRate'].to_s
-      _log.debug("#{log_header} Found realtime interval: [#{interval}] for mor: [#{mor}]")
+      _log.debug { "EMS: [#{ems.hostname}] Found realtime interval: [#{interval}] for mor: [#{mor}]" }
     else
       interval = nil
-      _log.debug("#{log_header} Realtime is not supported for mor: [#{mor}], summary: [#{summary.inspect}]")
+      _log.debug { "EMS: [#{ems.hostname}] Realtime is not supported for mor: [#{mor}], summary: [#{summary.inspect}]" }
     end
 
     phr.store_path(:realtime_interval, ems.id, mor, interval)
@@ -59,8 +56,6 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     results = phr.fetch_path(:hourly_interval, ems.id)
     return results unless results.nil?
 
-    log_header = "EMS: [#{ems.hostname}]"
-
     # Using the reporting value of 'hourly', get the vim interval 'Past Month'
     #   and look for that in the intervals data
     vim_interval = VIM_INTERVAL_NAME_BY_MIQ_INTERVAL_NAME['hourly']
@@ -69,10 +64,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
     interval = intervals.detect { |i| i['name'].to_s.downcase == vim_interval.downcase }
     if interval.nil?
-      _log.debug("#{log_header} Unable to find hourly interval [#{vim_interval}] in intervals: #{intervals.collect { |i| i['name'] }.inspect}")
+      _log.debug { "EMS: [#{ems.hostname}] Unable to find hourly interval [#{vim_interval}] in intervals: #{intervals.collect { |i| i['name'] }.inspect}" }
     else
       interval = interval['samplingPeriod'].to_s
-      _log.debug("#{log_header} Found hourly interval: [#{interval}] for vim interval: [#{vim_interval}]")
+      _log.debug { "EMS: [#{ems.hostname}] Found hourly interval: [#{interval}] for vim interval: [#{vim_interval}]" }
     end
 
     phr.store_path(:hourly_interval, ems.id, interval)
@@ -83,11 +78,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     results = phr.fetch_path(:counter_info_by_id, ems.id)
     return results unless results.nil?
 
-    log_header = "EMS: [#{ems.hostname}]"
     begin
       counter_info = vim_hist.id2Counter
     rescue Handsoap::Fault, StandardError => err
-      _log.error("#{log_header} The following error occurred: [#{err}]")
+      _log.error("EMS: [#{ems.hostname}] The following error occurred: [#{err}]")
       raise
     end
 
@@ -121,11 +115,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     results = phr.fetch_path(:avail_metrics_for_entity, ems.id, mor, interval)
     return results unless results.nil?
 
-    log_header = "EMS: [#{ems.hostname}]"
     begin
       avail_metrics = vim_hist.availMetricsForEntity(mor, :intervalId => interval)
     rescue Handsoap::Fault, StandardError => err
-      _log.error("#{log_header} The following error occurred: [#{err}]")
+      _log.error("EMS: [#{ems.hostname}] The following error occurred: [#{err}]")
       raise
     end
 
@@ -169,7 +162,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     # Next process each of the those results
     processed_res.each do |res|
       full_vim_key = "#{res[:counter_id]}_#{res[:instance]}"
-      _log.debug("Processing [#{res[:results].length / 2}] results for MOR: [#{res[:mor]}], instance: [#{res[:instance]}], capture interval [#{res[:interval]}], counter vim key: [#{res[:counter_id]}]")
+      _log.debug { "Processing [#{res[:results].length / 2}] results for MOR: [#{res[:mor]}], instance: [#{res[:instance]}], capture interval [#{res[:interval]}], counter vim key: [#{res[:counter_id]}]" }
 
       hashes = perf_vim_data_to_hashes(res[:results])
       next if hashes.nil?
@@ -353,7 +346,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       interval_by_mor[mor] = interval
     end
 
-    _log.debug("Mapping of MOR to Intervals: #{interval_by_mor.inspect}")
+    _log.debug { "Mapping of MOR to Intervals: #{interval_by_mor.inspect}" }
     interval_by_mor
   end
 
@@ -389,7 +382,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
         :format     => "csv",
         :metricId   => counters.values.collect { |counter| {:counterId => counter[:vim_key], :instance => counter[:instance]} }
       }
-      _log.debug("Adding query params: #{param.inspect}")
+      _log.debug { "Adding query params: #{param.inspect}" }
       params << param
     end
 
@@ -403,16 +396,16 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     return counter_values_by_mor_and_ts if params.blank?
 
     Benchmark.current_realtime[:num_vim_queries] = params.length
-    _log.debug("Total item(s) to be requested: [#{params.length}], #{params.inspect}")
+    _log.debug { "Total item(s) to be requested: [#{params.length}], #{params.inspect}" }
 
     query_size = Metric::Capture.concurrent_requests(interval_name)
     vim_trips = 0
     params.each_slice(query_size) do |query|
       vim_trips += 1
 
-      _log.debug("Starting request for [#{query.length}] item(s), #{query.inspect}")
+      _log.debug { "Starting request for [#{query.length}] item(s), #{query.inspect}" }
       data, = Benchmark.realtime_block(:vim_execute_time) { @perf_vim_hist.queryPerfMulti(query) }
-      _log.debug("Finished request for [#{query.length}] item(s)")
+      _log.debug { "Finished request for [#{query.length}] item(s)" }
 
       Benchmark.realtime_block(:perf_processing) { self.class.preprocess_data(data, counter_values_by_mor_and_ts) }
     end
