@@ -1,2 +1,4 @@
-# GlobalVars:
-#   AllowedVariables:
+GlobalVars:
+  AllowedVariables:
+  # Loggers
+  - $vcloud_log

@@ -8,7 +8,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
       service.instantiate_template(create_options)
     end
   rescue => err
-    _log.error "stack=[#{stack_name}], error: #{err}"
+    $vcloud_log.error("stack=[#{stack_name}], error: #{err}")
     raise MiqException::MiqOrchestrationProvisionError, err.to_s, err.backtrace
   end
 
@@ -23,7 +23,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
       raw_stack.destroy
     end
   rescue => err
-    _log.error "stack=[#{name}], error: #{err}"
+    $vcloud_log.error("stack=[#{name}], error: #{err}")
     raise MiqException::MiqOrchestrationDeleteError, err.to_s, err.backtrace
   end
 
@@ -38,7 +38,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
   rescue MiqException::MiqOrchestrationStackNotExistError
     raise
   rescue => err
-    _log.error("stack=[#{name}], error: #{err}")
+    $vcloud_log.error("stack=[#{name}], error: #{err}")
     raise MiqException::MiqOrchestrationStatusError, err.to_s, err.backtrace
   end
 end
