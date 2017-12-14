@@ -18,7 +18,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
   def ems_inv_to_hashes
     log_header = "MIQ(#{self.class.name}.#{__method__}) Collecting data for EMS name: [#{@ems.name}] id: [#{@ems.id}]"
 
-    $log.info("#{log_header}...")
+    $vcloud_log.info("#{log_header}...")
 
     get_ems
     get_orgs
@@ -28,7 +28,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
     get_vapp_templates
     get_images
 
-    $log.info("#{log_header}...Complete")
+    $vcloud_log.info("#{log_header}...Complete")
 
     @data
   end

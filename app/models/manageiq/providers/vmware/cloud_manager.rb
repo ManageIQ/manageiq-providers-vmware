@@ -60,24 +60,24 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   def vm_start(vm, _options = {})
     vm.start
   rescue => err
-    _log.error "vm=[#{vm.name}, error: #{err}"
+    $vcloud_log.error("vm=[#{vm.name}, error: #{err}")
   end
 
   def vm_stop(vm, _options = {})
     vm.stop
   rescue => err
-    _log.error "vm=[#{vm.name}, error: #{err}"
+    $vcloud_log.error("vm=[#{vm.name}, error: #{err}")
   end
 
   def vm_suspend(vm, _options = {})
     vm.suspend
   rescue => err
-    _log.error "vm=[#{vm.name}], error: #{err}"
+    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
   end
 
   def vm_restart(vm, _options = {})
     vm.restart
   rescue => err
-    _log.error "vm=[#{vm.name}], error: #{err}"
+    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
   end
 end

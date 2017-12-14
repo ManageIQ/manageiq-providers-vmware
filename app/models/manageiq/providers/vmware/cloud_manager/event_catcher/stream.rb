@@ -41,7 +41,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
   end
 
   def start
-    _log.debug("Opening amqp connection to #{@options}")
+    $vcloud_log.debug("Opening amqp connection to #{@options}")
     connection.start
     @channel = connection.create_channel
     initialize_queues(@channel)
@@ -76,7 +76,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
       begin
         @queues[queue_name] = channel.queue(queue_name, :durable => true)
       rescue Bunny::AccessRefused => err
-        _log.warn("Could not start listening to queue '#{queue_name}' due to: #{err}")
+        $vcloud_log.warn("Could not start listening to queue '#{queue_name}' due to: #{err}")
       end
     end
   end
@@ -96,7 +96,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
             end
           end
         rescue => e
-          _log.error("Exception receiving Rabbit (amqp)"\
+          $vcloud_log.error("Exception receiving Rabbit (amqp)"\
                      " event on #{queue_name} from #{@options[:hostname]}: #{e}")
         end
       end
