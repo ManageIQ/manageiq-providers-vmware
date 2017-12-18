@@ -110,15 +110,10 @@ describe ManageIQ::Providers::Vmware::InfraManager do
         ems.authentications << FactoryGirl.create(:authentication, :userid => "root", :password => "vmware")
       end
 
-      it "uses the default credentials" do
+      it "raises an exception" do
         require 'VMwareWebService/MiqVim'
 
-        vim = mock_vim_broker_connection
-
-        expect(MiqVim).to receive(:new).with(ems.hostname, "root", "vmware").and_return(vim)
-        expect(vim).to receive(:acquireCloneTicket)
-
-        ems.remote_console_vmrc_acquire_ticket
+        expect { ems.remote_console_vmrc_acquire_ticket }.to raise_error "no console credentials defined"
       end
     end
   end

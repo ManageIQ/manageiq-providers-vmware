@@ -92,6 +92,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   end
 
   context '#validate_remote_console_webmks_support' do
+    before do
+      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
+    end
+
     it 'normal case' do
       ems.update_attribute(:api_version, '6.0')
       expect(vm.validate_remote_console_webmks_support).to be_truthy
@@ -121,7 +125,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
       auth = FactoryGirl.create(:authentication,
                                 :userid   => 'dev1',
                                 :password => 'dev1pass',
-                                :authtype => 'default')
+                                :authtype => 'console')
       ems.authentications = [auth]
       ticket = VCR.use_cassette(described_class.name.underscore) do
         vm.remote_console_vmrc_acquire_ticket
@@ -143,6 +147,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   end
 
   context '#validate_remote_console_vmrc_support' do
+    before do
+      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
+    end
+
     it 'normal case' do
       expect(vm.validate_remote_console_vmrc_support).to be_truthy
     end
@@ -178,6 +186,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     let(:server) { double('MiqServer') }
 
     before(:each) do
+      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
       allow(server).to receive_messages(:id => 1)
       allow(MiqServer).to receive_messages(:my_server => server)
     end
