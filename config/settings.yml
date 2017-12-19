@@ -31,6 +31,10 @@
     :update_driven_refresh: false
 :workers:
   :worker_base:
+    :ems_refresh_core_worker:
+      :poll: 1.seconds
+      :nice_delta: 1
+      :thread_shutdown_timeout: 10.seconds
     :event_catcher:
       :event_catcher_vmware:
         :flooding_monitor_enabled: true
