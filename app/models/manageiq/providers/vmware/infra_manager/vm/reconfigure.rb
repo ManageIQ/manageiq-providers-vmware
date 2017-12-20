@@ -90,13 +90,15 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
       set_spec_option(vmcs, :memoryMB, options[:vm_memory],      :to_i)
       set_spec_option(vmcs, :numCPUs,  options[:number_of_cpus], :to_i)
 
-      if options[:disk_remove] || options[:disk_add] || options[:disk_resize]
+      if options[:disk_remove] || options[:disk_add] || options[:disk_resize] || options[:network_adapter_add] || options[:network_adapter_remove]
         with_provider_object do |vim_obj|
           hardware = vim_obj.getHardware
 
           remove_disks(vim_obj, vmcs, hardware, options[:disk_remove]) if options[:disk_remove]
           resize_disks(vim_obj, vmcs, hardware, options[:disk_resize]) if options[:disk_resize]
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
+          remove_network_adapters(vim_obj, vmcs, options[:network_adapter_remove]) if options[:network_adapter_remove]
+          add_network_adapters(vim_obj, vmcs, options[:network_adapter_add]) if options[:network_adapter_add]
         end
       end
     end
@@ -146,6 +148,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
       d[:unit_number]    = unit_number
 
       add_disk_config_spec(vmcs, d)
+    end
+  end
+
+  def remove_network_adapters(vim_obj, vmcs, network_adapters)
+    network_adapters.each do |n|
+      remove_network_adapter_config_spec(vim_obj, vmcs, n)
+    end
+  end
+
+
+  def add_network_adapters(vim_obj, vmcs, network_adapters)
+    network_adapters.each do |n|
+      add_network_adapter_config_spec(vmcs, n)
     end
   end
 
@@ -246,6 +261,33 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
+  def add_network_adapter_config_spec(vmcs, options)
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
+      vdcs.device = VimHash.new("VirtualVmxnet3") do |dev|
+        dev.key = rand(-9999..-100) # negative integer as temporary key
+        dev.unitNumber = 0
+        dev.addressType = "Generated"
+        dev.wakeOnLanEnabled = "true"
+        dev.connectable = VimHash.new("VirtualDeviceConnectInfo") do |con|
+          con.allowGuestControl = "true"
+          con.connected = "true"
+          con.startConnected = "true"
+        end
+        dev.backing = VimHash.new("VirtualEthernetCardDistributedVirtualPortBackingInfo") do |bck|
+          bck.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |pc|
+
+            # A DistributedVirtualPortgroup name is unique in a datacenter so look for a Lan with this name
+            # on all switches in the cluster
+            lan = Lan.find_by(:name => options[:network], :switch_id => HostSwitch.where(:host_id => host).pluck(:switch_id))
+
+            pc.switchUuid = lan.switch.switch_uuid
+            pc.portgroupKey = lan.uid_ems
+          end
+        end
+      end
+    end
+  end
+
   def remove_disk_config_spec(vim_obj, vmcs, hardware, options)
     raise "remove_disk_config_spec: disk filename is required." unless options[:disk_name]
 
@@ -284,6 +326,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
         dev.controllerKey = device.controllerKey
         dev.unitNumber    = device.unitNumber
         dev.backing       = device.backing
+      end
+    end
+  end
+
+  def remove_network_adapter_config_spec(vim_obj, vmcs, options)
+    raise "remove_network_adapter_config_spec: network_adapter name is required." unless options[:network][:name]
+    networkName = options[:network][:name]
+    controller_key, key, unitNumber = vim_obj.send(:getDeviceKeysByNetwork, networkName)
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
+      vdcs.device = VimHash.new("VirtualEthernetCard") do |dev|
+        dev.key = key
+        dev.controllerKey = controller_key
+        dev.unitNumber =  unitNumber
       end
     end
   end

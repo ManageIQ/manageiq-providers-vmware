@@ -10,6 +10,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
   end
 
   supports :reconfigure_disks
+  supports :reconfigure_network_adapters
 
   supports :reconfigure_disksize
 
