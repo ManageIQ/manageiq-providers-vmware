@@ -26,6 +26,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
     true
   end
 
+  def migration_status
+    'success'
+  end
+
   supports :snapshots
   supports :quick_stats
 end
