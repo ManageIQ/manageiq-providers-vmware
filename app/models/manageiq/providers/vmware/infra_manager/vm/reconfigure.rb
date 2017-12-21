@@ -332,8 +332,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
 
   def remove_network_adapter_config_spec(vim_obj, vmcs, options)
     raise "remove_network_adapter_config_spec: network_adapter name is required." unless options[:network][:name]
-    networkName = options[:network][:name]
-    controller_key, key, unitNumber = vim_obj.send(:getDeviceKeysByNetwork, networkName)
+    networkAdapterLabel = options[:network][:name]
+    controller_key, key, unitNumber = vim_obj.send(:getDeviceKeysByLabel, networkAdapterLabel)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
       vdcs.device = VimHash.new("VirtualEthernetCard") do |dev|
         dev.key = key
