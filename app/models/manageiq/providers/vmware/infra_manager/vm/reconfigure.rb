@@ -272,24 +272,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def resize_disk_config_spec(vim_obj, vmcs, hardware, options)
     raise "resize_disk_config_spec: disk filename is required." unless options[:disk_name]
 
-    controller_key, key = vim_obj.getDeviceKeysByBacking(options[:disk_name], hardware)
-    raise "resize_disk_config_spec: no virtual device associated with: #{options[:disk_name]}" unless key
-
-    device = vim_obj.getDeviceByBacking(options[:disk_name])
+    device = vim_obj.getDeviceByBacking(options[:disk_name], hardware)
+    raise "resize_disk_config_spec: no virtual device associated with: #{options[:disk_name]}" unless device
     raise "resize_disk_config_spec: decrease size is not supported for: #{options[:disk_name]}" unless device.capacityInKB.to_i <= options[:disk_size_in_mb].to_i * 1024
 
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
       vdcs.device = VimHash.new("VirtualDisk") do |dev|
-        dev.key           = key
+        dev.key           = device.key
         dev.capacityInKB  = options[:disk_size_in_mb].to_i * 1024
-        dev.controllerKey = controller_key
+        dev.controllerKey = device.controllerKey
         dev.unitNumber    = device.unitNumber
-
-        dev.connectable = VimHash.new("VirtualDeviceConnectInfo") do |con|
-          con.allowGuestControl = "false"
-          con.startConnected    = "true"
-          con.connected         = "true"
-        end
 
         dev.backing = VimHash.new("VirtualDiskFlatVer2BackingInfo") do |bck|
           bck.diskMode        = device.backing.diskMode
