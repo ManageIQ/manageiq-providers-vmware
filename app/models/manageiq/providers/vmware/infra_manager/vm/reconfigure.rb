@@ -98,7 +98,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
           resize_disks(vim_obj, vmcs, hardware, options[:disk_resize]) if options[:disk_resize]
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
           remove_network_adapters(vim_obj, vmcs, options[:network_adapter_remove]) if options[:network_adapter_remove]
-          add_network_adapters(vim_obj, vmcs, options[:network_adapter_add]) if options[:network_adapter_add]
+          add_network_adapters(vmcs, options[:network_adapter_add]) if options[:network_adapter_add]
         end
       end
     end
@@ -157,8 +157,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-
-  def add_network_adapters(vim_obj, vmcs, network_adapters)
+  def add_network_adapters(vmcs, network_adapters)
     network_adapters.each do |n|
       add_network_adapter_config_spec(vmcs, n)
     end
@@ -275,7 +274,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
         end
         dev.backing = VimHash.new("VirtualEthernetCardDistributedVirtualPortBackingInfo") do |bck|
           bck.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |pc|
-
             # A DistributedVirtualPortgroup name is unique in a datacenter so look for a Lan with this name
             # on all switches in the cluster
             lan = Lan.find_by(:name => options[:network], :switch_id => HostSwitch.where(:host_id => host).pluck(:switch_id))
@@ -332,13 +330,13 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
 
   def remove_network_adapter_config_spec(vim_obj, vmcs, options)
     raise "remove_network_adapter_config_spec: network_adapter name is required." unless options[:network][:name]
-    networkAdapterLabel = options[:network][:name]
-    controller_key, key, unitNumber = vim_obj.send(:getDeviceKeysByLabel, networkAdapterLabel)
+    network_adapter_label = options[:network][:name]
+    controller_key, key, unit_number = vim_obj.send(:getDeviceKeysByLabel, network_adapter_label)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
       vdcs.device = VimHash.new("VirtualEthernetCard") do |dev|
         dev.key = key
         dev.controllerKey = controller_key
-        dev.unitNumber =  unitNumber
+        dev.unitNumber =  unit_number
       end
     end
   end
