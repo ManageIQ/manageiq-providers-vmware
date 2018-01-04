@@ -605,6 +605,15 @@ module ManageIQ::Providers
                                            when 'HostParallelScsiHba' then 'SCSI'
                                            when 'HostBusAdapter'      then 'HBA'
                                            end
+            case new_result[:controller_type]
+            when 'iSCSI'
+              new_result[:speed] = data['maxSpeedMb']
+            when 'Fibre'
+              new_result[:speed]     = data['speed'] / 8_388_608 unless data['speed'].nil? # 1.megabyte * 8 bits
+              new_result[:node_wwn]  = data['nodeWorldWideName'].to_s
+              new_result[:port_type] = data['portType'].to_s
+              new_result[:port_wwn]  = data['portWorldWideName'].to_s
+            end
 
             result << new_result
             result_uids[:storage][uid] = new_result
