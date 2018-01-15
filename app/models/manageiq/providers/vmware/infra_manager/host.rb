@@ -24,32 +24,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
     handle.release if handle rescue nil
   end
 
-  def get_files_on_datastore(datastore)
-    with_provider_connection do |vim|
-      begin
-        vim_ds = vim.getVimDataStore(datastore.name)
-        return vim_ds.dsFolderFileList
-      rescue Handsoap::Fault, StandardError, Timeout::Error, DRb::DRbConnError => err
-        _log.log_backtrace(err)
-        raise MiqException::MiqStorageError, "Error communicating with Host: [#{name}]"
-      ensure
-        begin
-          vim_ds.release if vim_ds
-        rescue
-          # TODO: specify what to rescue
-          # TODO: log it
-          nil
-        end
-      end
-    end
-
-    nil
-  end
-
   def refresh_files_on_datastore(datastore)
-    hashes = ManageIQ::Providers::Vmware::InfraManager::RefreshParser.datastore_file_inv_to_hashes(
-      get_files_on_datastore(datastore), datastore.vm_ids_by_path)
-    EmsRefresh.save_storage_files_inventory(datastore, hashes)
+    raise _("Host must be connected to an EMS to refresh datastore files") if ext_management_system.nil?
+    ext_management_system.refresh_files_on_datastore(datastore)
   end
 
   def reserve_next_available_vnc_port
