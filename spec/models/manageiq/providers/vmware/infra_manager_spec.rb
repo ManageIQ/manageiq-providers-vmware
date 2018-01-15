@@ -50,11 +50,6 @@ describe ManageIQ::Providers::Vmware::InfraManager do
       expect(@ems.remote_console_vmrc_support_known?).to be_truthy
     end
 
-    it "false for missing hostname" do
-      @ems.update_attributes(:hostname => nil, :api_version => "5.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
-    end
-
     it "false for blank hostname" do
       @ems.update_attributes(:hostname => "", :api_version => "5.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
       expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
@@ -135,7 +130,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
 
     it "will restart EventCatcher when hostname changes" do
-      @ems.update_attributes(:hostname => "something else")
+      @ems.update_attributes(:hostname => "something-else")
       assert_event_catcher_restart_queued
     end
 
