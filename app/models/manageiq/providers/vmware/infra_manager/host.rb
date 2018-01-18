@@ -70,4 +70,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
   end
 
   supports :quick_stats
+
+  def self.display_name(number = 1)
+    n_('Host (Vmware)', 'Hosts (Vmware)', number)
+  end
 end

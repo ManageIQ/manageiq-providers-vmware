@@ -173,4 +173,8 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
     ash = vim_advanced_settings
     AdvancedSetting.add_elements(self, ash) unless ash.nil?
   end
+
+  def self.display_name(number = 1)
+    n_('Host (Vmware)', 'Hosts (Vmware)', number)
+  end
 end

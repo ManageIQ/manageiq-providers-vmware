@@ -100,4 +100,8 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
   rescue REXML::ParseException => err
     err.message
   end
+
+  def self.display_name(number = 1)
+    n_('vApp Template', 'vApp Templates', number)
+  end
 end

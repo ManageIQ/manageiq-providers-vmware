@@ -540,4 +540,8 @@ module ManageIQ::Providers
       EmsRefresh.save_storage_files_inventory(datastore, hashes)
     end
   end
+
+  def self.display_name(number = 1)
+    n_('Infrastructure Provider (VMware)', 'Infrastructure Providers (VMware)', number)
+  end
 end

@@ -18,4 +18,8 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
     # https://github.com/xlab-si/fog-vcloud-director/blob/master/lib/fog/vcloud_director/parsers/compute/vm.rb#L70
     POWER_STATES[raw_power_state.to_s] || "terminated"
   end
+
+  def self.display_name(number = 1)
+    n_('Instance (VMware vCloud)', 'Instances (VMware vCloud)', number)
+  end
 end
