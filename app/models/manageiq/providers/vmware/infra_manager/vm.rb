@@ -28,4 +28,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
 
   supports :snapshots
   supports :quick_stats
+
+  def self.display_name(number = 1)
+    n_('Virtual Machine (VMware)', 'Virtual Machines (VMware)', number)
+  end
 end

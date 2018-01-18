@@ -80,4 +80,8 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   rescue => err
     $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
   end
+
+  def self.display_name(number = 1)
+    n_('Cloud Provider (VMware vCloud)', 'Cloud Providers (VMware vCloud)', number)
+  end
 end
