@@ -90,14 +90,21 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
       set_spec_option(vmcs, :memoryMB, options[:vm_memory],      :to_i)
       set_spec_option(vmcs, :numCPUs,  options[:number_of_cpus], :to_i)
 
-      if options[:disk_remove] || options[:disk_add]
+      if options[:disk_remove] || options[:disk_add] || options[:disk_resize]
         with_provider_object do |vim_obj|
           hardware = vim_obj.getHardware
 
           remove_disks(vim_obj, vmcs, hardware, options[:disk_remove]) if options[:disk_remove]
+          resize_disks(vim_obj, vmcs, hardware, options[:disk_resize]) if options[:disk_resize]
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
         end
       end
+    end
+  end
+
+  def resize_disks(vim_obj, vmcs, hardware, disks)
+    disks.each do |disk|
+      resize_disk_config_spec(vim_obj, vmcs, hardware, disk)
     end
   end
 
@@ -258,6 +265,25 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
           con.startConnected    = "true"
           con.connected         = "true"
         end
+      end
+    end
+  end
+
+  def resize_disk_config_spec(vim_obj, vmcs, hardware, options)
+    raise "resize_disk_config_spec: disk filename is required." unless options[:disk_name]
+
+    device = vim_obj.getDeviceByBacking(options[:disk_name], hardware)
+    raise "resize_disk_config_spec: no virtual device associated with: #{options[:disk_name]}" unless device
+    new_capacity_in_kb = options[:disk_size_in_mb].to_i * 1024
+    raise "resize_disk_config_spec: decrease size is not supported for: #{options[:disk_name]}" unless device.capacityInKB.to_i <= new_capacity_in_kb
+
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
+      vdcs.device = VimHash.new("VirtualDisk") do |dev|
+        dev.key           = device.key
+        dev.capacityInKB  = new_capacity_in_kb
+        dev.controllerKey = device.controllerKey
+        dev.unitNumber    = device.unitNumber
+        dev.backing       = device.backing
       end
     end
   end

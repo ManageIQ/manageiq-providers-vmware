@@ -11,6 +11,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
 
   supports :reconfigure_disks
 
+  supports :reconfigure_disksize
+
   def add_miq_alarm
     raise "VM has no EMS, unable to add alarm" unless ext_management_system
     ext_management_system.vm_add_miq_alarm(self)
