@@ -230,6 +230,56 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
     end
   end
 
+  context '#resize_disk_config_spec' do
+    let(:vmcs)      { VimHash.new("VirtualMachineConfigSpec") }
+    let(:filename)  { '[datastore] vm_name/abc.vmdk' }
+    let(:hardware)  { VimHash.new("VirtualHardware") }
+    let(:disk_size) { 2048 }
+    let(:device)    do
+      VimHash.new("VirtualDisk").tap do |disk|
+        disk.key           = 2_000
+        disk.capacityInKB  = 1_048_576
+        disk.controllerKey = 1_000
+        disk.unitNumber    = 0
+        disk.backing       = VimHash.new("VirtualDiskFlatVer2BackingInfo").tap do |backing|
+          backing.fileName = filename
+        end
+      end
+    end
+    let(:vim_obj)   { double('provider object', :getDeviceByBacking => device) }
+    let(:options)   { {:disk_name => filename, :disk_size_in_mb => disk_size} }
+    subject         { vm.resize_disk_config_spec(vim_obj, vmcs, hardware, options) }
+
+    context 'with no disk name passed' do
+      let(:filename) { nil }
+      it 'raises an exception' do
+        expect { subject }.to raise_error(RuntimeError, /resize_disk_config_spec: disk filename is required./)
+      end
+    end
+
+    context 'with no disks' do
+      let(:device) { nil }
+      it 'raises an exception with no disks' do
+        expect { subject }.to raise_error(RuntimeError, /resize_disk_config_spec: no virtual device associated with: /)
+      end
+    end
+
+    context 'with new disk size smaller than existing disk' do
+      let(:disk_size) { 512 }
+
+      it 'raises an exception' do
+        expect { subject }.to raise_error(RuntimeError, /resize_disk_config_spec: decrease size is not supported for: /)
+      end
+    end
+
+    context 'with new disk size greater than existing disk' do
+      it 'returns the device config spec' do
+        device_change = subject.first
+        expect(device_change["device"]["capacityInKB"]).to eq(disk_size * 1024)
+      end
+    end
+  end
+
   context '#backing_filename' do
     subject { vm.backing_filename }
 
