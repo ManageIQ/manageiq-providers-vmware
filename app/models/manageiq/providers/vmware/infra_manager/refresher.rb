@@ -21,6 +21,7 @@ module ManageIQ::Providers
         Benchmark.realtime_block(:get_vc_data) { get_vc_data(ems) }
 
         Benchmark.realtime_block(:get_vc_data_storage_profile) { get_vc_data_storage_profile(ems, targets) }
+        Benchmark.realtime_block(:get_vc_data_tags) { get_vc_data_tags(ems) }
         Benchmark.realtime_block(:get_vc_data_ems_customization_specs) { get_vc_data_ems_customization_specs(ems) } if targets.include?(ems)
 
         # Filter the data, and determine for which hosts we will need to get extended data
@@ -150,6 +151,19 @@ module ManageIQ::Providers
             if targets.include?(ems)
               collect_and_log_inventory(ems, :storage_profile_datastore) { @vi.pbmQueryMatchingHub(storage_profile_ids) }
             end
+          end
+        end
+      end
+
+      def get_vc_data_tags(ems)
+        cleanup_callback = proc { @vc_data = nil }
+
+        retrieve_from_vc(ems, cleanup_callback) do
+          collect_and_log_inventory(ems, :tag) { @vi.tagsByUid }
+
+          unless @vc_data[:tag].blank?
+            tag_ids = @vc_data[:tag].keys
+            collect_and_log_inventory(ems, :tagged_entity) { @vi.tagQueryAssociatedEntity(tag_ids) }
           end
         end
       end
