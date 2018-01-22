@@ -1,4 +1,47 @@
 class ManageIQ::Providers::Vmware::InfraManager::Operations < ManageIQ::Providers::BaseManager::Operations
+  def raw_vm_start(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+    host = rbvmomi_object('HostSystem', vim, args[:host]) if args[:host]
+
+    task = vm.PowerOnVM_Task(host: host)
+    task.wait_for_completion
+  end
+
+  def raw_vm_stop(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+
+    task = vm.PowerOffVM_Task
+    task.wait_for_completion
+  end
+
+  def raw_vm_suspend(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+
+    task = vm.SuspendVM_Task
+    task.wait_for_completion
+  end
+
+  def raw_vm_shutdown_guest(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+    vm.ShutdownGuest
+  end
+
+  def raw_vm_reboot_guest(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+    vm.RebootGuest
+  end
+
+  def raw_vm_reset(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+    task = vm.ResetVM_Task
+    task.wait_for_completion
+  end
+
+  def raw_vm_unregister(vim, vm_ref, args = {})
+    vm = rbvmomi_object('VirtualMachine', vim, vm_ref)
+    vm.UnregisterVM
+  end
+
   private
 
   def connection_key(connect_params)
@@ -40,5 +83,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Operations < ManageIQ::Provider
     _log.info("Connecting to #{host}...Complete")
 
     conn
+  end
+
+  def rbvmomi_object(wsdl_name, connection, ref)
+    connection.type(wsdl_name).new(connection, ref)
   end
 end
