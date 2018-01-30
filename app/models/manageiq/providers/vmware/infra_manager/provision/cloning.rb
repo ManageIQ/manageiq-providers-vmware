@@ -114,13 +114,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
     [:transform, :config, :customization, :linked_clone].each { |key| vim_clone_options[key] = clone_options[key] }
 
-    [:folder, :host, :pool, :snapshot].each do |key|
+    [:folder, :host, :datastore, :pool, :snapshot].each do |key|
       ci = clone_options[key]
       next if ci.nil?
       vim_clone_options[key] = ci.ems_ref_obj
     end
 
-    vim_clone_options[:datastore]       = datastore_ems_ref(clone_options)
     vim_clone_options[:storage_profile] = build_storage_profile(clone_options[:storage_profile]) unless clone_options[:storage_profile].nil?
 
     task_mor = clone_vm(vim_clone_options)
@@ -155,20 +154,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
     end
 
     task_mor
-  end
-
-  def datastore_ems_ref(clone_opts)
-    host_ids = if clone_opts[:host]
-                 clone_opts[:host].id
-               else
-                 clone_opts[:cluster].hosts.pluck(:id)
-               end
-
-    # Find a host in the cluster that has this storage mounted to get the right ems_ref for this
-    # datastore in the datacenter
-    datastore = HostStorage.find_by(:storage_id => clone_opts[:datastore].id, :host_id => host_ids)
-
-    datastore.try(:ems_ref)
   end
 
   def get_selected_snapshot
