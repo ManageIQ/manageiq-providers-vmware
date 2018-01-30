@@ -10,6 +10,8 @@ module ManageIQ::Providers
     require_nested :Host
     require_nested :HostEsx
     require_nested :Inventory
+    require_nested :OperationsWorker
+    require_nested :Operations
     require_nested :Provision
     require_nested :ProvisionViaPxe
     require_nested :ProvisionWorkflow

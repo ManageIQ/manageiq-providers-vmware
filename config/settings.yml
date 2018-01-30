@@ -31,6 +31,8 @@
     :update_driven_refresh: false
 :workers:
   :worker_base:
+    :ems_operations_worker:
+      :ems_operations_worker_vmware: {}
     :event_catcher:
       :event_catcher_vmware:
         :flooding_monitor_enabled: true
