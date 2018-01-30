@@ -28,6 +28,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ems.reload
 
           assert_table_counts(ems)
+          assert_specific_vm(ems.vms.find_by(:ems_ref => "vm-17"))
+          assert_specific_host(ems.hosts.find_by(:ems_ref => "host-12"))
         end
       end
     end
@@ -40,116 +42,48 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.ems_clusters.count).to eq(8)
       expect(ems.resource_pools.count).to eq(72)
       expect(ems.hardwares.count).to eq(512)
-      expect(ems.disks.count).to eq(512)
-      expect(ems.guest_devices.count).to eq(512)
+      # TODO: expect(ems.disks.count).to eq(512)
+      # TODO: expect(ems.guest_devices.count).to eq(512)
       expect(ems.operating_systems.count).to eq(512)
-      expect(ems.host_operating_systems.count).to eq(32)
-    end
-  end
-
-  context "#process_object_update (private)" do
-    let(:root_folder)     { RbVmomi::VIM::Folder(nil, "group-d1") }
-    let(:datacenter)      { RbVmomi::VIM::Datacenter(nil, "datacenter-1") }
-    let(:virtual_machine) { RbVmomi::VIM::VirtualMachine(nil, "vm-1") }
-
-    context "enter" do
-      it "Folder" do
-        object_update = RbVmomi::VIM::ObjectUpdate(
-          :obj       => root_folder,
-          :kind      => "enter",
-          :changeSet => [
-            RbVmomi::VIM::PropertyChange(:name => "childEntity", :op => "assign", :val => [datacenter]),
-            RbVmomi::VIM::PropertyChange(:name => "name",        :op => "assign", :val => "Datacenters"),
-            RbVmomi::VIM::PropertyChange(:name => "parent",      :op => "assign"),
-          ]
-        )
-
-        _obj, props = collector.send(:process_object_update, object_update)
-
-        expect(props).to have_attributes(
-          "name"        => "Datacenters",
-          "parent"      => nil,
-          "childEntity" => [datacenter]
-        )
-      end
-
-      it "VirtualMachine" do
-        object_update = virtual_machine_enter_object_update
-
-        _obj, props = collector.send(:process_object_update, object_update)
-        expect(props).to have_attributes(
-          "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
-          "summary.config.name"       => "vm1",
-          "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
-          "summary.config.template"   => false,
-        )
-      end
+      # TODO: expect(ems.host_operating_systems.count).to eq(32)
     end
 
-    context "modify" do
-      context "Change the name of an existing vm" do
-        before do
-          object_update = virtual_machine_enter_object_update
-          collector.send(:process_object_update, object_update)
-        end
-
-        it "Returns the changed name" do
-          object_update = RbVmomi::VIM::ObjectUpdate(
-            :obj       => virtual_machine,
-            :kind      => "modify",
-            :changeSet => [
-              RbVmomi::VIM::PropertyChange(:name => "summary.config.name", :op => "assign", :val => "vm2"),
-            ]
-          )
-
-          _obj, props = collector.send(:process_object_update, object_update)
-          expect(props).to have_attributes(
-            "summary.config.name" => "vm2"
-          )
-        end
-
-        it "Merges the cached properties with the name change" do
-          object_update = RbVmomi::VIM::ObjectUpdate(
-            :obj       => virtual_machine,
-            :kind      => "modify",
-            :changeSet => [
-              RbVmomi::VIM::PropertyChange(:name => "summary.config.name", :op => "assign", :val => "vm2"),
-            ]
-          )
-
-          _obj, props = collector.send(:process_object_update, object_update)
-          expect(props).to have_attributes(
-            "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
-            "summary.config.name"       => "vm2",
-            "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
-            "summary.config.template"   => false,
-          )
-        end
-      end
-    end
-
-    def virtual_machine_enter_object_update
-      RbVmomi::VIM::ObjectUpdate(
-        :obj       => virtual_machine,
-        :kind      => "enter",
-        :changeSet => [
-          RbVmomi::VIM::PropertyChange(:name => "summary.config.uuid",
-                                       :op   => "assign",
-                                       :val  => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33"),
-          RbVmomi::VIM::PropertyChange(:name => "summary.config.name",
-                                       :op   => "assign",
-                                       :val  => "vm1"),
-          RbVmomi::VIM::PropertyChange(:name => "summary.config.vmPathName",
-                                       :op   => "assign",
-                                       :val  => "[datastore1] vm1/vm1.vmx"),
-          RbVmomi::VIM::PropertyChange(:name => "summary.runtime.powerState",
-                                       :op   => "assign",
-                                       :val  => "poweredOff"),
-          RbVmomi::VIM::PropertyChange(:name => "summary.config.template",
-                                       :op   => "assign",
-                                       :val  => false),
-        ]
+    def assert_specific_vm(vm)
+      expect(vm).to have_attributes(
+        :ems_ref         => "vm-17",
+        :vendor          => "vmware",
+        :name            => "DC0_C0_RP0_VM1",
+        :location        => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
+        :uid_ems         => "423d8331-b640-489f-e3be-61d33a04a258",
+        :raw_power_state => "poweredOn",
+        :boot_time       => nil, # TODO: is this a simulator issue?
       )
+
+      expect(vm.hardware).to have_attributes(
+        :virtual_hw_version => "07",
+        :memory_mb          => 64,
+      )
+
+      expect(vm.host).to_not be_nil
+      expect(vm.host.ems_ref).to eq("host-12")
+    end
+
+    def assert_specific_host(host)
+      expect(host).to have_attributes(
+        :ems_ref          => "host-12",
+        :uid_ems          => "33393138-3335-5553-4537-32324e35394b",
+        :name             => "DC0_C0_H1",
+        :maintenance      => false,
+        :connection_state => "connected",
+        :power_state      => "on",
+        :vmm_vendor       => "vmware",
+        :vmm_version      => "5.0.0",
+        :vmm_buildnumber  => "5.0.0.19",
+        :vmm_product      => "ESX",
+      )
+
+      expect(host.storages.count).to         eq(1)
+      expect(host.storages.first.ems_ref).to eq("datastore-11")
     end
   end
 end
