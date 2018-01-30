@@ -188,6 +188,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(vm.host).to eq(vm2.host)
   end
 
+  it 'creates a new folder from refresh_new_target' do
+    folder_ems_ref = 'group-v12223'
+
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+
+    # delete the folder so we can create one that is already returned in inventory
+    @ems.ems_folders.find_by(:ems_ref => folder_ems_ref).destroy
+
+    hash, klass, find = @ems.class::EventParser.parse_new_target(:objType => 'Folder', :mor => folder_ems_ref)
+    new_folder = EmsRefresh.refresh_new_target(@ems.id, hash, klass, find)
+
+    expect(new_folder).to have_attributes(
+      :ems_ref => folder_ems_ref,
+      :uid_ems => folder_ems_ref,
+    )
+  end
+
   it 'handles refresh of new target without deleting other inventory' do
     EmsRefresh.refresh(@ems)
     @ems.reload
