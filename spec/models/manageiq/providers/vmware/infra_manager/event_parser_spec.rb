@@ -73,5 +73,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
         expect(data[:host_ems_ref]).to be_instance_of String
       end
     end
+
+    context "with a TaskEvent" do
+      let(:event) { YAML.load_file(File.join(EPV_DATA_DIR, 'task_event.yaml')) }
+
+      it "sets the vm_uid_ems" do
+        expect(described_class.event_to_hash(event, 12_345)).to have_attributes(
+          :vm_uid_ems => event["vm"]["uuid"]
+        )
+      end
+    end
   end
 end

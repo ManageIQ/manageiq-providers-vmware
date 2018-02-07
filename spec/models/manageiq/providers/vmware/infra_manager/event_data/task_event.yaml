@@ -1,0 +1,148 @@
+--- !ruby/hash-with-ivars:VimHash
+elements:
+  key: !ruby/string:VimString
+    str: '2109001'
+    xsiType: :SOAP::SOAPInt
+    vimType: 
+  chainId: !ruby/string:VimString
+    str: '2109001'
+    xsiType: :SOAP::SOAPInt
+    vimType: 
+  createdTime: !ruby/string:VimString
+    str: '2018-01-29T20:22:55.002915Z'
+    xsiType: :SOAP::SOAPDateTime
+    vimType: 
+  userName: !ruby/string:VimString
+    str: RH CORP\agrare
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  datacenter: !ruby/hash-with-ivars:VimHash
+    elements:
+      name: !ruby/string:VimString
+        str: dev-vc65-DC
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      datacenter: !ruby/string:VimString
+        str: datacenter-2
+        xsiType: :ManagedObjectReference
+        vimType: :Datacenter
+    ivars:
+      :@xsiType: :DatacenterEventArgument
+      :@vimType: 
+  computeResource: !ruby/hash-with-ivars:VimHash
+    elements:
+      name: !ruby/string:VimString
+        str: dev-vc65-cluster
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      computeResource: !ruby/string:VimString
+        str: domain-c7
+        xsiType: :ManagedObjectReference
+        vimType: :ClusterComputeResource
+    ivars:
+      :@xsiType: :ComputeResourceEventArgument
+      :@vimType: 
+  host: !ruby/hash-with-ivars:VimHash
+    elements:
+      name: !ruby/string:VimString
+        str: dell-r430-16.example.com
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      host: !ruby/string:VimString
+        str: host-261
+        xsiType: :ManagedObjectReference
+        vimType: :HostSystem
+    ivars:
+      :@xsiType: :HostEventArgument
+      :@vimType: 
+  vm: !ruby/hash-with-ivars:VimHash
+    elements:
+      name: !ruby/string:VimString
+        str: ag_test_2
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      vm: !ruby/string:VimString
+        str: vm-854
+        xsiType: :ManagedObjectReference
+        vimType: :VirtualMachine
+      path: !ruby/string:VimString
+        str: "[NFS Share] ag_test_2/ag_test_2.vmx"
+        xsiType: :xsd:string
+        vimType: 
+      uuid: !ruby/string:VimString
+        str: 423cb279-6a04-5b89-4a4a-a77e56e71173
+        xsiType: :xsd:string
+        vimType: 
+    ivars:
+      :@xsiType: :VmEventArgument
+      :@vimType: 
+  fullFormattedMessage: !ruby/string:VimString
+    str: 'Task: Delete virtual machine'
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  changeTag: !ruby/string:VimString
+    str: ''
+    xsiType: :SOAP::SOAPString
+    vimType: 
+  info: !ruby/hash-with-ivars:VimHash
+    elements:
+      key: !ruby/string:VimString
+        str: task-14604
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      task: !ruby/string:VimString
+        str: task-14604
+        xsiType: :ManagedObjectReference
+        vimType: :Task
+      name: !ruby/string:VimString
+        str: Destroy_Task
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      descriptionId: !ruby/string:VimString
+        str: VirtualMachine.destroy
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      entity: !ruby/string:VimString
+        str: vm-854
+        xsiType: :ManagedObjectReference
+        vimType: :VirtualMachine
+      entityName: !ruby/string:VimString
+        str: ag_test_2
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      state: !ruby/string:VimString
+        str: queued
+        xsiType: :SOAP::SOAPString
+        vimType: 
+      cancelled: !ruby/string:VimString
+        str: 'false'
+        xsiType: :SOAP::SOAPBoolean
+        vimType: 
+      cancelable: !ruby/string:VimString
+        str: 'true'
+        xsiType: :SOAP::SOAPBoolean
+        vimType: 
+      reason: !ruby/hash-with-ivars:VimHash
+        elements:
+          userName: !ruby/string:VimString
+            str: RH CORP\agrare
+            xsiType: :SOAP::SOAPString
+            vimType: 
+        ivars:
+          :@xsiType: :TaskReasonUser
+          :@vimType: 
+      queueTime: !ruby/string:VimString
+        str: '2018-01-29T20:22:55.002675Z'
+        xsiType: :SOAP::SOAPDateTime
+        vimType: 
+      eventChainId: !ruby/string:VimString
+        str: '0'
+        xsiType: :SOAP::SOAPInt
+        vimType: 
+    ivars:
+      :@xsiType: :TaskInfo
+      :@vimType: 
+  eventType: TaskEvent
+ivars:
+  :@xsiType: :TaskEvent
+  :@vimType: 

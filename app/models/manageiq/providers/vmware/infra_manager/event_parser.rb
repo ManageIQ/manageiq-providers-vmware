@@ -84,6 +84,8 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
       result[:vm_name] = URI.decode(vm_name) unless vm_name.nil?
       vm_location = vm_data['path']
       result[:vm_location] = vm_location unless vm_location.nil?
+      vm_uid_ems = vm_data['uuid']
+      result[:vm_uid_ems] = vm_uid_ems unless vm_uid_ems.nil?
     end
 
     # Get the dest vm information
