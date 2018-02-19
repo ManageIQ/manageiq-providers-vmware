@@ -37,7 +37,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
 
     case prop_change.op
     when "add"
+      add_to_collection(h, tag, prop_change.val)
     when "remove", "indirectRemove"
+      if key
+        # TODO
+        raise "Array properties aren't supported yet"
+      else
+        h.delete(tag)
+      end
     when "assign"
       if key
         # TODO
@@ -101,5 +108,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
     end
     key = key[1...-1] if key[0, 1] == '"' && key[-1, 1] == '"'
     return tag, key
+  end
+
+  def add_to_collection(hash, tag, val)
+    hash[tag] ||= []
+    hash[tag] << val
   end
 end
