@@ -263,7 +263,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def add_network_adapter_config_spec(vmcs, options)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
       vdcs.device = VimHash.new("VirtualVmxnet3") do |dev|
-        dev.key = rand(-9999..-100) # negative integer as temporary key
+        dev.key = get_next_device_idx # negative integer as temporary key
         dev.unitNumber = 0
         dev.addressType = "Generated"
         dev.wakeOnLanEnabled = "true"
@@ -272,14 +272,18 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
           con.connected = "true"
           con.startConnected = "true"
         end
-        dev.backing = VimHash.new("VirtualEthernetCardDistributedVirtualPortBackingInfo") do |bck|
-          bck.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |pc|
-            # A DistributedVirtualPortgroup name is unique in a datacenter so look for a Lan with this name
-            # on all switches in the cluster
-            lan = Lan.find_by(:name => options[:network], :switch_id => HostSwitch.where(:host_id => host).pluck(:switch_id))
-
-            pc.switchUuid = lan.switch.switch_uuid
-            pc.portgroupKey = lan.uid_ems
+        lan = Lan.find_by(:name => options[:network], :switch_id => HostSwitch.where(:host_id => host.id).pluck(:switch_id))
+        raise MiqException::MiqVmError, "Network [#{options[:network]}] is not available on target" if lan.nil?
+        if lan.switch.shared
+          dev.backing = VimHash.new("VirtualEthernetCardDistributedVirtualPortBackingInfo") do |bck|
+            bck.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |pc|
+              pc.switchUuid = lan.switch.switch_uuid
+              pc.portgroupKey = lan.uid_ems
+            end
+          end
+        else
+          dev.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |bck|
+            bck.deviceName = options[:network]
           end
         end
       end
@@ -365,5 +369,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
         _log.info "#{property} inheriting value from spec: #{value} (#{value.class})"
       end
     end
+  end
+
+  def get_next_device_idx
+    @new_device_idx ||= -100
+    @new_device_idx -= 1
   end
 end
