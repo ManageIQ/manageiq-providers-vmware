@@ -49,19 +49,138 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
     end
 
     context "orchestration template" do
-      it "creates parameter groups for the given template" do
-        parameter_groups = orchestration_template.parameter_groups
+      let(:parameter_groups) { orchestration_template.parameter_groups }
 
-        expect(parameter_groups.size).to eq(3)
+      it "creates vapp parameter group for given template" do
+        assert_vapp_parameter_group(parameter_groups)
+      end
 
-        assert_vapp_parameter_group(parameter_groups[0])
-        assert_vm_parameter_group(parameter_groups[1], "VM1", "e9b55b85-640b-462c-9e7a-d18c47a7a5f3")
-        assert_vm_parameter_group(parameter_groups[2], "VM2", "04f85cca-3f8d-43b4-8473-7aa099f95c1b")
+      [
+        {
+          :vm_name          => 'VM1',
+          :vm_id            => 'e9b55b85-640b-462c-9e7a-d18c47a7a5f3',
+          :hostname         => 'vm-1',
+          :num_cores        => 2,
+          :cores_per_socket => 2,
+          :memory_mb        => 2048,
+          :disks            => [
+            { :disk_id => '2000', :disk_address => '0', :size => 16_384 },
+            { :disk_id => '2001', :disk_address => '1', :size => 40_960 }
+          ],
+          :nics             => [{ :idx => '0', :network => nil, :mode => 'DHCP', :ip_address => nil }]
+        },
+        {
+          :vm_name          => 'VM2',
+          :vm_id            => '04f85cca-3f8d-43b4-8473-7aa099f95c1b',
+          :hostname         => 'vm-2',
+          :num_cores        => 2,
+          :cores_per_socket => 2,
+          :memory_mb        => 4096,
+          :disks            => [{ :disk_id => '2000', :disk_address => '0', :size => 40_960 }],
+          :nics             => [
+            { :idx => '0', :network => 'RedHat Private network 43', :mode => 'MANUAL', :ip_address => '192.168.43.100' },
+            { :idx => '1', :network => nil, :mode => 'DHCP', :ip_address => nil }
+          ]
+        }
+      ].each_with_index do |args, vm_idx|
+        it "creates specific vm parameter group - #{args[:vm_name]} - for given template" do
+          # Group exists.
+          vm_group = parameter_groups.detect { |g| g.label == "VM Instance Parameters for '#{args[:vm_name]}'" }
+          expect(vm_group).not_to be_nil
+          # Group has expected parameters.
+          assert_parameter_group(
+            vm_group,
+            'instance_name'    => {
+              :name          => "instance_name-#{vm_idx}",
+              :label         => 'Instance name',
+              :data_type     => 'string',
+              :required      => true,
+              :default_value => args[:vm_name],
+              :constraints   => []
+            },
+            'hostname'         => {
+              :name          => "hostname-#{vm_idx}",
+              :label         => 'Instance Hostname',
+              :data_type     => 'string',
+              :required      => true,
+              :default_value => args[:hostname]
+            },
+            'num_cores'        => {
+              :name          => "num_cores-#{vm_idx}",
+              :label         => 'Number of virtual CPUs',
+              :data_type     => 'integer',
+              :required      => true,
+              :default_value => args[:num_cores]
+            },
+            'cores_per_socket' => {
+              :name          => "cores_per_socket-#{vm_idx}",
+              :label         => 'Cores per socket',
+              :data_type     => 'integer',
+              :required      => true,
+              :default_value => args[:cores_per_socket]
+            },
+            'memory_mb'        => {
+              :name          => "memory_mb-#{vm_idx}",
+              :label         => 'Total memory (MB)',
+              :data_type     => 'integer',
+              :required      => true,
+              :default_value => args[:memory_mb]
+            }
+          )
+          assert_vm_disks(vm_group, args[:disks], vm_idx)
+          assert_vm_nics(vm_group, args[:nics], vm_idx)
+          # Group has not extra parameters.
+          expect(vm_group.parameters.size).to eq(5 + args[:disks].count + 3 * args[:nics].count)
+        end
+      end
+
+      [
+        {
+          :vapp_net_name => 'VM Network',
+          :parent        => nil,
+          :mode          => 'isolated',
+          :subnets       => [{ :gateway => '192.168.254.1', :netmask => '255.255.255.0', :dns1 => '', :dns2 => '' }]
+        },
+        {
+          :vapp_net_name => 'RedHat Private network 43',
+          :parent        => nil,
+          :mode          => 'bridged',
+          :subnets       => [{ :gateway => '192.168.43.1', :netmask => '255.255.255.0', :dns1 => '192.168.43.1', :dns2 => '' }]
+        }
+      ].each_with_index do |args, vapp_net_idx|
+        it "creates specific vapp network parameter group - #{args[:vapp_net_name]} - for given template" do
+          # Group exists.
+          vapp_net_group = parameter_groups.detect { |g| g.label == "vApp Network Parameters for '#{args[:vapp_net_name]}'" }
+          expect(vapp_net_group).not_to be_nil
+          # Group has expected parameters.
+          assert_parameter_group(
+            vapp_net_group,
+            'parent'     => {
+              :name          => "parent-#{vapp_net_idx}",
+              :label         => 'Parent Network',
+              :data_type     => 'string',
+              :required      => nil,
+              :default_value => args[:parent]
+            },
+            'fence_mode' => {
+              :name          => "fence_mode-#{vapp_net_idx}",
+              :label         => 'Fence Mode',
+              :data_type     => 'string',
+              :required      => true,
+              :default_value => args[:mode]
+            },
+          )
+          assert_vapp_net_subnets(vapp_net_group, vapp_net_idx, args[:subnets])
+          # Group has not extra parameters.
+          expect(vapp_net_group.parameters.size).to eq(2 + 4 * args[:subnets].count)
+        end
       end
     end
   end
 
-  def assert_vapp_parameter_group(group)
+  def assert_vapp_parameter_group(groups)
+    group = groups.detect { |g| g.label == 'vApp Parameters' }
+    expect(group).not_to be_nil
     expect(group.parameters.size).to eq(2)
 
     expect(group.parameters[0]).to have_attributes(
@@ -82,24 +201,72 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
     expect(group.parameters[1].constraints[0]).to be_instance_of(OrchestrationTemplate::OrchestrationParameterBoolean)
   end
 
-  def assert_vm_parameter_group(group, vm_name, vm_id)
-    expect(group.parameters.size).to eq(2)
+  def assert_parameter_group(group, params)
+    params.each do |key, attrs|
+      parameter = group.parameters.detect { |p| p.name.start_with?(key) }
+      expect(parameter).not_to be_nil
+      assert_parameter(parameter, attrs)
+    end
+  end
 
-    assert_parameter(group.parameters[0],
-                     :name          => "instance_name-#{vm_id}",
-                     :label         => "Instance name",
-                     :data_type     => "string",
-                     :default_value => vm_name)
+  def assert_vm_disks(group, disks, vm_idx)
+    disks.each_with_index do |disk, disk_idx|
+      disk_name = "disk_mb-#{vm_idx}-#{disk_idx}"
+      parameter = group.parameters.detect { |p| p.name == disk_name }
+      assert_parameter(
+        parameter,
+        :name          => disk_name,
+        :label         => "Disk #{disk[:disk_address]} (MB)",
+        :data_type     => 'integer',
+        :required      => true,
+        :default_value => disk[:size]
+      )
+    end
+  end
 
-    assert_parameter(group.parameters[1],
-                     :name          => "vdc_network-#{vm_id}",
-                     :label         => "Network",
-                     :data_type     => "string",
-                     :default_value => "(default)")
+  def assert_vm_nics(vm_group, nics, vm_idx)
+    nics.each_with_index do |nic, nic_idx|
+      suffix = "#{vm_idx}-#{nic_idx}"
+      assert_parameter_group(
+        vm_group,
+        "nic_network-#{suffix}"    => {
+          :name          => "nic_network-#{suffix}",
+          :label         => "NIC##{nic[:idx]} Network",
+          :data_type     => 'string',
+          :required      => nil,
+          :default_value => nic[:network]
+        },
+        "nic_mode-#{suffix}"       => {
+          :name          => "nic_mode-#{suffix}",
+          :label         => "NIC##{nic[:idx]} Mode",
+          :data_type     => 'string',
+          :required      => true,
+          :default_value => nic[:mode]
+        },
+        "nic_ip_address-#{suffix}" => {
+          :name          => "nic_ip_address-#{suffix}",
+          :label         => "NIC##{nic[:idx]} IP Address",
+          :data_type     => 'string',
+          :required      => nil,
+          :default_value => nic[:ip_address]
+        },
+      )
+    end
+  end
 
-    network_parameter = group.parameters[1]
-    expect(network_parameter.constraints.count).to eq(1)
-    expect(network_parameter.constraints[0].fqname).to eq("/Cloud/Orchestration/Operations/Methods/Available_Vdc_Networks")
+  def assert_vapp_net_subnets(vapp_net_group, vapp_net_idx, subnets)
+    subnets.each_with_index do |subnet, subnet_idx|
+      assert_parameter_group(
+        vapp_net_group,
+        "gateway" => {
+          :name          => "gateway-#{vapp_net_idx}-#{subnet_idx}",
+          :label         => 'Gateway',
+          :data_type     => 'string',
+          :required      => nil,
+          :default_value => subnet[:gateway]
+        }
+      )
+    end
   end
 
   def assert_parameter(field, attributes)

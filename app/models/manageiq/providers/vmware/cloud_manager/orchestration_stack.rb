@@ -2,13 +2,14 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
   require_nested :Status
 
   def self.raw_create_stack(orchestration_manager, stack_name, template, options = {})
+    log_prefix = "stack=[#{stack_name}]"
     orchestration_manager.with_provider_connection do |service|
       create_options = {:stack_name => stack_name, :template => template.ems_ref}.merge(options)
-
+      $vcloud_log.info("#{log_prefix} create_options: #{create_options}")
       service.instantiate_template(create_options)
     end
   rescue => err
-    $vcloud_log.error("stack=[#{stack_name}], error: #{err}")
+    $vcloud_log.error("#{log_prefix} error: #{err}")
     raise MiqException::MiqOrchestrationProvisionError, err.to_s, err.backtrace
   end
 

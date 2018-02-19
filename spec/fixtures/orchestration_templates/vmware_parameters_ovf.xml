@@ -28,6 +28,52 @@
             </vcloud:Configuration>
             <vcloud:IsDeployed>false</vcloud:IsDeployed>
         </vcloud:NetworkConfig>
+        <vcloud:NetworkConfig networkName="VM Network">
+            <vcloud:Description>VM Network</vcloud:Description>
+            <vcloud:Configuration>
+                <vcloud:IpScopes>
+                    <vcloud:IpScope>
+                        <vcloud:IsInherited>false</vcloud:IsInherited>
+                        <vcloud:Gateway>192.168.254.1</vcloud:Gateway>
+                        <vcloud:Netmask>255.255.255.0</vcloud:Netmask>
+                        <vcloud:IsEnabled>true</vcloud:IsEnabled>
+                        <vcloud:IpRanges>
+                            <vcloud:IpRange>
+                                <vcloud:StartAddress>192.168.254.100</vcloud:StartAddress>
+                                <vcloud:EndAddress>192.168.254.199</vcloud:EndAddress>
+                            </vcloud:IpRange>
+                        </vcloud:IpRanges>
+                    </vcloud:IpScope>
+                </vcloud:IpScopes>
+                <vcloud:FenceMode>isolated</vcloud:FenceMode>
+                <vcloud:RetainNetInfoAcrossDeployments>false</vcloud:RetainNetInfoAcrossDeployments>
+            </vcloud:Configuration>
+            <vcloud:IsDeployed>false</vcloud:IsDeployed>
+        </vcloud:NetworkConfig>
+        <vcloud:NetworkConfig networkName="RedHat Private network 43">
+            <vcloud:Description/>
+            <vcloud:Configuration>
+                <vcloud:IpScopes>
+                    <vcloud:IpScope>
+                        <vcloud:IsInherited>true</vcloud:IsInherited>
+                        <vcloud:Gateway>192.168.43.1</vcloud:Gateway>
+                        <vcloud:Netmask>255.255.255.0</vcloud:Netmask>
+                        <vcloud:Dns1>192.168.43.1</vcloud:Dns1>
+                        <vcloud:IsEnabled>true</vcloud:IsEnabled>
+                        <vcloud:IpRanges>
+                            <vcloud:IpRange>
+                                <vcloud:StartAddress>192.168.43.2</vcloud:StartAddress>
+                                <vcloud:EndAddress>192.168.43.99</vcloud:EndAddress>
+                            </vcloud:IpRange>
+                        </vcloud:IpRanges>
+                    </vcloud:IpScope>
+                </vcloud:IpScopes>
+                <vcloud:ParentNetwork hrefE="" name="RedHat Private network 43"/>
+                <vcloud:FenceMode>bridged</vcloud:FenceMode>
+                <vcloud:RetainNetInfoAcrossDeployments>false</vcloud:RetainNetInfoAcrossDeployments>
+            </vcloud:Configuration>
+            <vcloud:IsDeployed>false</vcloud:IsDeployed>
+        </vcloud:NetworkConfig>
     </vcloud:NetworkConfigSection>
     <vcloud:LeaseSettingsSection ovf:required="false">
         <ovf:Info>Lease settings section</ovf:Info>
@@ -88,6 +134,18 @@
                     <rasd:Parent>2</rasd:Parent>
                     <rasd:ResourceType>17</rasd:ResourceType>
                     <rasd:VirtualQuantity>17179869184</rasd:VirtualQuantity>
+                    <rasd:VirtualQuantityUnits>byte</rasd:VirtualQuantityUnits>
+                    <vmw:Config ovf:required="false" vmw:key="backing.writeThrough" vmw:value="false"/>
+                </ovf:Item>
+                <ovf:Item>
+                    <rasd:AddressOnParent>1</rasd:AddressOnParent>
+                    <rasd:Description>Hard disk</rasd:Description>
+                    <rasd:ElementName>Hard disk 2</rasd:ElementName>
+                    <rasd:HostResource vcloud:capacity="40960" vcloud:busSubType="lsilogic" vcloud:busType="6"/>
+                    <rasd:InstanceID>2001</rasd:InstanceID>
+                    <rasd:Parent>2</rasd:Parent>
+                    <rasd:ResourceType>17</rasd:ResourceType>
+                    <rasd:VirtualQuantity>42949672960</rasd:VirtualQuantity>
                     <rasd:VirtualQuantityUnits>byte</rasd:VirtualQuantityUnits>
                     <vmw:Config ovf:required="false" vmw:key="backing.writeThrough" vmw:value="false"/>
                 </ovf:Item>
@@ -166,7 +224,7 @@
                 <vcloud:AdminPasswordEnabled>true</vcloud:AdminPasswordEnabled>
                 <vcloud:AdminPasswordAuto>true</vcloud:AdminPasswordAuto>
                 <vcloud:ResetPasswordRequired>false</vcloud:ResetPasswordRequired>
-                <vcloud:ComputerName>VM1</vcloud:ComputerName>
+                <vcloud:ComputerName>vm-1</vcloud:ComputerName>
             </vcloud:GuestCustomizationSection>
             <vcloud:NetworkConnectionSection ovf:required="false">
                 <ovf:Info>Specifies the available VM network connections</ovf:Info>
@@ -195,10 +253,22 @@
                     <vssd:VirtualSystemType>vmx-10</vssd:VirtualSystemType>
                 </ovf:System>
                 <ovf:Item>
-                    <rasd:Address>00:50:56:01:00:4c</rasd:Address>
+                    <rasd:Address>00:50:56:01:00:5c</rasd:Address>
                     <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                    <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+                    <rasd:Connection vcloud:ipAddressingMode="MANUAL" vcloud:ipAddress="192.168.43.100" vcloud:primaryNetworkConnection="true">RedHat Private network 43</rasd:Connection>
+                    <rasd:Description>E1000s ethernet adapter on "RedHat Private network 43"</rasd:Description>
+                    <rasd:ElementName>Network adapter 0</rasd:ElementName>
+                    <rasd:InstanceID>1</rasd:InstanceID>
+                    <rasd:ResourceSubType>E1000E</rasd:ResourceSubType>
+                    <rasd:ResourceType>10</rasd:ResourceType>
+                    <vmw:Config ovf:required="false" vmw:key="wakeOnLanEnabled" vmw:value="true"/>
+                </ovf:Item>
+                <ovf:Item>
+                    <rasd:Address>00:50:56:01:00:4c</rasd:Address>
+                    <rasd:AddressOnParent>1</rasd:AddressOnParent>
                     <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
-                    <rasd:Connection vcloud:primaryNetworkConnection="true" vcloud:ipAddressingMode="NONE">none</rasd:Connection>
+                    <rasd:Connection vcloud:primaryNetworkConnection="false" vcloud:ipAddressingMode="NONE">none</rasd:Connection>
                     <rasd:Description>Vmxnet3 ethernet adapter on "none"</rasd:Description>
                     <rasd:ElementName>Network adapter 0</rasd:ElementName>
                     <rasd:InstanceID>1</rasd:InstanceID>
@@ -305,13 +375,20 @@
                 <vcloud:AdminPasswordEnabled>false</vcloud:AdminPasswordEnabled>
                 <vcloud:AdminPasswordAuto>true</vcloud:AdminPasswordAuto>
                 <vcloud:ResetPasswordRequired>false</vcloud:ResetPasswordRequired>
-                <vcloud:ComputerName>VM2</vcloud:ComputerName>
+                <vcloud:ComputerName>vm-2</vcloud:ComputerName>
             </vcloud:GuestCustomizationSection>
             <vcloud:NetworkConnectionSection ovf:required="false">
                 <ovf:Info>Specifies the available VM network connections</ovf:Info>
                 <vcloud:PrimaryNetworkConnectionIndex>0</vcloud:PrimaryNetworkConnectionIndex>
-                <vcloud:NetworkConnection needsCustomization="true" network="none">
+                <vcloud:NetworkConnection needsCustomization="true" network="RedHat Private network 43">
                     <vcloud:NetworkConnectionIndex>0</vcloud:NetworkConnectionIndex>
+                    <vcloud:IpAddress>192.168.43.100</vcloud:IpAddress>
+                    <vcloud:IsConnected>true</vcloud:IsConnected>
+                    <vcloud:MACAddress>00:50:56:01:00:5c</vcloud:MACAddress>
+                    <vcloud:IpAddressAllocationMode>MANUAL</vcloud:IpAddressAllocationMode>
+                </vcloud:NetworkConnection>
+                <vcloud:NetworkConnection needsCustomization="true" network="none">
+                    <vcloud:NetworkConnectionIndex>1</vcloud:NetworkConnectionIndex>
                     <vcloud:IsConnected>false</vcloud:IsConnected>
                     <vcloud:MACAddress>00:50:56:01:00:4c</vcloud:MACAddress>
                     <vcloud:IpAddressAllocationMode>NONE</vcloud:IpAddressAllocationMode>
