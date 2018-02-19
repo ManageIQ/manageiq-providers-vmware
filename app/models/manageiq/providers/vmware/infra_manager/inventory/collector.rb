@@ -15,7 +15,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       begin
         wait_for_updates(vim)
       rescue RbVmomi::Fault => err
-        _log.err("Caught exception #{err.message}")
+        _log.error("Caught exception #{err.message}")
         _log.log_backtrace(err)
       ensure
         vim.close unless vim.nil?
@@ -98,7 +98,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         object_update_set = property_filter_update.objectSet
         next if object_update_set.blank?
 
-        process_object_update_set(object_update_set)
+        _log.info("Processing #{object_update_set.count} updates...")
+
+        process_object_update_set(object_update_set).each do |managed_object, props|
+          parser.parse(managed_object, props)
+        end
+
+        _log.info("Processing #{object_update_set.count} updates...Complete")
       end
 
       next if update_set.truncated
@@ -119,26 +125,25 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def process_object_update_set(object_update_set)
-    _log.info("Processing #{object_update_set.count} updates...")
-
-    object_update_set.each do |object_update|
+    object_update_set.map do |object_update|
       process_object_update(object_update)
     end
-
-    _log.info("Processing #{object_update_set.count} updates...Complete")
   end
 
   def process_object_update(object_update)
     managed_object = object_update.obj
 
-    case object_update.kind
-    when "enter"
-      process_object_update_enter(managed_object, object_update.changeSet, object_update.missingSet)
-    when "modify"
-      process_object_update_modify(managed_object, object_update.changeSet, object_update.missingSet)
-    when "leave"
-      process_object_update_leave(managed_object)
-    end
+    props =
+      case object_update.kind
+      when "enter"
+        process_object_update_enter(managed_object, object_update.changeSet, object_update.missingSet)
+      when "modify"
+        process_object_update_modify(managed_object, object_update.changeSet, object_update.missingSet)
+      when "leave"
+        process_object_update_leave(managed_object)
+      end
+
+    return managed_object, props
   end
 
   def process_object_update_enter(obj, change_set, _missing_set = [])

@@ -1,45 +1,29 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module Datastore
     def parse_datastore_summary(storage_hash, props)
-      if props.include?("summary.name")
-        storage_hash[:name] = props["summary.name"]
-      end
-      if props.include?("summary.url")
-        storage_hash[:location] = normalize_storage_uid(props["summary.url"])
-      end
-      if props.include?("summary.type")
-        storage_hash[:store_type] = props["summary.type"].to_s.upcase
-      end
-      if props.include?("summary.capacity")
-        storage_hash[:total_space] = props["summary.capacity"]
-      end
-      if props.include?("summary.freeSpace")
-        storage_hash[:free_space] = props["summary.freeSpace"]
-      end
-      if props.include?("summary.uncommitted")
-        storage_hash[:uncommitted] = props["summary.uncommitted"]
-      end
-      if props.include?("summary.multipleHostAccess")
-        storage_hash[:multiplehostaccess] = props["summary.multipleHostAccess"].to_s.downcase == "true"
-      end
+      summary = props[:summary]
+      return if summary.nil?
+
+      storage_hash[:name] = summary[:name]
+      storage_hash[:location] = normalize_storage_uid(summary[:url])
+      storage_hash[:store_type] = summary[:type].to_s.upcase
+      storage_hash[:total_space] = summary[:capacity]
+      storage_hash[:free_space] = summary[:freeSpace]
+      storage_hash[:uncommitted] = summary[:uncommitted]
+      storage_hash[:multiplehostaccess] = summary[:multipleHostAccess].to_s.downcase == "true"
     end
 
     def parse_datastore_capability(storage_hash, props)
-      if props.include?("capability.directoryHierarchySupported")
-        storage_hash[:directory_hierarchy_supported] = props["capability.directoryHierarchySupported"].to_s.downcase == 'true'
-      end
-      if props.include?("capability.perFileThinProvisioningSupported")
-        storage_hash[:thin_provisioning_supported] = props["capability.perFileThinProvisioningSupported"].to_s.downcase == 'true'
-      end
-      if props.include?("capability.rawDiskMappingsSupported")
-        storage_hash[:raw_disk_mappings_supported] = props["capability.rawDiskMappingsSupported"].to_s.downcase == 'true'
-      end
+      capability = props[:capability]
+      return if capability.nil?
+
+      storage_hash[:directory_hierarchy_supported] = capability[:directoryHierarchySupported].to_s.downcase == 'true'
+      storage_hash[:thin_provisioning_supported] = capability[:perFileThinProvisioningSupported].to_s.downcase == 'true'
+      storage_hash[:raw_disk_mappings_supported] = capability[:rawDiskMappingsSupported].to_s.downcase == 'true'
     end
 
     def parse_datastore_host_mount(storage, datastore_ref, props)
-      return unless props.include?("host")
-
-      props["host"].to_a.each do |host_mount|
+      props[:host].to_a.each do |host_mount|
         persister.host_storages.build(
           :storage   => storage,
           :host      => persister.hosts.lazy_find(host_mount.key._ref),

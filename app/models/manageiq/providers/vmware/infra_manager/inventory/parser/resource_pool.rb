@@ -1,41 +1,25 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module ResourcePool
     def parse_resource_pool_memory_allocation(cluster_hash, props)
-      if props.include?("summary.config.memoryAllocation.reservation")
-        cluster_hash[:memory_reserve] = props["summary.config.memoryAllocation.reservation"]
-      end
-      if props.include?("summary.config.memoryAllocation.expandableReservation")
-        expandable_reservation = props["summary.config.memoryAllocation.expandableReservation"]
-        cluster_hash[:memory_reserve_expand] = expandable_reservation.to_s.downcase == "true"
-      end
-      if props.include?("summary.config.memoryAllocation.limit")
-        cluster_hash[:memory_limit] = props["summary.config.memoryAllocation.limit"]
-      end
-      if props.include?("summary.config.memoryAllocation.shares.shares")
-        cluster_hash[:memory_shares] = props["summary.config.memoryAllocation.shares.shares"]
-      end
-      if props.include?("summary.config.memoryAllocation.shares.level")
-        cluster_hash[:memory_shares_level] = props["summary.config.memoryAllocation.shares.level"]
-      end
+      memory_allocation = props.fetch_path(:summary, :config, :memoryAllocation)
+      return if memory_allocation.nil?
+
+      cluster_hash[:memory_reserve] = memory_allocation[:reservation]
+      cluster_hash[:memory_reserve_expand] = memory_allocation[:expandableReservation].to_s.downcase == "true"
+      cluster_hash[:memory_limit] = memory_allocation[:limit]
+      cluster_hash[:memory_shares] = memory_allocation.fetch_path(:shares, :shares)
+      cluster_hash[:memory_shares_level] = memory_allocation.fetch_path(:shares, :level)
     end
 
     def parse_resource_pool_cpu_allocation(cluster_hash, props)
-      if props.include?("summary.config.cpuAllocation.reservation")
-        cluster_hash[:cpu_reserve] = props["summary.config.cpuAllocation.reservation"]
-      end
-      if props.include?("summary.config.cpuAllocation.expandableReservation")
-        expandable_reservation = props["summary.config.cpuAllocation.expandableReservation"]
-        cluster_hash[:cpu_reserve_expand] = expandable_reservation.to_s.downcase == "true"
-      end
-      if props.include?("summary.config.cpuAllocation.limit")
-        cluster_hash[:cpu_limit] = props["summary.config.cpuAllocation.limit"]
-      end
-      if props.include?("summary.config.cpuAllocation.shares.shares")
-        cluster_hash[:cpu_shares] = props["summary.config.cpuAllocation.shares.shares"]
-      end
-      if props.include?("summary.config.cpuAllocation.limit.limit")
-        cluster_hash[:cpu_shares_level] = props["summary.config.cpuAllocation.limit.limit"]
-      end
+      cpu_allocation = props.fetch_path(:summary, :config, :cpuAllocation)
+      return if cpu_allocation.nil?
+
+      cluster_hash[:cpu_reserve] = cpu_allocation[:reservation]
+      cluster_hash[:cpu_reserve_expand] = cpu_allocation[:expandableReservation].to_s.downcase == "true"
+      cluster_hash[:cpu_limit] = cpu_allocation[:limit]
+      cluster_hash[:cpu_shares] = cpu_allocation.fetch_path(:shares, :shares)
+      cluster_hash[:cpu_shares_level] = cpu_allocation.fetch_path(:limit, :limit)
     end
 
     def parse_resource_pool_children(cluster_hash, props)
@@ -44,15 +28,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :vm => [],
       }
 
-      if props.include?("resourcePool")
-        props["resourcePool"].to_a.each do |rp|
-          cluster_hash[:ems_children][:rp] << persister.resource_pools.lazy_find(rp._ref)
-        end
+      props[:resourcePool].to_a.each do |rp|
+        cluster_hash[:ems_children][:rp] << persister.resource_pools.lazy_find(rp._ref)
       end
-      if props.include?("vm")
-        props["vm"].to_a.each do |vm|
-          cluster_hash[:ems_children][:vm] << persister.resource_pools.lazy_find(vm._ref)
-        end
+
+      props[:vm].to_a.each do |vm|
+        cluster_hash[:ems_children][:vm] << persister.resource_pools.lazy_find(vm._ref)
       end
     end
   end
