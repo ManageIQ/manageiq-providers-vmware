@@ -59,8 +59,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
       it "caches the properties" do
         props = cache["VirtualMachine"]["vm-123"]
 
-        expect(props.keys).to include("name", "parent", "config")
-        expect(props["config"]["version"]).to eq("vmx-08")
+        expect(props.keys).to include(:name, :parent, :config)
+        expect(props[:config][:version]).to eq("vmx-08")
       end
     end
   end
@@ -96,13 +96,43 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
       it "updates a top-level value" do
         update_change_set = [RbVmomi::VIM::PropertyChange(:name => "name", :op => "assign", :val => "vm2")]
         props = cache.update(vm, update_change_set)
-        expect(props["name"]).to eq("vm2")
+        expect(props[:name]).to eq("vm2")
       end
 
       it "updates a nested value" do
         update_change_set = [RbVmomi::VIM::PropertyChange(:name => "config.version", :op => "assign", :val => "vmx-09")]
         props = cache.update(vm, update_change_set)
-        expect(props["config"]["version"]).to eq("vmx-09")
+        expect(props[:config][:version]).to eq("vmx-09")
+      end
+
+      it "updates a value in an array" do
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[1000].device",
+            :op              => "assign",
+            :val             => [2000, 2001]
+          ),
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2002]",
+            :op              => "add",
+            :val             => RbVmomi::VIM::VirtualDisk(
+              :dynamicProperty => [],
+              :key             => 2001,
+              :deviceInfo      => RbVmomi::VIM::Description(:dynamicProperty => [], :label => "Hard disk 2", :summary => "16,777,216 KB"),
+              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(),
+              :controllerKey   => 1000,
+              :unitNumber      => 2,
+              :capacityInKB    => 16_777_216,
+            )
+          ),
+        ]
+
+        props = cache.update(vm, update_change_set)
+
+        controller = props[:config][:hardware][:device].detect { |dev| dev.key == 1000 }
+        expect(controller[:device]).to match_array([2000, 2001])
       end
     end
   end

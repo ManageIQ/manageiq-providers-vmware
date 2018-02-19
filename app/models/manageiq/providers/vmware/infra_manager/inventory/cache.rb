@@ -37,7 +37,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
 
     case prop_change.op
     when "add"
-      add_to_collection(h, tag, prop_change.val)
+      h[tag] ||= []
+      h[tag] << prop_change.val
     when "remove", "indirectRemove"
       if key
         # TODO
@@ -62,8 +63,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
     prop_keys[0...-1].each do |key|
       key, array_key = tag_and_key(key)
       if array_key
-        # TODO
-        raise "Array properties aren't supported yet"
+        array, idx = get_array_entry(h[key], array_key)
+        raise "hashTarget: Could not traverse tree through array element #{k}[#{array_key}] in #{key_string}" unless array
+        h = array[idx]
       else
         h[key] ||= {}
         h = h[key]
@@ -99,7 +101,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
   end
 
   def tag_and_key(prop_str)
-    return prop_str, nil unless prop_str.include? "["
+    return prop_str.to_sym, nil unless prop_str.include?("[")
 
     if prop_str =~ /([^\[]+)\[([^\]]+)\]/
       tag, key = $1, $2
@@ -107,11 +109,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
       raise "tagAndKey: malformed property string #{prop_str}"
     end
     key = key[1...-1] if key[0, 1] == '"' && key[-1, 1] == '"'
-    return tag, key
+    return tag.to_sym, key
   end
 
-  def add_to_collection(hash, tag, val)
-    hash[tag] ||= []
-    hash[tag] << val
+  def get_array_entry(array, key)
+    return nil, nil unless array.kind_of?(Array)
+
+    array.each_index do |n|
+      h = array[n]
+      case h
+      when RbVmomi::BasicTypes::DataObject
+        return array, n if h.respond_to?("key") && h.key.to_s == key
+      when RbVmomi::BasicTypes::ManagedObject
+        return array, n if h._ref == key
+      end
+    end
   end
 end
