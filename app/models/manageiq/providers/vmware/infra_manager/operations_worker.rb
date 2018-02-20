@@ -3,7 +3,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker < MiqWorker
 
   include PerEmsWorkerMixin
 
-  self.required_roles = ["ems_metrics_collector", "ems_operations"]
+  self.required_roles = %w(ems_metrics_collector ems_operations)
 
   def friendly_name
     @friendly_name ||= begin
@@ -18,5 +18,10 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker < MiqWorker
 
   def self.ems_class
     parent
+  end
+
+  def self.uri(ems)
+    worker = find_by_ems(ems).find_by(MiqWorker::CONDITION_CURRENT)
+    worker.try(:uri)
   end
 end

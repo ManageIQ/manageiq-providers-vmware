@@ -3,11 +3,17 @@ require "sinatra/base"
 class ManageIQ::Providers::Vmware::InfraManager::Operations < Sinatra::Base
   require_nested :Connection
 
+  disable :traps
+
   def initialize
     super
 
     @connections      = Concurrent::Map.new
     @connection_class = self.class::Connection
+  end
+
+  def shutdown
+    connections.each_value(&:close)
   end
 
   private
