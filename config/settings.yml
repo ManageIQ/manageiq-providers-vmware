@@ -43,6 +43,7 @@
         :amqp_port: 5672
         :amqp_heartbeat: 30
         :amqp_recovery_attempts: 4
+    :operations_worker_vmware: {}
     :queue_worker_base:
       :ems_metrics_collector_worker:
         :ems_metrics_collector_worker_vmware: {}
