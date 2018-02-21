@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-21 10:19+0200\n"
-"PO-Revision-Date: 2017-04-21 10:19+0200\n"
+"POT-Creation-Date: 2018-02-21 13:06+0100\n"
+"PO-Revision-Date: 2018-02-21 13:06+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -30,11 +30,15 @@ msgstr ""
 msgid "Either Host Name or Cluster Name is required"
 msgstr ""
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:7 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:17 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
+msgid "Host must be connected to an EMS to refresh datastore files"
+msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
 msgstr ""
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:14
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
 msgstr ""
 
