@@ -1,4 +1,4 @@
-require 'manageiq/network/port'
+require 'manageiq/network_discovery/port'
 
 module ManageIQ
   module Providers
@@ -23,7 +23,7 @@ module ManageIQ
 
         def self.probe(ost)
           # Check if VMware Server
-          ost.hypervisor << :vmwareserver if Port.scan_open(ost, SERVER_CONSOLE_PORTS).length == 2
+          ost.hypervisor << :vmwareserver if ManageIQ::NetworkDiscovery::Port.scan_open(ost, SERVER_CONSOLE_PORTS).length == 2
 
           # First check if we can access the VMware webservice before even trying the port scans.
           begin
@@ -49,7 +49,7 @@ module ManageIQ
           if ost.discover_types.include?(:virtualcenter)
             checked_vc = true
 
-            if Port.all_open?(ost, VC_PORTS)
+            if ManageIQ::NetworkDiscovery::Port.all_open?(ost, VC_PORTS)
               ost.os << :mswin
               ost.hypervisor << :virtualcenter
               found_vc = true
@@ -58,11 +58,11 @@ module ManageIQ
           end
 
           # Check if we have ESX ports open
-          if !found_vc && ost.discover_types.include?(:esx) && Port.any_open?(ost, ESX_PORTS)
+          if !found_vc && ost.discover_types.include?(:esx) && ManageIQ::NetworkDiscovery::Port.any_open?(ost, ESX_PORTS)
 
             # Since VC may share ports with ESX, but it may have not already been
             # checked due to filtering, check that this is not a VC server
-            if checked_vc || !Port.all_open?(ost, VC_PORTS)
+            if checked_vc || !ManageIQ::NetworkDiscovery::Port.all_open?(ost, VC_PORTS)
               ost.os << :linux
               ost.hypervisor << :esx
               $log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is an ESX server.")
