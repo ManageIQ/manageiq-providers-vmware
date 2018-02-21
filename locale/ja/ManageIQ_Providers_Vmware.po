@@ -3,7 +3,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-21 10:19+0200\n"
 "PO-Revision-Date: 2017-11-13 05:08-0500\n"
 "Last-Translator: asasaki <asasaki@redhat.com>\n"
 "Language-Team: Japanese\n"
@@ -14,28 +13,23 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Zanata 3.9.6\n"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
 msgstr "Non-DRS が有効なクラスター向け %{field_required}"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
 msgstr "クローン操作がサポートされていません"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
 msgstr "ホスト名またはクラスター名が必要です"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:7
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:17
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+msgid "Host must be connected to an EMS to refresh datastore files"
+msgstr ""
+
 msgid "The VM is not powered on"
 msgstr "仮想マシンの電源がオンになっていません"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:14
 msgid "The VM tools is not installed"
 msgstr "仮想マシンツールがインストールされていません"
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
 msgstr "EMS に接続されていません"

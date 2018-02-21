@@ -26,6 +26,9 @@ msgstr ""
 msgid "Either Host Name or Cluster Name is required"
 msgstr ""
 
+msgid "Host must be connected to an EMS to refresh datastore files"
+msgstr ""
+
 msgid "The VM is not powered on"
 msgstr ""
 
