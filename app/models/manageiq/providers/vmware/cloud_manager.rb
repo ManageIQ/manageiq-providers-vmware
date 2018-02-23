@@ -80,4 +80,10 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   rescue => err
     $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
   end
+
+  def vm_destroy(vm, _options = {})
+    vm.vm_destroy
+  rescue => err
+    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
+  end
 end
