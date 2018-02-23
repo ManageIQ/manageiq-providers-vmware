@@ -84,4 +84,16 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   def self.display_name(number = 1)
     n_('Cloud Provider (VMware vCloud)', 'Cloud Providers (VMware vCloud)', number)
   end
+
+  def vm_create_snapshot(vm, options = {})
+    defaults = {
+      :memory  => false,
+      :quiesce => false
+    }
+    options = defaults.merge(options)
+    with_provider_connection do |service|
+      response = service.post_create_snapshot(vm.ems_ref, options)
+      service.process_task(response.body)
+    end
+  end
 end
