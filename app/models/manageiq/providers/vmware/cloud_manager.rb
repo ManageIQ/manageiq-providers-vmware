@@ -86,4 +86,16 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   rescue => err
     $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
   end
+
+  def vm_create_snapshot(vm, options = {})
+    defaults = {
+      :memory  => false,
+      :quiesce => false
+    }
+    options = defaults.merge(options)
+    with_provider_connection do |service|
+      response = service.post_create_snapshot(vm.ems_ref, options)
+      service.process_task(response.body)
+    end
+  end
 end
