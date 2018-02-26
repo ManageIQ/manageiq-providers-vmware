@@ -121,5 +121,16 @@ describe ManageIQ::Providers::Vmware::CloudManager do
         @ems.vm_create_snapshot(vm, snapshot_options)
       end
     end
+
+    context ".vm_revert_to_snapshot" do
+      let(:connection) { double('connection') }
+
+      it 'reverts a vm to snapshot' do
+        expect(connection).to receive(:post_revert_snapshot).and_return(response)
+        expect(connection).to receive(:process_task).and_return(true)
+
+        @ems.vm_revert_to_snapshot(vm)
+      end
+    end
   end
 end
