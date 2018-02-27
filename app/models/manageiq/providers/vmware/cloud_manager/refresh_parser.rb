@@ -141,6 +141,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :name                => name,
       :vendor              => "vmware",
       :raw_power_state     => status,
+      :snapshots           => [parse_snapshot(vm)].compact,
 
       :hardware            => {
         :guest_os             => guest_os,
@@ -216,5 +217,22 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
     }
 
     return uid, new_result
+  end
+
+  def parse_snapshot(vm)
+    resp = @connection.get_snapshot_section(vm.id).data
+    if (snapshot_resp = resp.fetch_path(:body, :Snapshot))
+      {
+        :name        => "#{vm.name} (snapshot)",
+        :uid         => "#{vm.id}_#{snapshot_resp[:created]}",
+        :ems_ref     => "#{vm.id}_#{snapshot_resp[:created]}",
+        :parent_id   => vm.id,
+        :parent_uid  => vm.id,
+        :create_time => snapshot_resp[:created],
+        :total_size  => snapshot_resp[:size]
+      }
+    else
+      return nil
+    end
   end
 end

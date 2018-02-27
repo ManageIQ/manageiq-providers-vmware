@@ -5509,4 +5509,135 @@ http_interactions:
         </VAppTemplate>
     http_version: 
   recorded_at: Fri, 16 Sep 2016 08:55:36 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-f9ceb77c-b9d9-400c-8c06-72c785e884af/snapshotSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Feb 2018 12:50:19 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 5c9eda34-c719-4e5f-b2ad-3639a9d9be6e
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+      Set-Cookie:
+      - vcloud-token=c52a60a15bd3434096cb4d4cc1ccea15; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.snapshotsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '62'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1062'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <SnapshotSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-6850d9ee-ce30-42e0-aaad-3909e1861c48/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+            <ovf:Info>Snapshot information section</ovf:Info>
+        </SnapshotSection>
+    http_version:
+  recorded_at: Fri, 23 Feb 2018 12:50:19 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-8df2faf3-fd33-40de-9b26-da34c146f55d/snapshotSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Feb 2018 12:50:20 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 26083f04-68e1-4347-85b6-920148fbc41e
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+      Set-Cookie:
+      - vcloud-token=c52a60a15bd3434096cb4d4cc1ccea15; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.snapshotsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '109'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1154'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <SnapshotSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-9e951807-f9a6-4d95-a1b9-c83fa9a061a7/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+            <ovf:Info>Snapshot information section</ovf:Info>
+            <Snapshot created="2018-02-22T12:22:20.784+01:00" poweredOn="false" size="4294967296"/>
+        </SnapshotSection>
+    http_version:
+  recorded_at: Fri, 23 Feb 2018 12:50:20 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6/snapshotSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Feb 2018 12:50:20 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 26083f04-68e1-4347-85b6-920148fbc41e
+      X-Vcloud-Authorization:
+      - c52a60a15bd3434096cb4d4cc1ccea15
+      Set-Cookie:
+      - vcloud-token=c52a60a15bd3434096cb4d4cc1ccea15; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.snapshotsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '109'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1154'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <SnapshotSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-9e951807-f9a6-4d95-a1b9-c83fa9a061a7/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+            <ovf:Info>Snapshot information section</ovf:Info>
+            <Snapshot created="2018-02-22T12:22:20.784+01:00" poweredOn="false" size="4294967296"/>
+        </SnapshotSection>
+    http_version:
+  recorded_at: Fri, 23 Feb 2018 12:50:20 GMT
 recorded_with: VCR 3.0.3

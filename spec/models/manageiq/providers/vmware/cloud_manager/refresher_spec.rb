@@ -55,6 +55,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       assert_specific_vm_powered_on
       assert_specific_vm_powered_off
       assert_specific_orchestration_template
+      assert_specific_vm_with_snapshot
     end
   end
 
@@ -82,7 +83,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(GuestDevice.count).to eq(0)
     expect(Hardware.count).to eq(3)
     expect(OperatingSystem.count).to eq(3)
-    expect(Snapshot.count).to eq(0)
+    expect(Snapshot.count).to eq(2)
     expect(SystemService.count).to eq(0)
 
     expect(Relationship.count).to eq(0)
@@ -280,7 +281,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     )
 
     expect(v.custom_attributes.size).to eq(0)
-    expect(v.snapshots.size).to eq(0)
+    expect(v.snapshots.size).to eq(1)
 
     expect(v.hardware).to have_attributes(
       :config_version       => nil,
@@ -347,5 +348,19 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(@template.ems_id).to eq(@ems.id)
     expect(@template.content.include?('ovf:Envelope')).to be_truthy
     expect(@template.md5).to eq('729bfcafe52065bdee376931efe104d9')
+  end
+
+  def assert_specific_vm_with_snapshot
+    vm = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1")
+
+    expect(vm.snapshots.first).not_to be_nil
+    expect(vm.snapshots.first).to have_attributes(
+      :ems_ref    => 'vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6_2018-02-22T12:22:20.784+01:00',
+      :uid        => 'vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6_2018-02-22T12:22:20.784+01:00',
+      :parent_uid => 'vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6',
+      :name       => 'spec2-vm1 (snapshot)',
+      :total_size => 4_294_967_296
+    )
+    expect(vm.snapshots.first.create_time.to_s).to eq('2018-02-22 11:22:20 UTC')
   end
 end
