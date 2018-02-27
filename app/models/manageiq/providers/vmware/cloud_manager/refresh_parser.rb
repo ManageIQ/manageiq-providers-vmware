@@ -111,6 +111,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
     status        = vm.status
     uid           = vm.id
     name          = vm.name
+    hostname      = vm.customization.try(:computer_name)
     guest_os      = vm.operating_system
     bitness       = vm.operating_system =~ /64-bit/ ? 64 : 32
     cpus          = vm.cpu
@@ -139,6 +140,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :uid_ems             => uid,
       :ems_ref             => uid,
       :name                => name,
+      :hostname            => hostname,
       :vendor              => "vmware",
       :raw_power_state     => status,
       :snapshots           => [parse_snapshot(vm)].compact,
