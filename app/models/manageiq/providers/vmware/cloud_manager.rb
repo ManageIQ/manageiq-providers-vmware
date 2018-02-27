@@ -98,4 +98,11 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
       service.process_task(response.body)
     end
   end
+
+  def vm_revert_to_snapshot(vm, _options = {})
+    with_provider_connection do |service|
+      response = service.post_revert_snapshot(vm.ems_ref)
+      service.process_task(response.body)
+    end
+  end
 end
