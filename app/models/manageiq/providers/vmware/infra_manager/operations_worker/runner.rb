@@ -60,7 +60,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner < ::Mi
   end
 
   def rest_server(started_event)
-    operations_klass.run! { started_event.set }
+    operations_class.run!(:port => rest_server_port) { started_event.set }
     rest_server_instance.shutdown
   rescue => err
     _log.warn("Exception in Operations REST server: #{err}")
@@ -71,6 +71,16 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner < ::Mi
 
   def update_worker_uri(uri)
     @worker.update_attributes(:uri => uri)
+  end
+
+  def rest_server_port
+    return ENV['PORT'] if ENV['PORT'].present?
+
+    # Get the ems_id without the region factor
+    short_ems_id = ApplicationRecord.split_id(ems.id).last
+
+    base_port_number = ENV['BASE_PORT'] || 6_000
+    base_port_number + short_ems_id
   end
 
   def rest_server_uri
