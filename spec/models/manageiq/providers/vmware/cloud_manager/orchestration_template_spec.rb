@@ -63,6 +63,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
           :num_cores        => 2,
           :cores_per_socket => 2,
           :memory_mb        => 2048,
+          :admin_password   => nil,
+          :admin_reset      => false,
           :disks            => [
             { :disk_id => '2000', :disk_address => '0', :size => 16_384 },
             { :disk_id => '2001', :disk_address => '1', :size => 40_960 }
@@ -76,6 +78,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
           :num_cores        => 2,
           :cores_per_socket => 2,
           :memory_mb        => 4096,
+          :admin_password   => nil,
+          :admin_reset      => false,
           :disks            => [{ :disk_id => '2000', :disk_address => '0', :size => 40_960 }],
           :nics             => [
             { :idx => '0', :network => 'RedHat Private network 43', :mode => 'MANUAL', :ip_address => '192.168.43.100' },
@@ -125,12 +129,26 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
               :data_type     => 'integer',
               :required      => true,
               :default_value => args[:memory_mb]
+            },
+            'admin_password'   => {
+              :name          => "admin_password-#{vm_idx}",
+              :label         => 'Administrator Password',
+              :data_type     => 'string',
+              :required      => nil,
+              :default_value => args[:admin_password]
+            },
+            'admin_reset'      => {
+              :name          => "admin_reset-#{vm_idx}",
+              :label         => 'Require password change',
+              :data_type     => 'boolean',
+              :required      => nil,
+              :default_value => args[:admin_reset]
             }
           )
           assert_vm_disks(vm_group, args[:disks], vm_idx)
           assert_vm_nics(vm_group, args[:nics], vm_idx)
           # Group has not extra parameters.
-          expect(vm_group.parameters.size).to eq(5 + args[:disks].count + 3 * args[:nics].count)
+          expect(vm_group.parameters.size).to eq(7 + args[:disks].count + 3 * args[:nics].count)
         end
       end
 
