@@ -5640,4 +5640,163 @@ http_interactions:
         </SnapshotSection>
     http_version:
   recorded_at: Fri, 23 Feb 2018 12:50:20 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-f9ceb77c-b9d9-400c-8c06-72c785e884af/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 5654e38c198f4265bc768fea28d3b1bf
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 27 Feb 2018 13:47:04 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 847868c4-6cce-4d35-9b90-bfdeea747cfd
+      X-Vcloud-Authorization:
+      - eb22e4808d8a463ab6d72dd293d4cc0a
+      Set-Cookie:
+      - vcloud-token=eb22e4808d8a463ab6d72dd293d4cc0a; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '26'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1743'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>false</Enabled>
+            <ChangeSid>true</ChangeSid>
+            <VirtualMachineId>352c29cb-43a9-42e3-8726-c2d38b99f78f</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>true</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>WebServerVM</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Tue, 27 Feb 2018 13:47:04 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-8df2faf3-fd33-40de-9b26-da34c146f55d/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 5654e38c198f4265bc768fea28d3b1bf
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 27 Feb 2018 13:47:04 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 847868c4-6cce-4d35-9b90-bfdeea747cfd
+      X-Vcloud-Authorization:
+      - eb22e4808d8a463ab6d72dd293d4cc0a
+      Set-Cookie:
+      - vcloud-token=eb22e4808d8a463ab6d72dd293d4cc0a; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '26'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1743'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>false</Enabled>
+            <ChangeSid>true</ChangeSid>
+            <VirtualMachineId>352c29cb-43a9-42e3-8726-c2d38b99f78f</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>true</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>WebServerVM2</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Tue, 27 Feb 2018 13:47:04 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 5654e38c198f4265bc768fea28d3b1bf
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 27 Feb 2018 13:47:04 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 847868c4-6cce-4d35-9b90-bfdeea747cfd
+      X-Vcloud-Authorization:
+      - eb22e4808d8a463ab6d72dd293d4cc0a
+      Set-Cookie:
+      - vcloud-token=eb22e4808d8a463ab6d72dd293d4cc0a; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '26'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1743'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>false</Enabled>
+            <ChangeSid>true</ChangeSid>
+            <VirtualMachineId>352c29cb-43a9-42e3-8726-c2d38b99f78f</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>true</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>WebServerVM3</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-352c29cb-43a9-42e3-8726-c2d38b99f78f/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Tue, 27 Feb 2018 13:47:04 GMT
 recorded_with: VCR 3.0.3

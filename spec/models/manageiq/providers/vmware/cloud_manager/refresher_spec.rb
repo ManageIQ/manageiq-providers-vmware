@@ -180,7 +180,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :cpu_reserve_expand    => nil,
       :cpu_limit             => nil,
       :cpu_shares            => nil,
-      :cpu_shares_level      => nil
+      :cpu_shares_level      => nil,
+      :hostname              => 'WebServerVM'
     )
 
     expect(v.ext_management_system).to eq(@ems)
@@ -264,7 +265,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :cpu_reserve_expand    => nil,
       :cpu_limit             => nil,
       :cpu_shares            => nil,
-      :cpu_shares_level      => nil
+      :cpu_shares_level      => nil,
+      :hostname              => 'WebServerVM3'
     )
 
     expect(v.ext_management_system).to eq(@ems)
