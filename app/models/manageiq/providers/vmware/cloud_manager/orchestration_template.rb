@@ -2,33 +2,29 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
   def parameter_groups
     # Define vApp's general purpose parameters.
     groups = [OrchestrationTemplate::OrchestrationParameterGroup.new(
-      :label      => "vApp Parameters",
+      :label      => 'vApp Parameters',
       :parameters => vapp_parameters,
     )]
 
-    # Parse template's OVF file
-    ovf_doc = MiqXml.load(content)
-    # Collect VM-specific parameters from the OVF template if it is a valid one.
-    groups.concat(vm_param_groups(ovf_doc.root)) unless ovf_doc.root.nil?
-
-    groups
+    template = ManageIQ::Providers::Vmware::CloudManager::OvfTemplate.new(content)
+    groups + vapp_net_param_groups(template) + vm_param_groups(template)
   end
 
   def vapp_parameters
     [
       OrchestrationTemplate::OrchestrationParameter.new(
-        :name          => "deploy",
-        :label         => "Deploy vApp",
-        :data_type     => "boolean",
+        :name          => 'deploy',
+        :label         => 'Deploy vApp',
+        :data_type     => 'boolean',
         :default_value => true,
         :constraints   => [
           OrchestrationTemplate::OrchestrationParameterBoolean.new
         ]
       ),
       OrchestrationTemplate::OrchestrationParameter.new(
-        :name          => "powerOn",
-        :label         => "Power On vApp",
-        :data_type     => "boolean",
+        :name          => 'powerOn',
+        :label         => 'Power On vApp',
+        :data_type     => 'boolean',
         :default_value => false,
         :constraints   => [
           OrchestrationTemplate::OrchestrationParameterBoolean.new
@@ -37,39 +33,200 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
     ]
   end
 
-  def vm_param_groups(ovf)
-    groups = []
-    # Parse the XML template document for specific vCloud attributes.
-    ovf.each_element("//vcloud:GuestCustomizationSection") do |el|
-      vm_id = el.elements["vcloud:VirtualMachineId"].text
-      vm_name = el.elements["vcloud:ComputerName"].text
+  def vm_param_groups(template)
+    template.vms.each_with_index.map do |vm, vm_idx|
+      vm_parameters = [
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('instance_name', [vm_idx]),
+          :label         => 'Instance name',
+          :data_type     => 'string',
+          :required      => true,
+          :default_value => vm.name
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('hostname', [vm_idx]),
+          :label         => 'Instance Hostname',
+          :description   => 'Can only contain alphanumeric characters and hypens',
+          :data_type     => 'string',
+          :required      => true,
+          :default_value => vm.hostname,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterPattern.new(
+              :pattern     => '^\S+$',
+              :description => 'No spaces allowed'
+            )
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('num_cores', [vm_idx]),
+          :label         => 'Number of virtual CPUs',
+          :data_type     => 'integer',
+          :required      => true,
+          :default_value => vm.num_cores,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterRange.new(
+              :min_value   => 1,
+              :max_value   => 128,
+              :description => 'Must be between 1 and 128'
+            )
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('cores_per_socket', [vm_idx]),
+          :label         => 'Cores per socket',
+          :description   => 'Must be divisor of number of virtual CPUs',
+          :data_type     => 'integer',
+          :required      => true,
+          :default_value => vm.cores_per_socket,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterRange.new(
+              :min_value   => 1,
+              :max_value   => 128,
+              :description => 'Must be between 1 and 128'
+            )
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('memory_mb', [vm_idx]),
+          :label         => 'Total memory (MB)',
+          :description   => 'Must not be less than 4MB',
+          :data_type     => 'integer',
+          :required      => true,
+          :default_value => vm.memory_mb,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterRange.new(:min_value => 4)
+          ]
+        )
+      ]
 
-      groups << OrchestrationTemplate::OrchestrationParameterGroup.new(
-        :label      => vm_name,
-        :parameters => [
-          # Name of the provisioned instance.
-          OrchestrationTemplate::OrchestrationParameter.new(
-            :name          => "instance_name-#{vm_id}",
-            :label         => "Instance name",
-            :data_type     => "string",
-            :default_value => vm_name
-          ),
+      # Disks.
+      vm.disks.each_with_index do |disk, disk_idx|
+        vm_parameters << OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('disk_mb', [vm_idx, disk_idx]),
+          :label         => "Disk #{disk.address} (MB)",
+          :description   => "Must not be less than original Disk #{disk.address} size (#{disk.capacity_mb}MB)",
+          :data_type     => 'integer',
+          :required      => true,
+          :default_value => disk.capacity_mb,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterRange.new(:min_value => disk.capacity_mb)
+          ]
+        )
+      end
 
-          # List of available VDC networks.
+      # NICs.
+      vm.nics.each_with_index do |nic, nic_idx|
+        vm_parameters += [
           OrchestrationTemplate::OrchestrationParameter.new(
-            :name          => "vdc_network-#{vm_id}",
-            :label         => "Network",
-            :data_type     => "string",
-            :default_value => "(default)",
+            :name          => param_name('nic_network', [vm_idx, nic_idx]),
+            :label         => "NIC##{nic.idx} Network",
+            :data_type     => 'string',
+            :default_value => nic.network,
             :constraints   => [
-              OrchestrationTemplate::OrchestrationParameterAllowedDynamic.new(:fqname => "/Cloud/Orchestration/Operations/Methods/Available_Vdc_Networks")
+              OrchestrationTemplate::OrchestrationParameterAllowed.new(:allowed_values => template.vapp_network_names)
             ]
-          )
+          ),
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('nic_mode', [vm_idx, nic_idx]),
+            :label         => "NIC##{nic.idx} Mode",
+            :data_type     => 'string',
+            :default_value => nic.mode,
+            :required      => true,
+            :constraints   => [
+              OrchestrationTemplate::OrchestrationParameterAllowed.new(
+                :allowed_values => {
+                  'DHCP'   => 'DHCP',
+                  'MANUAL' => 'Static - Manual',
+                  'POOL'   => 'Static - IP Pool'
+                }
+              )
+            ]
+          ),
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('nic_ip_address', [vm_idx, nic_idx]),
+            :label         => "NIC##{nic.idx} IP Address",
+            :description   => "Ignored unless Mode is set to 'Static - Manual'",
+            :data_type     => 'string',
+            :default_value => nic.ip_address,
+            :constraints   => [ip_constraint]
+          ),
         ]
+      end
+
+      OrchestrationTemplate::OrchestrationParameterGroup.new(
+        :label      => "VM Instance Parameters for '#{vm.name}'",
+        :parameters => vm_parameters
       )
     end
+  end
 
-    groups
+  def vapp_net_param_groups(template)
+    template.vapp_networks.each_with_index.map do |vapp_net, vapp_net_idx|
+      vapp_net_parameters = [
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name        => param_name('parent', [vapp_net_idx]),
+          :label       => 'Parent Network',
+          :data_type   => 'string',
+          :constraints => [
+            OrchestrationTemplate::OrchestrationParameterAllowedDynamic.new(:fqname => '/Cloud/Orchestration/Operations/Methods/Available_Vdc_Networks')
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('fence_mode', [vapp_net_idx]),
+          :label         => 'Fence Mode',
+          :data_type     => 'string',
+          :default_value => vapp_net.mode,
+          :required      => true,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterAllowed.new(
+              :allowed_values => {
+                'isolated'  => 'Isolated',
+                'bridged'   => 'Bridged',
+                'natRouted' => 'NAT'
+              }
+            )
+          ]
+        )
+      ]
+
+      vapp_net.subnets.each_with_index do |subnet, subnet_idx|
+        vapp_net_parameters += [
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('gateway', [vapp_net_idx, subnet_idx]),
+            :label         => 'Gateway',
+            :data_type     => 'string',
+            :default_value => subnet.gateway,
+            :constraints   => [ip_constraint]
+          ),
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('netmask', [vapp_net_idx, subnet_idx]),
+            :label         => "Netmask",
+            :data_type     => "string",
+            :default_value => subnet.netmask,
+            :constraints   => [ip_constraint]
+          ),
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('dns1', [vapp_net_idx, subnet_idx]),
+            :label         => 'DNS 1',
+            :data_type     => 'string',
+            :default_value => subnet.dns1,
+            :constraints   => [ip_constraint]
+          ),
+          OrchestrationTemplate::OrchestrationParameter.new(
+            :name          => param_name('dns2', [vapp_net_idx, subnet_idx]),
+            :label         => 'DNS 2',
+            :data_type     => 'string',
+            :default_value => subnet.dns2,
+            :constraints   => [ip_constraint]
+          )
+        ]
+      end
+
+      OrchestrationTemplate::OrchestrationParameterGroup.new(
+        :label      => "vApp Network Parameters for '#{vapp_net.name}'",
+        :parameters => vapp_net_parameters
+      )
+    end
   end
 
   def deployment_options(_manager_class = nil)
@@ -85,7 +242,21 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
       ]
     )
 
-    super << availability_opt
+    vapp_template = OrchestrationTemplate::OrchestrationParameter.new(
+      :name          => 'stack_template',
+      :label         => 'vApp Template',
+      :description   => 'vApp Template that this Service bases on',
+      :data_type     => 'string',
+      :required      => true,
+      :default_value => id,
+      :constraints   => [
+        OrchestrationTemplate::OrchestrationParameterAllowed.new(
+          :allowed_values => { id => name }
+        )
+      ]
+    )
+
+    super << availability_opt << vapp_template
   end
 
   def self.eligible_manager_types
@@ -103,5 +274,16 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
 
   def self.display_name(number = 1)
     n_('vApp Template', 'vApp Templates', number)
+  end
+
+  def param_name(param, indeces = [])
+    "#{param}-#{indeces.join('-')}".chomp('-')
+  end
+
+  def ip_constraint
+    OrchestrationTemplate::OrchestrationParameterPattern.new(
+      :pattern     => '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$',
+      :description => 'IP address'
+    )
   end
 end
