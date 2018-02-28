@@ -19,16 +19,16 @@ module ManageIQ::Providers
     def customize_vapp_template(vm_params, vapp_net_params)
       source_vms = vm_params.map do |_, vm_opts|
         src_vm = {
-          :vm_id    => "vm-#{vm_opts[:vm_id]}",
-          :networks => parse_nics(vm_opts),
-          :hardware => {
+          :vm_id               => "vm-#{vm_opts[:vm_id]}",
+          :networks            => parse_nics(vm_opts),
+          :hardware            => {
             :cpu    => { :num_cores => vm_opts['num_cores'], :cores_per_socket => vm_opts['cores_per_socket'] },
             :memory => { :quantity_mb => vm_opts['memory_mb'] },
             :disk   => parse_disks(vm_opts)
-          }
+          },
+          :guest_customization => parse_guest_customization(vm_opts)
         }
         src_vm[:name]                = vm_opts["instance_name"] if vm_opts.key?("instance_name")
-        src_vm[:guest_customization] = { :ComputerName => vm_opts['hostname'] } if vm_opts.key?("hostname")
         src_vm
       end
 
@@ -49,7 +49,10 @@ module ManageIQ::Providers
 
     def collect_vm_params(template)
       vm_params = collect_stack_parameters(
-        %w(instance_name vdc_network num_cores cores_per_socket memory_mb disk_mb hostname nic_network nic_mode nic_ip_address)
+        %w(
+          instance_name vdc_network num_cores cores_per_socket memory_mb disk_mb hostname nic_network nic_mode
+          nic_ip_address admin_password admin_reset
+        )
       )
       # Reverse lookup by indeces.
       vm_params.each do |vm_idx, obj|
@@ -117,6 +120,19 @@ module ManageIQ::Providers
           :IsConnected             => true
         }
       end
+    end
+
+    def parse_guest_customization(opts)
+      admin_pass = opts['admin_password']
+      res = {
+        :Enabled               => true,
+        :ComputerName          => opts['hostname'],
+        :AdminPasswordEnabled  => true,
+        :AdminPasswordAuto     => admin_pass.blank?,
+        :ResetPasswordRequired => opts['admin_reset'] == 't'
+      }
+      res[:AdminPassword] = admin_pass if admin_pass.present?
+      res
     end
 
     def option_value(opts_group, subkeys)

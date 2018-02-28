@@ -23,6 +23,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
       'dialog_param_num_cores-0'        => 8,
       'dialog_param_cores_per_socket-0' => 4,
       'dialog_param_memory_mb-0'        => 8192,
+      'dialog_param_admin_password-0'   => 'admin-password',
+      'dialog_param_admin_reset-0'      => 't',
       'dialog_param_disk_mb-0-0'        => 40_960,
       'dialog_param_disk_mb-0-1'        => 20_480,
       'dialog_param_nic_network-0-0'    => 'VM Network',
@@ -34,6 +36,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
       'dialog_param_num_cores-1'        => 4,
       'dialog_param_cores_per_socket-1' => 1,
       'dialog_param_memory_mb-1'        => 2048,
+      'dialog_param_admin_password-1'   => '',
+      'dialog_param_admin_reset-1'      => 'f',
       'dialog_param_disk_mb-1-0'        => 4096,
       'dialog_param_nic_network-1-0'    => 'RedHat Private network 43',
       'dialog_param_nic_mode-1-0'       => 'DHCP',
@@ -91,7 +95,14 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
       expect(options[:source_vms][0]).to eq(
         :name                => 'my VM1',
         :vm_id               => 'vm-e9b55b85-640b-462c-9e7a-d18c47a7a5f3',
-        :guest_customization => { :ComputerName => 'my-vm-1' },
+        :guest_customization => {
+          :Enabled               => true,
+          :ComputerName          => 'my-vm-1',
+          :AdminPasswordEnabled  => true,
+          :AdminPassword         => 'admin-password',
+          :AdminPasswordAuto     => false,
+          :ResetPasswordRequired => true
+        },
         :hardware            => {
           :cpu    => { :num_cores => 8, :cores_per_socket => 4 },
           :memory => { :quantity_mb => 8192 },
@@ -112,7 +123,13 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
       expect(options[:source_vms][1]).to eq(
         :name                => 'my VM2',
         :vm_id               => 'vm-04f85cca-3f8d-43b4-8473-7aa099f95c1b',
-        :guest_customization => { :ComputerName => 'my-vm-2' },
+        :guest_customization => {
+          :Enabled               => true,
+          :ComputerName          => 'my-vm-2',
+          :AdminPasswordEnabled  => true,
+          :AdminPasswordAuto     => true,
+          :ResetPasswordRequired => false
+        },
         :hardware            => {
           :cpu    => { :num_cores => 4, :cores_per_socket => 1 },
           :memory => { :quantity_mb => 2048 },

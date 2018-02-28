@@ -96,7 +96,23 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
           :constraints   => [
             OrchestrationTemplate::OrchestrationParameterRange.new(:min_value => 4)
           ]
-        )
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name        => param_name('admin_password', [vm_idx]),
+          :label       => 'Administrator Password',
+          :description => 'Leave empty to auto generate',
+          :data_type   => 'string'
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('admin_reset', [vm_idx]),
+          :label         => 'Require password change',
+          :description   => 'Require administrator to change password on first login',
+          :data_type     => 'boolean',
+          :default_value => false,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterBoolean.new
+          ]
+        ),
       ]
 
       # Disks.
