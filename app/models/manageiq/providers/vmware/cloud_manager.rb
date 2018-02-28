@@ -109,4 +109,11 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
       service.process_task(response.body)
     end
   end
+
+  def vm_remove_all_snapshots(vm, _options = {})
+    with_provider_connection do |service|
+      response = service.post_remove_all_snapshots(vm.ems_ref)
+      service.process_task(response.body)
+    end
+  end
 end
