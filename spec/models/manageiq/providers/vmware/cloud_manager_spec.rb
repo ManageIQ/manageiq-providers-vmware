@@ -104,15 +104,15 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
   describe 'snapshot operations' do
     before(:each) do
-      expect(@ems).to receive(:with_provider_connection).and_yield(connection)
+      allow(@ems).to receive(:with_provider_connection).and_yield(connection)
     end
 
-    let(:vm) { FactoryGirl.create(:vm_vmware, :ext_management_system => @ems) }
+    let(:vm) { FactoryGirl.create(:vm_vcloud, :ext_management_system => @ems) }
     let(:response) { double("response", :body => nil) }
+    let(:connection) { double('connection') }
 
     context ".vm_create_snapshot" do
       let(:snapshot_options) { { :name => 'name', :memory => false } }
-      let(:connection) { double("connection", :post_create_snapshot => "post_create_snapshot") }
 
       it 'creates a snapshot' do
         expect(connection).to receive(:post_create_snapshot).and_return(response)
@@ -123,13 +123,28 @@ describe ManageIQ::Providers::Vmware::CloudManager do
     end
 
     context ".vm_revert_to_snapshot" do
-      let(:connection) { double('connection') }
-
       it 'reverts a vm to snapshot' do
         expect(connection).to receive(:post_revert_snapshot).and_return(response)
         expect(connection).to receive(:process_task).and_return(true)
 
         @ems.vm_revert_to_snapshot(vm)
+      end
+    end
+
+    context ".vm_remove_snapshot" do
+      it 'removes all snapshots' do
+        expect(connection).to receive(:post_remove_all_snapshots).and_return(response)
+        expect(connection).to receive(:process_task).and_return(true)
+
+        @ems.vm_remove_all_snapshots(vm)
+      end
+
+      it 'supports remove all snapshots' do
+        expect(vm.supports_remove_all_snapshots?).to be_truthy
+      end
+
+      it 'supports remove snapshot' do
+        expect(vm.supports_remove_snapshot?).to be_falsey
       end
     end
   end
