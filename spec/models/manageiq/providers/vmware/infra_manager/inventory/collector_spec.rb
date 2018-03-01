@@ -48,9 +48,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
   end
 
   context "#process_object_update (private)" do
-    let(:root_folder)     { RbVmomi::VIM::Folder(nil, "group-d1") }
-    let(:datacenter)      { RbVmomi::VIM::Datacenter(nil, "datacenter-1") }
-    let(:virtual_machine) { RbVmomi::VIM::VirtualMachine(nil, "vm-1") }
+    let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
+    let(:root_folder)     { RbVmomi::VIM::Folder(vim, "group-d1") }
+    let(:datacenter)      { RbVmomi::VIM::Datacenter(vim, "datacenter-1") }
+    let(:virtual_machine) { RbVmomi::VIM::VirtualMachine(vim, "vm-1") }
 
     context "enter" do
       it "Folder" do
@@ -69,9 +70,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(props).to include(
           "name"        => "Datacenters",
           "parent"      => nil,
+          "childEntity" => [datacenter],
         )
-
-        expect(props["childEntity"].first._ref).to eq(datacenter._ref)
       end
 
       it "VirtualMachine" do
