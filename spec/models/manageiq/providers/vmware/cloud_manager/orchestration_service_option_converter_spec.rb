@@ -59,7 +59,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
       expect(options).not_to be_nil
       expect(options[:vapp_networks]).not_to be_nil
       expect(options[:vapp_networks].count).to eq(2)
-      expect(options[:vapp_networks][0]).to have_attributes(
+      expect(options[:vapp_networks][0]).to include(
         :name       => 'VM Network',
         :parent     => nil,
         :fence_mode => 'isolated',
@@ -72,7 +72,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionCo
           }
         ]
       )
-      expect(options[:vapp_networks][1]).to have_attributes(
+      expect(options[:vapp_networks][1]).to include(
         :name       => 'RedHat Private network 43',
         :parent     => 'b915be99-1471-4e51-bcde-da2da791b98f',
         :fence_mode => 'bridged',
