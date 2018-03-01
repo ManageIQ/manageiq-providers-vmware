@@ -1,15 +1,17 @@
 describe ManageIQ::Providers::Vmware::NetworkManager::RefreshParser do
   describe "Utility" do
     before do
-      allow_any_instance_of(described_class).to receive(:initialize).and_return(nil)
       allow($vcloud_log).to receive(:debug)
       allow($vcloud_log).to receive(:error)
       allow($vcloud_log).to receive(:info)
     end
-    let(:refresher) { described_class.new }
-    let(:network) do
-      double(:id => 'id1', :name => 'name1')
+    let(:ems) do
+      FactoryGirl.create(:ems_vmware_cloud).tap do |ems|
+        ems.authentications << FactoryGirl.create(:authentication, :status => "Valid")
+      end
     end
+    let(:refresher) { described_class.new(ems) }
+    let(:network)   { double(:id => 'id1', :name => 'name1') }
 
     describe 'build_vapp_network' do
       [
