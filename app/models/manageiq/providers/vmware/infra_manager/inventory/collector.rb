@@ -13,7 +13,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def run
     until exit_requested
-      vim = connect(ems.address, ems.authentication_userid, ems.authentication_password)
+      vim = connect(ems.hostname, ems.authentication_userid, ems.authentication_password)
 
       begin
         wait_for_updates(vim)
