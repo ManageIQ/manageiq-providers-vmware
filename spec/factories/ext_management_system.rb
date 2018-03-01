@@ -21,4 +21,11 @@ FactoryGirl.define do
       ems.authentications << FactoryGirl.create(:authentication, cred)
     end
   end
+
+  factory :ems_vmware_cloud_with_amqp_authentication, :parent => :ems_vmware_cloud do
+    after(:create) do |x|
+      x.authentications << FactoryGirl.create(:authentication, :authtype => 'amqp')
+      x.endpoints       << FactoryGirl.create(:endpoint, :role => 'amqp')
+    end
+  end
 end
