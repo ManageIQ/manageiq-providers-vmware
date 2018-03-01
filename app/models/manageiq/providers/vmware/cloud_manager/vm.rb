@@ -2,6 +2,8 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
   include_concern 'Operations'
 
   supports :snapshots
+  supports :remove_all_snapshots
+  supports_not :remove_snapshot
 
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect
