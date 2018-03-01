@@ -127,7 +127,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
       :secret     => password,
       :url_secret => SecureRandom.hex
     }
-    host_address = host.address
+    host_address = host.hostname
 
     SystemConsole.launch_proxy_if_not_local(console_args, originating_server, host_address, host_port)
   end
