@@ -5,18 +5,19 @@ module ManageIQ::Providers
 
     def initialize(ems, options = nil)
       @ems                  = ems
-      @connection           = ems.connect
       @options              = options || {}
       @data                 = {}
       @data_index           = {}
       @inv                  = Hash.new { |h, k| h[k] = [] }
-      @org                  = @connection.organizations.first
       @network_name_mapping = {}
     end
 
     def ems_inv_to_hashes
       $vcloud_log.info("#{log_header} Collecting data for EMS name: [#{@ems.name}] id: [#{@ems.id}]...")
 
+      connect
+
+      get_org
       get_vdc_networks
       get_vapp_networks
       get_network_ports
@@ -27,6 +28,14 @@ module ManageIQ::Providers
     end
 
     private
+
+    def connect
+      @connection ||= @ems.connect
+    end
+
+    def get_org
+      @org = @connection.organizations.first
+    end
 
     def get_vdc_networks
       @inv[:vdc_networks] = @org.networks || []
