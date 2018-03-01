@@ -6,14 +6,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
       event = YAML.load_file(File.join(EPV_DATA_DIR, 'general_user_event.yml'))
       data = described_class.event_to_hash(event, 12345)
 
-      expect(data).to have_attributes(
+      expect(data).to include(
         :event_type   => "GeneralUserEvent",
         :chain_id     => "5361104",
         :is_task      => false,
         :source       => "VC",
         :message      => "User logged event: EVM SmartState Analysis completed for VM [tch-UBUNTU-904-LTS-DESKTOP]",
         :timestamp    => "2010-08-24T01:08:10.396636Z",
-        :full_data    => event,
         :ems_id       => 12345,
         :username     => "MANAGEIQ\\thennessy",
 
@@ -24,6 +23,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
         :host_name    => "yoda.manageiq.com",
       )
 
+      expect(data[:full_data]).to    eq(event)
       expect(data[:full_data]).to    be_instance_of VimHash
       expect(data[:vm_ems_ref]).to   be_instance_of String
       expect(data[:host_ems_ref]).to be_instance_of String
@@ -35,7 +35,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
         data = described_class.event_to_hash(event, 12345)
 
         assert_result_fields(data, event)
-        expect(data).to have_attributes(
+        expect(data).to include(
           :event_type => "vprob.vmfs.resource.corruptondisk",
           :message    => "event.vprob.vmfs.resource.corruptondisk.fullFormat (vprob.vmfs.resource.corruptondisk)"
         )
@@ -46,29 +46,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
         data = described_class.event_to_hash(event, 12345)
 
         assert_result_fields(data, event)
-        expect(data).to have_attributes(
+        expect(data).to include(
           :event_type => "EventEx",
           :message    => ""
         )
       end
 
       def assert_result_fields(data, event)
-        expect(data).to have_attributes(
+        expect(data).to include(
           :chain_id     => "297179",
           :is_task      => false,
           :source       => "VC",
           :timestamp    => "2010-11-12T17:15:42.661128Z",
-          :full_data    => event,
           :ems_id       => 12345,
-          :username     => nil,
-
-          :vm_ems_ref   => nil,
-          :vm_name      => nil,
-          :vm_location  => nil,
           :host_ems_ref => "host-29",
           :host_name    => "vi4esx1.galaxy.local",
         )
 
+        expect(data[:full_data]).to    eq(event)
         expect(data[:full_data]).to    be_instance_of VimHash
         expect(data[:host_ems_ref]).to be_instance_of String
       end
@@ -78,7 +73,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
       let(:event) { YAML.load_file(File.join(EPV_DATA_DIR, 'task_event.yaml')) }
 
       it "sets the vm_uid_ems" do
-        expect(described_class.event_to_hash(event, 12_345)).to have_attributes(
+        expect(described_class.event_to_hash(event, 12_345)).to include(
           :vm_uid_ems => event["vm"]["uuid"]
         )
       end
