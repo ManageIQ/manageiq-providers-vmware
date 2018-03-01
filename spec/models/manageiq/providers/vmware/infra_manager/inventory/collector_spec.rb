@@ -66,18 +66,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
         _obj, props = collector.send(:process_object_update, object_update)
 
-        expect(props).to have_attributes(
+        expect(props).to include(
           "name"        => "Datacenters",
           "parent"      => nil,
-          "childEntity" => [datacenter]
         )
+
+        expect(props["childEntity"].first._ref).to eq(datacenter._ref)
       end
 
       it "VirtualMachine" do
         object_update = virtual_machine_enter_object_update
 
         _obj, props = collector.send(:process_object_update, object_update)
-        expect(props).to have_attributes(
+        expect(props).to include(
           "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
           "summary.config.name"       => "vm1",
           "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
@@ -103,7 +104,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           )
 
           _obj, props = collector.send(:process_object_update, object_update)
-          expect(props).to have_attributes(
+          expect(props).to include(
             "summary.config.name" => "vm2"
           )
         end
@@ -118,7 +119,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           )
 
           _obj, props = collector.send(:process_object_update, object_update)
-          expect(props).to have_attributes(
+          expect(props).to include(
             "summary.config.uuid"       => "eaf4991e-ab31-4f86-9ec0-aeb5d5a27c33",
             "summary.config.name"       => "vm2",
             "summary.config.vmPathName" => "[datastore1] vm1/vm1.vmx",
