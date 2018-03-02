@@ -120,6 +120,15 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
         @ems.vm_create_snapshot(vm, snapshot_options)
       end
+
+      it 'supports snapshot create' do
+        expect(vm.supports_snapshot_create?).to be_truthy
+      end
+
+      it 'supports snapshot create (for second snapshot)' do
+        FactoryGirl.create(:snapshot, :vm_or_template_id => vm.id)
+        expect(vm.supports_snapshot_create?).to be_truthy
+      end
     end
 
     context ".vm_revert_to_snapshot" do
