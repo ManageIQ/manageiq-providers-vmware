@@ -53,6 +53,9 @@ module ManageIQ::Providers
 
       @ems.orchestration_stacks.each do |stack|
         fetch_network_configurations_for_vapp(stack.ems_ref).map do |net_conf|
+          # 'none' is special network placeholder that we must ignore
+          next if net_conf[:networkName] == 'none'
+
           $vcloud_log.debug("#{log_header} processing net_conf for vapp #{stack.ems_ref}: #{net_conf}")
           network_id = network_id_from_links(net_conf)
           $vcloud_log.debug("#{log_header} calculated vApp network id: #{network_id}")

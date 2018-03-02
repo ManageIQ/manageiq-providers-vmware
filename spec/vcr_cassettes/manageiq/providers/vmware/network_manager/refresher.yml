@@ -9325,6 +9325,21 @@ http_interactions:
             <NetworkConfigSection href="https://VMWARE_CLOUD_HOST/api/vApp/vapp-a421d543-768d-4ae5-b7b0-48caeeaccd64/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml" ovf:required="false">
                 <ovf:Info>The configuration parameters for logical networks</ovf:Info>
                 <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vapp-a421d543-768d-4ae5-b7b0-48caeeaccd64/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml"/>
+                <NetworkConfig networkName="none">
+                    <Description>This is a special place-holder used for disconnected network interfaces.</Description>
+                    <Configuration>
+                        <IpScopes>
+                            <IpScope>
+                                <IsInherited>false</IsInherited>
+                                <Gateway>196.254.254.254</Gateway>
+                                <Netmask>255.255.0.0</Netmask>
+                                <Dns1>196.254.254.254</Dns1>
+                            </IpScope>
+                        </IpScopes>
+                        <FenceMode>isolated</FenceMode>
+                    </Configuration>
+                    <IsDeployed>false</IsDeployed>
+                </NetworkConfig>
                 <NetworkConfig networkName="vApp network test 2">
                     <Link rel="repair" href="https://VMWARE_CLOUD_HOST/api/admin/network/e12c7b8c-ef85-4541-87e1-13218c7f1bd8/action/reset"/>
                     <Description></Description>
