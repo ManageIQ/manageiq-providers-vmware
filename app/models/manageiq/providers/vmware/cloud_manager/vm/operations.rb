@@ -5,7 +5,7 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations
 
   included do
     supports :terminate do
-      unsupported_reason_add(:terminate, "The VM is powered on") unless current_state == "off"
+      unsupported_reason_add(:terminate, "The VM is powered on") if vm_powered_on?
     end
   end
 
