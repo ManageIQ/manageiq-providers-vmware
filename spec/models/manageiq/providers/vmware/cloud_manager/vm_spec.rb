@@ -34,6 +34,11 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm do
       let(:state) { :standby_guest }
       include_examples "Vm operation is not available"
     end
+
+    context("with :terminate") do
+      let(:state) { :terminate }
+      include_examples "Vm operation is available when not powered on"
+    end
   end
 
   context "when destroyed" do
