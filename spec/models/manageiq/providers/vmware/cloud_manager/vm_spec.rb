@@ -55,4 +55,33 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm do
       vm.raw_destroy
     end
   end
+
+  describe 'power operations' do
+    before(:each) do
+      allow(ems).to receive(:with_provider_connection).and_yield(connection)
+    end
+
+    let(:ems)        { FactoryGirl.create(:ems_vmware_cloud) }
+    let(:vm)         { FactoryGirl.create(:vm_vcloud, :ext_management_system => ems, :ems_ref => 'id') }
+    let(:connection) { double('connection') }
+    let(:response)   { double('response', :body => nil) }
+
+    context '.raw_stop' do
+      it 'stops the virtual machine' do
+        expect(connection).to receive(:post_undeploy_vapp).with('id', :UndeployPowerAction => 'powerOff').and_return(response)
+        expect(connection).to receive(:process_task)
+
+        vm.raw_stop
+      end
+    end
+
+    context '.raw_suspend' do
+      it 'suspends the virtual machine' do
+        expect(connection).to receive(:post_undeploy_vapp).with('id', :UndeployPowerAction => 'suspend').and_return(response)
+        expect(connection).to receive(:process_task)
+
+        vm.raw_suspend
+      end
+    end
+  end
 end
