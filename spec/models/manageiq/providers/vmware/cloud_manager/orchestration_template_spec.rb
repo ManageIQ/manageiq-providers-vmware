@@ -46,6 +46,11 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
         expect(ovf_doc).not_to be(nil)
         expect(ovf_doc.root.name).not_to be("Envelope")
       end
+
+      it "contains template ems_ref" do
+        ems_ref = described_class.calc_md5(valid_template.content)
+        expect(ems_ref).to eq('vappTemplate-05e4d68f-1a4e-40d5-9361-a121c1a67393')
+      end
     end
 
     context "orchestration template" do
