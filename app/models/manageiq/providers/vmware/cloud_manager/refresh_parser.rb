@@ -110,7 +110,8 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
   def parse_vm(vm)
     status        = vm.status
     uid           = vm.id
-    name          = vm.name
+    hostname      = vm.customization.try(:computer_name)
+    name          = hostname.present? ? "#{vm.name} (#{hostname})" : vm.name
     guest_os      = vm.operating_system
     bitness       = vm.operating_system =~ /64-bit/ ? 64 : 32
     cpus          = vm.cpu

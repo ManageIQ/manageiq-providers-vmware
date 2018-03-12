@@ -88,7 +88,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_network_port
       expect(net_port).to have_attributes(
-        :name                  => 'RHEL7-001#NIC#0',
+        :name                  => 'RHEL7-001 (WebServerVM)#NIC#0',
         :mac_address           => '00:50:56:01:00:09',
         :device_type           => 'VmOrTemplate',
         :source                => 'refresh',
@@ -99,7 +99,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_vm_networking
       expect(vm).to have_attributes(
-        :name           => 'RHEL7-001',
+        :name           => 'RHEL7-001 (WebServerVM)',
         :ipaddresses    => ['10.12.6.17'],
         :mac_addresses  => [net_port.mac_address],
         :cloud_networks => [vdc_net],
@@ -167,7 +167,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_network_port
       expect(net_port).to have_attributes(
-        :name                  => 'vAppRHEL7-w-002#NIC#0',
+        :name                  => 'vAppRHEL7-w-002 (WebServerVM)#NIC#0',
         :mac_address           => '00:50:56:01:00:0c',
         :device_type           => 'VmOrTemplate',
         :source                => 'refresh',
@@ -200,7 +200,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_vm_networking
       expect(vm).to have_attributes(
-        :name           => 'vAppRHEL7-w-002',
+        :name           => 'vAppRHEL7-w-002 (WebServerVM)',
         :ipaddresses    => ['192.168.2.100', floating_ip.address],
         :mac_addresses  => [net_port.mac_address],
         :cloud_networks => [vapp_net],
@@ -220,7 +220,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
     it "full refresh" do
       refresh_network_manager(described_class.name.underscore) do
         expect(vm).to have_attributes(
-          :name         => 'RHEL01-rspec',
+          :name         => 'RHEL01-rspec (WebServerVM)',
           :floating_ips => [floating_ip]
         )
 
