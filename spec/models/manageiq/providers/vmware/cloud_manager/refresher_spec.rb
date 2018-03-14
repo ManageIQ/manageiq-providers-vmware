@@ -233,7 +233,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(v.hardware.disks.first).to have_attributes(
       :device_name     => "Hard disk 1",
       :device_type     => "disk",
-      :controller_type => "SCSI Controller",
+      :controller_type => "LSI Logic Parallel SCSI controller",
       :size            => 17_179_869_184,
     )
     expect(v.hardware.guest_devices.size).to eq(0)
@@ -318,7 +318,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(v.hardware.disks.first).to have_attributes(
       :device_name     => "Hard disk 1",
       :device_type     => "disk",
-      :controller_type => "SCSI Controller",
+      :controller_type => "LSI Logic Parallel SCSI controller",
       :size            => 17_179_869_184,
     )
     expect(v.hardware.guest_devices.size).to eq(0)

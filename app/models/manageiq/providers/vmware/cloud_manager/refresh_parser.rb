@@ -120,15 +120,11 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
     stack         = @data_index.fetch_path(:orchestration_stacks, vapp_uid)
     disk_capacity = vm.hard_disks.inject(0) { |sum, x| sum + x.values[0] } * 1.megabyte
 
-    vm_disks = vm.disks.all
-
-    disks = vm_disks.select { |d| d.description == "Hard disk" }.map do |disk|
-      parent = vm_disks.find { |d| d.id == disk.parent }
-
+    disks = vm.disks.all.select { |d| hdd? d.bus_type }.map do |disk|
       {
         :device_name     => disk.name,
         :device_type     => "disk",
-        :controller_type => parent.description,
+        :controller_type => controller_description(disk.bus_sub_type),
         :size            => disk.capacity * 1.megabyte,
         :location        => "#{vm.id}-#{disk.id}",
         :filename        => "#{vm.id}-#{disk.id}",
@@ -237,5 +233,28 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
     else
       return nil
     end
+  end
+
+  # See https://pubs.vmware.com/vcd-80/index.jsp#com.vmware.vcloud.api.sp.doc_90/GUID-E1BA999D-87FA-4E2C-B638-24A211AB8160.html
+  def controller_description(bus_subtype)
+    case bus_subtype
+    when 'buslogic'
+      'BusLogic Parallel SCSI controller'
+    when 'lsilogic'
+      'LSI Logic Parallel SCSI controller'
+    when 'lsilogicsas'
+      'LSI Logic SAS SCSI controller'
+    when 'VirtualSCSI'
+      'Paravirtual SCSI controller'
+    when 'vmware.sata.ahci'
+      'SATA controller'
+    else
+      'IDE controller'
+    end
+  end
+
+  # See https://pubs.vmware.com/vcd-80/index.jsp#com.vmware.vcloud.api.sp.doc_90/GUID-E1BA999D-87FA-4E2C-B638-24A211AB8160.html
+  def hdd?(bus_type)
+    [5, 6, 20].include?(bus_type)
   end
 end
