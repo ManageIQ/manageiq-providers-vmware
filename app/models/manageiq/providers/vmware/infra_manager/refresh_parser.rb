@@ -431,6 +431,7 @@ module ManageIQ::Providers
             :uid_ems           => uid,
             :name              => name,
             :ports             => data['numPorts'],
+            :type              => self.parent::HostVirtualSwitch.name,
 
             :allow_promiscuous => security_policy['allowPromiscuous'].nil? ? nil : security_policy['allowPromiscuous'].to_s.downcase == 'true',
             :forged_transmits  => security_policy['forgedTransmits'].nil? ? nil : security_policy['forgedTransmits'].to_s.downcase == 'true',
@@ -458,6 +459,7 @@ module ManageIQ::Providers
             :uid_ems           => uid,
             :name              => URI.decode(name),
             :ports             => config['numPorts'] || 0,
+            :type              => self.parent::DistributedVirtualSwitch.name,
 
             :allow_promiscuous => allow_promiscuous.nil? ? nil : allow_promiscuous.to_s.casecmp('true') == 0,
             :forged_transmits  => forged_transmits.nil? ? nil : forged_transmits.to_s.casecmp('true') == 0,
