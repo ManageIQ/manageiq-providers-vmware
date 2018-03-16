@@ -1,5 +1,5 @@
 class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
-  include VimConnectMixin
+  include ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
   def provider_object(connection)
     api_type = connection.about["apiType"]
