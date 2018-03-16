@@ -8,7 +8,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   def validate_remote_console_acquire_ticket(protocol, options = {})
     raise(MiqException::RemoteConsoleNotSupportedError, "#{protocol} remote console requires the vm to be registered with a management system.") if ext_management_system.nil?
 
-    raise(MiqException::RemoteConsoleNotSupportedError, "remote console requires console credentials") if ext_management_system.authentication_type(:console).nil?
+    raise(MiqException::RemoteConsoleNotSupportedError, "remote console requires console credentials") if ext_management_system.authentication_type(:console).nil? && protocol == "vmrc"
 
     options[:check_if_running] = true unless options.key?(:check_if_running)
     raise(MiqException::RemoteConsoleNotSupportedError, "#{protocol} remote console requires the vm to be running.") if options[:check_if_running] && state != "on"
