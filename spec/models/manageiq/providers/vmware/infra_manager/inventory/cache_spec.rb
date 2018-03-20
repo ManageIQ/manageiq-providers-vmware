@@ -3,6 +3,7 @@ require "rbvmomi/vim"
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
   let(:cache) { described_class.new }
   let(:vm) { RbVmomi::VIM.VirtualMachine(nil, "vm-123") }
+  let(:vm_folder) { RbVmomi::VIM.Folder(nil, "group-v3") }
   let(:device) do
     [
       RbVmomi::VIM::VirtualLsiLogicController(
@@ -34,12 +35,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
       ),
     ]
   end
-  let(:change_set) do
+  let(:folder_change_set) do
+    [
+      RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "name", :op => "assign", :val => "vm"),
+      RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity", :op => "assign", :val => [vm]),
+    ]
+  end
+  let(:vm_change_set) do
     [
       RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "config.hardware.device", :op => "assign", :val => device),
       RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "config.version",         :op => "assign", :val => "vmx-08"),
       RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "name",                   :op => "assign", :val => "vm1"),
-      RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "parent",                 :op => "assign", :val => RbVmomi::VIM::Folder(nil, "group-v3")),
+      RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "parent",                 :op => "assign", :val => vm_folder),
     ]
   end
 
@@ -54,7 +61,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
     end
 
     context "with an initial change_set" do
-      before { cache.insert(vm, change_set) }
+      before { cache.insert(vm, vm_change_set) }
 
       it "caches the properties" do
         props = cache["VirtualMachine"]["vm-123"]
@@ -91,7 +98,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
     end
 
     context "of an object in the cache" do
-      before { cache.insert(vm, change_set) }
+      before do
+        cache.insert(vm_folder, folder_change_set)
+        cache.insert(vm, vm_change_set)
+      end
 
       it "updates a top-level value" do
         update_change_set = [RbVmomi::VIM::PropertyChange(:name => "name", :op => "assign", :val => "vm2")]
@@ -133,6 +143,29 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
 
         controller = props[:config][:hardware][:device].detect { |dev| dev.key == 1000 }
         expect(controller[:device]).to match_array([2000, 2001])
+      end
+
+      it "removes a managed entity in an array by mor" do
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity[\"vm-123\"]", :op => "remove")
+        ]
+
+        props = cache.update(vm_folder, update_change_set)
+        expect(props[:childEntity]).not_to include(vm)
+      end
+
+      it "removes a data object in an array by key" do
+        update_change_set = [
+          RbVmomi::VIM.PropertyChange(:name => "config.hardware.device[1000].device", :op => "assign", :val => []),
+          RbVmomi::VIM.PropertyChange(:name => "config.hardware.device[2000]", :op => "remove"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.storage.committed", :op => "assign", :val => 1422),
+          RbVmomi::VIM.PropertyChange(:name => "summary.storage.unshared", :op => "assign", :val => 0),
+        ]
+
+        props = cache.update(vm, update_change_set)
+
+        device_keys = props[:config][:hardware][:device].map(&:key)
+        expect(device_keys).not_to include(2000)
       end
     end
   end

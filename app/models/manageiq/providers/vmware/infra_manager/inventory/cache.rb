@@ -41,8 +41,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
       h[tag] << prop_change.val
     when "remove", "indirectRemove"
       if key
-        # TODO
-        raise "Array properties aren't supported yet"
+        a, i = get_array_entry(h[tag], key)
+        a.delete_at(i)
       else
         h.delete(tag)
       end
