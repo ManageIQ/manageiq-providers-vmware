@@ -3,6 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-21 13:06+0100\n"
 "PO-Revision-Date: 2017-11-21 05:21-0500\n"
 "Last-Translator: Marie Robert <marie.robert@stoquart.com>\n"
 "Language-Team: French\n"
@@ -13,23 +14,33 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "X-Generator: Zanata 3.9.6\n"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
 msgstr "%{field_required} pour cluster activé non-DRS"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
 msgstr "L'opération de clonage n’est pas prise en charge"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
 msgstr "Le nom de l'hôte ou du cluster est requis"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
 msgid "Host must be connected to an EMS to refresh datastore files"
 msgstr ""
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
 msgstr "La VM n'est pas activée"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
 msgstr "Les outils de VM ne sont pas installés"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
 msgstr "non connecté à EMS"
