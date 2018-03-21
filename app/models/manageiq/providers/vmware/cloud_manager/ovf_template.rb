@@ -1,7 +1,7 @@
 class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
   attr_accessor :vms, :vapp_networks
   class OvfParseError < StandardError; end
-  OvfVM          = Struct.new(:id, :name, :num_cores, :cores_per_socket, :memory_mb, :hostname, :disks, :nics)
+  OvfVM          = Struct.new(:id, :name, :num_cores, :cores_per_socket, :memory_mb, :hostname, :disks, :nics, :guest_customization)
   OvfDisk        = Struct.new(:id, :address, :capacity_mb)
   OvfNIC         = Struct.new(:idx, :network, :mode, :ip_address)
   OvfVappNetwork = Struct.new(:name, :mode, :subnets)
@@ -53,13 +53,14 @@ class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
 
   def parse_vms(ovf)
     ovf.each_element(vapp_xpaths(:vms)) do |el|
-      vm                  = OvfVM.new
-      vm.id               = text(el, vm_xpaths(:id))
-      vm.hostname         = text(el, vm_xpaths(:hostname))
-      vm.name             = text(el, vm_xpaths(:name), :default => vm.hostname)
-      vm.num_cores        = int(el, vm_xpaths(:num_cores))
-      vm.cores_per_socket = int(el, vm_xpaths(:cores_per_socket), :default => vm.num_cores)
-      vm.memory_mb        = int(el, vm_xpaths(:memory_mb), :default => 1024)
+      vm                     = OvfVM.new
+      vm.id                  = text(el, vm_xpaths(:id))
+      vm.hostname            = text(el, vm_xpaths(:hostname))
+      vm.name                = text(el, vm_xpaths(:name), :default => vm.hostname)
+      vm.num_cores           = int(el, vm_xpaths(:num_cores))
+      vm.cores_per_socket    = int(el, vm_xpaths(:cores_per_socket), :default => vm.num_cores)
+      vm.memory_mb           = int(el, vm_xpaths(:memory_mb), :default => 1024)
+      vm.guest_customization = bool(el, vm_xpaths(:guest_customization))
 
       # Disks.
       vm.disks = []
@@ -109,6 +110,10 @@ class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
     end
   end
 
+  def bool(el, xpath, default: false)
+    (match = el.elements[xpath]) ? match.text.downcase == 'true' : default
+  end
+
   def text(el, xpath, default: '')
     (match = el.elements[xpath]) ? match.text : default
   end
@@ -138,9 +143,11 @@ class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
     when :disks
       "./ovf:VirtualHardwareSection/ovf:Item[rasd:ResourceType = '17']"
     when :hostname
-      "./vcloud:GuestCustomizationSection/vcloud:ComputerName"
+      './vcloud:GuestCustomizationSection/vcloud:ComputerName'
     when :nics
       './/vcloud:NetworkConnection'
+    when :guest_customization
+      './vcloud:GuestCustomizationSection/vcloud:Enabled'
     else
       ''
     end

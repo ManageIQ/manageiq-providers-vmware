@@ -51,7 +51,7 @@ module ManageIQ::Providers
       vm_params = collect_stack_parameters(
         %w(
           instance_name vdc_network num_cores cores_per_socket memory_mb disk_mb hostname nic_network nic_mode
-          nic_ip_address admin_password admin_reset
+          nic_ip_address admin_password admin_reset guest_customization
         )
       )
       # Reverse lookup by indeces.
@@ -125,7 +125,7 @@ module ManageIQ::Providers
     def parse_guest_customization(opts)
       admin_pass = opts['admin_password']
       res = {
-        :Enabled               => true,
+        :Enabled               => opts['guest_customization'] == 't',
         :ComputerName          => opts['hostname'],
         :AdminPasswordEnabled  => true,
         :AdminPasswordAuto     => admin_pass.blank?,
