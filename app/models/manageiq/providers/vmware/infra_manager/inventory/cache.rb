@@ -116,12 +116,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
     return nil, nil unless array.kind_of?(Array)
 
     array.each_index do |n|
-      h = array[n]
-      case h
-      when RbVmomi::BasicTypes::DataObject
-        return array, n if h.respond_to?("key") && h.key.to_s == key
+      array_entry = array[n]
+
+      entry_key = array_entry.respond_to?("key") ? array_entry.key : array_entry
+      case entry_key
       when RbVmomi::BasicTypes::ManagedObject
-        return array, n if h._ref == key
+        return array, n if entry_key._ref == key
+      else
+        return array, n if entry_key.to_s == key
       end
     end
   end

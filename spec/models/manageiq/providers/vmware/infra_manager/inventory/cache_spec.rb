@@ -167,6 +167,56 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
         device_keys = props[:config][:hardware][:device].map(&:key)
         expect(device_keys).not_to include(2000)
       end
+
+      it "assigns to array with a ref as an array key" do
+        datastore = RbVmomi::VIM.Datastore(nil, "datastore-1")
+        datastore_host = [
+          RbVmomi::VIM.DatastoreHostMount(
+            :key       => RbVmomi::VIM.HostSystem(nil, "host-815"),
+            :mountInfo => RbVmomi::VIM.HostMountInfo(
+              :path       => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode => "readWrite",
+              :mounted    => true,
+              :accessible => true
+            )
+          ),
+          RbVmomi::VIM.DatastoreHostMount(
+            :key       => RbVmomi::VIM.HostSystem(nil, "host-244"),
+            :mountInfo => RbVmomi::VIM.HostMountInfo(
+              :path       => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode => "readWrite",
+              :mounted    => true,
+              :accessible => true
+            )
+          ),
+        ]
+
+        initial_change_set = [
+          RbVmomi::VIM.PropertyChange(:dynamicProperty => [], :name => "host", :op => "assign", :val => datastore_host),
+        ]
+
+        cache.insert(datastore, initial_change_set)
+
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "host[\"host-244\"].mountInfo",
+            :op              => "assign",
+            :val             => RbVmomi::VIM::HostMountInfo(
+              :dynamicProperty => [],
+              :path            => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode      => "readWrite",
+              :mounted         => false,
+              :accessible      => false
+            )
+          )
+        ]
+
+        props = cache.update(datastore, update_change_set)
+
+        host_mount = props[:host].detect { |h| h.key._ref == "host-244" }
+        expect(host_mount.mountInfo.props).to include(:mounted => false, :accessible => false)
+      end
     end
   end
 end
