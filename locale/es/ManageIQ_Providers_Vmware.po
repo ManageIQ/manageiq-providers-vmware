@@ -1,10 +1,12 @@
 # Gisela Leal <giselaleal21@gmail.com>, 2017. #zanata
+# Translator <tr.rh02@oceantranslations.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-11-21 10:49-0500\n"
-"Last-Translator: Gisela Leal <giselaleal21@gmail.com>\n"
+"POT-Creation-Date: 2018-02-21 13:06+0100\n"
+"PO-Revision-Date: 2018-03-16 08:11-0400\n"
+"Last-Translator: Translator <tr.rh02@oceantranslations.com>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -13,23 +15,35 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.9.6\n"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
 msgstr "%{field_required} para cluster Non-DRS habilitado"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
 msgstr "No se admite la operación de clonado"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
 msgstr "Se requiere el nombre del host o el nombre del clúster"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
 msgid "Host must be connected to an EMS to refresh datastore files"
 msgstr ""
+"El host debe estar conectado a EMS para actualizar los archivos del almacén "
+"de datos"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
 msgstr "La MV no está encendida"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
 msgstr "Las herramientas de la MV no están instaladas"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
 msgstr "no está conectado a EMS"
