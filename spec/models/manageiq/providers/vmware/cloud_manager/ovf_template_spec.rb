@@ -82,4 +82,32 @@ describe ManageIQ::Providers::Vmware::CloudManager::OvfTemplate do
       )
     end
   end
+
+  describe '#template_ems_ref' do
+    it 'with expected preceeding comment' do
+      content = <<-CONENT
+        <!-- vappTemplate-05e4d68f-1a4e-40d5-9361-a121c1a67393 -->
+        <?xml version="1.0" encoding="UTF-8"?>
+        <envelope />
+      CONENT
+      expect(described_class.template_ems_ref(content)).to eq('vappTemplate-05e4d68f-1a4e-40d5-9361-a121c1a67393')
+    end
+
+    it 'with unexpected preceeding comment' do
+      content = <<-CONENT
+        <!-- hi im unexpected -->
+        <?xml version="1.0" encoding="UTF-8"?>
+        <envelope />
+      CONENT
+      expect(described_class.template_ems_ref(content)).to be nil
+    end
+
+    it 'without preceeding comment' do
+      content = <<-CONENT
+        <?xml version="1.0" encoding="UTF-8"?>
+        <envelope />
+      CONENT
+      expect(described_class.template_ems_ref(content)).to be nil
+    end
+  end
 end

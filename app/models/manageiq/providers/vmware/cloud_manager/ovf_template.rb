@@ -7,6 +7,8 @@ class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
   OvfVappNetwork = Struct.new(:name, :mode, :subnets)
   OvfSubnet      = Struct.new(:gateway, :netmask, :dns1, :dns2)
 
+  RESERVED_LINE_REGEX = /<!-- (vappTemplate-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}) -->/
+
   def initialize(ovf_string)
     @vms           = []
     @vapp_networks = []
@@ -29,6 +31,15 @@ class ManageIQ::Providers::Vmware::CloudManager::OvfTemplate
 
   def vapp_net_name_from_idx(vapp_net_idx)
     @vapp_networks[vapp_net_idx].name if @vapp_networks[vapp_net_idx]
+  end
+
+  # Extract ems_ref of the template from the very first line of the XML. This line is supposed to
+  # be put there by refresh parser.
+  def self.template_ems_ref(ovf_string)
+    return unless ovf_string
+    if (reserved_line = ovf_string.lines.first) && (param_match = reserved_line.match(RESERVED_LINE_REGEX))
+      param_match.captures.first
+    end
   end
 
   private

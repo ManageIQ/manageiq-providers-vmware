@@ -302,4 +302,13 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
       :description => 'IP address'
     )
   end
+
+  # Override md5 calculation on vapp templates because XML elements ordering is not guaranteed.
+  # We observed annoying fact that vCloud returns randomly shuffled XML content for very same
+  # vapp template, therefore MD5 content differs. For this reason we need to override md5 calculation
+  # to return unique identifier instead actual checksum. Luckily, vapp templates are not modifyable on
+  # vCloud dashboard, so we don't really need the checksum like other providers.
+  def self.calc_md5(text)
+    ManageIQ::Providers::Vmware::CloudManager::OvfTemplate.template_ems_ref(text) if text
+  end
 end
