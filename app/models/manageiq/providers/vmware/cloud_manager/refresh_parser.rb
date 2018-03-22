@@ -203,6 +203,8 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
 
     # The content of the template is the OVF specification of the vApp template
     content = @connection.get_vapp_template_ovf_descriptor(uid).body
+    # Prepend comment containing template uid which is then used istead of MD5 checksum.
+    content = "<!-- #{uid} -->\n#{content}"
 
     new_result = {
       :type        => ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate.name,

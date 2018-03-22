@@ -347,7 +347,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
 
     expect(@template.ems_id).to eq(@ems.id)
     expect(@template.content.include?('ovf:Envelope')).to be_truthy
-    expect(@template.md5).to eq('729bfcafe52065bdee376931efe104d9')
+    expect(@template.md5).to eq('vappTemplate-a19bdc8f-88fa-4dd6-8436-486590353ed5')
   end
 
   def assert_specific_vm_with_snapshot
