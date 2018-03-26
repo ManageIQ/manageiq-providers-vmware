@@ -12,6 +12,7 @@
           :critical:
 :ems_refresh:
   :vmware_cloud:
+    :inventory_object_refresh: false
     :get_public_images: false
 :http_proxy:
   :vmware_cloud:
