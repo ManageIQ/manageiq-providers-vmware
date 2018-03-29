@@ -4,70 +4,60 @@ module ManageIQ
   module Providers
     module Vmware
       class Discovery
-        SERVER_CONSOLE_PORTS = [902, 912].freeze
-
-        ESX_PORTS = [902, 903].freeze
-
-        VC_PORTS = [
-          [
-            135, # VC < 5.1 or
-            7444 # VC >= 5.1
-          ],
-          [
-            139,  # VC < 5.1 or
-            2012, # VC >= 5.1
-            2013,
-            2014
-          ]
-        ].freeze
-
         def self.probe(ost)
-          # Check if VMware Server
-          ost.hypervisor << :vmwareserver if ManageIQ::NetworkDiscovery::Port.scan_open(ost, SERVER_CONSOLE_PORTS).length == 2
+          # Get Info from VMware (vSphere) Web Service API
+          info = retrieve_webservice_info(ost.ipaddr)
+          return if info.nil?
 
-          # First check if we can access the VMware webservice before even trying the port scans.
-          begin
-            require 'VMwareWebService/MiqVimClientBase'
-            MiqVimClientBase.new(ost.ipaddr, "test", "test")
-          rescue => err
-            $log&.debug("Vmware::Discovery: Failed to connect to VMware webservice: #{err}. ip = #{ost.ipaddr}")
-            return
+          hvisor_type = hypervisor_type(ost.ipaddr, info.productLineId)
+
+          if ost.discover_types&.include?(hvisor_type)
+            ost.hypervisor << hvisor_type
+            ost.os << hypervisor_os_type(info.osType)
           end
 
-          $log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Connected to VMware webservice. Machine is either ESX or VirtualCenter.")
+        rescue => err
+          _log.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Failed to connect to VMware webservice: #{err}.")
+          return
+        end
 
-          # Next check for ESX or VC. Since VC shares some port numbers with ESX, we check VC before ESX
+        # Obtains info about IP address from vSphere Web Service API
+        # @param ost [OpenStruct]
+        def self.retrieve_webservice_info(ip)
+          require 'VMwareWebService/MiqVimClientBase'
+          vim = MiqVimClientBase.new(ip, "test", "test")
+          info = vim&.about
 
-          # TODO: See if there is a way we can check ESX first, and without having to
-          #   also check VC, since it is more likely there will be more ESX servers on
-          #   a network than VC servers.
+          _log.debug("Vmware::Discovery: ip = #{ip}, Connected to VMware webservice.")
 
-          checked_vc = false
-          found_vc = false
+          info
+        end
 
-          # Check if we have VC ports
-          if ost.discover_types.include?(:virtualcenter)
-            checked_vc = true
-
-            if ManageIQ::NetworkDiscovery::Port.all_open?(ost, VC_PORTS)
-              ost.os << :mswin
-              ost.hypervisor << :virtualcenter
-              found_vc = true
-              $log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is VirtualCenter.")
-            end
+        # Adds product type (as hypervisor value) from vmware api info
+        # @param [String] product_line_id
+        def self.hypervisor_type(ip, product_line_id)
+          case product_line_id.to_s
+          when 'vpx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is VirtualCenter.")
+            :virtualcenter
+          when 'esx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an ESX server.")
+            :esx
+          when 'embeddedEsx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an ESXi server.")
+            :esx
+          when 'gsx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an VMWare Server product.")
+            :vmwareserver
+          else
+            _log.error("Vmware::Discovery: ip = #{ip}, Unknown product: #{product_line_id}")
+            nil
           end
+        end
 
-          # Check if we have ESX ports open
-          if !found_vc && ost.discover_types.include?(:esx) && ManageIQ::NetworkDiscovery::Port.any_open?(ost, ESX_PORTS)
-
-            # Since VC may share ports with ESX, but it may have not already been
-            # checked due to filtering, check that this is not a VC server
-            if checked_vc || !ManageIQ::NetworkDiscovery::Port.all_open?(ost, VC_PORTS)
-              ost.os << :linux
-              ost.hypervisor << :esx
-              $log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is an ESX server.")
-            end
-          end
+        # Adds operating system from vmware api info
+        def self.hypervisor_os_type(os_type)
+          os_type.to_s.include?('win32') ? :mswin : :linux
         end
       end
     end
