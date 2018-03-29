@@ -6,59 +6,58 @@ module ManageIQ
       class Discovery
         def self.probe(ost)
           # Get Info from VMware (vSphere) Web Service API
-          access_webservice(ost) do |info|
-            if add_hypervisor(ost, info)
-              add_os(ost, info)
-            end
+          info = retrieve_webservice_info(ost.ipaddr)
+          return if info.nil?
+
+          hvisor_type = hypervisor_type(ost.ipaddr, info.productLineId)
+
+          if ost.discover_types&.include?(hvisor_type)
+            ost.hypervisor << hvisor_type
+            ost.os << hypervisor_os_type(info.osType)
           end
-        rescue StandardError => err
-          _log&.warn("Vmware::Discovery: Failed to connect to VMware webservice: #{err}. ip = #{ost.ipaddr}")
+
+        rescue => err
+          _log.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Failed to connect to VMware webservice: #{err}.")
           return
         end
 
         # Obtains info about IP address from vSphere Web Service API
         # @param ost [OpenStruct]
-        def self.access_webservice(ost)
+        def self.retrieve_webservice_info(ip)
           require 'VMwareWebService/MiqVimClientBase'
-          vim = MiqVimClientBase.new(ost.ipaddr, "test", "test")
-          info = vim&.sic&.about
+          vim = MiqVimClientBase.new(ip, "test", "test")
+          info = vim&.about
 
-          _log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Connected to VMware webservice.")
+          _log.debug("Vmware::Discovery: ip = #{ip}, Connected to VMware webservice.")
 
-          yield info
+          info
         end
 
         # Adds product type (as hypervisor value) from vmware api info
-        def self.add_hypervisor(ost, info)
-          hypervisor = case info&.productLineId
-                       when 'vpx'
-                         _log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is VirtualCenter.")
-                         :virtualcenter
-                       when 'esx'
-                         _log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is an ESX server.")
-                         :esx
-                       when 'embeddedEsx'
-                         _log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is an ESXi server.")
-                         :esx
-                       when 'gsx'
-                         _log&.debug("Vmware::Discovery: ip = #{ost.ipaddr}, Machine is an VMWare Server product.")
-                         :vmwareserver
-                       else
-                         _log&.error("Vmware::Discovery: ip: #{ost.ipaddr}, Unknown product: #{info&.productLineId}")
-                         nil
-                       end
-
-          ost.hypervisor << hypervisor if hypervisor
-          hypervisor
+        # @param [String] product_line_id
+        def self.hypervisor_type(ip, product_line_id)
+          case product_line_id.to_s
+          when 'vpx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is VirtualCenter.")
+            :virtualcenter
+          when 'esx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an ESX server.")
+            :esx
+          when 'embeddedEsx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an ESXi server.")
+            :esx
+          when 'gsx'
+            _log.debug("Vmware::Discovery: ip = #{ip}, Machine is an VMWare Server product.")
+            :vmwareserver
+          else
+            _log.error("Vmware::Discovery: ip = #{ip}, Unknown product: #{product_line_id}")
+            nil
+          end
         end
 
         # Adds operating system from vmware api info
-        def self.add_os(ost, info)
-          ost.os << if info&.osType.to_s.include?('win32')
-                      :mswin
-                    else
-                      :linux
-                    end
+        def self.hypervisor_os_type(os_type)
+          os_type.to_s.include?('win32') ? :mswin : :linux
         end
       end
     end
