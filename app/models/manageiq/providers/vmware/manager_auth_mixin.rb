@@ -28,21 +28,23 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
   def connect(options = {})
     raise "no credentials defined" if missing_credentials?(options[:auth_type])
 
-    server   = options[:ip] || address
-    port     = options[:port] || self.port
-    username = options[:user] || authentication_userid(options[:auth_type])
-    password = options[:pass] || authentication_password(options[:auth_type])
+    server      = options[:ip] || address
+    port        = options[:port] || self.port
+    api_version = options[:api_version] || self.api_version
+    username    = options[:user] || authentication_userid(options[:auth_type])
+    password    = options[:pass] || authentication_password(options[:auth_type])
 
-    self.class.raw_connect(server, port, username, password)
+    self.class.raw_connect(server, port, username, password, api_version)
   end
 
   module ClassMethods
-    def raw_connect(server, port, username, password, validate = false)
+    def raw_connect(server, port, username, password, api_version = '5.5', validate = false)
       params = {
         :vcloud_director_username      => username,
         :vcloud_director_password      => MiqPassword.try_decrypt(password),
         :vcloud_director_host          => server,
         :vcloud_director_show_progress => false,
+        :vcloud_director_api_version   => api_version,
         :port                          => port,
         :connection_options            => {
           :ssl_verify_peer => false # for development
