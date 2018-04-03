@@ -62,31 +62,33 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
 
       [
         {
-          :vm_name          => 'VM1',
-          :vm_id            => 'e9b55b85-640b-462c-9e7a-d18c47a7a5f3',
-          :hostname         => 'vm-1',
-          :num_cores        => 2,
-          :cores_per_socket => 2,
-          :memory_mb        => 2048,
-          :admin_password   => nil,
-          :admin_reset      => false,
-          :disks            => [
+          :vm_name             => 'VM1',
+          :vm_id               => 'e9b55b85-640b-462c-9e7a-d18c47a7a5f3',
+          :hostname            => 'vm-1',
+          :num_cores           => 2,
+          :cores_per_socket    => 2,
+          :memory_mb           => 2048,
+          :admin_password      => nil,
+          :admin_reset         => false,
+          :guest_customization => false,
+          :disks               => [
             { :disk_id => '2000', :disk_address => '0', :size => 16_384 },
             { :disk_id => '2001', :disk_address => '1', :size => 40_960 }
           ],
-          :nics             => [{ :idx => '0', :network => nil, :mode => 'DHCP', :ip_address => nil }]
+          :nics                => [{ :idx => '0', :network => nil, :mode => 'DHCP', :ip_address => nil }]
         },
         {
-          :vm_name          => 'VM2',
-          :vm_id            => '04f85cca-3f8d-43b4-8473-7aa099f95c1b',
-          :hostname         => 'vm-2',
-          :num_cores        => 2,
-          :cores_per_socket => 2,
-          :memory_mb        => 4096,
-          :admin_password   => nil,
-          :admin_reset      => false,
-          :disks            => [{ :disk_id => '2000', :disk_address => '0', :size => 40_960 }],
-          :nics             => [
+          :vm_name             => 'VM2',
+          :vm_id               => '04f85cca-3f8d-43b4-8473-7aa099f95c1b',
+          :hostname            => 'vm-2',
+          :num_cores           => 2,
+          :cores_per_socket    => 2,
+          :memory_mb           => 4096,
+          :admin_password      => nil,
+          :admin_reset         => false,
+          :guest_customization => true,
+          :disks               => [{ :disk_id => '2000', :disk_address => '0', :size => 40_960 }],
+          :nics                => [
             { :idx => '0', :network => 'RedHat Private network 43', :mode => 'MANUAL', :ip_address => '192.168.43.100' },
             { :idx => '1', :network => nil, :mode => 'DHCP', :ip_address => nil }
           ]
@@ -148,12 +150,19 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
               :data_type     => 'boolean',
               :required      => nil,
               :default_value => args[:admin_reset]
+            },
+            'guest_customization' => {
+              :name          => "guest_customization-#{vm_idx}",
+              :label         => 'Guest customization',
+              :data_type     => 'boolean',
+              :required      => nil,
+              :default_value => args[:guest_customization]
             }
           )
           assert_vm_disks(vm_group, args[:disks], vm_idx)
           assert_vm_nics(vm_group, args[:nics], vm_idx)
           # Group has not extra parameters.
-          expect(vm_group.parameters.size).to eq(7 + args[:disks].count + 3 * args[:nics].count)
+          expect(vm_group.parameters.size).to eq(8 + args[:disks].count + 3 * args[:nics].count)
         end
       end
 
