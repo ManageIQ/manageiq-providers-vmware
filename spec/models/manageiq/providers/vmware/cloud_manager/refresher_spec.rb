@@ -9,9 +9,10 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
     @ems = FactoryGirl.create(
       :ems_vmware_cloud,
-      :zone     => zone,
-      :hostname => @hostname,
-      :port     => @port
+      :zone        => zone,
+      :hostname    => @hostname,
+      :port        => @port,
+      :api_version => '5.5'
     )
 
     @userid = Rails.application.secrets.vmware_cloud.try(:[], 'userid') || 'VMWARE_CLOUD_USERID'
@@ -92,7 +93,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
 
   def assert_ems
     expect(@ems).to have_attributes(
-      :api_version => "5.1",
+      :api_version => "5.5",
       :uid_ems     => nil
     )
 

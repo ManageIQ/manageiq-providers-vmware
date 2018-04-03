@@ -38,6 +38,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
         :vcloud_director_password      => "encrypted",
         :vcloud_director_host          => "server",
         :vcloud_director_show_progress => false,
+        :vcloud_director_api_version   => "api_version",
         :port                          => "port",
         :connection_options            => {
           :ssl_verify_peer => false # for development
@@ -53,7 +54,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       encrypted = MiqPassword.encrypt("encrypted")
       expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
 
-      described_class.raw_connect("server", "port", "username", encrypted)
+      described_class.raw_connect("server", "port", "username", encrypted, "api_version")
     end
 
     it "validates the password if validate is true if specified" do
@@ -61,7 +62,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
 
       expect do
-        described_class.raw_connect("server", "port", "username", "encrypted", true)
+        described_class.raw_connect("server", "port", "username", "encrypted", "api_version", true)
       end.to raise_error(MiqException::MiqInvalidCredentialsError, "Login failed due to a bad username or password.")
     end
 
@@ -69,7 +70,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       expect(described_class).to_not receive(:validate_connection)
       expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
 
-      described_class.raw_connect("server", "port", "username", "encrypted")
+      described_class.raw_connect("server", "port", "username", "encrypted", "api_version")
     end
   end
 
