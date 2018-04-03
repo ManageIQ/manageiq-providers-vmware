@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::CloudManager::Vm
   include_concern 'Operations'
+  include_concern 'RemoteConsole'
 
   supports :snapshots
   supports :remove_all_snapshots
