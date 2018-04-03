@@ -98,6 +98,18 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
           ]
         ),
         OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => param_name('guest_customization', [vm_idx]),
+          :label         => 'Guest customization',
+          :description   => 'Check this to apply Hostname and NIC configuration for this VM to its Guest OS when
+                            the VM is powered on. Guest OS must support this feature otherwise provisioning
+                            will fail.',
+          :data_type     => 'boolean',
+          :default_value => vm.guest_customization,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterBoolean.new
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
           :name        => param_name('admin_password', [vm_idx]),
           :label       => 'Administrator Password',
           :description => 'Leave empty to auto generate',
