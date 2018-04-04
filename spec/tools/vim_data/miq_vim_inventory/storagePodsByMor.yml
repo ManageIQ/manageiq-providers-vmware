@@ -1,38 +1,40 @@
---- 
-? !str:VimString 
+---
+? !ruby/string:VimString
   str: group-p81
-  "@vimType": :StoragePod
-  "@xsiType": :ManagedObjectReference
-: !map:VimHash 
-  name: !str:VimString 
-    str: TestDatastoreCluster
-    "@vimType": 
-    "@xsiType": :"xsd:string"
-  parent: !str:VimString 
-    str: group-s5
-    "@vimType": :Folder
-    "@xsiType": :ManagedObjectReference
-  MOR: !str:VimString 
-    str: group-p81
-    "@vimType": :Datacenter
-    "@xsiType": :ManagedObjectReference
-  summary: !map:VimHash 
-    name: !str:VimString 
+  vimType: :StoragePod
+  xsiType: :ManagedObjectReference
+: !ruby/hash-with-ivars:VimHash
+  elements:
+    name: !ruby/string:VimString
       str: TestDatastoreCluster
-      "@vimType": 
-      "@xsiType": :"SOAP::SOAPString"
-    capacity: !str:VimString 
-      str: "1048508891136"
-      "@vimType": 
-      "@xsiType": :"SOAP::SOAPLong"
-    freeSpace: !str:VimString 
-      str: "656626679808"
-      "@vimType": 
-      "@xsiType": :"SOAP::SOAPLong"
-  childEntity: !seq:VimArray 
-    - !str:VimString 
+      vimType: 
+      xsiType: :xsd:string
+    parent: !ruby/string:VimString
+      str: group-s5
+      vimType: :Folder
+      xsiType: :ManagedObjectReference
+    MOR: !ruby/string:VimString
+      str: group-p81
+      vimType: :Datacenter
+      xsiType: :ManagedObjectReference
+    summary: !ruby/hash:VimHash
+      name: !ruby/string:VimString
+        str: TestDatastoreCluster
+        vimType: 
+        xsiType: :SOAP::SOAPString
+      capacity: !ruby/string:VimString
+        str: '1048508891136'
+        vimType: 
+        xsiType: :SOAP::SOAPLong
+      freeSpace: !ruby/string:VimString
+        str: '656626679808'
+        vimType: 
+        xsiType: :SOAP::SOAPLong
+    childEntity: !ruby/array:VimArray
+    - !ruby/string:VimString
       str: datastore-12281
-      "@vimType": :Datastore
-      "@xsiType": :ManagedObjectReference
-  __iv__@vimType: 
-  __iv__@xsiType: :ObjectContent
+      vimType: :Datastore
+      xsiType: :ManagedObjectReference
+  ivars:
+    :@vimType: 
+    :@xsiType: :ObjectContent

@@ -1,109 +1,117 @@
---- !seq:VimArray 
-- !map:VimHash 
-  name: !str:VimString 
-    str: Past day
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPString"
-  level: !str:VimString 
-    str: "1"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  enabled: !str:VimString 
-    str: "true"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPBoolean"
-  length: !str:VimString 
-    str: "86400"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  key: !str:VimString 
-    str: "1"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  samplingPeriod: !str:VimString 
-    str: "300"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  __iv__@vimType: 
-  __iv__@xsiType: :PerfInterval
-- !map:VimHash 
-  name: !str:VimString 
-    str: Past week
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPString"
-  level: !str:VimString 
-    str: "1"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  enabled: !str:VimString 
-    str: "true"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPBoolean"
-  length: !str:VimString 
-    str: "604800"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  key: !str:VimString 
-    str: "2"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  samplingPeriod: !str:VimString 
-    str: "1800"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  __iv__@vimType: 
-  __iv__@xsiType: :PerfInterval
-- !map:VimHash 
-  name: !str:VimString 
-    str: Past month
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPString"
-  level: !str:VimString 
-    str: "1"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  enabled: !str:VimString 
-    str: "true"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPBoolean"
-  length: !str:VimString 
-    str: "2592000"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  key: !str:VimString 
-    str: "3"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  samplingPeriod: !str:VimString 
-    str: "7200"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  __iv__@vimType: 
-  __iv__@xsiType: :PerfInterval
-- !map:VimHash 
-  name: !str:VimString 
-    str: Past year
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPString"
-  level: !str:VimString 
-    str: "1"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  enabled: !str:VimString 
-    str: "true"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPBoolean"
-  length: !str:VimString 
-    str: "31536000"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  key: !str:VimString 
-    str: "4"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  samplingPeriod: !str:VimString 
-    str: "86400"
-    "@vimType": 
-    "@xsiType": :"SOAP::SOAPInt"
-  __iv__@vimType: 
-  __iv__@xsiType: :PerfInterval
+--- !ruby/array:VimArray
+- !ruby/hash-with-ivars:VimHash
+  elements:
+    name: !ruby/string:VimString
+      str: Past day
+      vimType: 
+      xsiType: :SOAP::SOAPString
+    level: !ruby/string:VimString
+      str: '1'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    enabled: !ruby/string:VimString
+      str: 'true'
+      vimType: 
+      xsiType: :SOAP::SOAPBoolean
+    length: !ruby/string:VimString
+      str: '86400'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    key: !ruby/string:VimString
+      str: '1'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    samplingPeriod: !ruby/string:VimString
+      str: '300'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+  ivars:
+    :@vimType: 
+    :@xsiType: :PerfInterval
+- !ruby/hash-with-ivars:VimHash
+  elements:
+    name: !ruby/string:VimString
+      str: Past week
+      vimType: 
+      xsiType: :SOAP::SOAPString
+    level: !ruby/string:VimString
+      str: '1'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    enabled: !ruby/string:VimString
+      str: 'true'
+      vimType: 
+      xsiType: :SOAP::SOAPBoolean
+    length: !ruby/string:VimString
+      str: '604800'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    key: !ruby/string:VimString
+      str: '2'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    samplingPeriod: !ruby/string:VimString
+      str: '1800'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+  ivars:
+    :@vimType: 
+    :@xsiType: :PerfInterval
+- !ruby/hash-with-ivars:VimHash
+  elements:
+    name: !ruby/string:VimString
+      str: Past month
+      vimType: 
+      xsiType: :SOAP::SOAPString
+    level: !ruby/string:VimString
+      str: '1'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    enabled: !ruby/string:VimString
+      str: 'true'
+      vimType: 
+      xsiType: :SOAP::SOAPBoolean
+    length: !ruby/string:VimString
+      str: '2592000'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    key: !ruby/string:VimString
+      str: '3'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    samplingPeriod: !ruby/string:VimString
+      str: '7200'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+  ivars:
+    :@vimType: 
+    :@xsiType: :PerfInterval
+- !ruby/hash-with-ivars:VimHash
+  elements:
+    name: !ruby/string:VimString
+      str: Past year
+      vimType: 
+      xsiType: :SOAP::SOAPString
+    level: !ruby/string:VimString
+      str: '1'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    enabled: !ruby/string:VimString
+      str: 'true'
+      vimType: 
+      xsiType: :SOAP::SOAPBoolean
+    length: !ruby/string:VimString
+      str: '31536000'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    key: !ruby/string:VimString
+      str: '4'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+    samplingPeriod: !ruby/string:VimString
+      str: '86400'
+      vimType: 
+      xsiType: :SOAP::SOAPInt
+  ivars:
+    :@vimType: 
+    :@xsiType: :PerfInterval
