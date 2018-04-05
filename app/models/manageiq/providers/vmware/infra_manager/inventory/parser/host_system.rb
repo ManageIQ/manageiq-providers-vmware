@@ -1,41 +1,42 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module HostSystem
     def parse_host_system_config(host_hash, props)
-      if props.include?("config.name")
-        host_hash[:uid_ems] = props["config.name"]
-      end
-      if props.include?("config.adminDisabled")
-        host_hash[:admin_disabled] = props["config.adminDisabled"].to_s.downcase == "true"
-      end
-      if props.include?("config.hyperThread.active")
-        host_hash[:hyperthreading] = props["config.hyperThread.active"].to_s.downcase == "true"
-      end
+      config = props[:config]
+      return if config.nil?
+
+      host_hash[:uid_ems]        = config[:name]
+      host_hash[:admin_disabled] = config[:adminDisabled].to_s.downcase == "true"
+      host_hash[:hyperthreading] = config.fetch_path(:hyperThread, :active).to_s.downcase == "true"
     end
 
     def parse_host_system_network(host_hash, props)
-      if props.include?("config.network.dnsConfig.hostName")
-        hostname = props["config.network.dnsConfig.hostName"]
-        host_hash[:name] = host_hash[:hostname] = hostname
-      end
-      if props.include?("config.network.dnsConfig.domainName")
-        _domain_name = props["config.network.dnsConfig.domainName"]
+      network = props.fetch_path(:config, :network)
+      return if network.nil?
+
+      dns_config = network[:dnsConfig]
+      if dns_config
+        hostname    = dns_config[:hostName]
+        domain_name = dns_config[:domainName]
+
+        hostname = "#{hostname}.#{domain_name}" if domain_name
+
+        host_hash[:name]     = hostname
+        host_hash[:hostname] = hostname
       end
 
-      default_gw = if props.include?("config.network.ipRouteConfig.defaultGateway")
-                     require 'ipaddr'
-                     IPAddr.new(props["config.network.ipRouteConfig.defaultGateway"])
-                   end
+      if network.fetch_path(:ipRouteConfig, :defaultGateway)
+        require 'ipaddr'
+        default_gw = IPAddr.new(network.fetch_path(:ipRouteConfig, :defaultGateway))
+      end
+
       unless default_gw.nil?
         vnics = []
 
-        if props.include?("config.network.consoleVnic")
-          console_vnic = props["config.network.consoleVnic"]
-          vnics.concat(console_vnic) unless console_vnic.blank?
-        end
-        if props.include?("config.network.vnic")
-          network_vnic = props["config.network.vnic"]
-          vnics.concat(network_vnic) unless network_vnic.blank?
-        end
+        console_vnic = network[:consoleVnic]
+        vnics.concat(console_vnic) if console_vnic.present?
+
+        network_vnic = network[:vnic]
+        vnics.concat(network_vnic) if network_vnic.present?
 
         vnics.each do |vnic|
           ip = vnic.spec.ip.ipAddress
@@ -50,53 +51,41 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_product(host_hash, props)
-      if props.include?("summary.config.product.vendor")
-        vendor = props["summary.config.product.vendor"].split(",").first.to_s.downcase
-        vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
+      product = props.fetch_path(:summary, :config, :product)
+      return if product.nil?
 
-        host_hash[:vmm_vendor] = vendor
-      end
-      if props.include?("summary.config.product.name")
-        product_name = props["summary.config.product.name"]
-        host_hash[:vmm_product] = product_name.nil? ? nil : product_name.to_s.gsub(/^VMware\s*/i, "")
-      end
-      if props.include?("summary.config.product.version")
-        host_hash[:vmm_version] = props["summary.config.product.version"]
-      end
-      if props.include?("summary.config.product.build")
-        host_hash[:vmm_buildnumber] = props["summary.config.product.build"]
-      end
+      vendor = product[:vendor].split(",").first.to_s.downcase
+      vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
+      host_hash[:vmm_vendor] = vendor
+
+      product_name = product[:name]
+      host_hash[:vmm_product]     = product_name.nil? ? nil : product_name.to_s.gsub(/^VMware\s*/i, "")
+      host_hash[:vmm_version]     = product[:version]
+      host_hash[:vmm_buildnumber] = product[:build]
     end
 
     def parse_host_system_runtime(host_hash, props)
-      if props.include?("summary.runtime.connectionState")
-        connection_state = props["summary.runtime.connectionState"]
+      runtime = props.fetch_path(:summary, :runtime)
+      return if runtime.nil?
 
-        if ['disconnected', 'notResponding', nil, ''].include?(connection_state)
-        end
+      host_hash[:connection_state] = runtime[:connectionState]
 
-        host_hash[:connection_state] = connection_state
-      end
-      if props.include?("summary.runtime.inMaintenanceMode")
-        maintenance_mode = props["summary.runtime.connectionState"]
-        host_hash[:maintenance] = maintenance_mode.to_s.downcase == "true"
-      end
-      if props.include?("summary.runtime.inMaintenanceMode") && props.include?("summary.runtime.connectionState")
-        host_hash[:power_state] = if host_hash[:connection_state] != "connected"
-                                    "off"
-                                  elsif host_hash[:maintenance]
-                                    "maintenance"
-                                  else
-                                    "on"
-                                  end
-      end
+      host_hash[:maintenance] = runtime[:inMaintenanceMode].to_s.downcase == "true"
+      host_hash[:power_state] = if host_hash[:connection_state] != "connected"
+                                  "off"
+                                elsif host_hash[:maintenance]
+                                  "maintenance"
+                                else
+                                  "on"
+                                end
     end
 
     def parse_host_system_system_info(host_hash, props)
-      return unless props.include?("hardware.systemInfo.otherIdentifyingInfo")
+      other_identifying_info = props.fetch_path(:hardware, :systemInfo, :otherIdentifyingInfo)
+      return if other_identifying_info.nil?
 
       asset_tag = service_tag = nil
-      props["hardware.systemInfo.otherIdentifyingInfo"].each do |info|
+      other_identifying_info.each do |info|
         value = info.identifierValue.to_s.strip
         value = nil if value.blank?
 
@@ -121,7 +110,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :product_name => host.data[:vmm_product],
         :version      => host.data[:vmm_version],
         :build_number => host.data[:vmm_buildnumber],
-        :product_type => props["summary.config.product.osType"],
+        :product_type => props.fetch_path(:summary, :config, :product, :osType),
       )
     end
 
@@ -132,54 +121,39 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     def parse_host_system_hardware(host, props)
       hardware_hash = {:host => host}
 
-      if props.include?("summary.hardware.cpuMhz")
-        hardware_hash[:cpu_speed] = props["summary.hardware.cpuMhz"]
-      end
-      if props.include?("summary.hardware.cpuModel")
-        hardware_hash[:cpu_type] = props["summary.hardware.cpuModel"]
-      end
-      if props.include?("summary.hardware.manufacturer")
-        hardware_hash[:manufacturer] = props["summary.hardware.manufacturer"]
-      end
-      if props.include?("summary.hardware.model")
-        hardware_hash[:model] = props["summary.hardware.model"]
-      end
-      if props.include?("summary.hardware.numNics")
-        hardware_hash[:number_of_nics] = props["summary.hardware.numNics"]
-      end
-      if props.include?("summary.hardware.memorySize")
-        memory_size = props["summary.hardware.memorySize"]
+      hardware = props.fetch_path(:summary, :hardware)
+      if hardware
+        hardware_hash[:cpu_speed] = hardware[:cpuMhz]
+        hardware_hash[:cpu_type] = hardware[:cpuModel]
+        hardware_hash[:manufacturer] = hardware[:manufacturer]
+        hardware_hash[:model] = hardware[:model]
+        hardware_hash[:number_of_nics] = hardware[:numNics]
 
         # Value provided by VC is in bytes, need to convert to MB
+        memory_size = hardware[:memorySize]
         hardware_hash[:memory_mb] = is_numeric?(memory_size) ? (memory_size.to_f / 1.megabyte).round : nil
-      end
-      if props.include?("console.consoleReservation.serviceConsoleReserved")
-        memory_console = props["console.consoleReservation.serviceConsoleReserved"]
+
+        memory_console = props.fetch_path(:console, :consoleReservation, :serviceConsoleReserved)
         hardware_hash[:memory_console] = is_numeric?(memory_console) ? (memory_console.to_f / 1.megabyte).round : nil
-      end
-      if props.include?("summary.hardware.numCpuPkgs")
-        hardware_hash[:cpu_sockets] = props["summary.hardware.numCpuPkgs"]
-      end
-      if props.include?("summary.hardware.numCpuCores")
-        hardware_hash[:cpu_total_cores] = props["summary.hardware.numCpuCores"]
-      end
-      if props.include?("summary.hardware.numCpuPkgs") && props.include?("summary.hardware.numCpuCores")
+        hardware_hash[:cpu_sockets] = hardware[:numCpuPkgs]
+        hardware_hash[:cpu_total_cores] = hardware[:numCpuCores]
         hardware_hash[:cpu_cores_per_socket] = (hardware_hash[:cpu_total_cores].to_f / hardware_hash[:cpu_sockets].to_f).to_i
       end
-      if props.include?("summary.config.product.name")
-        guest_os = props["summary.config.product.name"].to_s.gsub(/^VMware\s*/i, "")
+
+      summary_config = props.fetch_path(:summary, :config)
+      if summary_config
+        guest_os = summary_config.fetch_path(:product, :name).to_s.gsub(/^VMware\s*/i, "")
         hardware_hash[:guest_os] = guest_os
         hardware_hash[:guest_os_full_name] = guest_os
-      end
-      if props.include?("summary.config.vmotionEnabled")
-        vmotion_enabled = props["summary.config.vmotionEnabled"]
+
+        vmotion_enabled = summary_config[:vmotionEnabled]
         hardware_hash[:vmotion_enabled] = vmotion_enabled.to_s.downcase == "true"
       end
-      if props.include?("summary.quickStats.overallCpuUsage")
-        hardware_hash[:cpu_usage] = props["summary.quickStats.overallCpuUsage"]
-      end
-      if props.include?("summary.quickStats.overallMemoryUsage")
-        hardware_hash[:memory_usage] = props["summary.quickStats.overallMemoryUsage"]
+
+      quick_stats = props.fetch_path(:summary, :quickStats)
+      if quick_stats
+        hardware_hash[:cpu_usage] = quick_stats[:overallCpuUsage]
+        hardware_hash[:memory_usage] = quick_stats[:overallMemoryUsage]
       end
 
       hardware = persister.host_hardwares.build(hardware_hash)
@@ -188,63 +162,61 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_guest_devices(hardware, props)
-      if props.include?("config.network.pnic")
-        props["config.network.pnic"].to_a.each do |pnic|
-          name = uid = pnic.device
+      pnics = props.fetch_path(:config, :network, :pnic)
+      pnics.to_a.each do |pnic|
+        name = uid = pnic.device
 
-          persister.guest_devices.build(
-            :hardware        => hardware,
-            :uid_ems         => uid,
-            :device_name     => name,
-            :device_type     => 'ethernet',
-            :location        => pnic.pci,
-            :present         => true,
-            :controller_type => 'ethernet',
-            :address         => pnic.mac,
-            :switch          => persister.switches.lazy_find(pnic.key)
-          )
-        end
+        persister.guest_devices.build(
+          :hardware        => hardware,
+          :uid_ems         => uid,
+          :device_name     => name,
+          :device_type     => 'ethernet',
+          :location        => pnic.pci,
+          :present         => true,
+          :controller_type => 'ethernet',
+          :address         => pnic.mac,
+          :switch          => persister.switches.lazy_find(pnic.key)
+        )
       end
 
-      if props.include?("config.storageDevice.hostBusAdapter")
-        props["config.storageDevice.hostBusAdapter"].to_a.each do |hba|
-          name = uid = hba.device
-          location = hba.pci
-          model = hba.model
+      hbas = props.fetch_path(:config, :storageDevice, :hostBusAdapter)
+      hbas.to_a.each do |hba|
+        name = uid = hba.device
+        location = hba.pci
+        model = hba.model
 
-          if hba.kind_of?(RbVmomi::VIM::HostInternetScsiHba)
-            iscsi_name = hba.iScsiName
-            iscsi_alias = hba.iScsiAlias
-            chap_auth_enabled = hba.authenticationProperties.chapAuthEnabled
-          end
-
-          controller_type = case hba
-                            when RbVmomi::VIM::HostBlockHba
-                              "Block"
-                            when RbVmomi::VIM::HostFibreChannelHba
-                              "Fibre"
-                            when RbVmomi::VIM::HostInternetScsiHba
-                              "iSCSI"
-                            when RbVmomi::VIM::HostParallelScsiHba
-                              "SCSI"
-                            else
-                              "HBA"
-                            end
-
-          persister.guest_devices.build(
-            :hardware          => hardware,
-            :uid_ems           => uid,
-            :device_name       => name,
-            :device_type       => 'storage',
-            :present           => true,
-            :iscsi_name        => iscsi_name,
-            :iscsi_alias       => iscsi_alias,
-            :location          => location,
-            :model             => model,
-            :chap_auth_enabled => chap_auth_enabled,
-            :controller_type   => controller_type,
-          )
+        if hba.kind_of?(RbVmomi::VIM::HostInternetScsiHba)
+          iscsi_name = hba.iScsiName
+          iscsi_alias = hba.iScsiAlias
+          chap_auth_enabled = hba.authenticationProperties.chapAuthEnabled
         end
+
+        controller_type = case hba
+                          when RbVmomi::VIM::HostBlockHba
+                            "Block"
+                          when RbVmomi::VIM::HostFibreChannelHba
+                            "Fibre"
+                          when RbVmomi::VIM::HostInternetScsiHba
+                            "iSCSI"
+                          when RbVmomi::VIM::HostParallelScsiHba
+                            "SCSI"
+                          else
+                            "HBA"
+                          end
+
+        persister.guest_devices.build(
+          :hardware          => hardware,
+          :uid_ems           => uid,
+          :device_name       => name,
+          :device_type       => 'storage',
+          :present           => true,
+          :iscsi_name        => iscsi_name,
+          :iscsi_alias       => iscsi_alias,
+          :location          => location,
+          :model             => model,
+          :chap_auth_enabled => chap_auth_enabled,
+          :controller_type   => controller_type,
+        )
       end
     end
 

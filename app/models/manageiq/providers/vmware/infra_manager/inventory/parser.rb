@@ -30,11 +30,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     cluster_hash = {
       :ems_ref => object._ref,
       :uid_ems => object._ref,
+      :name    => CGI.unescape(props[:name]),
     }
-
-    if props.include?("name")
-      cluster_hash[:name] = URI.decode(props["name"])
-    end
 
     parse_compute_resource_summary(cluster_hash, props)
     parse_compute_resource_das_config(cluster_hash, props)
@@ -53,12 +50,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref      => object._ref,
       :uid_ems      => object._ref,
       :type         => "Datacenter",
+      :name         => CGI.unescape(props[:name]),
       :ems_children => {},
     }
-
-    if props.include?("name")
-      dc_hash[:name] = URI.decode(props["name"])
-    end
 
     parse_datacenter_children(dc_hash, props)
 
@@ -102,12 +96,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref      => object._ref,
       :uid_ems      => object._ref,
       :type         => "EmsFolder",
+      :name         => CGI.unescape(props[:name]),
       :ems_children => {},
     }
-
-    if props.include?("name")
-      folder_hash[:name] = URI.decode(props["name"])
-    end
 
     parse_folder_children(folder_hash, props)
 
@@ -154,12 +145,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     rp_hash = {
       :ems_ref => object._ref,
       :uid_ems => object._ref,
+      :name    => CGI.unescape(props[:name]),
       :vapp    => object.kind_of?(RbVmomi::VIM::VirtualApp),
     }
-
-    if props.include?("name")
-      rp_hash[:name] = URI.decode(props["name"])
-    end
 
     parse_resource_pool_memory_allocation(rp_hash, props)
     parse_resource_pool_cpu_allocation(rp_hash, props)
@@ -173,15 +161,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.manager_uuids << object._ref
     return if props.nil?
 
+    name = props.fetch_path(:summary, :name)
+
     pod_hash = {
       :ems_ref => object._ref,
       :uid_ems => object._ref,
       :type    => "StorageCluster",
+      :name    => CGI.unescape(name),
     }
-
-    if props.include?("summary.name")
-      pod_hash[:name] = URI.decode(props["summary.name"])
-    end
 
     persister.ems_folders.build(pod_hash)
   end
