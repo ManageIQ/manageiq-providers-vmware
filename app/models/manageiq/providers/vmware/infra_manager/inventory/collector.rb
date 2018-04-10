@@ -2,25 +2,31 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems, run_once: false)
+  def initialize(ems, run_once: false, threaded: true)
     @ems             = ems
     @inventory_cache = ems.class::Inventory::Cache.new
     @run_once        = run_once
+    @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
 
     self.exit_requested = false
   end
 
   def run
+    _log.info("Monitor updates thread started")
+
+    saver.start_thread
+
     until exit_requested
       monitor_updates
-      break if run_once
     end
 
-    _log.info("Exiting...")
+    saver.stop_thread
+
+    _log.info("Monitor updates thread exited")
   end
 
   def stop
-    _log.info("Exit request received...")
+    _log.info("Monitor updates thread exiting...")
     self.exit_requested = true
   end
 
@@ -33,7 +39,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   private
 
-  attr_reader   :ems, :inventory_cache, :run_once
+  attr_reader   :ems, :inventory_cache, :run_once, :saver
   attr_accessor :exit_requested
 
   def connect
@@ -115,7 +121,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       next if update_set.truncated
 
-      ManagerRefresh::SaveInventory.save_inventory(ems, persister.inventory_collections)
+      save_inventory(persister)
+
       persister = nil
       parser = nil
 
@@ -162,5 +169,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def process_object_update_leave(obj)
     inventory_cache.delete_object(obj.class.wsdl_name, obj._ref)
+  end
+
+  def save_inventory(persister)
+    saver.queue_save_inventory(persister)
   end
 end
