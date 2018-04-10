@@ -14,16 +14,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems) }
+  let(:collector) { described_class.new(ems, :run_once => true) }
 
   context "#wait_for_updates" do
     it "Performs a full refresh" do
       2.times do
         # All VIM API calls go to uri https://hostname/sdk so we have to match on the body
         VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
-          vim = collector.send(:connect, ems.hostname, ems.authentication_userid, ems.authentication_password)
-          collector.send(:wait_for_updates, vim, :run_once => true)
-          vim.close
+          collector.run
 
           ems.reload
 
