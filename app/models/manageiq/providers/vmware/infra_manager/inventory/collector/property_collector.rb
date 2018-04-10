@@ -194,6 +194,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     vim.propertyCollector.CreateFilter(:spec => spec, :partialUpdates => true)
   end
 
+  def destroy_property_filter(property_filter)
+    return if property_filter.nil?
+
+    property_filter.DestroyPropertyFilter
+  end
+
   def full_traversal_object_spec(root)
     traversal_spec = [
       folder_to_child_entity,

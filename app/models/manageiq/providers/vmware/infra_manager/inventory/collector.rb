@@ -10,7 +10,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def run
     until exit_requested
-      vim = connect(ems.hostname, ems.authentication_userid, ems.authentication_password)
+      vim = connect
 
       begin
         wait_for_updates(vim)
@@ -25,7 +25,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("Exiting...")
   ensure
-    vim.serviceContent.sessionManager.Logout unless vim.nil?
+    disconnect(vim)
   end
 
   def stop
@@ -37,7 +37,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   attr_reader :ems, :exit_requested, :inventory_cache
 
-  def connect(host, username, password)
+  def connect
+    host = ems.hostname
+    username, password = ems.auth_user_pwd
+
     _log.info("Connecting to #{username}@#{host}...")
 
     vim_opts = {
@@ -58,6 +61,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("Connected")
     conn
+  end
+
+  def disconnect(vim)
+    return if vim.nil?
+
+    vim.serviceContent.sessionManager.Logout
   end
 
   def wait_for_updates(vim, run_once: false)
@@ -121,7 +130,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       break if run_once
     end
   ensure
-    property_filter.DestroyPropertyFilter unless property_filter.nil?
+    destroy_property_filter(property_filter)
   end
 
   def process_object_update_set(object_update_set)
