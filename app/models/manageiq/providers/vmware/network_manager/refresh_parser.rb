@@ -1,24 +1,24 @@
 module ManageIQ::Providers
   class Vmware::NetworkManager::RefreshParser
     include ManageIQ::Providers::Vmware::RefreshHelperMethods
-    VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2, :netmask, :enabled, :dhcp_enabled)
+    VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2)
 
     def initialize(ems, options = nil)
-      @ems                  = ems
-      @connection           = ems.connect
-      @options              = options || {}
-      @data                 = {}
-      @data_index           = {}
-      @inv                  = Hash.new { |h, k| h[k] = [] }
-      @org                  = @connection.organizations.first
-      @network_name_mapping = {}
+      @ems        = ems
+      @connection = ems.connect
+      @options    = options || {}
+      @data       = {}
+      @data_index = {}
+      @inv        = Hash.new { |h, k| h[k] = [] }
+      @org        = @connection.organizations.first
     end
 
     def ems_inv_to_hashes
-      $vcloud_log.info("#{log_header} Collecting data for EMS name: [#{@ems.name}] id: [#{@ems.id}]...")
+      log_header = "MIQ(#{self.class.name}.#{__method__}) Collecting data for EMS name: [#{@ems.name}] id: [#{@ems.id}]"
 
-      get_vdc_networks
-      get_vapp_networks
+      $vcloud_log.info("#{log_header}...")
+
+      get_networks
       get_network_ports
 
       $vcloud_log.info("#{log_header}...Complete")
@@ -28,69 +28,36 @@ module ManageIQ::Providers
 
     private
 
-    def get_vdc_networks
-      @inv[:vdc_networks] = @org.networks || []
-      @inv[:vdc_networks_idx] = @inv[:vdc_networks].index_by(&:id)
+    def get_networks
+      # fetch org VDC networks
+      @inv[:networks] = @org.networks
 
-      process_collection(@inv[:vdc_networks], :cloud_networks) { |n| parse_network(n) }
-      process_collection(@inv[:vdc_networks], :cloud_subnets, false) { |n| parse_network_subnet(n) }
+      # fetch vApp networks
+      @inv[:networks] += get_vapp_networks
 
-      $vcloud_log.info("#{log_header} Fetched #{@inv[:vdc_networks].count} VDC networks")
+      process_collection(@inv[:networks], :cloud_networks) { |n| parse_network(n) }
+      process_collection(@inv[:networks], :cloud_subnets, false) { |n| parse_network_subnet(n) }
     end
 
-    def get_vapp_networks
-      @inv[:vapp_networks] = []
-      @inv[:routers] = []
-
-      @ems.orchestration_stacks.each do |stack|
-        fetch_network_configurations_for_vapp(stack.ems_ref).map do |net_conf|
-          $vcloud_log.debug("#{log_header} processing net_conf for vapp #{stack.ems_ref}: #{net_conf}")
-          network_id = network_id_from_links(net_conf)
-          $vcloud_log.debug("#{log_header} calculated vApp network id: #{network_id}")
-          if (vdc_net = corresponding_vdc_network(net_conf, @inv[:vdc_networks_idx]))
-            $vcloud_log.debug("#{log_header} skipping VDC network duplicate")
-            memorize_network_name_mapping(stack.ems_ref, vdc_net.name, vdc_net.id)
-          else
-            memorize_network_name_mapping(stack.ems_ref, net_conf[:networkName], network_id)
-            @inv[:vapp_networks] << build_vapp_network(stack, network_id, net_conf)
-
-            # routers connecting vApp networks to VDC networks
-            if (parent_net = parent_vdc_network(net_conf, @inv[:vdc_networks_idx]))
-              $vcloud_log.debug("#{log_header} connecting router to parent: #{parent_net}")
-              @inv[:routers] << {
-                :net_conf   => net_conf,
-                :network_id => network_id,
-                :parent_net => parent_net
-              }
+    def get_network_ports
+      # TODO: Update FOG so that it will provide list of network ports. Currently, it is only possible to obtain
+      # very little data, barely enough to tell to which network the VM is connected to.
+      @inv[:vm_networks] = []
+      @org.vdcs.each do |vdc|
+        vdc.vapps.each do |vapp|
+          vapp.vms.each do |vm|
+            @inv[:vm_networks] += vm.network_adapters.each_with_index.map do |net_if, i|
+              net_if[:vapp] = vapp
+              net_if[:vm] = vm
+              net_if[:vm_network] = vm.network
+              net_if[:idx] = i
+              net_if
             end
           end
         end
       end
 
-      process_collection(@inv[:vapp_networks], :cloud_networks) { |n| parse_network(n) }
-      process_collection(@inv[:vapp_networks], :cloud_subnets, false) { |n| parse_network_subnet(n) }
-      process_collection(@inv[:routers], :network_routers) { |r| parse_network_router(r) }
-
-      $vcloud_log.info("#{log_header} Fetched #{@inv[:vapp_networks].count} vApp networks")
-      $vcloud_log.info("#{log_header} Fetched #{@inv[:routers].count} network routers")
-    end
-
-    def get_network_ports
-      @inv[:nics] = []
-      @ems.vms.each do |vm|
-        fetch_nic_configurations_for_vm(vm.ems_ref).each do |nic|
-          next unless nic[:IsConnected]
-          $vcloud_log.debug("#{log_header} processing NIC configuration for vm #{vm.ems_ref}: #{nic}")
-          nic[:vm] = vm
-          @inv[:nics] << nic
-        end
-      end
-
-      process_collection(@inv[:nics], :network_ports) { |n| parse_network_port(n) }
-      process_collection(@inv[:nics], :floating_ips) { |n| parse_floating_ip(n) }
-
-      $vcloud_log.info("#{log_header} Fetched #{@inv[:nics].count} network ports")
-      $vcloud_log.info("#{log_header} Fetched #{@data[:floating_ips].count} floating ips")
+      process_collection(@inv[:vm_networks], :network_ports) { |n| parse_network_port(n) }
     end
 
     # Parsing
@@ -103,13 +70,11 @@ module ManageIQ::Providers
       new_result = {
         :name          => network.name,
         :ems_ref       => uid,
+        :enabled       => true,
         :shared        => network.is_shared,
         :type          => network_type,
         :cloud_subnets => []
       }
-      new_result[:cidr] = to_cidr(network.gateway, network.netmask)
-      new_result[:enabled] = network.enabled if network.respond_to?(:enabled)
-
       return uid, new_result
     end
 
@@ -119,12 +84,10 @@ module ManageIQ::Providers
         :name            => subnet_name(network),
         :ems_ref         => uid,
         :gateway         => network.gateway,
-        :dns_nameservers => [network.dns1, network.dns2].compact,
+        :dns_nameservers => [network.dns1, network.dns2],
         :type            => self.class.cloud_subnet_type,
-        :network_ports   => []
+        :network_ports   => [],
       }
-      new_result[:cidr] = to_cidr(network.gateway, network.netmask)
-      new_result[:dhcp_enabled] = network.dhcp_enabled if network.respond_to?(:dhcp_enabled)
 
       # assign myself to the network
       @data_index.fetch_path(:cloud_networks, network.id)[:cloud_subnets] << new_result
@@ -132,43 +95,29 @@ module ManageIQ::Providers
       return uid, new_result
     end
 
-    def parse_network_router(router)
-      parent_id  = router[:parent_net].id
-      uid        = "#{router[:network_id]}---#{parent_id}"
-      new_result = {
-        :type          => self.class.network_router_type,
-        :name          => "Router #{router[:parent_net].name} -> #{router.dig(:net_conf, :networkName)}",
-        :ems_ref       => uid,
-        :cloud_network => @data_index.fetch_path(:cloud_networks, parent_id),
-        :cloud_subnets => []
-      }
-
-      # assign myself to the vapp network
-      @data_index.store_path(:cloud_subnets, "subnet-#{router[:network_id]}", :network_router, new_result)
-
-      return uid, new_result
-    end
-
-    def parse_network_port(nic_data)
-      uid = port_id(nic_data)
-      vm_uid = nic_data[:vm].id
+    def parse_network_port(net_if)
+      uid = port_id(net_if)
+      vm_uid = net_if[:vm].id
 
       new_result = {
-        :type        => self.class.network_port_type,
-        :name        => port_name(nic_data),
-        :ems_ref     => uid,
-        :device_ref  => vm_uid,
-        :device      => nic_data[:vm],
-        :mac_address => nic_data.dig(:MACAddress)
+        :type       => self.class.network_port_type,
+        :name       => port_name(net_if),
+        :ems_ref    => uid,
+        :device_ref => vm_uid,
+        :device     => @ems.vms.try(:where, :ems_ref => vm_uid).try(:first),
       }
 
-      network_id = read_network_name_mapping(nic_data[:vm].orchestration_stack.ems_ref, nic_data.dig(:network))
-      network = @data_index.fetch_path(:cloud_networks, network_id)
+      # find network by name, since network name is all what we are given from FOG
+      # TODO: update FOG since network *name* is not unique - network *id* should be provided
+      network = @data[:cloud_networks].find { |n| n[:name] == net_if[:network] }
+      network ||= @data[:cloud_networks].find do |n|
+        n[:name] == vapp_network_name(net_if[:network], net_if[:vapp])
+      end
 
       unless network.nil?
         subnet = network[:cloud_subnets].first
         cloud_subnet_network_port = {
-          :address      => nic_data[:IpAddress],
+          :address      => net_if["ip_address"],
           :cloud_subnet => subnet
         }
         new_result[:cloud_subnet_network_ports] = [cloud_subnet_network_port]
@@ -177,45 +126,28 @@ module ManageIQ::Providers
       return uid, new_result
     end
 
-    def parse_floating_ip(nic_data)
-      floating_ip = nic_data[:ExternalIpAddress]
-      return unless floating_ip
-
-      uid = floating_ip_id(nic_data)
-      network_id = read_network_name_mapping(nic_data[:vm].orchestration_stack.ems_ref, nic_data[:network])
-      network = @data_index.fetch_path(:cloud_networks, network_id)
-
-      new_result = {
-        :type             => self.class.floating_ip_type,
-        :ems_ref          => uid,
-        :address          => floating_ip,
-        :fixed_ip_address => floating_ip,
-        :cloud_network    => network,
-        :network_port     => @data_index.fetch_path(:network_ports, port_id(nic_data)),
-        :vm               => nic_data[:vm]
-      }
-
-      return uid, new_result
-    end
-
     # Utility
 
-    def build_vapp_network(vapp, network_id, net_conf)
-      n = VappNetwork.new(network_id)
-      n.name = vapp_network_name(net_conf[:networkName], vapp)
-      n.is_shared = false
-      n.type = 'application/vnd.vmware.vcloud.vAppNetwork+xml'
-      Array.wrap(net_conf.dig(:Configuration, :IpScopes)).each do |ip_scope|
-        n.gateway = ip_scope.dig(:IpScope, :Gateway)
-        n.netmask = ip_scope.dig(:IpScope, :Netmask)
-        n.enabled = ip_scope.dig(:IpScope, :IsEnabled)
-      end
-      Array.wrap(net_conf.dig(:Configuration, :Features)).each do |feature|
-        if feature[:DhcpService]
-          n.dhcp_enabled = feature.dig(:DhcpService, :IsEnabled)
+    def get_vapp_networks
+      vdc_network_names = Set.new @inv[:networks].map(&:name)
+      vapp_networks = []
+      @org.vdcs.each do |vdc|
+        vdc.vapps.each do |vapp|
+          vapp.network_config.map do |net_conf|
+            name = net_conf[:networkName]
+
+            next if vdc_network_names.include? name
+
+            vapp_networks << VappNetwork.new(
+              vapp_network_id(name, vapp),
+              vapp_network_name(name, vapp),
+              "application/vnd.vmware.vcloud.vAppNetwork+xml"
+            )
+          end
         end
       end
-      n
+
+      vapp_networks
     end
 
     def subnet_id(network)
@@ -226,95 +158,20 @@ module ManageIQ::Providers
       "subnet-#{network.name}"
     end
 
+    def vapp_network_id(name, vapp)
+      "#{vapp.id}_#{name}"
+    end
+
     def vapp_network_name(name, vapp)
       "#{name} (#{vapp.name})"
     end
 
-    def port_id(nic_data)
-      "#{nic_data[:vm].ems_ref}#NIC##{nic_data[:NetworkConnectionIndex]}"
+    def port_id(net_if)
+      "#{net_if[:vm].id}#NIC##{net_if[:idx]}"
     end
 
-    def port_name(nic_data)
-      "#{nic_data[:vm].name}#NIC##{nic_data[:NetworkConnectionIndex]}"
-    end
-
-    def floating_ip_id(nic_data)
-      "floating_ip-#{port_id(nic_data)}"
-    end
-
-    # vCD API does not provide us with vApp network IDs for some reason. Luckily it provides
-    # "Links" section whith API link to edit network page and network ID is part of this link.
-    def network_id_from_links(data)
-      return unless data[:Link]
-      links = Array.wrap(data[:Link])
-      links.each do |link|
-        m = /.*\/network\/(?<id>[^\/]+)\/.*/.match(link[:href])
-        return m[:id] unless m.nil? || m[:id].nil?
-      end
-      nil
-    end
-
-    # Detect when network configuration as reported by vapp is actually a VDC network.
-    # In such cases vCD reports duplicate of VDC networks (all the same, only ID is different)
-    # instead the original one, which would result in duplicate entries in the VMDB. When the
-    # function above returns not nil, such network was detected. The returned value is then the
-    # actual VDC network specification.
-    def corresponding_vdc_network(net_conf, vdc_networks)
-      if net_conf.dig(:networkName) == net_conf.dig(:Configuration, :ParentNetwork, :name)
-        parent_vdc_network(net_conf, vdc_networks)
-      end
-    end
-
-    def parent_vdc_network(net_conf, vdc_networks)
-      vdc_networks[net_conf.dig(:Configuration, :ParentNetwork, :id)]
-    end
-
-    # Remember network id for given network name. Generally network names are not unique,
-    # but inside vapp network specification they are. Therefore we must remember what network
-    # id was listed for given network name in corresponding vapp in order to be able to later
-    # hook VM to the appropriate network (VM only reports network name, without network ID...).
-    def memorize_network_name_mapping(vapp_id, network_name, network_id)
-      @network_name_mapping[vapp_id] ||= {}
-      @network_name_mapping[vapp_id][network_name] = network_id
-    end
-
-    def read_network_name_mapping(vapp_id, network_name)
-      @network_name_mapping.dig(vapp_id, network_name)
-    end
-
-    def to_cidr(address, netmask)
-      return unless address.to_s =~ Resolv::IPv4::Regex && netmask.to_s =~ Resolv::IPv4::Regex
-      address + '/' + netmask.to_s.split(".").map { |e| e.to_i.to_s(2).rjust(8, "0") }.join.count("1").to_s
-    end
-
-    def log_header
-      location = caller_locations(1, 1)
-      location = location.first if location.kind_of?(Array)
-      "MIQ(#{self.class.name}.#{location.base_label})"
-    end
-
-    # Additional API calls
-
-    # Fetch vapp network configuration via vCD API. This call is implemented in Fog, but it's not
-    # managed, therefore we must handle errors by ourselves.
-    def fetch_network_configurations_for_vapp(vapp_id)
-      begin
-        data = @connection.get_vapp(vapp_id).body
-      rescue Fog::VcloudDirector::Errors::ServiceError => e
-        $vcloud_log.error("#{log_header} could not fetch network configuration for vapp #{vapp_id}: #{e}")
-        return []
-      end
-      Array.wrap(data.dig(:NetworkConfigSection, :NetworkConfig))
-    end
-
-    def fetch_nic_configurations_for_vm(vm_id)
-      begin
-        data = @connection.get_network_connection_system_section_vapp(vm_id).body
-      rescue Fog::VcloudDirector::Errors::ServiceError => e
-        $vcloud_log.error("#{log_header} could not fetch NIC configuration for vm #{vm_id}: #{e}")
-        return []
-      end
-      Array.wrap(data[:NetworkConnection])
+    def port_name(net_if)
+      "#{net_if[:vm].name}#NIC##{net_if[:idx]}"
     end
 
     class << self
@@ -336,10 +193,6 @@ module ManageIQ::Providers
 
       def network_port_type
         "ManageIQ::Providers::Vmware::NetworkManager::NetworkPort"
-      end
-
-      def floating_ip_type
-        "ManageIQ::Providers::Vmware::NetworkManager::FloatingIp"
       end
     end
   end

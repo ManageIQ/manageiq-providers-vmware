@@ -1,260 +1,127 @@
 describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
-  before(:each) do
-    @ems = FactoryGirl.create(:ems_vmware_with_vcr_authentication, :port => 443, :api_version => "v5_0", :security_protocol => "ssl-with-validation")
+  before do
+    @host = Rails.application.secrets.vmware_cloud.try(:[], 'host') || 'vmwarecloudhost'
+    host_uri = URI.parse("https://#{@host}")
+
+    @hostname = host_uri.host
+    @port = host_uri.port == 443 ? nil : host_uri.port
+
+    _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
+    @ems = FactoryGirl.create(
+      :ems_vmware_cloud,
+      :zone     => zone,
+      :hostname => @hostname,
+      :port     => @port
+    )
     @ems_network = @ems.network_manager
-  end
+    @network_type_vdc = "ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::OrgVdcNet"
+    @network_type_vapp = "ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::VappNet"
 
-  before(:each) do
-    userid   = Rails.application.secrets.vmware_cloud.try(:[], 'userid') || 'VMWARE_CLOUD_USERID'
-    password = Rails.application.secrets.vmware_cloud.try(:[], 'password') || 'VMWARE_CLOUD_PASSWORD'
-    hostname = @ems.hostname
+    @userid = Rails.application.secrets.vmware_cloud.try(:[], 'userid') || 'VMWARE_CLOUD_USERID'
+    @password = Rails.application.secrets.vmware_cloud.try(:[], 'password') || 'VMWARE_CLOUD_PASSWORD'
 
-    # Ensure that VCR will obfuscate the basic auth
     VCR.configure do |c|
-      # workaround for escaping host
+      # workaround for escaping host in spec/spec_helper.rb
       c.before_playback do |interaction|
-        interaction.filter!(CGI.escape(hostname), hostname)
+        interaction.filter!(CGI.escape(@host), @host)
         interaction.filter!(CGI.escape('VMWARE_CLOUD_HOST'), 'vmwarecloudhost')
       end
-      c.filter_sensitive_data('VMWARE_CLOUD_AUTHORIZATION') { Base64.encode64("#{userid}:#{password}").chomp }
-    end
-  end
 
-  let(:network_type_vdc)  { 'ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::OrgVdcNet' }
-  let(:network_type_vapp) { 'ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::VappNet' }
-  let(:subnet_type)       { 'ManageIQ::Providers::Vmware::NetworkManager::CloudSubnet' }
-  let(:router_type)       { 'ManageIQ::Providers::Vmware::NetworkManager::NetworkRouter' }
-  let(:floating_ip_type)  { 'ManageIQ::Providers::Vmware::NetworkManager::FloatingIp' }
+      c.filter_sensitive_data('VMWARE_CLOUD_AUTHORIZATION') { Base64.encode64("#{@userid}:#{@password}").chomp }
+    end
+
+    cred = {
+      :userid   => @userid,
+      :password => @password
+    }
+
+    @ems.authentications << FactoryGirl.create(:authentication, cred)
+  end
 
   it ".ems_type" do
     expect(described_class.ems_type).to eq(:vmware_cloud_network)
   end
 
-  describe "VDC network is properly inventoried" do
-    let(:vdc_net_ref)    { 'f656a8db-ac4d-47dc-9b63-672cb1497126' }
-    let(:vdc_subnet_ref) { 'subnet-f656a8db-ac4d-47dc-9b63-672cb1497126' }
-    let(:net_port_ref)   { 'vm-6850d9ee-ce30-42e0-aaad-3909e1861c48#NIC#0' }
-    let(:vm_ref)         { 'vm-6850d9ee-ce30-42e0-aaad-3909e1861c48' }
-    let(:vdc_net)        { CloudNetwork.find_by(:ems_ref => vdc_net_ref) }
-    let(:vdc_subnet)     { CloudSubnet.find_by(:ems_ref => vdc_subnet_ref) }
-    let(:net_port)       { NetworkPort.find_by(:ems_ref => net_port_ref) }
-    let(:vm)             { Vm.find_by(:ems_ref => vm_ref) }
-
-    it "full refresh" do
-      refresh_network_manager(described_class.name.underscore) do
-        assert_network_counts
-        assert_specific_network
-        assert_specific_subnet
-        assert_specific_network_port
-        assert_specific_vm_networking
-      end
-    end
-
-    def assert_specific_network
-      expect(vdc_net).to be
-      expect(vdc_net).to have_attributes(
-        :name   => 'RedHat external network',
-        :cidr   => '10.12.0.1/16',
-        :shared => false,
-        :type   => network_type_vdc
-      )
-      expect(vdc_net.cloud_subnets.count).to eq(1)
-    end
-
-    def assert_specific_subnet
-      expect(vdc_subnet).to have_attributes(
-        :name                           => 'subnet-RedHat external network',
-        :cidr                           => '10.12.0.1/16',
-        :status                         => nil,
-        :dhcp_enabled                   => nil,
-        :gateway                        => "10.12.0.1",
-        :network_protocol               => nil,
-        :dns_nameservers                => ["10.12.0.13"],
-        :ipv6_router_advertisement_mode => nil,
-        :ipv6_address_mode              => nil,
-        :extra_attributes               => nil,
-        :type                           => subnet_type,
-        :ext_management_system          => @ems_network,
-        :availability_zone              => nil,
-        :cloud_network                  => vdc_net,
-        :cloud_tenant                   => nil,
-        :network_router                 => nil,
-        :network_group                  => nil,
-        :parent_cloud_subnet            => nil
-      )
-      expect(vdc_subnet.network_ports.count).to eq(4)
-      expect(vdc_subnet.vms.count).to eq(4)
-    end
-
-    def assert_specific_network_port
-      expect(net_port).to have_attributes(
-        :name                  => 'RHEL7-001#NIC#0',
-        :mac_address           => '00:50:56:01:00:09',
-        :device_type           => 'VmOrTemplate',
-        :source                => 'refresh',
-        :ext_management_system => @ems_network,
-        :device                => vm
-      )
-    end
-
-    def assert_specific_vm_networking
-      expect(vm).to have_attributes(
-        :name           => 'RHEL7-001',
-        :ipaddresses    => ['10.12.6.17'],
-        :mac_addresses  => [net_port.mac_address],
-        :cloud_networks => [vdc_net],
-        :cloud_subnets  => [vdc_subnet],
-        :network_ports  => [net_port],
-        :floating_ips   => []
-      )
-    end
-  end
-
-  describe "vApp network is properly inventoried" do
-    let(:vapp_net_ref)    { '3d3da9a8-1db1-40cd-9fff-c770d6411486' }
-    let(:vapp_subnet_ref) { 'subnet-3d3da9a8-1db1-40cd-9fff-c770d6411486' }
-    let(:net_port_ref)    { 'vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab#NIC#0' }
-    let(:vm_ref)          { 'vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab' }
-    let(:router_ref)      { '3d3da9a8-1db1-40cd-9fff-c770d6411486---f656a8db-ac4d-47dc-9b63-672cb1497126' }
-    let(:floating_ip_ref) { 'floating_ip-vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab#NIC#0' }
-    let(:vdc_net_ref)     { 'f656a8db-ac4d-47dc-9b63-672cb1497126' }
-    let(:vapp_net)        { CloudNetwork.find_by(:ems_ref => vapp_net_ref) }
-    let(:vapp_subnet)     { CloudSubnet.find_by(:ems_ref => vapp_subnet_ref) }
-    let(:net_port)        { NetworkPort.find_by(:ems_ref => net_port_ref) }
-    let(:vm)              { Vm.find_by(:ems_ref => vm_ref) }
-    let(:router)          { NetworkRouter.find_by(:ems_ref => router_ref) }
-    let(:floating_ip)     { FloatingIp.find_by(:ems_ref => floating_ip_ref) }
-    let(:vdc_net)         { CloudNetwork.find_by(:ems_ref => vdc_net_ref) }
-
-    it "full refresh" do
-      refresh_network_manager(described_class.name.underscore) do
-        assert_network_counts
-        assert_specific_network
-        assert_specific_subnet
-        assert_specific_network_port
-        assert_specific_network_router
-        assert_specific_floating_ip
-        assert_specific_vm_networking
-      end
-    end
-
-    def assert_specific_network
-      expect(vapp_net).to have_attributes(
-        :name    => 'vApp network test (RHEL7-web-002)',
-        :cidr    => '192.168.2.1/24',
-        :enabled => true,
-        :shared  => false,
-        :type    => network_type_vapp
-      )
-      expect(vapp_net.cloud_subnets.count).to eq(1)
-    end
-
-    def assert_specific_subnet
-      expect(vapp_subnet).to have_attributes(
-        :name                  => 'subnet-vApp network test (RHEL7-web-002)',
-        :cidr                  => '192.168.2.1/24',
-        :dhcp_enabled          => true,
-        :gateway               => '192.168.2.1',
-        :dns_nameservers       => [],
-        :type                  => subnet_type,
-        :ext_management_system => @ems_network,
-        :cloud_network         => vapp_net,
-        :network_router        => router
-      )
-      expect(vapp_subnet.network_ports.count).to eq(1)
-      expect(vapp_subnet.vms.count).to eq(1)
-    end
-
-    def assert_specific_network_port
-      expect(net_port).to have_attributes(
-        :name                  => 'vAppRHEL7-w-002#NIC#0',
-        :mac_address           => '00:50:56:01:00:0c',
-        :device_type           => 'VmOrTemplate',
-        :source                => 'refresh',
-        :ext_management_system => @ems_network,
-        :device                => vm
-      )
-    end
-
-    def assert_specific_network_router
-      expect(router).to have_attributes(
-        :name                  => 'Router RedHat external network -> vApp network test',
-        :type                  => router_type,
-        :cloud_network         => vdc_net,
-        :ext_management_system => @ems_network,
-        :cloud_subnets         => [vapp_subnet]
-      )
-    end
-
-    def assert_specific_floating_ip
-      expect(floating_ip).to have_attributes(
-        :type                  => floating_ip_type,
-        :address               => '10.12.7.4',
-        :fixed_ip_address      => '10.12.7.4',
-        :ext_management_system => @ems_network,
-        :vm                    => vm,
-        :network_port          => net_port,
-        :cloud_network         => vapp_net
-      )
-    end
-
-    def assert_specific_vm_networking
-      expect(vm).to have_attributes(
-        :name           => 'vAppRHEL7-w-002',
-        :ipaddresses    => ['192.168.2.100', floating_ip.address],
-        :mac_addresses  => [net_port.mac_address],
-        :cloud_networks => [vapp_net],
-        :cloud_subnets  => [vapp_subnet],
-        :network_ports  => [net_port],
-        :floating_ips   => [floating_ip]
-      )
-    end
-  end
-
-  describe "VM with two network ports" do
-    let(:vm_ref)          { 'vm-37ff4eb7-a711-4baa-82cf-3075f099ebb0' }
-    let(:floating_ip_ref) { 'floating_ip-vm-37ff4eb7-a711-4baa-82cf-3075f099ebb0#NIC#0' }
-    let(:vm)              { Vm.find_by(:ems_ref => vm_ref) }
-    let(:floating_ip)     { FloatingIp.find_by(:ems_ref => floating_ip_ref) }
-
-    it "full refresh" do
-      refresh_network_manager(described_class.name.underscore) do
-        expect(vm).to have_attributes(
-          :name         => 'RHEL01-rspec',
-          :floating_ips => [floating_ip]
-        )
-
-        expect(vm.cloud_networks.count).to eq(2)
-        expect(vm.cloud_subnets.count).to eq(2)
-        expect(vm.network_ports.count).to eq(2)
-        expect(vm.ipaddresses).to contain_exactly('192.168.2.100', '10.12.7.6', floating_ip.address)
-        expect(vm.mac_addresses).to contain_exactly('00:50:56:01:00:1a', '00:50:56:01:00:19')
-      end
-    end
-  end
-
-  def refresh_network_manager(cassete)
+  it "will perform a full refresh" do
     2.times do # Run twice to verify that a second run with existing data does not change anything
       @ems.reload
       @ems_network.reload
-      VCR.use_cassette(cassete) do
+      VCR.use_cassette(described_class.name.underscore, :allow_unused_http_interactions => true) do
         EmsRefresh.refresh(@ems)
         EmsRefresh.refresh(@ems_network)
       end
       @ems.reload
       @ems_network.reload
 
-      yield
+      assert_network_counts
+      assert_specific_network_tree_vdc
+      assert_specific_network_tree_vapp
     end
   end
 
   def assert_network_counts
-    expect(CloudNetwork.count).to eq(11)
-    expect(CloudSubnet.count).to eq(11)
-    expect(CloudNetwork.where(:type => network_type_vdc).count).to eq(6)
-    expect(CloudNetwork.where(:type => network_type_vapp).count).to eq(5)
-    expect(NetworkRouter.count).to eq(2)
-    expect(NetworkPort.count).to eq(7)
-    expect(FloatingIp.count).to eq(2)
+    expect(CloudNetwork.count).to eq(7)
+    expect(CloudNetwork.where(:type => @network_type_vdc).count).to eq(2)
+    expect(CloudNetwork.where(:type => @network_type_vapp).count).to eq(5)
+    expect(CloudSubnet.count).to eq(7)
+    expect(NetworkPort.count).to eq(8)
+  end
+
+  def assert_specific_network_tree_vdc
+    n = CloudNetwork.where(:name => "vdc-net-miha").first
+    expect(n).to be
+    expect(n).to have_attributes(
+      :enabled => true,
+      :shared  => false,
+      :type    => @network_type_vdc,
+    )
+
+    expect(n.cloud_subnets.count).to eq(1)
+    subn = n.cloud_subnets.first
+    expect(subn).to have_attributes(
+      :gateway         => "10.30.2.1",
+      :dns_nameservers => ["8.8.8.8", "8.8.4.4"]
+    )
+
+    expect(subn.network_ports.count).to eq(2)
+    port = subn.network_ports.find { |p| p.name == "TTYLinux-1-mm#NIC#0" }
+    expect(port).to have_attributes(
+      :name => "TTYLinux-1-mm#NIC#0",
+    )
+
+    expect(subn.vms.count).to eq(2)
+    vm = subn.vms.second
+    expect(vm).to have_attributes(
+      :name => "Damn Small Linux-mm",
+    )
+  end
+
+  def assert_specific_network_tree_vapp
+    n = CloudNetwork.where(:name => "vapp-network-miha (mihap_vApp_networking)").first
+    expect(n).to be
+    expect(n).to have_attributes(
+      :enabled => true,
+      :shared  => nil,
+      :type    => @network_type_vapp,
+    )
+
+    expect(n.cloud_subnets.count).to eq(1)
+    subn = n.cloud_subnets.first
+    expect(subn).to have_attributes(
+      :gateway         => nil,
+      :dns_nameservers => [nil, nil]
+    )
+
+    expect(subn.network_ports.count).to eq(2)
+    port = subn.network_ports.find { |p| p.name == "TTYLinux-2-mm#NIC#0" }
+    expect(port).to have_attributes(
+      :name => "TTYLinux-2-mm#NIC#0",
+    )
+
+    expect(subn.vms.count).to eq(2)
+    vm = subn.vms.first
+    expect(vm).to have_attributes(
+      :name => "TTYLinux-2-mm",
+    )
   end
 end
