@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config.lib}/**/*"]
 
-  s.add_dependency("fog-vcloud-director", ["~> 0.1.8"])
+  s.add_dependency("fog-vcloud-director", ["0.1.8"])
   s.add_dependency "fog-core",                "~>1.40"
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
