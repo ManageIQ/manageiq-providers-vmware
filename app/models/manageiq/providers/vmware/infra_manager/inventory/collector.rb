@@ -2,6 +2,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
+  attr_reader   :ems, :inventory_cache, :run_once, :saver
+  attr_accessor :exit_requested
+
   def initialize(ems, run_once: false, threaded: true)
     @ems             = ems
     @inventory_cache = ems.class::Inventory::Cache.new
@@ -39,9 +42,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   private
 
-  attr_reader   :ems, :inventory_cache, :run_once, :saver
-  attr_accessor :exit_requested
-
   def connect
     host = ems.hostname
     username, password = ems.auth_user_pwd
@@ -71,7 +71,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def disconnect(vim)
     return if vim.nil?
 
-    vim.serviceContent.sessionManager.Logout
+    vim.close
   end
 
   def wait_for_updates(vim)
@@ -85,11 +85,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     # so that we get all inventory back in the first update set
     version = ""
 
-    _log.info("Refreshing initial inventory...")
-
     # Use the full refresh persister for the initial UpdateSet from WaitForUpdates
     # After the initial UpdateSet this will change to a targeted persister
     persister = ems.class::Inventory::Persister.new(ems)
+    parser    = ems.class::Inventory::Parser.new(persister)
+
+    _log.info("Refreshing initial inventory...")
 
     initial = true
     until exit_requested
@@ -99,32 +100,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       # Save the new update set version
       version = update_set.version
 
-      next if update_set.filterSet.blank?
-
-      property_filter_update = update_set.filterSet.detect { |update| update.filter == property_filter }
-      next if property_filter_update.nil?
-
-      # After the initial UpdateSet switch to a targeted persister
-      persister ||= ems.class::Inventory::Persister::Targeted.new(ems)
-      parser    ||= ems.class::Inventory::Parser.new(persister)
-
-      object_update_set = property_filter_update.objectSet
-      next if object_update_set.blank?
-
-      _log.info("Processing #{object_update_set.count} updates...")
-
-      process_object_update_set(object_update_set).each do |managed_object, props|
-        parser.parse(managed_object, props)
-      end
-
-      _log.info("Processing #{object_update_set.count} updates...Complete")
+      process_update_set(property_filter, update_set, parser)
 
       next if update_set.truncated
 
       save_inventory(persister)
 
-      persister = nil
-      parser = nil
+      persister = ems.class::Inventory::Persister::Targeted.new(ems)
+      parser    = ems.class::Inventory::Parser.new(persister)
 
       next unless initial
 
@@ -135,6 +118,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     end
   ensure
     destroy_property_filter(property_filter)
+  end
+
+  def process_update_set(property_filter, update_set, parser)
+    property_filter_update = update_set.filterSet.to_a.detect { |update| update.filter == property_filter }
+    return if property_filter_update.nil?
+
+    object_update_set = property_filter_update.objectSet
+    return if object_update_set.blank?
+
+    _log.info("Processing #{object_update_set.count} updates...")
+
+    process_object_update_set(object_update_set).each do |managed_object, props|
+      parser.parse(managed_object, props)
+    end
+
+    _log.info("Processing #{object_update_set.count} updates...Complete")
   end
 
   def process_object_update_set(object_update_set)
