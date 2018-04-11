@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 83 ending 2018-04-09
+
+### Added
+- Shift fog-vcloud-director version to 0.1.10 [(#224)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/224)
+- Actually apply CloudManager's api_version [(#219)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/219)
+- Add support for vCloud console access via WebMKS [(#218)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/218)
+- Add guest customization field to service catalog order form [(#215)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/215)
+- Add Distributed and Host VirtualSwitch models [(#212)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/212)
+
+### Fixed
+- Sort unitNumber as an integer not a string [(#223)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/223)
+- VMware provider IP discovery fix [(#221)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/221)
+
 ## Unreleased as of Sprint 82 ending 2018-03-26
 
 ### Added
