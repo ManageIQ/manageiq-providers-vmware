@@ -139,6 +139,10 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
         @ems.vm_revert_to_snapshot(vm)
       end
+
+      it 'supports revert to snapshot' do
+        expect(vm.supports_revert_to_snapshot?).to be_truthy
+      end
     end
 
     context ".vm_remove_snapshot" do

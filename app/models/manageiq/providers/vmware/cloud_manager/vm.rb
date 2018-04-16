@@ -6,6 +6,7 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
   supports :remove_all_snapshots
   supports_not :remove_snapshot
   supports :snapshot_create
+  supports :revert_to_snapshot
 
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect
