@@ -118,4 +118,12 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
       service.process_task(response.body)
     end
   end
+
+  def vm_reconfigure(vm, options = {})
+    with_provider_connection do |service|
+      xml = service.get_vapp(vm.ems_ref, :parser => 'xml').body
+      response = service.post_reconfigure_vm(vm.ems_ref, xml, options[:spec])
+      service.process_task(response.body)
+    end
+  end
 end
