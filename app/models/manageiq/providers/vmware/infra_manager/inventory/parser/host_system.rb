@@ -222,6 +222,33 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     def parse_host_system_switches(host, props)
       # TODO
+      network = props.fetch_path(:config, :network)
+      return if network.blank?
+
+      type = ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch.name
+
+      switches = network[:vswitch]
+      switches.to_a.each do |switch|
+        security_policy = switch.spec&.policy&.security
+        if security_policy
+          allow_promiscuous = security_policy[:allowPromiscuous]
+          forged_transmits  = security_policy[:forgedTransmits]
+          mac_changes       = security_policy[:macChanges]
+        end
+
+        persister_switch = persister.switches.build(
+          :uid_ems           => switch[:name],
+          :name              => switch[:name],
+          :type              => type,
+          :ports             => switch[:numPorts],
+          :mtu               => switch[:mtu],
+          :allow_promiscuous => allow_promiscuous,
+          :forged_transmits  => forged_transmits,
+          :mac_changes       => mac_changes,
+        )
+
+        persister.host_switches.build(:host => host, :switch => persister_switch)
+      end
     end
   end
 end
