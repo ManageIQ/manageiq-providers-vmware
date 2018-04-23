@@ -2,42 +2,44 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems)
+  def initialize(ems, run_once: false)
     @ems             = ems
-    @exit_requested  = false
     @inventory_cache = ems.class::Inventory::Cache.new
+    @run_once        = run_once
+
+    self.exit_requested = false
   end
 
   def run
     until exit_requested
-      vim = connect(ems.hostname, ems.authentication_userid, ems.authentication_password)
-
-      begin
-        wait_for_updates(vim)
-      rescue RbVmomi::Fault => err
-        _log.error("Caught exception #{err.message}")
-        _log.log_backtrace(err)
-      ensure
-        vim.close unless vim.nil?
-        vim = nil
-      end
+      monitor_updates
+      break if run_once
     end
 
     _log.info("Exiting...")
-  ensure
-    vim.serviceContent.sessionManager.Logout unless vim.nil?
   end
 
   def stop
     _log.info("Exit request received...")
-    @exit_requested = true
+    self.exit_requested = true
+  end
+
+  def monitor_updates
+    vim = connect
+    wait_for_updates(vim)
+  ensure
+    disconnect(vim)
   end
 
   private
 
-  attr_reader :ems, :exit_requested, :inventory_cache
+  attr_reader   :ems, :inventory_cache, :run_once
+  attr_accessor :exit_requested
 
-  def connect(host, username, password)
+  def connect
+    host = ems.hostname
+    username, password = ems.auth_user_pwd
+
     _log.info("Connecting to #{username}@#{host}...")
 
     vim_opts = {
@@ -60,7 +62,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     conn
   end
 
-  def wait_for_updates(vim, run_once: false)
+  def disconnect(vim)
+    return if vim.nil?
+
+    vim.serviceContent.sessionManager.Logout
+  end
+
+  def wait_for_updates(vim)
     property_filter = create_property_filter(vim)
 
     # Return if we don't receive any updates for 60 seconds break
@@ -85,27 +93,25 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       # Save the new update set version
       version = update_set.version
 
-      property_filter_update_set = update_set.filterSet
-      next if property_filter_update_set.blank?
+      next if update_set.filterSet.blank?
+
+      property_filter_update = update_set.filterSet.detect { |update| update.filter == property_filter }
+      next if property_filter_update.nil?
 
       # After the initial UpdateSet switch to a targeted persister
       persister ||= ems.class::Inventory::Persister::Targeted.new(ems)
       parser    ||= ems.class::Inventory::Parser.new(persister)
 
-      property_filter_update_set.each do |property_filter_update|
-        next if property_filter_update.filter != property_filter
+      object_update_set = property_filter_update.objectSet
+      next if object_update_set.blank?
 
-        object_update_set = property_filter_update.objectSet
-        next if object_update_set.blank?
+      _log.info("Processing #{object_update_set.count} updates...")
 
-        _log.info("Processing #{object_update_set.count} updates...")
-
-        process_object_update_set(object_update_set).each do |managed_object, props|
-          parser.parse(managed_object, props)
-        end
-
-        _log.info("Processing #{object_update_set.count} updates...Complete")
+      process_object_update_set(object_update_set).each do |managed_object, props|
+        parser.parse(managed_object, props)
       end
+
+      _log.info("Processing #{object_update_set.count} updates...Complete")
 
       next if update_set.truncated
 
@@ -121,7 +127,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       break if run_once
     end
   ensure
-    property_filter.DestroyPropertyFilter unless property_filter.nil?
+    destroy_property_filter(property_filter)
   end
 
   def process_object_update_set(object_update_set)
