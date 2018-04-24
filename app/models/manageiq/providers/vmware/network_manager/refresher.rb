@@ -1,4 +1,4 @@
-class ManageIQ::Providers::Vmware::NetworkManager::Refresher < ManageIQ::Providers::BaseManager::Refresher
+class ManageIQ::Providers::Vmware::NetworkManager::Refresher < ManageIQ::Providers::BaseManager::ManagerRefresher
   include ::EmsRefresh::Refreshers::EmsRefresherMixin
 
   def parse_legacy_inventory(ems)

@@ -1,7 +1,21 @@
 class ManageIQ::Providers::Vmware::Builder
   class << self
     def build_inventory(ems, target)
-      cloud_manager_inventory(ems, target)
+      case target
+      when ManageIQ::Providers::Vmware::CloudManager
+        cloud_manager_inventory(ems, target)
+      when ManageIQ::Providers::Vmware::NetworkManager
+        inventory(
+          ems,
+          target,
+          ManageIQ::Providers::Vmware::Inventory::Collector::NetworkManager,
+          ManageIQ::Providers::Vmware::Inventory::Persister::NetworkManager,
+          [ManageIQ::Providers::Vmware::Inventory::Parser::NetworkManager]
+        )
+      else
+        # Fallback to ems refresh
+        cloud_manager_inventory(ems, target)
+      end
     end
 
     private

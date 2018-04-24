@@ -1,10 +1,15 @@
 class ManageIQ::Providers::Vmware::Inventory::Persister < ManagerRefresh::Inventory::Persister
   require_nested :CloudManager
+  require_nested :NetworkManager
 
   protected
 
   def cloud
     ManageIQ::Providers::Vmware::InventoryCollectionDefault::CloudManager
+  end
+
+  def network
+    ManageIQ::Providers::Vmware::InventoryCollectionDefault::NetworkManager
   end
 
   def targeted

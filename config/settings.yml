@@ -11,6 +11,8 @@
         :power:
           :critical:
 :ems_refresh:
+  :vmware_cloud_network:
+    :inventory_object_refresh: false
   :vmware_cloud:
     :inventory_object_refresh: false
     :get_public_images: false
