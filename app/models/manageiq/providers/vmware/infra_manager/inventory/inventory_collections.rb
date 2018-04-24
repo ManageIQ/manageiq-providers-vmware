@@ -56,5 +56,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes = {:parent_inventory_collections => [:vms_and_templates]}
       super(attributes.merge(extra_attributes))
     end
+
+    def guest_devices(extra_attributes = {})
+      attributes = {:parent_inventory_collections => [:vms_and_templates]}
+      super(attributes.merge(extra_attributes))
+    end
   end
 end
