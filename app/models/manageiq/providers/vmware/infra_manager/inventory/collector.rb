@@ -19,13 +19,25 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     saver.start_thread
 
+    vim = connect
+    property_filter = create_property_filter(vim)
+
+    _log.info("Refreshing initial inventory")
+    version = initial_refresh(vim, property_filter)
+    _log.info("Refreshing initial inventory...Complete")
+
+    return if run_once
+
     until exit_requested
-      monitor_updates
+      persister = targeted_persister_klass.new(ems)
+      version = monitor_updates(vim, property_filter, version, persister)
     end
 
-    saver.stop_thread
-
     _log.info("Monitor updates thread exited")
+  ensure
+    saver.stop_thread
+    destroy_property_filter(property_filter)
+    disconnect(vim)
   end
 
   def stop
@@ -33,11 +45,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     self.exit_requested = true
   end
 
-  def monitor_updates
-    vim = connect
-    wait_for_updates(vim)
-  ensure
-    disconnect(vim)
+  def initial_refresh(vim, property_filter)
+    monitor_updates(vim, property_filter, "", full_persister_klass.new(ems))
+  end
+
+  def monitor_updates(vim, property_filter, version, persister)
+    parser = parser_klass.new(persister)
+
+    loop do
+      update_set = wait_for_updates(vim, version)
+      break if update_set.nil?
+
+      version = update_set.version
+
+      process_update_set(property_filter, update_set, parser)
+
+      break unless update_set.truncated
+    end
+
+    save_inventory(persister)
+
+    version
   end
 
   private
@@ -74,50 +102,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     vim.close
   end
 
-  def wait_for_updates(vim)
-    property_filter = create_property_filter(vim)
-
+  def wait_for_updates(vim, version)
     # Return if we don't receive any updates for 60 seconds break
     # so that we can check if we are supposed to exit
     options = RbVmomi::VIM.WaitOptions(:maxWaitSeconds => 60)
 
-    # Send the "special initial data version" i.e. an empty string
-    # so that we get all inventory back in the first update set
-    version = ""
-
-    # Use the full refresh persister for the initial UpdateSet from WaitForUpdates
-    # After the initial UpdateSet this will change to a targeted persister
-    persister = ems.class::Inventory::Persister.new(ems)
-    parser    = ems.class::Inventory::Parser.new(persister)
-
-    _log.info("Refreshing initial inventory...")
-
-    initial = true
-    until exit_requested
-      update_set = vim.propertyCollector.WaitForUpdatesEx(:version => version, :options => options)
-      next if update_set.nil?
-
-      # Save the new update set version
-      version = update_set.version
-
-      process_update_set(property_filter, update_set, parser)
-
-      next if update_set.truncated
-
-      save_inventory(persister)
-
-      persister = ems.class::Inventory::Persister::Targeted.new(ems)
-      parser    = ems.class::Inventory::Parser.new(persister)
-
-      next unless initial
-
-      _log.info("Refreshing initial inventory...Complete")
-      initial = false
-
-      break if run_once
-    end
-  ensure
-    destroy_property_filter(property_filter)
+    vim.propertyCollector.WaitForUpdatesEx(:version => version, :options => options)
   end
 
   def process_update_set(property_filter, update_set, parser)
@@ -172,5 +162,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def save_inventory(persister)
     saver.queue_save_inventory(persister)
+  end
+
+  def full_persister_klass
+    @full_persister_klass ||= ems.class::Inventory::Persister
+  end
+
+  def targeted_persister_klass
+    @targeted_persister_klass ||= ems.class::Inventory::Persister::Targeted
+  end
+
+  def parser_klass
+    @parser_klass ||= ems.class::Inventory::Parser
   end
 end

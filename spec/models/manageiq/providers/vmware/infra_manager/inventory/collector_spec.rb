@@ -59,6 +59,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(vm.reload.power_state).to eq("on")
       end
 
+      it "migrate a virtual machine" do
+        vm = ems.vms.find_by(:ems_ref => 'vm-107')
+
+        expect(vm.host.ems_ref).to eq("host-89")
+        run_targeted_refresh(targeted_update_set(vm_migrate_object_update))
+        expect(vm.reload.host.ems_ref).to eq("host-13")
+      end
+
       def run_targeted_refresh(update_set)
         collector.send(:process_update_set, property_filter, update_set, parser)
         collector.send(:save_inventory, persister)
@@ -92,12 +100,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           :missingSet      => [],
         )
       end
+
+      def vm_migrate_object_update
+        RbVmomi::VIM.ObjectUpdate(
+          :dynamicProperty => [],
+          :kind            => "modify",
+          :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+          :changeSet       => [
+            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-13")),
+          ],
+          :missingSet      => [],
+        )
+      end
     end
 
     def run_full_refresh
       # All VIM API calls go to uri https://hostname/sdk so we have to match on the body
       VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
-        collector.monitor_updates
+        collector.run
       end
     end
 
