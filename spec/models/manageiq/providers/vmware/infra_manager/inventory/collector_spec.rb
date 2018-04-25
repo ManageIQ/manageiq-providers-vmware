@@ -29,8 +29,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_specific_host
           assert_specific_cluster
           assert_specific_resource_pool
-          assert_specific_switch
-          assert_specific_lan
+          assert_specific_dvswitch
+          assert_specific_dvportgroup
           assert_specific_vm
         end
       end
@@ -170,6 +170,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(host).not_to be_nil
 
       switch = host.switches.find_by(:uid_ems => "vSwitch0")
+
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
@@ -180,6 +181,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :mac_changes       => true,
         :mtu               => 1500,
         :type              => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
+      )
+
+      vnic = host.hardware.guest_devices.find_by(:uid_ems => "vmnic0")
+      expect(vnic).not_to be_nil
+      expect(vnic).to have_attributes(
+        :device_name     => "vmnic0",
+        :device_type     => "ethernet",
+        :location        => "03:00.0",
+        :controller_type => "ethernet",
+        :uid_ems         => "vmnic0",
+        # TODO: :switch          => switch,
       )
     end
 
@@ -222,11 +234,23 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
-    def assert_specific_switch
-      # TODO: check a switch
+    def assert_specific_dvswitch
+      dvs = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.find_by(:uid_ems => "dvs-8")
+
+      expect(dvs).not_to be_nil
+      expect(dvs).to have_attributes(
+        :uid_ems           => "dvs-8",
+        :name              => "DC0_DVS",
+        :ports             => 288,
+        :switch_uuid       => "4e 1f 2b 50 19 20 4c f7-f3 11 41 90 35 76 52 7b",
+        :type              => "ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch",
+        :allow_promiscuous => false,
+        :forged_transmits  => false,
+        :mac_changes       => false,
+      )
     end
 
-    def assert_specific_lan
+    def assert_specific_dvportgroup
       # TODO: check a lan
     end
 

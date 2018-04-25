@@ -2,6 +2,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include_concern :ComputeResource
   include_concern :Datacenter
   include_concern :Datastore
+  include_concern :DistributedVirtualSwitch
   include_concern :Folder
   include_concern :HostSystem
   include_concern :ResourcePool
@@ -79,10 +80,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.switches.manager_uuids << object._ref
     return if props.nil?
 
+    type = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.name
+
     switch_hash = {
       :uid_ems => object._ref,
+      :type    => type,
       :shared  => true,
     }
+
+    parse_dvs_config(switch_hash, props[:config])
+    parse_dvs_summary(switch_hash, props[:summary])
 
     persister.switches.build(switch_hash)
   end

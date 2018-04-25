@@ -175,7 +175,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :present         => true,
           :controller_type => 'ethernet',
           :address         => pnic.mac,
-          :switch          => persister.switches.lazy_find(pnic.key)
+          # TODO: :switch          => persister.switches.lazy_find(pnic.device)
         )
       end
 
@@ -221,7 +221,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_switches(host, props)
-      # TODO
       network = props.fetch_path(:config, :network)
       return if network.blank?
 
