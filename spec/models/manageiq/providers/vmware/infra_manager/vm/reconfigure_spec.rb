@@ -1,11 +1,18 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
+  let(:storage) { FactoryGirl.create(:storage_vmware) }
+  let(:host) do
+    FactoryGirl.create(:host_vmware_esx).tap do |host|
+      host.host_storages.create(:storage_id => storage.id, :host_id => host.id, :ems_ref => "datastore-1")
+    end
+  end
   let(:vm) do
     FactoryGirl.create(
       :vm_vmware,
       :name            => 'test_vm',
       :raw_power_state => 'poweredOff',
       :storage         => FactoryGirl.create(:storage, :name => 'storage'),
-      :hardware        => FactoryGirl.create(:hardware, :cpu4x2, :ram1GB, :virtual_hw_version => "07")
+      :hardware        => FactoryGirl.create(:hardware, :cpu4x2, :ram1GB, :virtual_hw_version => "07"),
+      :host            => host,
     )
   end
 
@@ -500,6 +507,96 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
           expect(new_ctrlr.xsiType).to eq('ParaVirtualSCSIController')
         end
       end
+    end
+  end
+
+  context "#connect_cdroms" do
+    let(:vim_obj) { double("MiqVimVm obj") }
+    let(:vmcs) { VimHash.new("VirtualMachineConfigSpec") }
+    let(:options) do
+      [
+        {
+          :device_name => "CD/DVD drive 1",
+          :filename    => "[NFS Share] ISO/centos.iso",
+          :storage_id  => storage.id,
+        }
+      ]
+    end
+    let(:subject) { vm.connect_cdroms(vim_obj, vmcs, hardware, options) }
+
+    context "with no virtual cdroms" do
+      let(:hardware) { {"device" => []} }
+
+      before do
+        expect(vim_obj).to receive(:getDeviceByLabel).and_return(nil)
+      end
+
+      it "raises an exception when the cdrom can't be found" do
+        expect { subject }.to raise_error('connect_cdrom_config_spec: no virtual device associated with: CD/DVD drive 1')
+      end
+    end
+
+    context "with one virtual cdrom" do
+      let(:hardware) { {"device" => [virtual_cdrom]} }
+      let(:virtual_cdrom) do
+        VimHash.new("VirtualCdrom").tap do |cdrom|
+          cdrom.backing       = VimHash.new("VirtualCdromRemoteAtapiBackingInfo")
+          cdrom.connectable   = VimHash.new("VirtualDeviceConnectInfo")
+          cdrom.controllerKey = 15_000
+          cdrom.deviceInfo    = VimHash.new("Description") do |description|
+            description.label = "CD/DVD drive 1"
+          end
+          cdrom.key           = 16_000
+          cdrom.unitNumber    = 0
+        end
+      end
+
+      before do
+        expect(vim_obj).to receive(:getDeviceByLabel).and_return(virtual_cdrom)
+      end
+
+      it "sets the device backing" do
+        subject
+
+        expect(vmcs.deviceChange.count).to eq(1)
+
+        device_change = vmcs.deviceChange.first.device
+        expect(device_change.backing.xsiType).to  eq("VirtualCdromIsoBackingInfo")
+        expect(device_change.backing.fileName).to eq(options.first[:filename])
+      end
+    end
+  end
+
+  context "#disconnect_cdroms" do
+    let(:vim_obj) { double("MiqVimVm obj") }
+    let(:vmcs) { VimHash.new("VirtualMachineConfigSpec") }
+    let(:hardware) { {"device" => [virtual_cdrom]} }
+    let(:options) { [{:device_name => "CD/DVD drive 1"}] }
+    let(:subject) { vm.disconnect_cdroms(vim_obj, vmcs, hardware, options) }
+    let(:virtual_cdrom) do
+      VimHash.new("VirtualCdrom").tap do |cdrom|
+        cdrom.backing       = VimHash.new("VirtualCdromIsoBackingInfo")
+        cdrom.connectable   = VimHash.new("VirtualDeviceConnectInfo")
+        cdrom.controllerKey = 15_000
+        cdrom.deviceInfo    = VimHash.new("Description") do |description|
+          description.label = "CD/DVD drive 1"
+        end
+        cdrom.key           = 16_000
+        cdrom.unitNumber    = 0
+      end
+    end
+
+    before do
+      expect(vim_obj).to receive(:getDeviceByLabel).and_return(virtual_cdrom)
+    end
+
+    it "sets the device backing" do
+      subject
+
+      expect(vmcs.deviceChange.count).to eq(1)
+      device_change = vmcs.deviceChange.first.device
+      expect(device_change.backing.xsiType).to eq("VirtualCdromRemoteAtapiBackingInfo")
+      expect(device_change.backing.deviceName).to eq("")
     end
   end
 end

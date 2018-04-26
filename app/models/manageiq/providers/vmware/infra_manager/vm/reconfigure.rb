@@ -90,15 +90,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
       set_spec_option(vmcs, :memoryMB, options[:vm_memory],      :to_i)
       set_spec_option(vmcs, :numCPUs,  options[:number_of_cpus], :to_i)
 
-      if options[:disk_remove] || options[:disk_add] || options[:disk_resize] || options[:network_adapter_add] || options[:network_adapter_remove]
+      if options_requiring_connection.any? { |key| options.key?(key) }
         with_provider_object do |vim_obj|
           hardware = vim_obj.getHardware
 
           remove_disks(vim_obj, vmcs, hardware, options[:disk_remove]) if options[:disk_remove]
           resize_disks(vim_obj, vmcs, hardware, options[:disk_resize]) if options[:disk_resize]
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
-          remove_network_adapters(vim_obj, vmcs, options[:network_adapter_remove]) if options[:network_adapter_remove]
-          add_network_adapters(vmcs, options[:network_adapter_add]) if options[:network_adapter_add]
+
+          remove_network_adapters(vim_obj, vmcs, hardware, options[:network_adapter_remove]) if options[:network_adapter_remove]
+          add_network_adapters(vim_obj, vmcs, hardware, options[:network_adapter_add])       if options[:network_adapter_add]
+
+          connect_cdroms(vim_obj, vmcs, hardware, options[:cdrom_connect])       if options[:cdrom_connect]
+          disconnect_cdroms(vim_obj, vmcs, hardware, options[:cdrom_disconnect]) if options[:cdrom_disconnect]
         end
       end
     end
@@ -151,16 +155,24 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-  def remove_network_adapters(vim_obj, vmcs, network_adapters)
+  def remove_network_adapters(vim_obj, vmcs, hardware, network_adapters)
     network_adapters.each do |n|
-      remove_network_adapter_config_spec(vim_obj, vmcs, n)
+      remove_network_adapter_config_spec(vim_obj, vmcs, hardware, n)
     end
   end
 
-  def add_network_adapters(vmcs, network_adapters)
+  def add_network_adapters(vim_obj, vmcs, hardware, network_adapters)
     network_adapters.each do |n|
-      add_network_adapter_config_spec(vmcs, n)
+      add_network_adapter_config_spec(vim_obj, vmcs, hardware, n)
     end
+  end
+
+  def connect_cdroms(vim_obj, vmcs, hardware, cdroms)
+    cdroms.each { |cdrom| connect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom) }
+  end
+
+  def disconnect_cdroms(vim_obj, vmcs, hardware, cdroms)
+    cdroms.each { |cdrom| disconnect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom) }
   end
 
   def scsi_controller_units(controller_key)
@@ -260,7 +272,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-  def add_network_adapter_config_spec(vmcs, options)
+  def add_network_adapter_config_spec(_vim, vmcs, _hardware, options)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
       vdcs.device = VimHash.new("VirtualVmxnet3") do |dev|
         dev.key = next_device_idx # negative integer as temporary key
@@ -332,16 +344,50 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
-  def remove_network_adapter_config_spec(vim_obj, vmcs, options)
+  def remove_network_adapter_config_spec(vim_obj, vmcs, hardware, options)
     raise "remove_network_adapter_config_spec: network_adapter name is required." unless options[:network][:name]
     network_adapter_label = options[:network][:name]
-    controller_key, key, unit_number = vim_obj.send(:getDeviceKeysByLabel, network_adapter_label)
+    controller_key, key, unit_number = vim_obj.send(:getDeviceKeysByLabel, network_adapter_label, hardware)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
       vdcs.device = VimHash.new("VirtualEthernetCard") do |dev|
         dev.key = key
         dev.controllerKey = controller_key
         dev.unitNumber =  unit_number
       end
+    end
+  end
+
+  def connect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom)
+    device = vim_obj.send(:getDeviceByLabel, cdrom[:device_name], hardware)
+    raise "connect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
+
+    datastore_ref = HostStorage.find_by(:storage_id => cdrom[:storage_id], :host_id => host.id).try(:ems_ref)
+    raise "connect_cdrom_config_spec: could not find datastore reference for storage ID [#{cdrom[:storage_id]}] and host ID [#{host.id}]" unless datastore_ref
+
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
+      device.backing = VimHash.new("VirtualCdromIsoBackingInfo") do |backing|
+        backing.datastore = datastore_ref
+        backing.fileName  = cdrom[:filename]
+      end
+
+      device.connectable.startConnected = true
+
+      vdcs.device = device
+    end
+  end
+
+  def disconnect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom)
+    device = vim_obj.send(:getDeviceByLabel, cdrom[:device_name], hardware)
+    raise "disconnect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
+
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
+      device.backing = VimHash.new("VirtualCdromRemoteAtapiBackingInfo") do |backing|
+        backing.deviceName = ""
+      end
+
+      device.connectable.startConnected = false
+
+      vdcs.device = device
     end
   end
 
@@ -374,5 +420,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def next_device_idx
     @new_device_idx ||= -100
     @new_device_idx -= 1
+  end
+
+  def options_requiring_connection
+    %i(disk_remove disk_add disk_resize network_adapter_add network_adapter_remove cdrom_connect cdrom_disconnect)
   end
 end
