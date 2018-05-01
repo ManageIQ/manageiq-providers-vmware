@@ -250,6 +250,7 @@ class MiqVimBrokerWorker::Runner < MiqWorker::Runner
     MiqVimBroker.setSelector(ManageIQ::Providers::Vmware::InfraManager::SelectorSpec::VIM_SELECTOR_SPEC)
     MiqVimBroker.maxWait      = worker_settings[:vim_broker_max_wait]
     MiqVimBroker.maxObjects   = worker_settings[:vim_broker_max_objects]
+    MiqVimBroker.loadLimit    = worker_settings[:vim_broker_load_limit].to_i_with_method
 
     _log.info("#{log_prefix} Creating broker server with [#{MiqVimBroker.cacheScope}]")
 
