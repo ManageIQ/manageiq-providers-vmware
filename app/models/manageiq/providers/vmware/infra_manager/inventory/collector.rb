@@ -52,16 +52,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def monitor_updates(vim, property_filter, version, persister)
     parser = parser_klass.new(persister)
 
-    loop do
+    begin
       update_set = wait_for_updates(vim, version)
       break if update_set.nil?
 
       version = update_set.version
-
       process_update_set(property_filter, update_set, parser)
-
-      break unless update_set.truncated
-    end
+    end while update_set.truncated
 
     save_inventory(persister)
 
