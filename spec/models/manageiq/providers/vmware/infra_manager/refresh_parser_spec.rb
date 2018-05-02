@@ -1,7 +1,7 @@
 describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser do
   context ".vm_inv_to_hardware_hash" do
     context "properly calculates cores and sockets" do
-      let(:inv) { {"summary" => {"config" => {"name" => "a"}}} }
+      let(:inv) { {"config" => {}, "summary" => {"config" => {"name" => "a"}}} }
 
       it("without total") { assert_cores_and_sockets_values(nil, nil, nil) }
 

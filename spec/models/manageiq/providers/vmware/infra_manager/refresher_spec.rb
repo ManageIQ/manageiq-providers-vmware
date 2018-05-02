@@ -37,6 +37,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     assert_specific_dvportgroup
     assert_specific_host
     assert_specific_vm
+    assert_specific_vm_missing_uuid
     assert_cpu_layout
     assert_relationship_tree
   end
@@ -799,6 +800,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :cpu_cores_per_socket => 2,
       :cpu_sockets          => 2,
     )
+  end
+
+  def assert_specific_vm_missing_uuid
+    v = ManageIQ::Providers::Vmware::InfraManager::Vm.find_by(:ems_ref => 'vm-12201')
+    expect(v.uid_ems).to eq('422f5d0e-8bd4-2767-d278-eec66f00a1a1')
   end
 
   def assert_relationship_tree

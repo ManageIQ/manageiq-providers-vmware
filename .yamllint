@@ -2,6 +2,7 @@
 ignore: |
   /vendor/**
   /spec/manageiq/**
+  /spec/tools/vim_data/**
   /spec/vcr_cassettes/**
 
 extends: relaxed
