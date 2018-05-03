@@ -136,14 +136,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_operating_system(host, props)
     parse_host_system_system_services(host, props)
     parse_host_system_hardware(host, props)
-    parse_host_system_switches(host, props)
+
+    switches = parse_host_system_switches(host, props)
+    parse_host_system_host_switches(host, switches)
+    parse_host_system_lans(switches, props)
   end
 
   def parse_network(object, kind, props)
   end
 
   def parse_distributed_virtual_portgroup(object, kind, props)
-    persister.lans.targeted_scope << object._ref
+    dvs    = props.fetch_path(:config, :distributedVirtualSwitch)
+    switch = persister.distributed_virtual_switches.lazy_find(dvs._ref) unless dvs.nil?
+
+    persister.lans.targeted_scope << {:switch => switch, :uid_ems => object._ref} unless switch.nil?
     return if kind == "leave"
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
@@ -157,9 +163,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       forged_transmits  = security_policy.forgedTransmits&.value
       mac_changes       = security_policy.macChanges&.value
     end
-
-    dvs    = props.fetch_path(:config, :distributedVirtualSwitch)
-    switch = persister.distributed_virtual_switches.lazy_find(dvs._ref) unless dvs.nil?
 
     lan_hash = {
       :uid_ems           => object._ref,

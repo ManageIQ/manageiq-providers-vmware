@@ -29,6 +29,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_specific_host
           assert_specific_cluster
           assert_specific_resource_pool
+          assert_specific_switch
+          assert_specific_lan
           assert_specific_dvswitch
           assert_specific_dvportgroup
           assert_specific_vm
@@ -182,7 +184,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.switches.count).to eq(36)
       expect(ems.host_virtual_switches.count).to eq(32)
       expect(ems.distributed_virtual_switches.count).to eq(4)
-      expect(ems.lans.count).to eq(12)
+      expect(ems.lans.count).to eq(76)
     end
 
     def assert_specific_datacenter
@@ -303,6 +305,46 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
+    def assert_specific_switch
+      host = ems.hosts.find_by(:ems_ref => "host-14")
+      switch = host.switches.find_by(:name => "vSwitch0")
+
+      expect(switch).not_to be_nil
+      expect(switch).to have_attributes(
+        :name              => "vSwitch0",
+        :ports             => 64,
+        :uid_ems           => "vSwitch0",
+        :allow_promiscuous => false,
+        :forged_transmits  => true,
+        :mac_changes       => true,
+        :mtu               => 1500,
+      )
+
+      expect(switch.lans.count).to eq(2)
+      expect(switch.hosts.count).to eq(1)
+    end
+
+    def assert_specific_lan
+      host = ems.hosts.find_by(:ems_ref => "host-14")
+      switch = host.switches.find_by(:name => "vSwitch0")
+      lan = switch.lans.find_by(:uid_ems => "VM Network")
+
+      expect(lan).not_to be_nil
+      expect(lan).to have_attributes(
+        :name                       => "VM Network",
+        :uid_ems                    => "VM Network",
+        :tag                        => "0",
+        :allow_promiscuous          => false,
+        :forged_transmits           => true,
+        :mac_changes                => true,
+        :computed_allow_promiscuous => false,
+        :computed_forged_transmits  => true,
+        :computed_mac_changes       => true,
+      )
+
+      expect(lan.switch.uid_ems).to eq("vSwitch0")
+    end
+
     def assert_specific_dvswitch
       dvs = ems.distributed_virtual_switches.find_by(:uid_ems => "dvs-8")
 
@@ -317,7 +359,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :forged_transmits  => false,
         :mac_changes       => false,
       )
+
       expect(dvs.lans.count).to eq(3)
+      expect(dvs.hosts.count).to eq(8)
     end
 
     def assert_specific_dvportgroup

@@ -76,6 +76,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       super(attributes.merge(extra_attributes))
     end
 
+    def lans(extra_attributes = {})
+      attributes = {:manager_ref => %i(switch uid_ems)}
+      super(attributes.merge(extra_attributes))
+    end
+
     def hosts(extra_attributes = {})
       attributes = {
         :attributes_blacklist => %i(parent),
