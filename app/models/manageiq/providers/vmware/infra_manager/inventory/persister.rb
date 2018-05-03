@@ -60,4 +60,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       :targeted       => targeted,
     }
   end
+
+  def vim_class_to_collection(managed_object)
+    case managed_object
+    when RbVmomi::VIM::ComputeResource
+      ems_clusters
+    when RbVmomi::VIM::Datacenter
+      ems_folders
+    when RbVmomi::VIM::HostSystem
+      hosts
+    when RbVmomi::VIM::Folder
+      ems_folders
+    when RbVmomi::VIM::ResourcePool
+      resource_pools
+    end
+  end
 end

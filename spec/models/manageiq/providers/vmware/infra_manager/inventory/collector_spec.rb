@@ -150,7 +150,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems => "datacenter-2",
       )
 
-      # TODO: check relationships
+      expect(datacenter.parent.ems_ref).to eq("group-d1")
+
+      expect(datacenter.children.count).to eq(4)
+      expect(datacenter.children.map(&:name)).to match_array(%w(host network datastore vm))
     end
 
     def assert_specific_folder
@@ -163,7 +166,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems => "group-d1",
       )
 
-      # TODO: check relationships
+      expect(folder.parent).to be_nil
+      expect(folder.children.count).to eq(4)
+      expect(folder.children.map(&:name)).to match_array(%w(DC0 DC1 DC2 DC3))
     end
 
     def assert_specific_host
@@ -214,6 +219,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :name                    => "DC0_C0",
         :uid_ems                 => "domain-c12",
       )
+
+      expect(cluster.children.count).to eq(1)
+      expect(cluster.children.first.ems_ref).to eq("resgroup-13")
     end
 
     def assert_specific_resource_pool
@@ -233,6 +241,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :memory_shares_level   => "normal",
         :name                  => "Resources",
         :vapp                  => false,
+      )
+
+      expect(resource_pool.parent.ems_ref).to eq("domain-c91")
+
+      expect(resource_pool.children.count).to eq(8)
+      expect(resource_pool.children.map(&:ems_ref)).to match_array(
+        %w(resgroup-106 resgroup-115 resgroup-124 resgroup-133 resgroup-142 resgroup-151 resgroup-160 resgroup-97)
       )
     end
 

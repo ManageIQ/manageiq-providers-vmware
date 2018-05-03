@@ -1,5 +1,9 @@
 module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::PropertyCollector
   EmsRefreshPropMap = {
+    :ManagedEntity               => [
+      "name",
+      "parent",
+    ],
     :VirtualMachine              => [
       "availableField",
       "config.cpuAffinity.affinitySet",
@@ -48,9 +52,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "summary.storage.committed",
     ],
     :ComputeResource             => [
-      "name",
       "host",
-      "parent",
       "resourcePool",
     ],
     :ClusterComputeResource      => [
@@ -64,13 +66,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "summary.effectiveCpu",
       "summary.effectiveMemory",
       "host",
-      "name",
-      "parent",
       "resourcePool",
     ],
     :ResourcePool                => [
-      "name",
-      "parent",
       "resourcePool",
       "summary.config.cpuAllocation.expandableReservation",
       "summary.config.cpuAllocation.limit",
@@ -85,16 +83,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "vm",
     ],
     :Folder                      => [
-      "childEntity",
-      "name",
-      "parent",
     ],
     :Datacenter                  => [
       "datastoreFolder",
       "hostFolder",
-      "name",
       "networkFolder",
-      "parent",
       "vmFolder",
     ],
     :HostSystem                  => [
@@ -115,7 +108,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "config.storageDevice.scsiTopology.adapter",
       "datastore",
       "hardware.systemInfo.otherIdentifyingInfo",
-      "name",
       "summary.host",
       "summary.config.name",
       "summary.config.product.build",
@@ -153,14 +145,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "summary.type",
       "summary.uncommitted",
       "summary.url",
-      "parent",
     ],
     :StoragePod                  => [
       "summary.capacity",
       "summary.freeSpace",
       "summary.name",
-      "childEntity",
-      "parent",
     ],
     :DistributedVirtualPortgroup => [
       "summary.name",
@@ -168,7 +157,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "config.defaultPortConfig",
       "config.distributedVirtualSwitch",
       "config.name",
-      "parent",
       "host",
       "tag",
     ],
@@ -180,7 +168,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "summary.uuid",
       "summary.host",
       "summary.hostMember",
-      "parent",
     ]
   }.freeze
 
