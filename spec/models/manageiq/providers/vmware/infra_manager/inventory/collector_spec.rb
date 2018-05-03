@@ -26,10 +26,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_table_counts
           assert_specific_datacenter
           assert_specific_folder
+          assert_specific_host
           assert_specific_cluster
           assert_specific_resource_pool
-          assert_specific_switch
-          assert_specific_lan
+          assert_specific_dvswitch
+          assert_specific_dvportgroup
           assert_specific_vm
         end
       end
@@ -62,9 +63,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "migrate a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
-        expect(vm.host.ems_ref).to eq("host-89")
+        expect(vm.host.ems_ref).to eq("host-93")
         run_targeted_refresh(targeted_update_set(vm_migrate_object_update))
-        expect(vm.reload.host.ems_ref).to eq("host-13")
+        expect(vm.reload.host.ems_ref).to eq("host-94")
       end
 
       def run_targeted_refresh(update_set)
@@ -107,7 +108,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           :kind            => "modify",
           :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
           :changeSet       => [
-            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-13")),
+            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-94")),
           ],
           :missingSet      => [],
         )
@@ -134,6 +135,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.resource_pools.count).to eq(72)
       expect(ems.storages.count).to eq(1)
       expect(ems.vms_and_templates.count).to eq(512)
+      expect(ems.switches.count).to eq(5)
+      expect(ems.lans.count).to eq(12)
     end
 
     def assert_specific_datacenter
@@ -163,37 +166,68 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       # TODO: check relationships
     end
 
+    def assert_specific_host
+      host = ems.hosts.find_by(:ems_ref => "host-14")
+
+      expect(host).not_to be_nil
+
+      switch = host.switches.find_by(:uid_ems => "vSwitch0")
+
+      expect(switch).not_to be_nil
+      expect(switch).to have_attributes(
+        :name              => "vSwitch0",
+        :uid_ems           => "vSwitch0",
+        :ports             => 64,
+        :allow_promiscuous => false,
+        :forged_transmits  => true,
+        :mac_changes       => true,
+        :mtu               => 1500,
+        :type              => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
+      )
+
+      vnic = host.hardware.guest_devices.find_by(:uid_ems => "vmnic0")
+      expect(vnic).not_to be_nil
+      expect(vnic).to have_attributes(
+        :device_name     => "vmnic0",
+        :device_type     => "ethernet",
+        :location        => "03:00.0",
+        :controller_type => "ethernet",
+        :uid_ems         => "vmnic0",
+        # TODO: :switch          => switch,
+      )
+    end
+
     def assert_specific_cluster
-      cluster = ems.ems_clusters.find_by(:ems_ref => "domain-c87")
+      cluster = ems.ems_clusters.find_by(:ems_ref => "domain-c12")
 
       expect(cluster).not_to be_nil
       expect(cluster).to have_attributes(
         :drs_automation_level    => "manual",
         :drs_enabled             => true,
         :drs_migration_threshold => 3,
-        :effective_cpu           => 47_992,
-        :effective_memory        => 68_698_505_216,
-        :ems_ref                 => "domain-c87",
+        :effective_cpu           => 47_984,
+        :effective_memory        => 62_780_342_272,
+        :ems_ref                 => "domain-c12",
         :ha_admit_control        => true,
         :ha_enabled              => false,
         :ha_max_failures         => 1,
-        :name                    => "DC0_C1",
-        :uid_ems                 => "domain-c87",
+        :name                    => "DC0_C0",
+        :uid_ems                 => "domain-c12",
       )
     end
 
     def assert_specific_resource_pool
-      resource_pool = ems.resource_pools.find_by(:ems_ref => "resgroup-88")
+      resource_pool = ems.resource_pools.find_by(:ems_ref => "resgroup-92")
 
       expect(resource_pool).not_to be_nil
       expect(resource_pool).to have_attributes(
-        :cpu_limit             => 47_992,
-        :cpu_reserve           => 47_992,
+        :cpu_limit             => 47_984,
+        :cpu_reserve           => 47_984,
         :cpu_reserve_expand    => true,
         :cpu_shares            => 4_000,
         :cpu_shares_level      => nil,
-        :memory_limit          => 65_516,
-        :memory_reserve        => 65_516,
+        :memory_limit          => 59_872,
+        :memory_reserve        => 59_872,
         :memory_reserve_expand => true,
         :memory_shares         => 163_840,
         :memory_shares_level   => "normal",
@@ -202,16 +236,41 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
-    def assert_specific_switch
-      # TODO: check a switch
+    def assert_specific_dvswitch
+      dvs = ems.switches.find_by(:uid_ems => "dvs-8")
+
+      expect(dvs).not_to be_nil
+      expect(dvs).to have_attributes(
+        :uid_ems           => "dvs-8",
+        :name              => "DC0_DVS",
+        :ports             => 288,
+        :switch_uuid       => "4e 1f 2b 50 19 20 4c f7-f3 11 41 90 35 76 52 7b",
+        :type              => "ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch",
+        :allow_promiscuous => false,
+        :forged_transmits  => false,
+        :mac_changes       => false,
+      )
+      expect(dvs.lans.count).to eq(3)
     end
 
-    def assert_specific_lan
-      # TODO: check a lan
+    def assert_specific_dvportgroup
+      lan = ems.lans.find_by(:uid_ems => "dvportgroup-10")
+
+      expect(lan).not_to be_nil
+      expect(lan).to have_attributes(
+        :name              => "DC0_DVPG0",
+        :uid_ems           => "dvportgroup-10",
+        :allow_promiscuous => false,
+        :forged_transmits  => false,
+        :mac_changes       => false,
+        :tag               => nil,
+      )
+
+      expect(lan.switch.uid_ems).to eq("dvs-8")
     end
 
     def assert_specific_vm
-      vm = ems.vms.find_by(:ems_ref => "vm-17")
+      vm = ems.vms.find_by(:ems_ref => "vm-21")
 
       expect(vm).to have_attributes(
         :connection_state      => "connected",
@@ -221,7 +280,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :cpu_shares            => 1000,
         :cpu_shares_level      => "normal",
         :cpu_affinity          => nil,
-        :ems_ref               => "vm-17",
+        :ems_ref               => "vm-21",
         :location              => "DC0_C0_RP0_VM1/DC0_C0_RP0_VM1.vmx",
         :memory_reserve        => 0,
         :memory_reserve_expand => false,
@@ -231,12 +290,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :name                  => "DC0_C0_RP0_VM1",
         :raw_power_state       => "poweredOn",
         :type                  => "ManageIQ::Providers::Vmware::InfraManager::Vm",
-        :uid_ems               => "423d8331-b640-489f-e3be-61d33a04a258",
+        :uid_ems               => "422bf630-7e83-c7dd-f226-56b41f3c50ef",
         :vendor                => "vmware",
       )
 
       expect(vm.hardware).to have_attributes(
-        :bios                 => "423d8331-b640-489f-e3be-61d33a04a258",
+        :bios                 => "422bf630-7e83-c7dd-f226-56b41f3c50ef",
         :cpu_cores_per_socket => 1,
         :cpu_sockets          => 1,
         :cpu_total_cores      => 1,
@@ -259,7 +318,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
 
       expect(vm.host).not_to be_nil
-      expect(vm.host.ems_ref).to eq("host-12")
+      expect(vm.host.ems_ref).to eq("host-16")
     end
   end
 end
