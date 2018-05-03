@@ -262,7 +262,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
                     else
                       backing.deviceName
                     end
-          guest_device_hash[:lan] = persister.lans.lazy_find(lan_uid)
+          # TODO: guest_device_hash[:lan] = persister.lans.lazy_find(lan_uid)
         end
 
         persister.guest_devices.build(guest_device_hash)
