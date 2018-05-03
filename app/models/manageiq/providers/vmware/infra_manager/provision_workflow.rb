@@ -133,10 +133,14 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
 
     # dvportgroups key-value transformed
     if options[:dvs]
-      dvlans = Hash.new { |h, k| h[k] = [] }
-      hosts.to_miq_a.each do |h|
-        h.lans.each { |l| dvlans[l.name] << l.switch.name if l.switch.shared? }
-      end
+      dvlans      = Hash.new { |h, k| h[k] = [] }
+      shared_lans = Lan.distinct.select(:id, :switch_id, :name)
+                       .includes(:switch)
+                       .joins(:switch => :host_switches)
+                       .where(:host_switches => {:host_id => hosts.map(&:id)})
+                       .merge(Switch.shareable)
+
+      shared_lans.each { |l| dvlans[l.name] << l.switch.name }
       dvlans.each do |l, v|
         vlans["dvs_#{l}"] = "#{l} (#{v.sort.uniq.join('/')})"
       end
