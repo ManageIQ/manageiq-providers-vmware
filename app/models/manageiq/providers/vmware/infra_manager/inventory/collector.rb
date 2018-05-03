@@ -30,7 +30,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     until exit_requested
       persister = targeted_persister_klass.new(ems)
-      version = monitor_updates(vim, property_filter, version, persister)
+      parser    = parser_klass.new(persister)
+
+      version = monitor_updates(vim, property_filter, version, persister, parser)
     end
 
     _log.info("Monitor updates thread exited")
@@ -46,15 +48,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def initial_refresh(vim, property_filter)
-    monitor_updates(vim, property_filter, "", full_persister_klass.new(ems))
+    persister = full_persister_klass.new(ems)
+    parser    = parser_klass.new(persister)
+
+    monitor_updates(vim, property_filter, "", persister, parser)
   end
 
-  def monitor_updates(vim, property_filter, version, persister)
-    parser = parser_klass.new(persister)
-
+  def monitor_updates(vim, property_filter, version, persister, parser)
     begin
       update_set = wait_for_updates(vim, version)
-      break if update_set.nil?
+      return version if update_set.nil?
 
       version = update_set.version
       process_update_set(property_filter, update_set, parser)
