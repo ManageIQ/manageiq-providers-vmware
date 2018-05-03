@@ -165,6 +165,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     :DistributedVirtualPortgroup => [
       "summary.name",
       "config.key",
+      "config.defaultPortConfig",
       "config.distributedVirtualSwitch",
       "config.name",
       "parent",

@@ -91,7 +91,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_dvs_config(switch_hash, props[:config])
     parse_dvs_summary(switch_hash, props[:summary])
 
-    persister.switches.build(switch_hash)
+    persister_switch = persister.switches.build(switch_hash)
+
+    parser_dvs_hosts(persister_switch, props)
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
@@ -143,7 +145,37 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_network(object, props)
   end
-  alias parse_distributed_virtual_portgroup parse_network
+
+  def parse_distributed_virtual_portgroup(object, props)
+    persister.lans.manager_uuids << object._ref
+    return if props.nil?
+
+    name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
+    name = CGI.unescape(name) unless name.nil?
+
+    default_port_config = props.fetch_path(:config, :defaultPortConfig)
+    security_policy = default_port_config&.securityPolicy
+
+    if security_policy
+      allow_promiscuous = security_policy.allowPromiscuous&.value
+      forged_transmits  = security_policy.forgedTransmits&.value
+      mac_changes       = security_policy.macChanges&.value
+    end
+
+    dvs    = props.fetch_path(:config, :distributedVirtualSwitch)
+    switch = persister.switches.lazy_find(dvs._ref) unless dvs.nil?
+
+    lan_hash = {
+      :uid_ems           => object._ref,
+      :name              => name,
+      :switch            => switch,
+      :allow_promiscuous => allow_promiscuous,
+      :forged_transmits  => forged_transmits,
+      :mac_changes       => mac_changes,
+    }
+
+    persister.lans.build(lan_hash)
+  end
 
   def parse_resource_pool(object, props)
     persister.resource_pools.manager_uuids << object._ref

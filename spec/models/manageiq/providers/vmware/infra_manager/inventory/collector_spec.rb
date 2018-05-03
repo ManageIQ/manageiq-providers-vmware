@@ -135,6 +135,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.resource_pools.count).to eq(72)
       expect(ems.storages.count).to eq(1)
       expect(ems.vms_and_templates.count).to eq(512)
+      expect(ems.switches.count).to eq(5)
+      expect(ems.lans.count).to eq(12)
     end
 
     def assert_specific_datacenter
@@ -235,7 +237,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def assert_specific_dvswitch
-      dvs = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.find_by(:uid_ems => "dvs-8")
+      dvs = ems.switches.find_by(:uid_ems => "dvs-8")
 
       expect(dvs).not_to be_nil
       expect(dvs).to have_attributes(
@@ -248,10 +250,23 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :forged_transmits  => false,
         :mac_changes       => false,
       )
+      expect(dvs.lans.count).to eq(3)
     end
 
     def assert_specific_dvportgroup
-      # TODO: check a lan
+      lan = ems.lans.find_by(:uid_ems => "dvportgroup-10")
+
+      expect(lan).not_to be_nil
+      expect(lan).to have_attributes(
+        :name              => "DC0_DVPG0",
+        :uid_ems           => "dvportgroup-10",
+        :allow_promiscuous => false,
+        :forged_transmits  => false,
+        :mac_changes       => false,
+        :tag               => nil,
+      )
+
+      expect(lan.switch.uid_ems).to eq("dvs-8")
     end
 
     def assert_specific_vm
