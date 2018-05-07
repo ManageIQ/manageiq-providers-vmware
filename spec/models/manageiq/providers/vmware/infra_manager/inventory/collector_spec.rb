@@ -176,6 +176,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(host).not_to be_nil
 
+      expect(host.parent).not_to be_nil
+      expect(host.parent.ems_ref).to eq("domain-c12")
+
       switch = host.switches.find_by(:uid_ems => "vSwitch0")
 
       expect(switch).not_to be_nil
@@ -220,8 +223,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems                 => "domain-c12",
       )
 
-      expect(cluster.children.count).to eq(1)
-      expect(cluster.children.first.ems_ref).to eq("resgroup-13")
+      expect(cluster.parent).not_to be_nil
+      expect(cluster.parent.ems_ref).to eq("group-h4")
+
+      expect(cluster.children.count).to eq(5)
+      expect(cluster.default_resource_pool.ems_ref).to eq("resgroup-13")
     end
 
     def assert_specific_resource_pool
@@ -332,8 +338,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :start_connected => true,
       )
 
+      # TODO: expect(vm.ems_cluster).not_to be_nil
+
       expect(vm.host).not_to be_nil
       expect(vm.host.ems_ref).to eq("host-16")
+
+      expect(vm.parent_blue_folder).not_to be_nil
+      expect(vm.parent_blue_folder.ems_ref).to eq("group-v3")
+
+      # TODO: expect(vm.parent_yellow_folder).not_to be_nil
+      # TODO: expect(vm.parent_resource_pool).not_to be_nil
     end
   end
 end

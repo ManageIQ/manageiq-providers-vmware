@@ -17,6 +17,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes = {
         :model_class    => ::VmOrTemplate,
         :association    => :vms_and_templates,
+        :attributes_blacklist => %i(parent),
         :builder_params => {
           :ems_id => ->(persister) { persister.manager.id },
         },
