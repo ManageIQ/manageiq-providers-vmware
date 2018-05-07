@@ -15,10 +15,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
 
     def vms_and_templates(extra_attributes = {})
       attributes = {
-        :model_class    => ::VmOrTemplate,
-        :association    => :vms_and_templates,
-        :attributes_blacklist => %i(parent),
-        :builder_params => {
+        :model_class          => ::VmOrTemplate,
+        :association          => :vms_and_templates,
+        :attributes_blacklist => %i(parent resource_pool),
+        :builder_params       => {
           :ems_id => ->(persister) { persister.manager.id },
         },
       }
@@ -61,6 +61,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
     def guest_devices(extra_attributes = {})
       attributes = {:parent_inventory_collections => [:vms_and_templates]}
       super(attributes.merge(extra_attributes))
+    end
+
+    def parent_blue_folders(extra_attributes = {})
+      relationships(:parent, :ems_metadata, :parent_blue_folders, extra_attributes)
+    end
+
+    def vm_resource_pools(extra_attributes = {})
+      relationships(:resource_pool, :ems_metadata, :vm_resource_pools, extra_attributes)
     end
   end
 end

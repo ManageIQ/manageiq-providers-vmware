@@ -28,6 +28,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "resourceConfig.memoryAllocation.reservation",
       "resourceConfig.memoryAllocation.shares.level",
       "resourceConfig.memoryAllocation.shares.shares",
+      "resourcePool",
       "snapshot",
       "summary.vm",
       "summary.config.annotation",

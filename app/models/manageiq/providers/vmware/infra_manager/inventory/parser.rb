@@ -30,7 +30,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref => object._ref,
       :uid_ems => object._ref,
       :name    => CGI.unescape(props[:name]),
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_compute_resource_summary(cluster_hash, props)
@@ -51,7 +51,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :type    => "Datacenter",
       :name    => CGI.unescape(props[:name]),
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     persister.ems_folders.build(dc_hash)
@@ -63,7 +63,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     storage_hash = {
       :ems_ref => object._ref,
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_datastore_summary(storage_hash, props)
@@ -84,7 +84,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :type    => type,
       :shared  => true,
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_dvs_config(switch_hash, props[:config])
@@ -105,7 +105,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :type    => "EmsFolder",
       :name    => CGI.unescape(props[:name]),
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     persister.ems_folders.build(folder_hash)
@@ -117,7 +117,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     host_hash = {
       :ems_ref => object._ref,
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_host_system_config(host_hash, props)
@@ -184,7 +184,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :name    => CGI.unescape(props[:name]),
       :vapp    => object.kind_of?(RbVmomi::VIM::VirtualApp),
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_resource_pool_memory_allocation(rp_hash, props)
@@ -206,7 +206,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :type    => "StorageCluster",
       :name    => CGI.unescape(name),
-      :parent  => parse_parent(props[:parent]),
+      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     persister.ems_folders.build(pod_hash)
@@ -217,9 +217,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     return if props.nil?
 
     vm_hash = {
-      :ems_ref => object._ref,
-      :vendor  => "vmware",
-      :parent  => parse_parent(props[:parent]),
+      :ems_ref       => object._ref,
+      :vendor        => "vmware",
+      :parent        => lazy_find_managed_object(props[:parent]),
+      :resource_pool => lazy_find_managed_object(props[:resourcePool]),
     }
 
     parse_virtual_machine_config(vm_hash, props)
@@ -234,7 +235,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_virtual_machine_snapshots(vm, props)
   end
 
-  def parse_parent(managed_object)
+  def lazy_find_managed_object(managed_object)
     return if managed_object.nil?
 
     parent_collection = persister.vim_class_to_collection(managed_object)

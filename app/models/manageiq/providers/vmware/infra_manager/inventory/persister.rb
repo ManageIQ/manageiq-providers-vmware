@@ -10,8 +10,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
     end
 
     add_inventory_collection(
-      default_inventory_collections.relationships(
-        :parent, :ems_metadata, :relationships, :dependency_attributes => dependency_attributes
+      default_inventory_collections.parent_blue_folders(:dependency_attributes => dependency_attributes)
+    )
+
+    add_inventory_collection(
+      default_inventory_collections.vm_resource_pools(
+        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]}
       )
     )
   end
