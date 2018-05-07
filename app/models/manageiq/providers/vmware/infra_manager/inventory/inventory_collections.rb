@@ -64,11 +64,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
     end
 
     def parent_blue_folders(extra_attributes = {})
-      relationships(:parent, :ems_metadata, :parent_blue_folders, extra_attributes)
+      relationships(:parent, :ems_metadata, nil, :parent_blue_folders, extra_attributes)
+    end
+
+    def vm_parent_blue_folders(extra_attributes = {})
+      relationships(:parent, :ems_metadata, "EmsFolder", :vm_parent_blue_folders, extra_attributes)
     end
 
     def vm_resource_pools(extra_attributes = {})
-      relationships(:resource_pool, :ems_metadata, :vm_resource_pools, extra_attributes)
+      relationships(:resource_pool, :ems_metadata, "ResourcePool", :vm_resource_pools, extra_attributes)
     end
   end
 end

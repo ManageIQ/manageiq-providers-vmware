@@ -4,7 +4,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       default_inventory_collections, inventory_collection_names, inventory_collection_options
     )
 
-    relationship_collections = %i(ems_clusters ems_folders hosts resource_pools storages vms_and_templates)
+    relationship_collections = %i(ems_clusters ems_folders hosts resource_pools storages)
     dependency_attributes = relationship_collections.each_with_object({}) do |collection_key, obj|
       obj[collection_key] = [collections[collection_key]]
     end
@@ -14,8 +14,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
     )
 
     add_inventory_collection(
+      default_inventory_collections.vm_parent_blue_folders(
+        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]},
+      )
+    )
+
+    add_inventory_collection(
       default_inventory_collections.vm_resource_pools(
-        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]}
+        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]},
       )
     )
   end
