@@ -341,7 +341,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :start_connected => true,
       )
 
-      # TODO: expect(vm.ems_cluster).not_to be_nil
+      expect(vm.ems_cluster).not_to be_nil
+      expect(vm.ems_cluster.ems_ref).to eq("domain-c12")
 
       expect(vm.host).not_to be_nil
       expect(vm.host.ems_ref).to eq("host-17")
@@ -349,8 +350,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(vm.parent_blue_folder).not_to be_nil
       expect(vm.parent_blue_folder.ems_ref).to eq("group-v3")
 
-      # TODO: expect(vm.parent_yellow_folder).not_to be_nil
+      expect(vm.parent_yellow_folder).not_to be_nil
+      expect(vm.parent_yellow_folder.ems_ref).to eq("group-d1")
+
       expect(vm.parent_resource_pool).not_to be_nil
+      expect(vm.parent_resource_pool.ems_ref).to eq("resgroup-19")
     end
   end
 end
