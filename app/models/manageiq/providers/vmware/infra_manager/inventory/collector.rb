@@ -163,7 +163,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def process_object_update_leave(obj)
-    inventory_cache.delete_object(obj.class.wsdl_name, obj._ref)
+    inventory_cache.delete(obj)
   end
 
   def save_inventory(persister)
