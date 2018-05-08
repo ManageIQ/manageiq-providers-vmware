@@ -6,10 +6,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include_concern :ResourcePool
   include_concern :VirtualMachine
 
-  attr_reader :persister
-  private     :persister
+  attr_reader :cache, :persister
+  private     :cache, :persister
 
-  def initialize(persister)
+  def initialize(cache, persister)
+    @cache     = cache
     @persister = persister
   end
 

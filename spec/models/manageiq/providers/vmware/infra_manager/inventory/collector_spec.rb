@@ -40,7 +40,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
       let(:persister)       { ems.class::Inventory::Persister::Targeted.new(ems) }
-      let(:parser)          { ems.class::Inventory::Parser.new(persister) }
+      let(:parser)          { ems.class::Inventory::Parser.new(collector.send(:inventory_cache), persister) }
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory

@@ -30,7 +30,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     until exit_requested
       persister = targeted_persister_klass.new(ems)
-      parser    = parser_klass.new(persister)
+      parser    = parser_klass.new(inventory_cache, persister)
 
       version = monitor_updates(vim, property_filter, version, persister, parser)
     end
@@ -49,7 +49,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def initial_refresh(vim, property_filter)
     persister = full_persister_klass.new(ems)
-    parser    = parser_klass.new(persister)
+    parser    = parser_klass.new(inventory_cache, persister)
 
     monitor_updates(vim, property_filter, "", persister, parser)
   end

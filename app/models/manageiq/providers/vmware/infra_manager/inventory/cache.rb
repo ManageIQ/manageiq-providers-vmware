@@ -19,6 +19,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
     props
   end
 
+  def find(obj)
+    data[obj.class.wsdl_name][obj._ref] unless obj.nil?
+  end
+
   delegate :[], :keys, :to => :data
 
   private
