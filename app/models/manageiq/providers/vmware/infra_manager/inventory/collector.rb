@@ -55,13 +55,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def monitor_updates(vim, property_filter, version, persister, parser)
+    updated_objects = []
+
     begin
       update_set = wait_for_updates(vim, version)
       return version if update_set.nil?
 
       version = update_set.version
-      process_update_set(property_filter, update_set, parser)
+      updated_objects.concat(process_update_set(property_filter, update_set))
     end while update_set.truncated
+
+    updated_objects.each do |managed_object, props|
+      parser.parse(managed_object, props)
+    end
 
     save_inventory(persister)
 
@@ -110,7 +116,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     vim.propertyCollector.WaitForUpdatesEx(:version => version, :options => options)
   end
 
-  def process_update_set(property_filter, update_set, parser)
+  def process_update_set(property_filter, update_set)
     property_filter_update = update_set.filterSet.to_a.detect { |update| update.filter == property_filter }
     return if property_filter_update.nil?
 
@@ -119,11 +125,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("Processing #{object_update_set.count} updates...")
 
-    process_object_update_set(object_update_set).each do |managed_object, props|
-      parser.parse(managed_object, props)
-    end
+    updates = process_object_update_set(object_update_set)
 
     _log.info("Processing #{object_update_set.count} updates...Complete")
+
+    updates
   end
 
   def process_object_update_set(object_update_set)

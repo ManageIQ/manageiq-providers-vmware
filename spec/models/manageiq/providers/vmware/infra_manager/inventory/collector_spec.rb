@@ -69,7 +69,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def run_targeted_refresh(update_set)
-        collector.send(:process_update_set, property_filter, update_set, parser)
+        collector.send(:process_update_set, property_filter, update_set).each do |obj, props|
+          parser.parse(obj, props)
+        end
+
         collector.send(:save_inventory, persister)
       end
 
