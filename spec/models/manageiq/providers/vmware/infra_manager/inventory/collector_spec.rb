@@ -432,6 +432,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :virtual_hw_version   => "07",
       )
 
+      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:ab:a2:e2")
+      expect(nic).to have_attributes(
+        :device_name     => "Network adapter 1",
+        :device_type     => "ethernet",
+        :controller_type => "ethernet",
+        :address         => "00:50:56:ab:a2:e2",
+        :uid_ems         => "00:50:56:ab:a2:e2",
+      )
+
+      expect(nic.lan).not_to be_nil
+
       expect(vm.disks.count).to eq(1)
 
       disk = vm.disks.first
