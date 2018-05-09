@@ -28,13 +28,5 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       cluster_hash[:drs_automation_level]    = drs_config[:defaultVmBehavior]
       cluster_hash[:drs_migration_threshold] = drs_config[:vmotionRate]
     end
-
-    def parse_compute_resource_children(cluster_hash, props)
-      cluster_hash[:ems_children] = {:rp => []}
-      rp = props[:resourcePool]
-      unless rp.nil?
-        cluster_hash[:ems_children][:rp] << persister.resource_pools.lazy_find(rp._ref)
-      end
-    end
   end
 end

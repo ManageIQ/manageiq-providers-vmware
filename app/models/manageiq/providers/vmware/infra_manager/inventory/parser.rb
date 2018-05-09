@@ -36,7 +36,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_compute_resource_summary(cluster_hash, props)
     parse_compute_resource_das_config(cluster_hash, props)
     parse_compute_resource_drs_config(cluster_hash, props)
-    parse_compute_resource_children(cluster_hash, props)
 
     persister.ems_clusters.build(cluster_hash)
   end
@@ -84,7 +83,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :uid_ems => object._ref,
       :type    => type,
       :shared  => true,
-      :parent  => lazy_find_managed_object(props[:parent]),
     }
 
     parse_dvs_config(switch_hash, props[:config])
@@ -115,9 +113,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.hosts.manager_uuids << object._ref
     return if props.nil?
 
+    cluster = lazy_find_managed_object(props[:parent])
     host_hash = {
-      :ems_ref => object._ref,
-      :parent  => lazy_find_managed_object(props[:parent]),
+      :ems_cluster => cluster,
+      :ems_ref     => object._ref,
+      :parent      => cluster,
     }
 
     parse_host_system_config(host_hash, props)
@@ -189,7 +189,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     parse_resource_pool_memory_allocation(rp_hash, props)
     parse_resource_pool_cpu_allocation(rp_hash, props)
-    parse_resource_pool_children(rp_hash, props)
 
     persister.resource_pools.build(rp_hash)
   end
