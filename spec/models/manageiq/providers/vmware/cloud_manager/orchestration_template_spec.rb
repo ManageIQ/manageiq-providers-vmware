@@ -53,6 +53,98 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
       end
     end
 
+    context 'orchestration template tabbed' do
+      let(:tabs) { orchestration_template.tabs }
+
+      it 'creates 3 separate tab data hashes' do
+        expect(tabs).not_to be_nil
+        expect(tabs.size).to eq(3)
+
+        expect(tabs[0]).not_to be_nil
+        expect(tabs[1]).not_to be_nil
+        expect(tabs[2]).not_to be_nil
+      end
+
+      it 'creates Basic information tab' do
+        expect(tabs[0][:title]).to eq('Basic Information')
+        expect(tabs[0][:stack_group]).not_to be_nil
+        expect(tabs[0][:param_groups]).not_to be_nil
+      end
+
+      it 'creates correct vapp_parameter_group' do
+        assert_vapp_parameter_group(tabs[0][:param_groups])
+      end
+
+      it 'creates correct deployment options' do
+        options = tabs[0][:stack_group]
+        assert_deployment_option(options[0], 'tenant_name', :OrchestrationParameterAllowedDynamic)
+        assert_deployment_option(options[1], 'stack_name', :OrchestrationParameterPattern)
+        assert_deployment_option(options[2], 'availability_zone', :OrchestrationParameterAllowedDynamic)
+      end
+
+      it 'creates Networks tab' do
+        expect(tabs[1][:title]).to eq('vApp Networks')
+        expect(tabs[1][:stack_group]).to be_nil
+        expect(tabs[1][:param_groups]).not_to be_nil
+      end
+
+      it 'creates correct vapp_net_param_groups' do
+        tabs[1][:param_groups].each_with_index do |param_group, vapp_net_idx|
+          expect(param_group).not_to be_nil
+
+          assert_parameter_group(
+            param_group,
+            'parent'     => {
+              :name      => "parent-#{vapp_net_idx}",
+              :label     => 'Parent Network',
+              :data_type => 'string',
+              :required  => nil
+            },
+            'fence_mode' => {
+              :name      => "fence_mode-#{vapp_net_idx}",
+              :label     => 'Fence Mode',
+              :data_type => 'string',
+              :required  => true
+            },
+          )
+        end
+      end
+
+      it 'creates Instances tab' do
+        expect(tabs[2][:title]).to eq("Instances")
+        expect(tabs[2][:stack_group]).to be_nil
+        expect(tabs[2][:param_groups]).not_to be_nil
+      end
+
+      it 'creates correct vm_param_groups' do
+        tabs[2][:param_groups].each_with_index do |param_group, vm_index|
+          expect(param_group).not_to be_nil
+
+          assert_parameter_group(
+            param_group,
+            'instance_name'    => {
+              :name      => "instance_name-#{vm_index}",
+              :label     => 'Instance name',
+              :data_type => 'string',
+              :required  => true
+            },
+            'hostname'         => {
+              :name      => "hostname-#{vm_index}",
+              :label     => 'Instance Hostname',
+              :data_type => 'string',
+              :required  => true
+            },
+            'cores_per_socket' => {
+              :name      => "cores_per_socket-#{vm_index}",
+              :label     => 'Cores per socket',
+              :data_type => 'integer',
+              :required  => true
+            }
+          )
+        end
+      end
+    end
+
     context "orchestration template" do
       let(:parameter_groups) { orchestration_template.parameter_groups }
 
@@ -96,7 +188,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
       ].each_with_index do |args, vm_idx|
         it "creates specific vm parameter group - #{args[:vm_name]} - for given template" do
           # Group exists.
-          vm_group = parameter_groups.detect { |g| g.label == "VM Instance Parameters for '#{args[:vm_name]}'" }
+          vm_group = parameter_groups.detect { |g| g.label == args[:vm_name] }
           expect(vm_group).not_to be_nil
           # Group has expected parameters.
           assert_parameter_group(
@@ -182,7 +274,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
       ].each_with_index do |args, vapp_net_idx|
         it "creates specific vapp network parameter group - #{args[:vapp_net_name]} - for given template" do
           # Group exists.
-          vapp_net_group = parameter_groups.detect { |g| g.label == "vApp Network Parameters for '#{args[:vapp_net_name]}'" }
+          vapp_net_group = parameter_groups.detect { |g| g.label == args[:vapp_net_name] }
           expect(vapp_net_group).not_to be_nil
           # Group has expected parameters.
           assert_parameter_group(
