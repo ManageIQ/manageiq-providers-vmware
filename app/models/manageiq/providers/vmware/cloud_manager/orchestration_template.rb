@@ -1,36 +1,53 @@
 class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < OrchestrationTemplate
   def parameter_groups
-    # Define vApp's general purpose parameters.
-    groups = [OrchestrationTemplate::OrchestrationParameterGroup.new(
-      :label      => 'vApp Parameters',
-      :parameters => vapp_parameters,
-    )]
-
     template = ManageIQ::Providers::Vmware::CloudManager::OvfTemplate.new(content)
-    groups + vapp_net_param_groups(template) + vm_param_groups(template)
+    vapp_parameter_group + vapp_net_param_groups(template) + vm_param_groups(template)
   end
 
-  def vapp_parameters
+  def tabs
+    template = ManageIQ::Providers::Vmware::CloudManager::OvfTemplate.new(content)
+
     [
-      OrchestrationTemplate::OrchestrationParameter.new(
-        :name          => 'deploy',
-        :label         => 'Deploy vApp',
-        :data_type     => 'boolean',
-        :default_value => true,
-        :constraints   => [
-          OrchestrationTemplate::OrchestrationParameterBoolean.new
-        ]
-      ),
-      OrchestrationTemplate::OrchestrationParameter.new(
-        :name          => 'powerOn',
-        :label         => 'Power On vApp',
-        :data_type     => 'boolean',
-        :default_value => false,
-        :constraints   => [
-          OrchestrationTemplate::OrchestrationParameterBoolean.new
-        ]
-      )
+      {
+        :title        => "Basic Information",
+        :stack_group  => deployment_options,
+        :param_groups => vapp_parameter_group
+      },
+      {
+        :title        => "vApp Networks",
+        :param_groups => vapp_net_param_groups(template)
+      },
+      {
+        :title        => "Instances",
+        :param_groups => vm_param_groups(template)
+      }
     ]
+  end
+
+  def vapp_parameter_group
+    [OrchestrationTemplate::OrchestrationParameterGroup.new(
+      :label      => 'vApp Parameters',
+      :parameters => [
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => 'deploy',
+          :label         => 'Deploy vApp',
+          :data_type     => 'boolean',
+          :default_value => true,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterBoolean.new
+          ]
+        ),
+        OrchestrationTemplate::OrchestrationParameter.new(
+          :name          => 'powerOn',
+          :label         => 'Power On vApp',
+          :data_type     => 'boolean',
+          :default_value => false,
+          :constraints   => [
+            OrchestrationTemplate::OrchestrationParameterBoolean.new
+          ]
+        )
+      ],
+    )]
   end
 
   def vm_param_groups(template)
@@ -182,7 +199,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
       end
 
       OrchestrationTemplate::OrchestrationParameterGroup.new(
-        :label      => "VM Instance Parameters for '#{vm.name}'",
+        :label      => vm.name.to_s,
         :parameters => vm_parameters
       )
     end
@@ -251,7 +268,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
       end
 
       OrchestrationTemplate::OrchestrationParameterGroup.new(
-        :label      => "vApp Network Parameters for '#{vapp_net.name}'",
+        :label      => vapp_net.name.to_s,
         :parameters => vapp_net_parameters
       )
     end
@@ -306,7 +323,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
 
   def ip_constraint
     OrchestrationTemplate::OrchestrationParameterPattern.new(
-      :pattern     => '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$',
+      :pattern     => '(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)?',
       :description => 'IP address'
     )
   end
