@@ -14,18 +14,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     @persister = persister
   end
 
-  def parse(object, props)
+  def parse(object, kind, props)
     object_type = object.class.wsdl_name
     parse_method = "parse_#{object_type.underscore}"
 
     raise "Missing parser for #{object_type}" unless respond_to?(parse_method)
 
-    send(parse_method, object, props)
+    send(parse_method, object, kind, props)
   end
 
-  def parse_compute_resource(object, props)
+  def parse_compute_resource(object, kind, props)
     persister.ems_clusters.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     cluster_hash = {
       :ems_ref => object._ref,
@@ -42,9 +42,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_cluster_compute_resource parse_compute_resource
 
-  def parse_datacenter(object, props)
+  def parse_datacenter(object, kind, props)
     persister.ems_folders.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     dc_hash = {
       :ems_ref => object._ref,
@@ -57,9 +57,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(dc_hash)
   end
 
-  def parse_datastore(object, props)
+  def parse_datastore(object, kind, props)
     persister.storages.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     storage_hash = {
       :ems_ref => object._ref,
@@ -74,9 +74,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_datastore_host_mount(storage, object._ref, props)
   end
 
-  def parse_distributed_virtual_switch(object, props)
+  def parse_distributed_virtual_switch(object, kind, props)
     persister.switches.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     type = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.name
 
@@ -95,9 +95,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
-  def parse_folder(object, props)
+  def parse_folder(object, kind, props)
     persister.ems_folders.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     folder_hash = {
       :ems_ref => object._ref,
@@ -110,9 +110,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(folder_hash)
   end
 
-  def parse_host_system(object, props)
+  def parse_host_system(object, kind, props)
     persister.hosts.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     cluster = lazy_find_managed_object(props[:parent])
     host_hash = {
@@ -142,12 +142,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_switches(host, props)
   end
 
-  def parse_network(object, props)
+  def parse_network(object, kind, props)
   end
 
-  def parse_distributed_virtual_portgroup(object, props)
+  def parse_distributed_virtual_portgroup(object, kind, props)
     persister.lans.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
     name = CGI.unescape(name) unless name.nil?
@@ -176,9 +176,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.lans.build(lan_hash)
   end
 
-  def parse_resource_pool(object, props)
+  def parse_resource_pool(object, kind, props)
     persister.resource_pools.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     rp_hash = {
       :ems_ref => object._ref,
@@ -195,9 +195,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_virtual_app parse_resource_pool
 
-  def parse_storage_pod(object, props)
+  def parse_storage_pod(object, kind, props)
     persister.ems_folders.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     name = props.fetch_path(:summary, :name)
 
@@ -212,9 +212,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.build(pod_hash)
   end
 
-  def parse_virtual_machine(object, props)
+  def parse_virtual_machine(object, kind, props)
     persister.vms_and_templates.manager_uuids << object._ref
-    return if props.nil?
+    return if kind == "leave"
 
     vm_hash = {
       :ems_ref       => object._ref,

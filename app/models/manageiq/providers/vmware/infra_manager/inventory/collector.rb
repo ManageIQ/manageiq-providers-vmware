@@ -65,8 +65,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       updated_objects.concat(process_update_set(property_filter, update_set))
     end while update_set.truncated
 
-    updated_objects.each do |managed_object, props|
-      parser.parse(managed_object, props)
+    updated_objects.each do |managed_object, update_kind, props|
+      parser.parse(managed_object, update_kind, props)
     end
 
     save_inventory(persister)
@@ -151,7 +151,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         process_object_update_leave(managed_object)
       end
 
-    return managed_object, props
+    return managed_object, object_update.kind, props
   end
 
   def process_object_update_enter(obj, change_set, _missing_set = [])
