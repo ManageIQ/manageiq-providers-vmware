@@ -40,7 +40,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
       let(:persister)       { ems.class::Inventory::Persister::Targeted.new(ems) }
-      let(:parser)          { ems.class::Inventory::Parser.new(persister) }
+      let(:parser)          { ems.class::Inventory::Parser.new(collector.send(:inventory_cache), persister) }
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory
@@ -69,7 +69,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def run_targeted_refresh(update_set)
-        collector.send(:process_update_set, property_filter, update_set, parser)
+        collector.send(:process_update_set, property_filter, update_set).each do |obj, props|
+          parser.parse(obj, props)
+        end
+
         collector.send(:save_inventory, persister)
       end
 
@@ -338,7 +341,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :start_connected => true,
       )
 
-      # TODO: expect(vm.ems_cluster).not_to be_nil
+      expect(vm.ems_cluster).not_to be_nil
+      expect(vm.ems_cluster.ems_ref).to eq("domain-c12")
 
       expect(vm.host).not_to be_nil
       expect(vm.host.ems_ref).to eq("host-17")
@@ -346,8 +350,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(vm.parent_blue_folder).not_to be_nil
       expect(vm.parent_blue_folder.ems_ref).to eq("group-v3")
 
-      # TODO: expect(vm.parent_yellow_folder).not_to be_nil
+      expect(vm.parent_yellow_folder).not_to be_nil
+      expect(vm.parent_yellow_folder.ems_ref).to eq("group-d1")
+
       expect(vm.parent_resource_pool).not_to be_nil
+      expect(vm.parent_resource_pool.ems_ref).to eq("resgroup-19")
     end
   end
 end

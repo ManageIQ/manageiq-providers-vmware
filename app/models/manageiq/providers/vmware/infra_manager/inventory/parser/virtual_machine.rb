@@ -65,7 +65,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       return if runtime.nil?
 
       vm_hash[:connection_state] = runtime[:connectionState]
-      vm_hash[:host] = persister.hosts.lazy_find(runtime[:host]._ref) if runtime[:host]
+      vm_hash[:host] = lazy_find_managed_object(runtime[:host])
+      vm_hash[:ems_cluster] = lazy_find_managed_object(cache.find(runtime[:host])&.dig(:parent))
       vm_hash[:boot_time] = runtime[:bootTime]
       vm_hash[:raw_power_state] = if props.fetch_path(:summary, :config, :template)
                                       "never"
