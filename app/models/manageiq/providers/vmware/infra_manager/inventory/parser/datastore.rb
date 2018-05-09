@@ -5,12 +5,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       return if summary.nil?
 
       storage_hash[:name] = summary[:name]
-      storage_hash[:location] = normalize_storage_uid(summary[:url])
+      storage_hash[:location] = parse_datastore_location(props)
       storage_hash[:store_type] = summary[:type].to_s.upcase
       storage_hash[:total_space] = summary[:capacity]
       storage_hash[:free_space] = summary[:freeSpace]
       storage_hash[:uncommitted] = summary[:uncommitted]
       storage_hash[:multiplehostaccess] = summary[:multipleHostAccess].to_s.downcase == "true"
+    end
+
+    def parse_datastore_location(props)
+      url = props.fetch_path(:summary, :url)
+      normalize_storage_uid(url) if url
     end
 
     def parse_datastore_capability(storage_hash, props)

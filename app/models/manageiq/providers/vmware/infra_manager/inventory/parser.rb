@@ -58,7 +58,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_datastore(object, kind, props)
-    persister.storages.targeted_scope << object._ref
+    persister.storages.targeted_scope << parse_datastore_location(props)
     return if kind == "leave"
 
     storage_hash = {
@@ -226,6 +226,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_virtual_machine_config(vm_hash, props)
     parse_virtual_machine_resource_config(vm_hash, props)
     parse_virtual_machine_summary(vm_hash, props)
+    parse_virtual_machine_storage(vm_hash, props)
 
     vm = persister.vms_and_templates.build(vm_hash)
 

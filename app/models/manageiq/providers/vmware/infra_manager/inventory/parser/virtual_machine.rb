@@ -60,6 +60,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       parse_virtual_machine_summary_runtime(vm_hash, props)
     end
 
+    def parse_virtual_machine_storage(vm_hash, props)
+      vm_path_name = props.fetch_path(:summary, :config, :vmPathName)
+      return if vm_path_name.nil?
+
+      datastore_name = vm_path_name.gsub(/^\[([^\]]*)\].*/, '\1')
+      return if datastore_name.nil?
+
+      datastore = props[:datastore].to_a.detect do |ds|
+        cache.find(ds)&.dig(:summary, :name) == datastore_name
+      end
+
+      datastore_props = cache.find(datastore) if datastore
+      vm_hash[:storage] = persister.storages.lazy_find(parse_datastore_location(datastore_props)) if datastore_props
+    end
+
     def parse_virtual_machine_summary_runtime(vm_hash, props)
       runtime = props.fetch_path(:summary, :runtime)
       return if runtime.nil?
@@ -187,7 +202,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         case backing
         when RbVmomi::VIM::VirtualDeviceFileBackingInfo
           disk_hash[:filename] = backing.fileName
-          disk_hash[:storage] = persister.storages.lazy_find(backing.datastore._ref) unless backing.datastore.nil?
+
+          if backing.datastore
+            datastore_props    = cache.find(backing.datastore)
+            datastore_location = parse_datastore_location(datastore_props) if datastore_props
+
+            disk_hash[:storage] = persister.storages.lazy_find(datastore_location) if datastore_location
+          end
         when RbVmomi::VIM::VirtualDeviceRemoteDeviceBackingInfo
           disk_hash[:filename] = backing.deviceName
         end
