@@ -21,20 +21,5 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       cluster_hash[:cpu_shares] = cpu_allocation.fetch_path(:shares, :shares)
       cluster_hash[:cpu_shares_level] = cpu_allocation.fetch_path(:limit, :limit)
     end
-
-    def parse_resource_pool_children(cluster_hash, props)
-      cluster_hash[:ems_children] = {
-        :rp => [],
-        :vm => [],
-      }
-
-      props[:resourcePool].to_a.each do |rp|
-        cluster_hash[:ems_children][:rp] << persister.resource_pools.lazy_find(rp._ref)
-      end
-
-      props[:vm].to_a.each do |vm|
-        cluster_hash[:ems_children][:vm] << persister.resource_pools.lazy_find(vm._ref)
-      end
-    end
   end
 end

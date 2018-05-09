@@ -3,6 +3,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
     add_inventory_collections(
       default_inventory_collections, inventory_collection_names, inventory_collection_options
     )
+
+    relationship_collections = %i(ems_clusters ems_folders hosts resource_pools storages)
+    dependency_attributes = relationship_collections.each_with_object({}) do |collection_key, obj|
+      obj[collection_key] = [collections[collection_key]]
+    end
+
+    add_inventory_collection(
+      default_inventory_collections.parent_blue_folders(:dependency_attributes => dependency_attributes)
+    )
+
+    add_inventory_collection(
+      default_inventory_collections.vm_parent_blue_folders(
+        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]},
+      )
+    )
+
+    add_inventory_collection(
+      default_inventory_collections.vm_resource_pools(
+        :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]},
+      )
+    )
   end
 
   def default_inventory_collections
@@ -59,5 +80,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       :strategy       => strategy,
       :targeted       => targeted,
     }
+  end
+
+  def vim_class_to_collection(managed_object)
+    case managed_object
+    when RbVmomi::VIM::ComputeResource
+      ems_clusters
+    when RbVmomi::VIM::Datacenter
+      ems_folders
+    when RbVmomi::VIM::HostSystem
+      hosts
+    when RbVmomi::VIM::Folder
+      ems_folders
+    when RbVmomi::VIM::ResourcePool
+      resource_pools
+    end
   end
 end
