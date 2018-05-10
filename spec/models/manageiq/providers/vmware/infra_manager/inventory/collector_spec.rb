@@ -39,8 +39,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     context "targeted refresh" do
       let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
+      let(:cache)           { collector.send(:inventory_cache) }
       let(:persister)       { ems.class::Inventory::Persister::Targeted.new(ems) }
-      let(:parser)          { ems.class::Inventory::Parser.new(collector.send(:inventory_cache), persister) }
+      let(:parser)          { ems.class::Inventory::Parser.new(cache, persister) }
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory
@@ -48,7 +49,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       it "doesn't impact unassociated inventory" do
-        run_targeted_refresh(targeted_update_set(vm_power_on_object_update))
+        run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
         assert_table_counts
       end
 
@@ -56,7 +57,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
         expect(vm.power_state).to eq("off")
-        run_targeted_refresh(targeted_update_set(vm_power_on_object_update))
+        run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
         expect(vm.reload.power_state).to eq("on")
       end
 
@@ -64,22 +65,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
         expect(vm.host.ems_ref).to eq("host-93")
-        run_targeted_refresh(targeted_update_set(vm_migrate_object_update))
+        run_targeted_refresh(targeted_update_set([vm_migrate_object_update]))
         expect(vm.reload.host.ems_ref).to eq("host-94")
       end
 
-      def run_targeted_refresh(update_set)
-        collector.send(:process_update_set, property_filter, update_set).each do |obj, props|
-          parser.parse(obj, props)
-        end
+      it "deleting a virtual machine" do
+        vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
+        expect(vm.archived?).to be_falsy
+        run_targeted_refresh(targeted_update_set(vm_delete_object_updates))
+        expect(vm.reload.archived?).to be_truthy
+      end
+
+      def run_targeted_refresh(update_set)
+        update_set = collector.send(:process_update_set, property_filter, update_set)
+        update_set.each { |managed_object, kind, props| parser.parse(managed_object, kind, props) }
         collector.send(:save_inventory, persister)
       end
 
-      def targeted_update_set(object_update)
+      def targeted_update_set(object_updates)
         property_filter_update = RbVmomi::VIM.PropertyFilterUpdate(
           :filter    => property_filter,
-          :objectSet => [object_update],
+          :objectSet => object_updates,
         )
 
         RbVmomi::VIM.UpdateSet(
@@ -115,6 +122,38 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ],
           :missingSet      => [],
         )
+      end
+
+      def vm_delete_object_updates
+        [
+          RbVmomi::VIM.ObjectUpdate(
+            :dynamicProperty => [],
+            :kind            => "leave",
+            :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+            :changeSet       => [],
+            :missingSet      => [],
+          ),
+          RbVmomi::VIM.ObjectUpdate(
+            :dynamicProperty => [],
+            :kind            => "modify",
+            :obj             => RbVmomi::VIM.ClusterComputeResource(vim, "domain-c91"),
+            :changeSet       => [
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "summary.effectiveCpu",
+                :op              => "assign",
+                :val             => 47_983,
+              ),
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "summary.effectiveMemory",
+                :op              => "assign",
+                :val             => 59_871,
+              ),
+            ],
+            :missingSet      => [],
+          ),
+        ]
       end
     end
 

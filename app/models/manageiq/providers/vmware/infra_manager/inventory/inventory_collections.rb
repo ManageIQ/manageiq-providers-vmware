@@ -15,10 +15,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
 
     def vms_and_templates(extra_attributes = {})
       attributes = {
-        :model_class          => ::VmOrTemplate,
-        :association          => :vms_and_templates,
-        :attributes_blacklist => %i(parent resource_pool),
-        :builder_params       => {
+        :model_class            => ::VmOrTemplate,
+        :association            => :vms_and_templates,
+        :delete_method          => :disconnect_inv,
+        :attributes_blacklist   => %i(parent resource_pool),
+        :custom_reconnect_block => ManagerRefresh::InventoryCollectionDefault::INVENTORY_RECONNECT_BLOCK,
+        :builder_params         => {
           :ems_id => ->(persister) { persister.manager.id },
         },
       }
