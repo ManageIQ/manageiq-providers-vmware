@@ -24,7 +24,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_compute_resource(object, kind, props)
-    persister.ems_clusters.targeted_scope[object._ref] = nil
+    persister.ems_clusters.targeted_scope << object._ref
     return if kind == "leave"
 
     cluster_hash = {
@@ -43,7 +43,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   alias parse_cluster_compute_resource parse_compute_resource
 
   def parse_datacenter(object, kind, props)
-    persister.ems_folders.targeted_scope[object._ref] = nil
+    persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
 
     dc_hash = {
@@ -58,7 +58,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_datastore(object, kind, props)
-    persister.storages.targeted_scope[object._ref] = nil
+    persister.storages.targeted_scope << object._ref
     return if kind == "leave"
 
     storage_hash = {
@@ -75,7 +75,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_distributed_virtual_switch(object, kind, props)
-    persister.switches.targeted_scope[object._ref] = nil
+    persister.switches.targeted_scope << object._ref
     return if kind == "leave"
 
     type = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.name
@@ -96,7 +96,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
   def parse_folder(object, kind, props)
-    persister.ems_folders.targeted_scope[object._ref] = nil
+    persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
 
     folder_hash = {
@@ -111,7 +111,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_host_system(object, kind, props)
-    persister.hosts.targeted_scope[object._ref] = nil
+    persister.hosts.targeted_scope << object._ref
     return if kind == "leave"
 
     cluster = lazy_find_managed_object(props[:parent])
@@ -146,7 +146,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_distributed_virtual_portgroup(object, kind, props)
-    persister.lans.targeted_scope[object._ref] = nil
+    persister.lans.targeted_scope << object._ref
     return if kind == "leave"
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
@@ -177,7 +177,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_resource_pool(object, kind, props)
-    persister.resource_pools.targeted_scope[object._ref] = nil
+    persister.resource_pools.targeted_scope << object._ref
     return if kind == "leave"
 
     rp_hash = {
@@ -196,7 +196,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   alias parse_virtual_app parse_resource_pool
 
   def parse_storage_pod(object, kind, props)
-    persister.ems_folders.targeted_scope[object._ref] = nil
+    persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
 
     name = props.fetch_path(:summary, :name)
@@ -213,7 +213,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_virtual_machine(object, kind, props)
-    persister.vms_and_templates.targeted_scope[object._ref] = nil
+    persister.vms_and_templates.targeted_scope << object._ref
     return if kind == "leave"
 
     vm_hash = {
