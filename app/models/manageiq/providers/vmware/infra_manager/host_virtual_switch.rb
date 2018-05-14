@@ -1,2 +1,2 @@
-class ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch < Switch
+class ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch < ManageIQ::Providers::InfraManager::HostVirtualSwitch
 end

@@ -35,6 +35,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       custom_attributes
       customization_specs
       disks
+      distributed_virtual_switches
       ems_clusters
       ems_folders
       guest_devices
@@ -45,6 +46,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       host_storages
       host_switches
       host_operating_systems
+      host_virtual_switches
       lans
       networks
       operating_systems
@@ -52,7 +54,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       snapshots
       storages
       storage_profiles
-      switches
       vms_and_templates
     )
   end

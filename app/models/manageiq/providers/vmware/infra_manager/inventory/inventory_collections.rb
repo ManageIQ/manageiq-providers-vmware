@@ -13,6 +13,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes.merge!(extra_attributes)
     end
 
+    def host_virtual_switches(extra_attributes = {})
+      attributes = {
+        :model_class => ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch,
+      }
+
+      super(attributes.merge!(extra_attributes))
+    end
+
+    def distributed_virtual_switches(extra_attributes = {})
+      attributes = {
+        :model_class => ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch,
+      }
+
+      super(attributes.merge!(extra_attributes))
+    end
+
     def vms_and_templates(extra_attributes = {})
       attributes = {
         :model_class            => ::VmOrTemplate,
@@ -57,6 +73,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
 
     def storages(extra_attributes = {})
       attributes = {:attributes_blacklist => %i(parent)}
+      super(attributes.merge(extra_attributes))
+    end
+
+    def lans(extra_attributes = {})
+      attributes = {:manager_ref => %i(switch uid_ems)}
       super(attributes.merge(extra_attributes))
     end
 

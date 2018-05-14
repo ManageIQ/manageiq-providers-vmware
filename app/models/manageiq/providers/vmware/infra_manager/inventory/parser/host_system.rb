@@ -227,7 +227,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       type = ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch.name
 
       switches = network[:vswitch]
-      switches.to_a.each do |switch|
+      switches.to_a.map do |switch|
         security_policy = switch.spec&.policy&.security
         if security_policy
           allow_promiscuous = security_policy[:allowPromiscuous]
@@ -235,7 +235,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           mac_changes       = security_policy[:macChanges]
         end
 
-        persister_switch = persister.switches.build(
+        persister_switch = persister.host_virtual_switches.build(
+          :host              => host,
           :uid_ems           => switch[:name],
           :name              => switch[:name],
           :type              => type,
@@ -245,8 +246,48 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :forged_transmits  => forged_transmits,
           :mac_changes       => mac_changes,
         )
+      end
+    end
 
-        persister.host_switches.build(:host => host, :switch => persister_switch)
+    def parse_host_system_host_switches(host, switches)
+      switches.each do |switch|
+        persister.host_switches.build(:host => host, :switch => switch)
+      end
+    end
+
+    def parse_host_system_lans(switches, props)
+      network = props.fetch_path(:config, :network)
+      return if network.blank?
+
+      switch_uids = switches.index_by(&:name)
+
+      network[:portgroup].to_a.each do |portgroup|
+        next if portgroup.spec.nil?
+
+        name = portgroup.spec.name
+
+        lan_hash = {
+          :uid_ems => name,
+          :name    => name,
+          :tag     => portgroup.spec.vlanId.to_s,
+          :switch  => switch_uids[portgroup.spec.vswitchName],
+        }
+
+        security = portgroup.spec.policy&.security
+        if security
+          lan_hash[:allow_promiscuous] = security.allowPromiscuous
+          lan_hash[:forged_transmits]  = security.forgedTransmits
+          lan_hash[:mac_changes]       = security.macChanges
+        end
+
+        computed_security = portgroup.computedPolicy&.security
+        if computed_security
+          lan_hash[:computed_allow_promiscuous] = computed_security.allowPromiscuous
+          lan_hash[:computed_forged_transmits]  = computed_security.forgedTransmits
+          lan_hash[:computed_mac_changes]       = computed_security.macChanges
+        end
+
+        persister.lans.build(lan_hash)
       end
     end
   end
