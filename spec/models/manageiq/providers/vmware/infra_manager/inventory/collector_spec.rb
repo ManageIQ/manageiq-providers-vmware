@@ -25,6 +25,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
           assert_ems
           assert_specific_datacenter
+          assert_specific_datastore
           assert_specific_folder
           assert_specific_host
           assert_specific_cluster
@@ -72,9 +73,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "deleting a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
-        expect(vm.archived?).to be_falsy
+        expect(vm.orphaned?).to be_falsy
         run_targeted_refresh(targeted_update_set(vm_delete_object_updates))
-        expect(vm.reload.archived?).to be_truthy
+        expect(vm.reload.orphaned?).to be_truthy
       end
 
       def run_targeted_refresh(update_set)
@@ -198,6 +199,26 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(datacenter.children.count).to eq(4)
       expect(datacenter.children.map(&:name)).to match_array(%w(host network datastore vm))
+    end
+
+    def assert_specific_datastore
+      storage = ems.storages.find_by(:location => "ds:///vmfs/volumes/5280a4c3-b5e2-7dc7-5c31-7a344d35466c/")
+
+      expect(storage).to have_attributes(
+        :location                      => "ds:///vmfs/volumes/5280a4c3-b5e2-7dc7-5c31-7a344d35466c/",
+        :name                          => "GlobalDS_0",
+        :store_type                    => "VMFS",
+        :total_space                   => 1_099_511_627_776,
+        :free_space                    => 824_633_720_832,
+        :multiplehostaccess            => 1,
+        :directory_hierarchy_supported => true,
+        :thin_provisioning_supported   => true,
+        :raw_disk_mappings_supported   => true,
+      )
+
+      expect(storage.hosts.count).to eq(32)
+      expect(storage.disks.count).to eq(512)
+      expect(storage.vms.count).to   eq(512)
     end
 
     def assert_specific_folder
@@ -387,6 +408,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(vm.host).not_to be_nil
       expect(vm.host.ems_ref).to eq("host-17")
+
+      expect(vm.storage).not_to be_nil
+      expect(vm.storage.name).to eq("GlobalDS_0")
 
       expect(vm.parent_blue_folder).not_to be_nil
       expect(vm.parent_blue_folder.ems_ref).to eq("group-v3")
