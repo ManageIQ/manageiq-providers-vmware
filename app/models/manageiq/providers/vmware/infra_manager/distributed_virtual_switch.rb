@@ -1,2 +1,2 @@
-class ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch < Switch
+class ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch < ManageIQ::Providers::InfraManager::DistributedVirtualSwitch
 end

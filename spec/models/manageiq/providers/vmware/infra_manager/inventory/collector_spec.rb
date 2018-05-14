@@ -179,7 +179,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.resource_pools.count).to eq(72)
       expect(ems.storages.count).to eq(1)
       expect(ems.vms_and_templates.count).to eq(512)
-      expect(ems.switches.count).to eq(5)
+      expect(ems.switches.count).to eq(36)
+      expect(ems.host_virtual_switches.count).to eq(32)
+      expect(ems.distributed_virtual_switches.count).to eq(4)
       expect(ems.lans.count).to eq(12)
     end
 
@@ -223,7 +225,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(host.parent).not_to be_nil
       expect(host.parent.ems_ref).to eq("domain-c12")
 
-      switch = host.switches.find_by(:uid_ems => "vSwitch0")
+      switch = host.host_virtual_switches.find_by(:uid_ems => "vSwitch0")
 
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
@@ -302,7 +304,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def assert_specific_dvswitch
-      dvs = ems.switches.find_by(:uid_ems => "dvs-8")
+      dvs = ems.distributed_virtual_switches.find_by(:uid_ems => "dvs-8")
 
       expect(dvs).not_to be_nil
       expect(dvs).to have_attributes(

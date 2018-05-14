@@ -235,7 +235,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           mac_changes       = security_policy[:macChanges]
         end
 
-        persister_switch = persister.switches.build(
+        persister_switch = persister.host_virtual_switches.build(
+          :host              => host,
           :uid_ems           => switch[:name],
           :name              => switch[:name],
           :type              => type,
