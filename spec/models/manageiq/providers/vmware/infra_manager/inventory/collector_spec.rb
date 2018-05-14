@@ -23,7 +23,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           run_full_refresh
           ems.reload
 
-          assert_table_counts
+          assert_ems
           assert_specific_datacenter
           assert_specific_folder
           assert_specific_host
@@ -50,7 +50,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       it "doesn't impact unassociated inventory" do
         run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
-        assert_table_counts
+        assert_ems
       end
 
       it "power on a virtual machine" do
@@ -164,7 +164,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
     end
 
-    def assert_table_counts
+    def assert_ems
+      expect(ems.api_version).to eq("5.5")
+      expect(ems.uid_ems).to eq("D6EB1D64-05B2-4937-BFF6-6F77C6E647B7")
       expect(ems.ems_clusters.count).to eq(8)
       expect(ems.ems_folders.count).to eq(21)
       expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
