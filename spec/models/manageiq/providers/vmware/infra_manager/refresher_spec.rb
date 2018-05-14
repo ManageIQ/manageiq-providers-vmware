@@ -288,6 +288,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@ems.vms.size).to eq(92)
     expect(@ems.miq_templates.size).to eq(9)
     expect(@ems.storage_profiles.size).to eq(6)
+    expect(@ems.switches.size).to eq(9)
+    expect(@ems.host_virtual_switches.size).to eq(8)
+    expect(@ems.distributed_virtual_switches.size).to eq(1)
 
     expect(@ems.customization_specs.size).to eq(2)
     cspec = @ems.customization_specs.find_by(:name => "Win2k8Template")
@@ -486,6 +489,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     )
 
     expect(@host.switches.size).to eq(3)
+    expect(@host.host_virtual_switches.size).to eq(2)
 
     dvswitch = @host.switches.find_by(:name => "DC1_DVS")
     expect(dvswitch).to have_attributes(
