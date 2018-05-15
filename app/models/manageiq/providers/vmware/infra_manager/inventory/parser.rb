@@ -187,12 +187,28 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.resource_pools.targeted_scope << object._ref
     return if kind == "leave"
 
+    parent = props[:parent]
+
+    # Default resource pools are ones whose parent is a Cluster or a Host,
+    # resource pools which show up on the vSphere UI all have resource pools
+    # as parents.
+    is_default = parent && !parent.kind_of?(RbVmomi::VIM::ResourcePool)
+    name       = if is_default
+                   cached_parent = cache.find(parent) if parent
+                   parent_model = persister.vim_class_to_collection(parent).base_class_name
+
+                   "Default for #{Dictionary.gettext(parent_model, :type => :model, :notfound => :titleize)} #{cached_parent[:name]}"
+                 else
+                   CGI.unescape(props[:name])
+                 end
+
     rp_hash = {
-      :ems_ref => object._ref,
-      :uid_ems => object._ref,
-      :name    => CGI.unescape(props[:name]),
-      :vapp    => object.kind_of?(RbVmomi::VIM::VirtualApp),
-      :parent  => lazy_find_managed_object(props[:parent]),
+      :ems_ref    => object._ref,
+      :uid_ems    => object._ref,
+      :name       => name,
+      :vapp       => object.kind_of?(RbVmomi::VIM::VirtualApp),
+      :parent     => lazy_find_managed_object(parent),
+      :is_default => is_default,
     }
 
     parse_resource_pool_memory_allocation(rp_hash, props)
