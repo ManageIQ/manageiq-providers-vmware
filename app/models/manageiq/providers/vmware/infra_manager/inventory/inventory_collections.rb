@@ -61,7 +61,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
     end
 
     def lans(extra_attributes = {})
-      attributes = {:manager_ref => %i(switch uid_ems)}
+      attributes = {
+        :manager_ref => %i(switch uid_ems),
+        :parent_inventory_collections => [:switches]
+      }
       super(attributes.merge(extra_attributes))
     end
 
@@ -73,8 +76,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       super(attributes.merge(extra_attributes))
     end
 
-    def switchs(extra_attributes = {})
-      attributes = {:attributes_blacklist => %i(parent)}
+    def switches(extra_attributes = {})
+      attributes = {
+        :attributes_blacklist => %i(parent),
+        :secondary_refs       => {:by_switch_uuid => [:switch_uuid]},
+      }
       super(attributes.merge(extra_attributes))
     end
 
