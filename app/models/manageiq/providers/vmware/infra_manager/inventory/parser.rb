@@ -99,12 +99,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
 
+    # "Hidden" folders are folders which exist in the VIM API but are not shown
+    # on the vSphere UI.  These folders are the root folder above the datacenters
+    # named "Datacenters", and the 4 child folders of each datacenter (datastore,
+    # host, network, vm)
+    hidden = props[:parent].nil? || props[:parent].kind_of?(RbVmomi::VIM::Datacenter)
+
     folder_hash = {
       :ems_ref => object._ref,
       :uid_ems => object._ref,
       :type    => "EmsFolder",
       :name    => CGI.unescape(props[:name]),
       :parent  => lazy_find_managed_object(props[:parent]),
+      :hidden  => hidden,
     }
 
     persister.ems_folders.build(folder_hash)

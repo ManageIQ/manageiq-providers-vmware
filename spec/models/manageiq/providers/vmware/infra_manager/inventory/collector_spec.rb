@@ -229,6 +229,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :ems_ref => "group-d1",
         :name    => "Datacenters",
         :uid_ems => "group-d1",
+        :hidden  => true,
       )
 
       expect(folder.parent).to eq(ems)
