@@ -823,7 +823,7 @@ module ManageIQ::Providers
           invalid, err = if summary_config.nil? || config.nil?
                            type = ['summary_config', 'config'].find_all { |t| eval(t).nil? }.join(", ")
                            [true, "Missing configuration for VM [#{mor}]: #{type}."]
-                         elsif summary_config["uuid"].blank?
+                         elsif summary_config["uuid"].blank? && config["uuid"].blank?
                            [true, "Missing UUID for VM [#{mor}]."]
                          elsif pathname.blank?
                            _log.debug "vmPathname class: [#{pathname.class}] inspect: [#{pathname.inspect}]"
@@ -995,7 +995,8 @@ module ManageIQ::Providers
           :guest_os_full_name => inv["guestFullName"].blank? ? "Other" : inv["guestFullName"]
         }
 
-        bios = MiqUUID.clean_guid(inv["uuid"]) || inv["uuid"]
+        uuid = inv["uuid"] || config["uuid"]
+        bios = MiqUUID.clean_guid(uuid) || uuid
         result[:bios] = bios unless bios.blank?
 
         if inv["numCpu"].present?
