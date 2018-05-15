@@ -100,6 +100,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.hotPlugMemoryIncrementSize",
       "config.hotPlugMemoryLimit",
       "config.memoryHotAddEnabled",
+      "config.uuid",
       "config.version",
       "datastore",
       "datastore.ManagedObjectReference",

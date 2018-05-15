@@ -799,6 +799,10 @@
           __iv__@xsiType: :VirtualDisk
       __iv__@vimType: 
       __iv__@xsiType: :VirtualHardware
+    uuid: !str:VimString 
+      str: 422f5d0e-8bd4-2767-d278-eec66f00a1a1
+      "@vimType": 
+      "@xsiType": :"SOAP::SOAPString"
     __iv__@vimType: 
     __iv__@xsiType: :VirtualMachineConfigInfo
   resourceConfig: !map:VimHash 
@@ -884,10 +888,6 @@
         "@xsiType": :"SOAP::SOAPString"
       guestFullName: !str:VimString 
         str: Red Hat Enterprise Linux 5 (64-bit)
-        "@vimType": 
-        "@xsiType": :"SOAP::SOAPString"
-      uuid: !str:VimString 
-        str: 422f5d0e-8bd4-2767-d278-eec66f00a1a1
         "@vimType": 
         "@xsiType": :"SOAP::SOAPString"
       memorySizeMB: !str:VimString 
