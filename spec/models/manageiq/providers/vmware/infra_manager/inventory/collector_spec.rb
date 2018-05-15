@@ -231,7 +231,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems => "group-d1",
       )
 
-      expect(folder.parent).to be_nil
+      expect(folder.parent).to eq(ems)
       expect(folder.children.count).to eq(4)
       expect(folder.children.map(&:name)).to match_array(%w(DC0 DC1 DC2 DC3))
     end
