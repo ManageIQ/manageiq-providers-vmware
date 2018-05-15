@@ -149,7 +149,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_distributed_virtual_portgroup(object, kind, props)
-    persister.lans.targeted_scope << object._ref
     return if kind == "leave"
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
