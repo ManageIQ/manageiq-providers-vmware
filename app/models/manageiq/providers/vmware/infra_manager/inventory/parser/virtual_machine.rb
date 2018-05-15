@@ -264,7 +264,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
             lan_uid = backing.deviceName
             persister_switch = nil # TODO
           end
-          guest_device_hash[:lan] = persister.lans.lazy_find(:switch => persister_switch, :uid_ems => lan_uid)
+          guest_device_hash[:lan] = persister.lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, :transform_nested_lazy_finds => true)
         end
 
         persister.guest_devices.build(guest_device_hash)
