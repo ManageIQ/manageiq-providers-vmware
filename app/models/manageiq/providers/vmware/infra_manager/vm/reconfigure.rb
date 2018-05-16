@@ -347,7 +347,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def remove_network_adapter_config_spec(vim_obj, vmcs, hardware, options)
     raise "remove_network_adapter_config_spec: network_adapter name is required." unless options[:network][:name]
     network_adapter_label = options[:network][:name]
-    controller_key, key, unit_number = vim_obj.send(:getDeviceKeysByLabel, network_adapter_label, hardware)
+    controller_key, key, unit_number = vim_obj.getDeviceKeysByLabel(network_adapter_label, hardware)
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
       vdcs.device = VimHash.new("VirtualEthernetCard") do |dev|
         dev.key = key
@@ -358,7 +358,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   end
 
   def connect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom)
-    device = vim_obj.send(:getDeviceByLabel, cdrom[:device_name], hardware)
+    device = vim_obj.getDeviceByLabel(cdrom[:device_name], hardware)
     raise "connect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
 
     datastore_ref = HostStorage.find_by(:storage_id => cdrom[:storage_id], :host_id => host.id).try(:ems_ref)
@@ -377,7 +377,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   end
 
   def disconnect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom)
-    device = vim_obj.send(:getDeviceByLabel, cdrom[:device_name], hardware)
+    device = vim_obj.getDeviceByLabel(cdrom[:device_name], hardware)
     raise "disconnect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
 
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
