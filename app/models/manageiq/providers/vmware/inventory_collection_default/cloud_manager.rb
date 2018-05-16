@@ -45,6 +45,8 @@ class ManageIQ::Providers::Vmware::InventoryCollectionDefault::CloudManager < Ma
           hardware
           operating_system
           orchestration_stack
+          cpu_hot_add_enabled
+          memory_hot_add_enabled
         )
       }
 
@@ -91,6 +93,7 @@ class ManageIQ::Providers::Vmware::InventoryCollectionDefault::CloudManager < Ma
         :inventory_object_attributes => %i(
           device_name
           device_type
+          disk_type
           controller_type
           size
           location
