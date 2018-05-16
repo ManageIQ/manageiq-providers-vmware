@@ -257,12 +257,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         }
 
         unless backing.nil?
-          lan_uid = if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
-                      backing.port.portgroupKey
-                    else
-                      backing.deviceName
-                    end
-          guest_device_hash[:lan] = persister.lans.lazy_find(lan_uid)
+          if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
+            lan_uid = backing.port.portgroupKey
+            persister_switch = persister.switches.lazy_find({:switch_uuid => backing.port.switchUuid}, :ref => :by_switch_uuid)
+          else
+            lan_uid = backing.deviceName
+            persister_switch = nil # TODO
+          end
+          guest_device_hash[:lan] = persister.lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, :transform_nested_lazy_finds => true)
         end
 
         persister.guest_devices.build(guest_device_hash)

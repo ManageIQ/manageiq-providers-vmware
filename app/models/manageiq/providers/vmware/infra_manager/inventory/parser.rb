@@ -139,14 +139,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_operating_system(host, props)
     parse_host_system_system_services(host, props)
     parse_host_system_hardware(host, props)
-    parse_host_system_switches(host, props)
+
+    switches = parse_host_system_switches(host, props)
+    parse_host_system_host_switches(host, switches)
+    parse_host_system_lans(switches, props)
   end
 
   def parse_network(object, kind, props)
   end
 
   def parse_distributed_virtual_portgroup(object, kind, props)
-    persister.lans.targeted_scope << object._ref
     return if kind == "leave"
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
