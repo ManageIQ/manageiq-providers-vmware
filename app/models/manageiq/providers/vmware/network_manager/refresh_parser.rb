@@ -302,7 +302,10 @@ module ManageIQ::Providers
     # managed, therefore we must handle errors by ourselves.
     def fetch_network_configurations_for_vapp(vapp_id)
       begin
-        data = @connection.get_vapp(vapp_id).body
+        # fog-vcloud-director now uses a more user-friendly parser that yields vApp instance. However, vapp networking
+        # is not parsed there yet so we need to fallback to basic ToHashDocument parser that only converts XML to hash.
+        # TODO(miha-plesko): update default parser to do the XML parsing for us.
+        data = @connection.get_vapp(vapp_id, :parser => Fog::ToHashDocument).body
       rescue Fog::VcloudDirector::Errors::ServiceError => e
         $vcloud_log.error("#{log_header} could not fetch network configuration for vapp #{vapp_id}: #{e}")
         return []

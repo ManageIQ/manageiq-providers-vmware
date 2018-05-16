@@ -590,7 +590,7 @@ http_interactions:
                             <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:Description>Number of Virtual CPUs</rasd:Description>
-                            <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+                            <rasd:ElementName>8 virtual CPU(s)</rasd:ElementName>
                             <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:InstanceID>4</rasd:InstanceID>
                             <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -601,9 +601,10 @@ http_interactions:
                             <rasd:Reservation>0</rasd:Reservation>
                             <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:ResourceType>3</rasd:ResourceType>
-                            <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantity>8</rasd:VirtualQuantity>
                             <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:Weight>0</rasd:Weight>
+                            <vmw:CoresPerSocket ovf:required="false">4</vmw:CoresPerSocket>
                             <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
                         </ovf:Item>
                         <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory">
@@ -686,8 +687,8 @@ http_interactions:
                     <VAppScopedLocalId>c209ef9f-25c8-4fe5-a7f4-c522fbd45ea7</VAppScopedLocalId>
                     <VmCapabilities href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml">
                         <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml"/>
-                        <MemoryHotAddEnabled>false</MemoryHotAddEnabled>
-                        <CpuHotAddEnabled>false</CpuHotAddEnabled>
+                        <MemoryHotAddEnabled>true</MemoryHotAddEnabled>
+                        <CpuHotAddEnabled>true</CpuHotAddEnabled>
                     </VmCapabilities>
                     <StorageProfile href="https://VMWARE_CLOUD_HOST/api/vdcStorageProfile/b652f213-33aa-4c1f-8f30-ea2919a30843" name="*" type="application/vnd.vmware.vcloud.vdcStorageProfile+xml"/>
                 </Vm>
@@ -1874,7 +1875,7 @@ http_interactions:
                             <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:Description>Number of Virtual CPUs</rasd:Description>
-                            <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+                            <rasd:ElementName>8 virtual CPU(s)</rasd:ElementName>
                             <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:InstanceID>4</rasd:InstanceID>
                             <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -1885,9 +1886,10 @@ http_interactions:
                             <rasd:Reservation>0</rasd:Reservation>
                             <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:ResourceType>3</rasd:ResourceType>
-                            <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantity>8</rasd:VirtualQuantity>
                             <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                             <rasd:Weight>0</rasd:Weight>
+                            <vmw:CoresPerSocket ovf:required="false">4</vmw:CoresPerSocket>
                             <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
                         </ovf:Item>
                         <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory">
@@ -1970,8 +1972,8 @@ http_interactions:
                     <VAppScopedLocalId>c209ef9f-25c8-4fe5-a7f4-c522fbd45ea7</VAppScopedLocalId>
                     <VmCapabilities href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml">
                         <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml"/>
-                        <MemoryHotAddEnabled>false</MemoryHotAddEnabled>
-                        <CpuHotAddEnabled>false</CpuHotAddEnabled>
+                        <MemoryHotAddEnabled>true</MemoryHotAddEnabled>
+                        <CpuHotAddEnabled>true</CpuHotAddEnabled>
                     </VmCapabilities>
                     <StorageProfile href="https://VMWARE_CLOUD_HOST/api/vdcStorageProfile/b652f213-33aa-4c1f-8f30-ea2919a30843" name="*" type="application/vnd.vmware.vcloud.vdcStorageProfile+xml"/>
                 </Vm>

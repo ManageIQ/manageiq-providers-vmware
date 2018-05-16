@@ -199,29 +199,31 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   def assert_specific_vm_powered_on
     v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec1-vm1')
     expect(v).to have_attributes(
-      :template              => false,
-      :ems_ref               => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
-      :ems_ref_obj           => nil,
-      :uid_ems               => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
-      :vendor                => 'vmware',
-      :power_state           => 'on',
-      :location              => 'unknown',
-      :tools_status          => nil,
-      :boot_time             => nil,
-      :standby_action        => nil,
-      :connection_state      => nil,
-      :cpu_affinity          => nil,
-      :memory_reserve        => nil,
-      :memory_reserve_expand => nil,
-      :memory_limit          => nil,
-      :memory_shares         => nil,
-      :memory_shares_level   => nil,
-      :cpu_reserve           => nil,
-      :cpu_reserve_expand    => nil,
-      :cpu_limit             => nil,
-      :cpu_shares            => nil,
-      :cpu_shares_level      => nil,
-      :hostname              => 'spec1-vm1'
+      :template               => false,
+      :ems_ref                => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
+      :ems_ref_obj            => nil,
+      :uid_ems                => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
+      :vendor                 => 'vmware',
+      :power_state            => 'on',
+      :location               => 'unknown',
+      :tools_status           => nil,
+      :boot_time              => nil,
+      :standby_action         => nil,
+      :connection_state       => nil,
+      :cpu_affinity           => nil,
+      :memory_reserve         => nil,
+      :memory_reserve_expand  => nil,
+      :memory_limit           => nil,
+      :memory_shares          => nil,
+      :memory_shares_level    => nil,
+      :memory_hot_add_enabled => true,
+      :cpu_reserve            => nil,
+      :cpu_reserve_expand     => nil,
+      :cpu_limit              => nil,
+      :cpu_shares             => nil,
+      :cpu_shares_level       => nil,
+      :cpu_hot_add_enabled    => true,
+      :hostname               => 'spec1-vm1'
     )
 
     expect(v.ext_management_system).to eq(@ems)
@@ -244,7 +246,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :virtual_hw_version   => nil,
       :guest_os             => 'Microsoft Windows Server 2016 (64-bit)',
       :guest_os_full_name   => 'Microsoft Windows Server 2016 (64-bit)',
-      :cpu_sockets          => 1,
+      :cpu_sockets          => 2,
       :bios                 => nil,
       :bios_location        => nil,
       :time_sync            => nil,
@@ -259,8 +261,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :number_of_nics       => nil,
       :cpu_usage            => nil,
       :memory_usage         => nil,
-      :cpu_cores_per_socket => 1,
-      :cpu_total_cores      => 1,
+      :cpu_cores_per_socket => 4,
+      :cpu_total_cores      => 8,
       :vmotion_enabled      => nil,
       :disk_free_space      => nil,
       :disk_capacity        => 10_737_418_240,
@@ -272,10 +274,13 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
 
     expect(v.hardware.disks.size).to eq(1)
     expect(v.hardware.disks.first).to have_attributes(
-      :device_name     => 'Hard disk 1',
+      :device_name     => 'Disk 0',
       :device_type     => 'disk',
+      :disk_type       => 'LSI Logic SAS SCSI',
       :controller_type => 'LSI Logic SAS SCSI controller',
       :size            => 10_737_418_240,
+      :location        => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/0/0/2000',
+      :filename        => 'Disk 0'
     )
     expect(v.hardware.guest_devices.size).to eq(0)
     expect(v.hardware.nics.size).to eq(0)
@@ -358,10 +363,13 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
 
     expect(v.hardware.disks.size).to eq(1)
     expect(v.hardware.disks.first).to have_attributes(
-      :device_name     => 'Hard disk 1',
+      :device_name     => 'Disk 0',
       :device_type     => 'disk',
+      :disk_type       => 'Paravirtual SCSI',
       :controller_type => 'Paravirtual SCSI controller',
       :size            => 17_179_869_184,
+      :location        => 'vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/0/0/2000',
+      :filename        => 'Disk 0'
     )
     expect(v.hardware.guest_devices.size).to eq(0)
     expect(v.hardware.nics.size).to eq(0)

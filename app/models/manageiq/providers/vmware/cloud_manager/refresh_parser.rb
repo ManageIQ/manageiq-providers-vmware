@@ -108,43 +108,51 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
   end
 
   def parse_vm(vm)
-    status        = vm.status
-    uid           = vm.id
-    name          = vm.name
-    guest_os      = vm.operating_system
-    bitness       = vm.operating_system =~ /64-bit/ ? 64 : 32
-    cpus          = vm.cpu
-    memory_mb     = vm.memory
-    vapp_uid      = vm.vapp_id
-    stack         = @data_index.fetch_path(:orchestration_stacks, vapp_uid)
-    disk_capacity = vm.hard_disks.inject(0) { |sum, x| sum + x.values[0] } * 1.megabyte
+    status           = vm.status
+    uid              = vm.id
+    name             = vm.name
+    hostname         = vm.customization.try(:computer_name)
+    guest_os         = vm.operating_system
+    bitness          = vm.operating_system =~ /64-bit/ ? 64 : 32
+    cpus             = vm.cpu
+    cores_per_socket = vm.cores_per_socket
+    memory_mb        = vm.memory
+    vapp_uid         = vm.vapp_id
+    stack            = @data_index.fetch_path(:orchestration_stacks, vapp_uid)
+    disk_capacity    = vm.hard_disks.inject(0) { |sum, x| sum + x.values[0] } * 1.megabyte
+    cpu_hot_add      = vm.cpu_hot_add
+    mem_hot_add      = vm.memory_hot_add
 
-    disks = vm.disks.all.select { |d| hdd? d.bus_type }.map do |disk|
+    disks = vm.disks.all.select { |d| hdd? d.bus_type }.each_with_index.map do |disk, i|
       {
-        :device_name     => disk.name,
+        :device_name     => "Disk #{i}",
         :device_type     => "disk",
+        :disk_type       => controller_description(disk.bus_sub_type).sub(' controller', ''),
         :controller_type => controller_description(disk.bus_sub_type),
         :size            => disk.capacity * 1.megabyte,
-        :location        => "#{vm.id}-#{disk.id}",
-        :filename        => "#{vm.id}-#{disk.id}",
+        :location        => "#{vm.id}/#{disk.address}/#{disk.address_on_parent}/#{disk.id}",
+        :filename        => "Disk #{i}"
       }
     end
 
     new_result = {
-      :type                => ManageIQ::Providers::Vmware::CloudManager::Vm.name,
-      :uid_ems             => uid,
-      :ems_ref             => uid,
-      :name                => name,
-      :vendor              => "vmware",
-      :raw_power_state     => status,
-      :snapshots           => [parse_snapshot(vm)].compact,
+      :type                   => ManageIQ::Providers::Vmware::CloudManager::Vm.name,
+      :uid_ems                => uid,
+      :ems_ref                => uid,
+      :name                   => name,
+      :hostname               => hostname,
+      :vendor                 => "vmware",
+      :raw_power_state        => status,
+      :snapshots              => [parse_snapshot(vm)].compact,
+      :cpu_hot_add_enabled    => cpu_hot_add,
+      :memory_hot_add_enabled => mem_hot_add,
 
       :hardware            => {
         :guest_os             => guest_os,
         :guest_os_full_name   => guest_os,
         :bitness              => bitness,
-        :cpu_sockets          => cpus,
-        :cpu_cores_per_socket => 1,
+        :cpu_sockets          => cpus / cores_per_socket,
+        :cpu_cores_per_socket => cores_per_socket,
         :cpu_total_cores      => cpus,
         :memory_mb            => memory_mb,
         :disk_capacity        => disk_capacity,
