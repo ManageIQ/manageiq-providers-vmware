@@ -231,9 +231,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :ems_ref => "group-d1",
         :name    => "Datacenters",
         :uid_ems => "group-d1",
+        :hidden  => true,
       )
 
-      expect(folder.parent).to be_nil
+      expect(folder.parent).to eq(ems)
       expect(folder.children.count).to eq(4)
       expect(folder.children.map(&:name)).to match_array(%w(DC0 DC1 DC2 DC3))
     end
@@ -312,8 +313,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :memory_reserve_expand => true,
         :memory_shares         => 163_840,
         :memory_shares_level   => "normal",
-        :name                  => "Resources",
+        :name                  => "Default for Cluster / Deployment Role DC0_C1",
         :vapp                  => false,
+        :is_default            => true,
       )
 
       expect(resource_pool.parent.ems_ref).to eq("domain-c91")

@@ -24,6 +24,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
         :dependency_attributes => {:vms_and_templates => [collections[:vms_and_templates]]},
       )
     )
+
+    add_inventory_collection(
+      default_inventory_collections.root_folder_relationship(
+        :dependency_attributes => {:ems_folders => [collections[:ems_folders]]},
+      )
+    )
   end
 
   def default_inventory_collections

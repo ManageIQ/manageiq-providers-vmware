@@ -116,6 +116,26 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       relationships(:resource_pool, :ems_metadata, "ResourcePool", :vm_resource_pools, extra_attributes)
     end
 
+    def root_folder_relationship(extra_attributes = {})
+      root_folder_save_block = lambda do |ems, inventory_collection|
+        folder_inv_collection = inventory_collection.dependency_attributes[:ems_folders]&.first
+        return if folder_inv_collection.nil?
+
+        # All folders must have a parent except for the root folder
+        root_folder_obj = folder_inv_collection.data.detect { |obj| obj.data[:parent].nil? }
+        return if root_folder_obj.nil?
+
+        root_folder = folder_inv_collection.model_class.find(root_folder_obj.id)
+        root_folder.with_relationship_type(:ems_metadata) { root_folder.parent = ems }
+      end
+
+      attributes = {
+        :association       => :root_folder_relationships,
+        :custom_save_block => root_folder_save_block,
+      }
+      attributes.merge!(extra_attributes)
+    end
+
     def relationships(relationship_key, relationship_type, parent_type, association, extra_attributes = {})
       relationship_save_block = lambda do |_ems, inventory_collection|
         parents  = Hash.new { |h, k| h[k] = {} }
