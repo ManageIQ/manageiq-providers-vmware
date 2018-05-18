@@ -28,6 +28,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
     end
   end
 
+  describe "#init_from_dialog" do
+    let(:user)     { FactoryGirl.create(:user_with_email, :role => 'super_administrator', :password => 'x') }
+    let(:ems)      { FactoryGirl.create(:ems_vmware_with_authentication) }
+    let(:template) { FactoryGirl.create(:template_vmware, :ext_management_system => ems) }
+    let(:req)      { FactoryGirl.create(:miq_provision_request, :requester => user, :source => template) }
+    let(:options)  { req.get_options.merge(:org_controller=>"vm") }
+
+    subject        { req.workflow(options) }
+
+    before do
+      EvmSpecHelper.create_guid_miq_server_zone
+      MiqDialog.seed
+    end
+
+    it "does not raise an error" do
+      expect { subject.init_from_dialog(options) }.to_not raise_error
+    end
+  end
+
   describe "#make_request" do
     let(:alt_user) { FactoryGirl.create(:user_with_group) }
     it "creates and update a request" do
