@@ -80,6 +80,27 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(vm.reload.orphaned?).to be_truthy
       end
 
+      it "moving a vm to a new folder and resource-pool" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+        prev_folder  = vm.parent_blue_folder
+        prev_respool = vm.parent_resource_pool
+
+        expect(prev_folder.ems_ref).to eq("group-v3")
+        expect(prev_folder.children).to include(vm)
+
+        run_targeted_refresh(targeted_update_set(vm_new_folder_object_updates))
+
+        new_folder  = vm.parent_blue_folder
+        new_respool = vm.parent_resource_pool
+
+        expect(new_folder.ems_ref).to eq("group-v2000")
+        expect(prev_folder.reload.children).not_to include(vm)
+
+        expect(new_respool.ems_ref).to eq("resgroup-92")
+        expect(prev_respool.reload.children).not_to include(vm)
+      end
+
       def run_targeted_refresh(update_set)
         update_set = collector.send(:process_update_set, property_filter, update_set)
         update_set.each { |managed_object, kind, props| parser.parse(managed_object, kind, props) }
@@ -152,6 +173,51 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
                 :name            => "summary.effectiveMemory",
                 :op              => "assign",
                 :val             => 59_871,
+              ),
+            ],
+            :missingSet      => [],
+          ),
+        ]
+      end
+
+      def vm_new_folder_object_updates
+        [
+          RbVmomi::VIM.ObjectUpdate(
+            :dynamicProperty => [],
+            :kind            => "enter",
+            :obj             => RbVmomi::VIM.Folder(vim, "group-v2000"),
+            :changeSet       => [
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "name",
+                :op              => "assign",
+                :val             => "test-folder-1",
+              ),
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "parent",
+                :op              => "assign",
+                :val             => RbVmomi::VIM.Folder(vim, "group-v3"),
+              ),
+            ],
+            :missingSet      => [],
+          ),
+          RbVmomi::VIM.ObjectUpdate(
+            :dynamicProperty => [],
+            :kind            => "modify",
+            :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+            :changeSet       => [
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "parent",
+                :op              => "assign",
+                :val             => RbVmomi::VIM.Folder(vim, "group-v2000"),
+              ),
+              RbVmomi::VIM.PropertyChange(
+                :dynamicProperty => [],
+                :name            => "resourcePool",
+                :op              => "assign",
+                :val             => RbVmomi::VIM.ResourcePool(vim, "resgroup-92"),
               ),
             ],
             :missingSet      => [],
