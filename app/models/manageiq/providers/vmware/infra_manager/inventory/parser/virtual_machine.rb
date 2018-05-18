@@ -157,11 +157,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       hardware = persister.hardwares.build(hardware_hash)
 
-      parse_virtual_machine_disks(hardware, props)
-      parse_virtual_machine_guest_devices(hardware, props)
+      parse_virtual_machine_disks(vm, hardware, props)
+      parse_virtual_machine_guest_devices(vm, hardware, props)
     end
 
-    def parse_virtual_machine_disks(hardware, props)
+    def parse_virtual_machine_disks(_vm, hardware, props)
       devices = props.fetch_path(:config, :hardware, :device).to_a
       devices.each do |device|
         case device
@@ -231,7 +231,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_virtual_machine_guest_devices(hardware, props)
+    def parse_virtual_machine_guest_devices(vm, hardware, props)
       devices = props.fetch_path(:config, :hardware, :device).to_a
 
       veth_devices = devices.select { |dev| dev.kind_of?(RbVmomi::VIM::VirtualEthernetCard) }
@@ -240,7 +240,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         uid = address = device.macAddress
 
         name = device.deviceInfo.label
-        backing = device.backing
 
         present = device.connectable.connected
         start_connected = device.connectable.startConnected
@@ -254,18 +253,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :present         => present,
           :start_connected => start_connected,
           :address         => address,
+          :lan             => parse_virtual_machine_guest_device_lan(vm, device),
         }
-
-        unless backing.nil?
-          if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
-            lan_uid = backing.port.portgroupKey
-            persister_switch = persister.switches.lazy_find({:switch_uuid => backing.port.switchUuid}, :ref => :by_switch_uuid)
-          else
-            lan_uid = backing.deviceName
-            persister_switch = nil # TODO
-          end
-          guest_device_hash[:lan] = persister.lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, :transform_nested_lazy_finds => true)
-        end
 
         persister.guest_devices.build(guest_device_hash)
       end
@@ -324,6 +313,46 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       snapshot[:childSnapshotList].to_a.each do |child_snapshot|
         parse_virtual_machine_snapshot(vm, child_snapshot, current, snapshot_hash[:uid_ems])
       end
+    end
+
+    def parse_virtual_machine_guest_device_lan(vm, nic)
+      backing = nic.backing
+      return if backing.nil?
+
+      if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
+        lan_uid = backing.port.portgroupKey
+        persister_switch = persister.switches.lazy_find({:switch_uuid => backing.port.switchUuid}, :ref => :by_switch_uuid)
+      else
+        lan_uid = backing.deviceName
+
+        host_ref = find_vm_host_ref(vm)
+        return if host_ref.nil?
+
+        portgroup = find_host_portgroup_by_lan_name(host_ref, lan_uid)
+        return if portgroup.nil?
+
+        switch_uid = "#{host_ref}__#{portgroup.spec.vswitchName}"
+        persister_switch = persister.switches.lazy_find(switch_uid)
+      end
+
+      return if lan_uid.nil? || persister_switch.nil?
+
+      persister.lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, :transform_nested_lazy_finds => true)
+    end
+
+    def find_vm_host_ref(persister_vm)
+      host = persister_vm[:host]
+      return if host.nil?
+
+      host[:ems_ref]
+    end
+
+    def find_host_portgroup_by_lan_name(host_ref, lan_name)
+      cached_host = cache["HostSystem"][host_ref]
+      return if cached_host.nil?
+
+      host_portgroups = cached_host.dig(:config, :network, :portgroup) || []
+      host_portgroups.detect { |portgroup| portgroup.spec.name == lan_name }
     end
   end
 end
