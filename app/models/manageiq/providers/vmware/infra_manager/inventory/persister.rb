@@ -30,6 +30,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
         :dependency_attributes => {:ems_folders => [collections[:ems_folders]]},
       )
     )
+
+    add_inventory_collection(
+      default_inventory_collections.snapshot_parent(
+        :dependency_attributes => {:snapshots => [collections[:snapshots]]},
+      )
+    )
   end
 
   def default_inventory_collections

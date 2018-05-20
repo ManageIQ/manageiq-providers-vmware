@@ -322,7 +322,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       persister.snapshots.build(snapshot_hash)
 
       snapshot[:childSnapshotList].to_a.each do |child_snapshot|
-        parse_virtual_machine_snapshot(vm, child_snapshot, current, snapshot_hash[:uid])
+        parse_virtual_machine_snapshot(vm, child_snapshot, current, snapshot_hash[:uid_ems])
       end
     end
   end
