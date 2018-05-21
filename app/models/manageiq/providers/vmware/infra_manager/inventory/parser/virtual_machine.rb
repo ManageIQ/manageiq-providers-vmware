@@ -290,6 +290,40 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_virtual_machine_snapshots(vm, props)
+      snapshots = props[:snapshot]
+      return if snapshots.blank?
+
+      current = snapshots[:currentSnapshot]
+      return if current.nil?
+
+      snapshots[:rootSnapshotList].to_a.each do |snapshot|
+        parse_virtual_machine_snapshot(vm, snapshot, current)
+      end
+    end
+
+    def parse_virtual_machine_snapshot(vm, snapshot, current, parent_uid = nil)
+      snap_ref = snapshot[:snapshot]&._ref
+      return if snap_ref.nil?
+
+      create_time = snapshot[:createTime]
+
+      snapshot_hash = {
+        :vm_or_template => vm,
+        :ems_ref        => snap_ref,
+        :uid_ems        => create_time.to_s,
+        :uid            => create_time.iso8601(6),
+        :parent_uid     => parent_uid,
+        :name           => CGI.unescape(snapshot[:name]),
+        :description    => snapshot[:description],
+        :create_time    => create_time.to_s,
+        :current        => snap_ref == current._ref,
+      }
+
+      persister.snapshots.build(snapshot_hash)
+
+      snapshot[:childSnapshotList].to_a.each do |child_snapshot|
+        parse_virtual_machine_snapshot(vm, child_snapshot, current, snapshot_hash[:uid_ems])
+      end
     end
   end
 end

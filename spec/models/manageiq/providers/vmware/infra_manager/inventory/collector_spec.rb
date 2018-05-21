@@ -43,8 +43,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
       let(:cache)           { collector.send(:inventory_cache) }
-      let(:persister)       { ems.class::Inventory::Persister::Targeted.new(ems) }
-      let(:parser)          { ems.class::Inventory::Parser.new(cache, persister) }
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory
@@ -101,9 +99,42 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(prev_respool.reload.children).not_to include(vm)
       end
 
+      it "creating and deleting a snapshot" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+        expect(vm.snapshots.count).to eq(0)
+
+        run_targeted_refresh(targeted_update_set([vm_create_snapshot_object_update]))
+
+        vm.reload
+
+        expect(vm.snapshots.count).to eq(1)
+        expect(vm.snapshots.first).to have_attributes(
+          :uid         => "2018-05-19T06:47:56.000000Z",
+          :parent_uid  => nil,
+          :name        => "VM Snapshot 5%2f19%2f2018, 9:54:04 AM",
+          :description => "",
+          :current     => 1,
+          :create_time => Time.parse("2018-05-19 06:47:56 UTC").utc,
+          :parent_id   => nil,
+          :uid_ems     => "2018-05-19 06:47:56 UTC",
+          :ems_ref     => "snapshot-1100",
+        )
+
+        run_targeted_refresh(targeted_update_set([vm_delete_snapshot_object_update]))
+
+        vm.reload
+
+        expect(vm.snapshots.count).to eq(0)
+      end
+
       def run_targeted_refresh(update_set)
+        persister  = ems.class::Inventory::Persister::Targeted.new(ems)
+        parser     = ems.class::Inventory::Parser.new(cache, persister)
         update_set = collector.send(:process_update_set, property_filter, update_set)
+
         update_set.each { |managed_object, kind, props| parser.parse(managed_object, kind, props) }
+
         collector.send(:save_inventory, persister)
       end
 
@@ -224,6 +255,136 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ),
         ]
       end
+    end
+
+    def vm_create_snapshot_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :dynamicProperty => [],
+        :kind            => "modify",
+        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet       => [
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op              => "assign",
+            :val             => "redoLogFormat",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op              => "assign",
+            :val             => "vmfsSparseVariant",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.fileName",
+            :op              => "assign",
+            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.parent",
+            :op              => "assign",
+            :val             => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
+              :dynamicProperty => [],
+              :fileName        => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
+              :datastore       => RbVmomi::VIM.Datastore(vim, "datastore-15"),
+              :backingObjectId => "",
+              :diskMode        => "persistent",
+              :thinProvisioned => true,
+              :uuid            => "52dab7a1-6c3e-1f7b-fe00-a2c6213343b7",
+              :contentId       => "2929a7a583fe0c83749f9402fffffffe",
+              :digestEnabled   => false,
+            ),
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "snapshot",
+            :op              => "assign",
+            :val             => RbVmomi::VIM.VirtualMachineSnapshotInfo(
+              :dynamicProperty  => [],
+              :currentSnapshot  => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
+              :rootSnapshotList => [
+                RbVmomi::VIM.VirtualMachineSnapshotTree(
+                  :dynamicProperty   => [],
+                  :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
+                  :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+                  :name              => "VM Snapshot 5%252f19%252f2018, 9:54:04 AM",
+                  :description       => "",
+                  :id                => 5,
+                  :createTime        => Time.parse("2018-05-19 06:47:56 UTC").utc,
+                  :state             => "poweredOff",
+                  :quiesced          => false,
+                  :childSnapshotList => [],
+                  :replaySupported   => false,
+                ),
+              ],
+            ),
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.committed",
+            :op              => "assign",
+            :val             => 54_177,
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.unshared",
+            :op              => "assign",
+            :val             => 41_855,
+          ),
+        ],
+        :missingSet      => [],
+      )
+    end
+
+    def vm_delete_snapshot_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :dynamicProperty => [],
+        :kind            => "modify",
+        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet       => [
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op              => "assign",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op              => "assign",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.fileName",
+            :op              => "assign",
+            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.parent",
+            :op              => "assign",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "snapshot",
+            :op              => "assign",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.committed",
+            :op              => "assign",
+            :val             => 2316,
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.unshared",
+            :op              => "assign",
+            :val             => 538,
+          ),
+        ],
+        :missingSet      => [],
+      )
     end
 
     def run_full_refresh

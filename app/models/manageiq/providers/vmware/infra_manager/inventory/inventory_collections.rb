@@ -94,6 +94,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       super(attributes.merge(extra_attributes))
     end
 
+    def snapshots(extra_attributes = {})
+      attributes = {
+        :manager_ref                  => [:vm_or_template, :uid],
+        :parent_inventory_collections => [:vms_and_templates],
+      }
+      super(attributes.merge(extra_attributes))
+    end
+
     def operating_systems(extra_attributes = {})
       attributes = {:parent_inventory_collections => [:vms_and_templates]}
       super(attributes.merge(extra_attributes))
