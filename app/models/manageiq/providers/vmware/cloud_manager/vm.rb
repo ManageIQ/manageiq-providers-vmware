@@ -1,12 +1,17 @@
 class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::CloudManager::Vm
   include_concern 'Operations'
   include_concern 'RemoteConsole'
+  include_concern 'Reconfigure'
 
   supports :snapshots
   supports :remove_all_snapshots
   supports_not :remove_snapshot
   supports :snapshot_create
   supports :revert_to_snapshot
+  supports :reconfigure_disks
+  supports :reconfigure_disksize do
+    unsupported_reason_add(:reconfigure_disksize, 'Cannot resize disks of a VM with snapshots') unless snapshots.empty?
+  end
 
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect

@@ -162,4 +162,40 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
     end
   end
+
+  describe 'reconfigure operations' do
+    before do
+      allow(@ems).to receive(:with_provider_connection).and_yield(connection)
+    end
+
+    let(:vm)         { FactoryGirl.create(:vm_vcloud, :ext_management_system => @ems) }
+    let(:connection) { double('connection') }
+    let(:vm_xml)     { double('vm_xml') }
+    let(:options)    { { :spec => 'fog-options' } }
+
+    it 'supports reconfigure_disks' do
+      expect(vm.supports_reconfigure_disks?).to be_truthy
+    end
+
+    describe 'supports reconfigure_disksize' do
+      it 'without snapshots' do
+        expect(vm.supports_reconfigure_disksize?).to be_truthy
+      end
+
+      context 'with snapshots' do
+        before { FactoryGirl.create(:snapshot, :vm_or_template => vm) }
+
+        it do
+          expect(vm.supports_reconfigure_disksize?).to be_falsey
+        end
+      end
+    end
+
+    it '.vm_reconfigure' do
+      expect(connection).to receive(:get_vapp).with(vm.ems_ref, :parser => 'xml').and_return(double(:body => vm_xml))
+      expect(connection).to receive(:post_reconfigure_vm).with(vm.ems_ref, vm_xml, 'fog-options').and_return(double(:body => nil))
+      expect(connection).to receive(:process_task)
+      @ems.vm_reconfigure(vm, options)
+    end
+  end
 end
