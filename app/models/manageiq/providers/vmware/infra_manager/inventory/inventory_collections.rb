@@ -146,8 +146,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
 
     def relationships(relationship_key, relationship_type, parent_type, association, extra_attributes = {})
       relationship_save_block = lambda do |_ems, inventory_collection|
-        parents  = Hash.new { |h, k| h[k] = {} }
-        children = Hash.new { |h, k| h[k] = {} }
+        children_by_parent = Hash.new { |h, k| h[k] = Hash.new { |hh, kk| hh[kk] = [] } }
+        parent_by_child    = Hash.new { |h, k| h[k] = {} }
 
         inventory_collection.dependency_attributes.each_value do |dependency_collections|
           next if dependency_collections.blank?
@@ -161,38 +161,48 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
 
               parent_klass = parent.inventory_collection.model_class
 
-              # Save the model_class and id of the parent for each child
-              children[collection.model_class][obj.id] = [parent_klass, parent.id]
-
-              # This will be populated later when looking up all the parent ids
-              parents[parent_klass][parent.id] = nil
+              children_by_parent[parent_klass][parent.id] << [collection.model_class, obj.id]
+              parent_by_child[collection.model_class][obj.id] = [parent_klass, parent.id]
             end
           end
         end
 
         ActiveRecord::Base.transaction do
-          # Lookup all of the parent records
-          parents.each do |model_class, ids|
-            model_class.find(ids.keys).each { |record| ids[record.id] = record }
+          child_recs = parent_by_child.each_with_object({}) do |(model_class, child_ids), hash|
+            hash[model_class] = model_class.find(child_ids.keys).index_by(&:id)
           end
 
-          # Loop through all children and assign parents
-          children.each do |model_class, ids|
-            child_records = model_class.find(ids.keys).index_by(&:id)
+          children_to_remove = Hash.new { |h, k| h[k] = Hash.new { |hh, kk| hh[kk] = [] } }
+          children_to_add    = Hash.new { |h, k| h[k] = Hash.new { |hh, kk| hh[kk] = [] } }
 
-            ids.each do |id, parent_info|
-              child = child_records[id]
+          parent_recs_needed = Hash.new { |h, k| h[k] = [] }
 
-              parent_klass, parent_id = parent_info
-              parent = parents[parent_klass][parent_id]
+          child_recs.each do |model_class, children_by_id|
+            children_by_id.each_value do |child|
+              new_parent_klass, new_parent_id = parent_by_child[model_class][child.id]
+              prev_parent = child.with_relationship_type(relationship_type) { child.parent(:of_type => parent_type) }
 
-              child.with_relationship_type(relationship_type) do
-                prev_parent = child.parent(:of_type => parent_type)
-                unless prev_parent == parent
-                  prev_parent&.remove_child(child)
-                  parent.add_child(child)
-                end
-              end
+              next if prev_parent && (prev_parent.class.base_class == new_parent_klass && prev_parent.id == new_parent_id)
+
+              children_to_remove[prev_parent.class.base_class][prev_parent.id] << child if prev_parent
+              children_to_add[new_parent_klass][new_parent_id] << child
+
+              parent_recs_needed[prev_parent.class.base_class] << prev_parent.id if prev_parent
+              parent_recs_needed[new_parent_klass] << new_parent_id
+            end
+          end
+
+          parent_recs = parent_recs_needed.each_with_object({}) do |(model_class, parent_ids), hash|
+            hash[model_class] = model_class.find(parent_ids.uniq)
+          end
+
+          parent_recs.each do |model_class, parents|
+            parents.each do |parent|
+              old_children = children_to_remove[model_class][parent.id]
+              new_children = children_to_add[model_class][parent.id]
+
+              parent.remove_children(old_children) unless old_children.blank?
+              parent.add_children(new_children) unless new_children.blank?
             end
           end
         end
