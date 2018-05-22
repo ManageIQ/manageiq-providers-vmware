@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency "fog-core",                "~>1.40"
   s.add_dependency "vmware_web_service",      "~>0.2.10"
   s.add_dependency "rbvmomi",                 "~>1.11.3"
+  s.add_dependency "sinatra",                 "~>2.0.1"
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   s.add_development_dependency "simplecov"

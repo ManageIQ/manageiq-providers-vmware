@@ -12,6 +12,9 @@ module ManageIQ::Providers
     require_nested :HostEsx
     require_nested :HostVirtualSwitch
     require_nested :Inventory
+    require_nested :Operations
+    require_nested :OperationsClient
+    require_nested :OperationsWorker
     require_nested :Provision
     require_nested :ProvisionViaPxe
     require_nested :ProvisionWorkflow
@@ -167,11 +170,13 @@ module ManageIQ::Providers
     end
 
     def vm_start(vm, options = {})
-      invoke_vim_ws(:start, vm, options[:user_event])
+      task_ref = operations_client.post("/vm/#{vm.ems_ref}/start")
+      wait_for_task(task_ref)
     end
 
     def vm_stop(vm, options = {})
-      invoke_vim_ws(:stop, vm, options[:user_event])
+      task_ref = operations_client.post("/vm/#{vm.ems_ref}/stop")
+      wait_for_task(task_ref)
     end
 
     def vm_poweroff(vm, options = {})
@@ -179,31 +184,33 @@ module ManageIQ::Providers
     end
 
     def vm_suspend(vm, options = {})
-      invoke_vim_ws(:suspend, vm, options[:user_event])
+      task_ref = operations_client.post("/vm/#{vm.ems_ref}/suspend")
+      wait_for_task(task_ref)
     end
 
     def vm_shutdown_guest(vm, options = {})
-      invoke_vim_ws(:shutdownGuest, vm, options[:user_event])
+      operations_client.post("/vm/#{vm.ems_ref}/shutdown")
     end
 
     def vm_reboot_guest(vm, options = {})
-      invoke_vim_ws(:rebootGuest, vm, options[:user_event])
+      operations_client.post("/vm/#{vm.ems_ref}/reboot")
     end
 
     def vm_reset(vm, options = {})
-      invoke_vim_ws(:reset, vm, options[:user_event])
+      task_ref = operations_client.post("/vm/#{vm.ems_ref}/reset")
+      wait_for_task(task_ref)
     end
 
     def vm_standby_guest(vm, options = {})
-      invoke_vim_ws(:standbyGuest, vm, options[:user_event])
+      operations_client.post("/vm/#{vm.ems_ref}/standby")
     end
 
     def vm_unregister(vm, options = {})
-      invoke_vim_ws(:unregister, vm, options[:user_event])
+      operations_client.post("/vm/#{vm.ems_ref}/unregister")
     end
 
     def vm_mark_as_template(vm, options = {})
-      invoke_vim_ws(:markAsTemplate, vm, options[:user_event])
+      operations_client.post("/vm/#{vm.ems_ref}/mark-as-template")
     end
 
     def vm_mark_as_vm(vm, options = {})
@@ -211,7 +218,7 @@ module ManageIQ::Providers
         :host     => nil,
       }
       options = defaults.merge(options)
-      invoke_vim_ws(:markAsVm, vm, options[:user_event], options[:pool], options[:host])
+      operations_client.post("/vm/#{vm.ems_ref}/mark-as-vm", options)
     end
 
     def vm_migrate(vm, options = {})
@@ -461,6 +468,25 @@ module ManageIQ::Providers
       end
 
       result
+    end
+
+    def operations_client(auth_type = :default)
+      @operations_client ||= {}
+      @operations_client[auth_type] ||= ManageIQ::Providers::Vmware::InfraManager::OperationsClient.new(self, address, *auth_user_pwd(auth_type))
+    end
+
+    def wait_for_task(task_ref)
+      loop do
+        task_props = YAML.safe_load(operations_client.get("/task/#{task_ref}"))
+        case task_props["info.state"]
+        when "success"
+          return task_props["info.result"]
+        when "error"
+          return task_props["info.error"]
+        else
+          sleep 1
+        end
+      end
     end
 
     def vm_log_user_event(vm, event_message)
