@@ -1,7 +1,7 @@
 module ManageIQ::Providers
   class Vmware::NetworkManager::RefreshParser
     include ManageIQ::Providers::Vmware::RefreshHelperMethods
-    VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2, :netmask, :enabled, :dhcp_enabled)
+    VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2, :netmask, :enabled, :dhcp_enabled, :orchestration_stack)
 
     def initialize(ems, options = nil)
       @ems                  = ems
@@ -113,11 +113,12 @@ module ManageIQ::Providers
           self.class.cloud_network_vdc_type : self.class.cloud_network_vapp_type
 
       new_result = {
-        :name          => network.name,
-        :ems_ref       => uid,
-        :shared        => network.is_shared,
-        :type          => network_type,
-        :cloud_subnets => []
+        :name                   => network.name,
+        :ems_ref                => uid,
+        :shared                 => network.is_shared,
+        :type                   => network_type,
+        :cloud_subnets          => [],
+        :orchestration_stack_id => network.try(:orchestration_stack).try(:id)
       }
       new_result[:cidr] = to_cidr(network.gateway, network.netmask)
       new_result[:enabled] = network.enabled if network.respond_to?(:enabled)
@@ -128,7 +129,7 @@ module ManageIQ::Providers
     def parse_network_subnet(network)
       uid = subnet_id(network)
       new_result = {
-        :name            => subnet_name(network),
+        :name            => network.name,
         :ems_ref         => uid,
         :gateway         => network.gateway,
         :dns_nameservers => [network.dns1, network.dns2].compact,
@@ -167,7 +168,7 @@ module ManageIQ::Providers
 
       new_result = {
         :type        => self.class.network_port_type,
-        :name        => port_name(nic_data),
+        :name        => "NIC##{nic_data[:NetworkConnectionIndex]}",
         :ems_ref     => uid,
         :device_ref  => vm_uid,
         :device      => nic_data[:vm],
@@ -215,6 +216,7 @@ module ManageIQ::Providers
     def build_vapp_network(vapp, network_id, net_conf)
       n = VappNetwork.new(network_id)
       n.name = vapp_network_name(net_conf[:networkName], vapp)
+      n.orchestration_stack = vapp
       n.is_shared = false
       n.type = 'application/vnd.vmware.vcloud.vAppNetwork+xml'
       Array.wrap(net_conf.dig(:Configuration, :IpScopes)).each do |ip_scope|
@@ -234,20 +236,12 @@ module ManageIQ::Providers
       "subnet-#{network.id}"
     end
 
-    def subnet_name(network)
-      "subnet-#{network.name}"
-    end
-
     def vapp_network_name(name, vapp)
       "#{name} (#{vapp.name})"
     end
 
     def port_id(nic_data)
       "#{nic_data[:vm].ems_ref}#NIC##{nic_data[:NetworkConnectionIndex]}"
-    end
-
-    def port_name(nic_data)
-      "#{nic_data[:vm].name}#NIC##{nic_data[:NetworkConnectionIndex]}"
     end
 
     def floating_ip_id(nic_data)

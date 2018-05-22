@@ -8,6 +8,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
       :cpu_hot_add_enabled    => true,
       :cpu_hot_remove_enabled => true,
       :memory_hot_add_enabled => true,
+      :orchestration_stack    => orchestration_stack,
+      :network_ports          => [FactoryGirl.create(:network_port, :name => 'NIC#0')],
       :hardware               => FactoryGirl.create(
         :hardware,
         :cpu4x2,
@@ -19,9 +21,42 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
       )
     )
   end
+  let(:orchestration_stack) do
+    stack = FactoryGirl.create(:orchestration_stack, :name => 'vapp name')
+    FactoryGirl.create(:cloud_network, :name => 'vApp network name (vapp name)', :orchestration_stack => stack)
+    stack
+  end
 
   it '#reconfigurable?' do
     expect(vm.reconfigurable?).to be_truthy
+  end
+
+  it '.max_cpu_cores_per_socket' do
+    expect(vm.max_cpu_cores_per_socket).to eq(128)
+  end
+
+  it '.max_total_vcpus' do
+    expect(vm.max_total_vcpus).to eq(128)
+  end
+
+  it '.max_vcpus' do
+    expect(vm.max_vcpus).to eq(128)
+  end
+
+  it '.max_memory_mb' do
+    expect(vm.max_memory_mb).to eq(4_194_304)
+  end
+
+  it '.disk_types' do
+    expect(vm.disk_types).to eq(['LSI Logic Parallel SCSI'])
+  end
+
+  it '.disk_default_type' do
+    expect(vm.disk_default_type).to eq('LSI Logic Parallel SCSI')
+  end
+
+  it '.available_adapter_names' do
+    expect(vm.available_adapter_names).to eq(['NIC#1', 'NIC#2', 'NIC#3'])
   end
 
   describe '#build_config_spec' do
@@ -137,6 +172,30 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
         it 'resize' do
           expect { fog_options }.to raise_error(MiqException::MiqVmError, 'Cannot resize disk of VM with shapshots')
         end
+      end
+    end
+
+    describe 'network adapters' do
+      let(:options) do
+        {
+          :network_adapter_add    => [
+            { :cloud_network => 'vApp Network Name (vapp name)', :name => 'VM Name#NIC#2' },
+            { :cloud_network => nil, :name => 'VM Name#NIC#3' }
+          ],
+          :network_adapter_remove => [{ :network => { :name => 'VM Name#NIC#0' } }]
+        }
+      end
+
+      it 'add' do
+        expect(fog_options[:networks]).to include(:new_idx => '2', :name => 'vApp Network Name')
+      end
+
+      it 'add unhooked' do
+        expect(fog_options[:networks]).to include(:new_idx => '3', :name => 'none')
+      end
+
+      it 'remove' do
+        expect(fog_options[:networks]).to include(:idx => '0', :new_idx => -1)
       end
     end
   end
