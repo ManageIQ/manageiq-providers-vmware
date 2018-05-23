@@ -564,9 +564,10 @@ module ManageIQ::Providers
             name = uid = data['device']
 
             new_result = {
+              :type            => "NetworkAdapter",
               :uid_ems         => uid,
               :device_name     => name,
-              :device_type     => 'ethernet',
+              :device_type     => data.xsiType,
               :location        => data['pci'],
               :present         => true,
               :controller_type => 'ethernet',
@@ -587,9 +588,10 @@ module ManageIQ::Providers
             chap_auth_enabled = data.fetch_path('authenticationProperties', 'chapAuthEnabled')
 
             new_result = {
+              :type              => "StorageAdapter",
               :uid_ems           => uid,
               :device_name       => name,
-              :device_type       => 'storage',
+              :device_type       => data.xsiType,
               :present           => true,
 
               :iscsi_name        => data['iScsiName'].blank? ? nil : data['iScsiName'],
@@ -899,8 +901,8 @@ module ManageIQ::Providers
 
           host_mor = runtime['host']
           hardware = vm_inv_to_hardware_hash(vm_inv)
-          hardware[:disks] = vm_inv_to_disk_hashes(vm_inv, storage_uids, storage_profile_by_disk_mor)
           hardware[:guest_devices], guest_device_uids[mor] = vm_inv_to_guest_device_hashes(vm_inv, lan_uids[host_mor])
+          hardware[:disks] = vm_inv_to_disk_hashes(vm_inv, storage_uids, guest_device_uids[mor], storage_profile_by_disk_mor)
           hardware[:networks] = vm_inv_to_network_hashes(vm_inv, guest_device_uids[mor])
           uid = hardware[:bios]
 
@@ -1024,6 +1026,25 @@ module ManageIQ::Providers
         result_uids = {}
         return result, result_uids if inv.nil?
 
+        inv.to_miq_a.each do |data|
+          next unless data.xsiType =~ /Controller/
+
+          uid = data['key']
+
+          new_result = {
+            :type            => "Controller",
+            :uid_ems         => uid,
+            :device_name     => data.fetch_path('deviceInfo', 'label'),
+            :device_type     => data.xsiType,
+            :location        => data['busNumber'],
+            :controller_type => 'controller',
+            :key             => uid,
+          }
+
+          result << new_result
+          result_uids[uid] = new_result
+        end
+
         inv.to_miq_a.find_all { |d| d.key?('macAddress') }.each do |data|
           uid = address = data['macAddress']
           name = data.fetch_path('deviceInfo', 'label')
@@ -1039,13 +1060,15 @@ module ManageIQ::Providers
           lan = lan_uids[lan_uid] unless lan_uid.nil? || lan_uids.nil?
 
           new_result = {
+            :type            => "NetworkAdapter",
             :uid_ems         => uid,
             :device_name     => name,
-            :device_type     => 'ethernet',
+            :device_type     => data.xsiType,
             :controller_type => 'ethernet',
             :present         => data.fetch_path('connectable', 'connected').to_s.downcase == 'true',
             :start_connected => data.fetch_path('connectable', 'startConnected').to_s.downcase == 'true',
             :address         => address,
+            :key             => data['key'],
           }
           new_result[:lan] = lan unless lan.nil?
 
@@ -1055,7 +1078,7 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
-      def self.vm_inv_to_disk_hashes(inv, storage_uids, storage_profile_by_disk_mor = {})
+      def self.vm_inv_to_disk_hashes(inv, storage_uids, guest_device_uids = {}, storage_profile_by_disk_mor = {})
         vm_mor = inv['MOR']
         inv = inv.fetch_path('config', 'hardware', 'device')
 
@@ -1094,7 +1117,10 @@ module ManageIQ::Providers
             :controller_type => controller_type,
             :present         => true,
             :filename        => backing['fileName'] || backing['deviceName'],
-            :location        => controller ? "#{controller['busNumber']}:#{device['unitNumber']}" : nil
+            :location        => controller ? "#{controller['busNumber']}:#{device['unitNumber']}" : nil,
+            :controller      => guest_device_uids[device['controllerKey']],
+            :key             => device['key'],
+            :unit_number     => device['unitNumber'],
           }
 
           if device_type == 'disk'

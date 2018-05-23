@@ -157,8 +157,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       hardware = persister.hardwares.build(hardware_hash)
 
+      parse_virtual_machine_controllers(vm, hardware, props)
       parse_virtual_machine_disks(vm, hardware, props)
       parse_virtual_machine_guest_devices(vm, hardware, props)
+    end
+
+    def parse_virtual_machine_controllers(_vm, hardware, props)
+      devices = props.fetch_path(:config, :hardware, :device).to_a
+      devices.each do |device|
+        next unless device.kind_of?(RbVmomi::VIM::VirtualController)
+
+        persister.guest_devices.build(
+          :type            => "Controller",
+          :hardware        => hardware,
+          :uid_ems         => device.key,
+          :device_type     => device.class.wsdl_name,
+          :device_name     => device.deviceInfo.label,
+          :location        => device.busNumber,
+          :controller_type => 'controller',
+          :key             => device.key,
+        )
+      end
     end
 
     def parse_virtual_machine_disks(_vm, hardware, props)
@@ -196,7 +215,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :device_type     => device_type,
           :controller_type => controller_type,
           :present         => true,
-          :location        => "#{controller.busNumber}:#{device.unitNumber}"
+          :location        => "#{controller.busNumber}:#{device.unitNumber}",
+          :key             => device.key,
+          :unit_number     => device.unitNumber,
+          :controller      => persister.guest_devices.lazy_find(:hardware => hardware, :uid_ems => controller.key),
         }
 
         case backing
@@ -245,14 +267,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         start_connected = device.connectable.startConnected
 
         guest_device_hash = {
+          :type            => "NetworkAdapter",
           :hardware        => hardware,
           :uid_ems         => uid,
           :device_name     => name,
-          :device_type     => 'ethernet',
+          :device_type     => device.class.wsdl_name,
           :controller_type => 'ethernet',
           :present         => present,
           :start_connected => start_connected,
           :address         => address,
+          :key             => device.key,
           :lan             => parse_virtual_machine_guest_device_lan(vm, device),
         }
 
