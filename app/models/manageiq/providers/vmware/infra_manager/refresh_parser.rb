@@ -564,9 +564,10 @@ module ManageIQ::Providers
             name = uid = data['device']
 
             new_result = {
+              :type            => "NetworkAdapter",
               :uid_ems         => uid,
               :device_name     => name,
-              :device_type     => 'ethernet',
+              :device_type     => data.xsiType,
               :location        => data['pci'],
               :present         => true,
               :controller_type => 'ethernet',
@@ -587,9 +588,10 @@ module ManageIQ::Providers
             chap_auth_enabled = data.fetch_path('authenticationProperties', 'chapAuthEnabled')
 
             new_result = {
+              :type              => "StorageAdapter",
               :uid_ems           => uid,
               :device_name       => name,
-              :device_type       => 'storage',
+              :device_type       => data.xsiType,
               :present           => true,
 
               :iscsi_name        => data['iScsiName'].blank? ? nil : data['iScsiName'],
@@ -1039,13 +1041,15 @@ module ManageIQ::Providers
           lan = lan_uids[lan_uid] unless lan_uid.nil? || lan_uids.nil?
 
           new_result = {
+            :type            => "NetworkAdapter",
             :uid_ems         => uid,
             :device_name     => name,
-            :device_type     => 'ethernet',
+            :device_type     => data.xsiType,
             :controller_type => 'ethernet',
             :present         => data.fetch_path('connectable', 'connected').to_s.downcase == 'true',
             :start_connected => data.fetch_path('connectable', 'startConnected').to_s.downcase == 'true',
             :address         => address,
+            :key             => data['key'],
           }
           new_result[:lan] = lan unless lan.nil?
 

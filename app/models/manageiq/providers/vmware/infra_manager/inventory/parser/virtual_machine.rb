@@ -245,14 +245,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         start_connected = device.connectable.startConnected
 
         guest_device_hash = {
+          :type            => "NetworkAdapter",
           :hardware        => hardware,
           :uid_ems         => uid,
           :device_name     => name,
-          :device_type     => 'ethernet',
+          :device_type     => device.class.wsdl_name,
           :controller_type => 'ethernet',
           :present         => present,
           :start_connected => start_connected,
           :address         => address,
+          :key             => device.key,
           :lan             => parse_virtual_machine_guest_device_lan(vm, device),
         }
 

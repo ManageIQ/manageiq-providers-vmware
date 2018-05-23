@@ -488,15 +488,26 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :type              => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
       )
 
-      vnic = host.hardware.guest_devices.find_by(:uid_ems => "vmnic0")
+      vnic = host.hardware.network_adapters.find_by(:uid_ems => "vmnic0")
       expect(vnic).not_to be_nil
       expect(vnic).to have_attributes(
         :device_name     => "vmnic0",
-        :device_type     => "ethernet",
+        :device_type     => "PhysicalNic",
         :location        => "03:00.0",
         :controller_type => "ethernet",
         :uid_ems         => "vmnic0",
         # TODO: :switch          => switch,
+      )
+
+      hba = host.hardware.storage_adapters.first
+      expect(hba).not_to be_nil
+      expect(hba).to have_attributes(
+        :device_name     => "vmhba0",
+        :device_type     => "HostBlockHba",
+        :location        => "00:1f.1",
+        :controller_type => "Block",
+        :model           => "631xESB/632xESB IDE Controller",
+        :uid_ems         => "vmhba0",
       )
     end
 
@@ -661,13 +672,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :virtual_hw_version   => "07",
       )
 
-      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:ab:a2:e2")
+      nic = vm.hardware.network_adapters.find_by(:uid_ems => "00:50:56:ab:a2:e2")
       expect(nic).to have_attributes(
         :device_name     => "Network adapter 1",
-        :device_type     => "ethernet",
+        :device_type     => "VirtualE1000",
         :controller_type => "ethernet",
         :address         => "00:50:56:ab:a2:e2",
         :uid_ems         => "00:50:56:ab:a2:e2",
+        :key             => 4000,
       )
 
       expect(nic.lan).not_to be_nil

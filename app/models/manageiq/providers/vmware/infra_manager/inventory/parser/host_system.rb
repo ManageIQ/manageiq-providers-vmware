@@ -167,10 +167,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         name = uid = pnic.device
 
         persister.guest_devices.build(
+          :type            => "NetworkAdapter",
           :hardware        => hardware,
           :uid_ems         => uid,
           :device_name     => name,
-          :device_type     => 'ethernet',
+          :device_type     => pnic.class.wsdl_name,
           :location        => pnic.pci,
           :present         => true,
           :controller_type => 'ethernet',
@@ -205,10 +206,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
                           end
 
         persister.guest_devices.build(
+          :type              => "StorageAdapter",
           :hardware          => hardware,
           :uid_ems           => uid,
           :device_name       => name,
-          :device_type       => 'storage',
+          :device_type       => hba.class.wsdl_name,
           :present           => true,
           :iscsi_name        => iscsi_name,
           :iscsi_alias       => iscsi_alias,
