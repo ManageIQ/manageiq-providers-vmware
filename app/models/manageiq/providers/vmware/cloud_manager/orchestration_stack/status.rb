@@ -1,9 +1,9 @@
 class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack::Status < ::OrchestrationStack::Status
   def succeeded?
-    status.casecmp("on") == 0
+    %w(on off suspended).include?(status.to_s.downcase)
   end
 
   def failed?
-    status.casecmp("failed_creation") == 0
+    %w(failed_creation).include?(status.to_s.downcase)
   end
 end
