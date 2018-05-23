@@ -258,7 +258,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(CustomAttribute.count).to eq(3)
     expect(CustomizationSpec.count).to eq(2)
     expect(Disk.count).to eq(421)
-    expect(GuestDevice.count).to eq(135)
+    expect(GuestDevice.count).to eq(741)
     expect(Hardware.count).to eq(105)
     expect(Lan.count).to eq(16)
     expect(MiqScsiLun.count).to eq(73)
@@ -584,7 +584,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(nic).to have_attributes(
       :uid_ems         => "vmnic0",
       :device_name     => "vmnic0",
-      :device_type     => "ethernet",
+      :device_type     => "PhysicalNic",
       :location        => "01:00.0",
       :present         => true,
       :controller_type => "ethernet"
@@ -597,7 +597,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(adapter).to have_attributes(
       :uid_ems         => "vmhba0",
       :device_name     => "vmhba0",
-      :device_type     => "storage",
+      :device_type     => "HostBlockHba",
       :present         => true,
       :iscsi_name      => nil,
       :iscsi_alias     => nil,
@@ -610,7 +610,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(adapter).to have_attributes(
       :uid_ems         => "vmhba34",
       :device_name     => "vmhba34",
-      :device_type     => "storage",
+      :device_type     => "HostInternetScsiHba",
       :present         => true,
       :iscsi_name      => "iqn.1998-01.com.vmware:localhost-6c48eb14",
       :iscsi_alias     => nil,
@@ -694,6 +694,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :memory_mb          => 4096
     )
 
+    expect(v.hardware.controllers.size).to eq(6)
+    scsi_controller = v.hardware.controllers.find_by(:name => "SCSI controller 0")
+
     expect(v.hardware.disks.size).to eq(5)
     disk = v.hardware.disks.find_by_device_name("Hard disk 1")
     expect(disk).to have_attributes(
@@ -706,9 +709,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :size            => 6442457088,
       :mode            => "persistent",
       :disk_type       => "thin",
-      :start_connected => true
+      :start_connected => true,
+      :unit_number     => 0,
+      :key             => 2000,
     )
     expect(disk.storage).to eq(@storage)
+    expect(disk.controller).to eq(scsi_controller)
 
     # test the case when a disk has no controller https://bugzilla.redhat.com/show_bug.cgi?id=1465761
     disk = v.hardware.disks.find_by_device_name("Hard disk 2")
@@ -722,15 +728,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :size            => 3_221_226_496,
       :mode            => "persistent",
       :disk_type       => "thin",
-      :start_connected => true
+      :start_connected => true,
+      :unit_number     => nil,
+      :key             => 2001,
     )
 
-    expect(v.hardware.guest_devices.size).to eq(1)
+    expect(v.hardware.network_adapters.size).to eq(1)
     nic = v.hardware.nics.first
     expect(nic).to have_attributes(
       :uid_ems         => "00:50:56:af:00:73",
       :device_name     => "Network adapter 1",
-      :device_type     => "ethernet",
+      :device_type     => "VirtualE1000",
       :controller_type => "ethernet",
       :present         => false,
       :start_connected => true,

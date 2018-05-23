@@ -401,7 +401,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.ems_folders.count).to eq(21)
       expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
       expect(ems.disks.count).to eq(512)
-      expect(ems.guest_devices.count).to eq(512)
+      expect(ems.guest_devices.count).to eq(3584)
       expect(ems.hardwares.count).to eq(512)
       expect(ems.hosts.count).to eq(32)
       expect(ems.host_operating_systems.count).to eq(32)
@@ -697,6 +697,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :mode            => "persistent",
         :size            => 536_870_912,
         :start_connected => true,
+        :unit_number     => 0,
+        :key             => 2000,
+      )
+
+      expect(disk.controller).not_to be_nil
+      expect(disk.controller).to have_attributes(
+        :device_name => "SCSI controller 0",
+        :device_type => "VirtualLsiLogicSASController",
+        :uid_ems     => "1000",
       )
 
       expect(vm.ems_cluster).not_to be_nil
