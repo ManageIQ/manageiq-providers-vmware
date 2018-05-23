@@ -65,12 +65,35 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack do
 
   describe 'stack status' do
     context '#raw_status and #raw_exists' do
-      it 'gets the stack status and reason' do
-        allow(the_raw_stack).to receive(:stack_status).and_return('on')
+      it 'gets the stack status and reason - on' do
+        allow(the_raw_stack).to receive(:human_status).and_return('on')
+        expect(orchestration_stack.raw_status).to have_attributes(:status => 'on', :reason => nil)
+        expect(orchestration_stack.raw_status.succeeded?).to be_truthy
+        expect(orchestration_stack.raw_status.failed?).to be_falsey
+        expect(orchestration_stack.raw_exists?).to be_truthy
+      end
 
-        rstatus = orchestration_stack.raw_status
-        expect(rstatus).to have_attributes(:status => 'on', :reason => nil)
+      it 'gets the stack status and reason - off' do
+        allow(the_raw_stack).to receive(:human_status).and_return('off')
+        expect(orchestration_stack.raw_status).to have_attributes(:status => 'off', :reason => nil)
+        expect(orchestration_stack.raw_status.succeeded?).to be_truthy
+        expect(orchestration_stack.raw_status.failed?).to be_falsey
+        expect(orchestration_stack.raw_exists?).to be_truthy
+      end
 
+      it 'gets the stack status and reason - suspended' do
+        allow(the_raw_stack).to receive(:human_status).and_return('suspended')
+        expect(orchestration_stack.raw_status).to have_attributes(:status => 'suspended', :reason => nil)
+        expect(orchestration_stack.raw_status.succeeded?).to be_truthy
+        expect(orchestration_stack.raw_status.failed?).to be_falsey
+        expect(orchestration_stack.raw_exists?).to be_truthy
+      end
+
+      it 'gets the stack status and reason - failed_creation' do
+        allow(the_raw_stack).to receive(:human_status).and_return('failed_creation')
+        expect(orchestration_stack.raw_status).to have_attributes(:status => 'failed_creation', :reason => nil)
+        expect(orchestration_stack.raw_status.succeeded?).to be_falsy
+        expect(orchestration_stack.raw_status.failed?).to be_truthy
         expect(orchestration_stack.raw_exists?).to be_truthy
       end
 
