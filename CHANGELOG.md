@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 86 ending 2018-05-21
+
+### Added
+- Parse VM Snapshots [(#270)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/270)
+- Shift fog-vcloud-director gem version [(#267)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/267)
+- Improve streaming refresh in a Refresh Worker [(#265)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/265)
+- Set the root folder's parent and set hidden/is_default for folders and resource pools [(#263)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/263)
+- Make nested lazy find with secondary ref work [(#262)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/262)
+- Enhance disk and CPU inventoring [(#261)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/261)
+- Set api_version and uid_ems in streaming refresh [(#259)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/259)
+- Use new interface for targeted_scope [(#258)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/258)
+- Fix storage parsing to use datastore url [(#256)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/256)
+- Add spec test for deleting a VM [(#255)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/255)
+- Save ems cluster for a vm [(#254)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/254)
+- Parse parent for most collections [(#251)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/251)
+- Add support for reconfigure cdrom [(#244)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/244)
+- Split vApp provisioning customization into three tabs [(#242)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/242)
+- Support CPU/MEM/HDD reconfiguration [(#231)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/231)
+
+### Fixed
+- Fixes ProvisionWorkflow#available_vlans_and_hosts [(#269)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/269)
+- Try to get VM UUID from summary.config or config [(#246)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/246)
+
 ## Unreleased as of Sprint 85 ending 2018-05-07
 
 ### Added
