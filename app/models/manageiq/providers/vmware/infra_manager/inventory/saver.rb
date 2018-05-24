@@ -5,6 +5,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
     @join_limit  = 30
     @queue       = Queue.new
     @should_exit = false
+    @sleep_poll  = 5
     @threaded    = threaded
     @thread      = nil
   end
@@ -45,7 +46,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
 
   private
 
-  attr_reader :join_limit, :queue, :should_exit, :thread, :threaded
+  attr_reader :join_limit, :queue, :should_exit, :sleep_poll, :thread, :threaded
 
   def saver_thread
     loop do
@@ -55,7 +56,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
 
       break if should_exit
 
-      sleep(5)
+      sleep(sleep_poll)
     end
   rescue => err
     _log.warn(err)
