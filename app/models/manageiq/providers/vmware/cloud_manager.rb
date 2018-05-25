@@ -17,6 +17,8 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
 
   has_many :snapshots, :through => :vms_and_templates
 
+  supports :configure_events
+
   before_create :ensure_managers
 
   def ensure_network_manager
