@@ -65,9 +65,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "migrate a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
-        expect(vm.host.ems_ref).to eq("host-93")
+        expect(vm.host.ems_ref).to eq("host-98")
         run_targeted_refresh(targeted_update_set([vm_migrate_object_update]))
-        expect(vm.reload.host.ems_ref).to eq("host-94")
+        expect(vm.reload.host.ems_ref).to eq("host-99")
       end
 
       it "deleting a virtual machine" do
@@ -84,7 +84,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         prev_folder  = vm.parent_blue_folder
         prev_respool = vm.parent_resource_pool
 
-        expect(prev_folder.ems_ref).to eq("group-v3")
+        expect(prev_folder.ems_ref).to eq("group-v62")
         expect(prev_folder.children).to include(vm)
 
         run_targeted_refresh(targeted_update_set(vm_new_folder_object_updates))
@@ -95,7 +95,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(new_folder.ems_ref).to eq("group-v2000")
         expect(prev_folder.reload.children).not_to include(vm)
 
-        expect(new_respool.ems_ref).to eq("resgroup-92")
+        expect(new_respool.ems_ref).to eq("resgroup-111")
         expect(prev_respool.reload.children).not_to include(vm)
       end
 
@@ -129,12 +129,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def run_targeted_refresh(update_set)
-        persister  = ems.class::Inventory::Persister::Targeted.new(ems)
-        parser     = ems.class::Inventory::Parser.new(cache, persister)
-        update_set = collector.send(:process_update_set, property_filter, update_set)
+        persister       = ems.class::Inventory::Persister::Targeted.new(ems)
+        parser          = ems.class::Inventory::Parser.new(cache, persister)
+        updated_objects = collector.send(:process_update_set, property_filter, update_set)
 
-        update_set.each { |managed_object, kind, props| parser.parse(managed_object, kind, props) }
-
+        collector.send(:parse_updates, updated_objects, parser)
         collector.send(:save_inventory, persister)
       end
 
@@ -173,7 +172,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           :kind            => "modify",
           :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
           :changeSet       => [
-            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-94")),
+            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-99")),
           ],
           :missingSet      => [],
         )
@@ -191,7 +190,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           RbVmomi::VIM.ObjectUpdate(
             :dynamicProperty => [],
             :kind            => "modify",
-            :obj             => RbVmomi::VIM.ClusterComputeResource(vim, "domain-c91"),
+            :obj             => RbVmomi::VIM.ClusterComputeResource(vim, "domain-c96"),
             :changeSet       => [
               RbVmomi::VIM.PropertyChange(
                 :dynamicProperty => [],
@@ -248,7 +247,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
                 :dynamicProperty => [],
                 :name            => "resourcePool",
                 :op              => "assign",
-                :val             => RbVmomi::VIM.ResourcePool(vim, "resgroup-92"),
+                :val             => RbVmomi::VIM.ResourcePool(vim, "resgroup-111"),
               ),
             ],
             :missingSet      => [],
@@ -397,20 +396,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     def assert_ems
       expect(ems.api_version).to eq("5.5")
       expect(ems.uid_ems).to eq("D6EB1D64-05B2-4937-BFF6-6F77C6E647B7")
-      expect(ems.ems_clusters.count).to eq(8)
-      expect(ems.ems_folders.count).to eq(21)
-      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(4)
-      expect(ems.disks.count).to eq(512)
-      expect(ems.guest_devices.count).to eq(512)
-      expect(ems.hardwares.count).to eq(512)
-      expect(ems.hosts.count).to eq(32)
-      expect(ems.host_operating_systems.count).to eq(32)
-      expect(ems.operating_systems.count).to eq(512)
-      expect(ems.resource_pools.count).to eq(72)
+      expect(ems.ems_clusters.count).to eq(4)
+      expect(ems.ems_folders.count).to eq(11)
+      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(2)
+      expect(ems.disks.count).to eq(64)
+      expect(ems.guest_devices.count).to eq(64)
+      expect(ems.hardwares.count).to eq(64)
+      expect(ems.hosts.count).to eq(16)
+      expect(ems.host_operating_systems.count).to eq(16)
+      expect(ems.operating_systems.count).to eq(64)
+      expect(ems.resource_pools.count).to eq(12)
       expect(ems.storages.count).to eq(1)
-      expect(ems.vms_and_templates.count).to eq(512)
-      expect(ems.switches.count).to eq(36)
-      expect(ems.lans.count).to eq(76)
+      expect(ems.vms_and_templates.count).to eq(64)
+      expect(ems.switches.count).to eq(18)
+      expect(ems.lans.count).to eq(38)
     end
 
     def assert_specific_datacenter
@@ -445,9 +444,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :raw_disk_mappings_supported   => true,
       )
 
-      expect(storage.hosts.count).to eq(32)
-      expect(storage.disks.count).to eq(512)
-      expect(storage.vms.count).to   eq(512)
+      expect(storage.hosts.count).to eq(16)
+      expect(storage.disks.count).to eq(64)
+      expect(storage.vms.count).to   eq(64)
     end
 
     def assert_specific_folder
@@ -462,8 +461,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
 
       expect(folder.parent).to eq(ems)
-      expect(folder.children.count).to eq(4)
-      expect(folder.children.map(&:name)).to match_array(%w(DC0 DC1 DC2 DC3))
+      expect(folder.children.count).to eq(2)
+      expect(folder.children.map(&:name)).to match_array(%w(DC0 DC1))
     end
 
     def assert_specific_host
@@ -526,7 +525,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def assert_specific_resource_pool
-      resource_pool = ems.resource_pools.find_by(:ems_ref => "resgroup-92")
+      resource_pool = ems.resource_pools.find_by(:ems_ref => "resgroup-13")
 
       expect(resource_pool).not_to be_nil
       expect(resource_pool).to have_attributes(
@@ -540,17 +539,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :memory_reserve_expand => true,
         :memory_shares         => 163_840,
         :memory_shares_level   => "normal",
-        :name                  => "Default for Cluster / Deployment Role DC0_C1",
+        :name                  => "Default for Cluster / Deployment Role DC0_C0",
         :vapp                  => false,
         :is_default            => true,
       )
 
-      expect(resource_pool.parent.ems_ref).to eq("domain-c91")
+      expect(resource_pool.parent.ems_ref).to eq("domain-c12")
 
-      expect(resource_pool.children.count).to eq(8)
-      expect(resource_pool.children.map(&:ems_ref)).to match_array(
-        %w(resgroup-106 resgroup-115 resgroup-124 resgroup-133 resgroup-142 resgroup-151 resgroup-160 resgroup-97)
-      )
+      expect(resource_pool.children.count).to eq(2)
+      expect(resource_pool.children.map(&:ems_ref)).to match_array(%w(resgroup-28 resgroup-19))
     end
 
     def assert_specific_switch
@@ -601,7 +598,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems           => "dvs-8",
         :name              => "DC0_DVS",
         :ports             => 288,
-        :switch_uuid       => "4e 1f 2b 50 19 20 4c f7-f3 11 41 90 35 76 52 7b",
+        :switch_uuid       => "a9 af 24 50 51 3a 40 48-56 b4 3d fe 0c 8b a0 5f",
         :type              => "ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch",
         :allow_promiscuous => false,
         :forged_transmits  => false,
@@ -649,19 +646,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :name                  => "DC0_C0_RP0_VM1",
         :raw_power_state       => "poweredOn",
         :type                  => "ManageIQ::Providers::Vmware::InfraManager::Vm",
-        :uid_ems               => "422bf630-7e83-c7dd-f226-56b41f3c50ef",
+        :uid_ems               => "42243da9-7676-d9ec-7a9b-e61e5db3725c",
         :vendor                => "vmware",
       )
 
       expect(vm.hardware).to have_attributes(
-        :bios                 => "422bf630-7e83-c7dd-f226-56b41f3c50ef",
+        :bios                 => "42243da9-7676-d9ec-7a9b-e61e5db3725c",
         :cpu_cores_per_socket => 1,
         :cpu_sockets          => 1,
         :cpu_total_cores      => 1,
         :virtual_hw_version   => "07",
       )
 
-      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:ab:a2:e2")
+      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:a4:01:01")
       expect(nic).to have_attributes(
         :device_name     => "Network adapter 1",
         :device_type     => "ethernet",
@@ -669,11 +666,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :present         => true,
         :start_connected => true,
         :model           => "VirtualE1000",
-        :address         => "00:50:56:ab:a2:e2",
-        :uid_ems         => "00:50:56:ab:a2:e2",
+        :address         => "00:50:56:a4:01:01",
+        :uid_ems         => "00:50:56:a4:01:01",
       )
 
       expect(nic.lan).not_to be_nil
+      expect(nic.lan.uid_ems).to eq("dvportgroup-11")
 
       expect(vm.disks.count).to eq(1)
 
@@ -694,7 +692,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(vm.ems_cluster.ems_ref).to eq("domain-c12")
 
       expect(vm.host).not_to be_nil
-      expect(vm.host.ems_ref).to eq("host-17")
+      expect(vm.host.ems_ref).to eq("host-16")
 
       expect(vm.storage).not_to be_nil
       expect(vm.storage.name).to eq("GlobalDS_0")

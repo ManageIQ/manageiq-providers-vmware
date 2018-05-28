@@ -69,10 +69,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       updated_objects.concat(process_update_set(property_filter, update_set))
     end while update_set.truncated
 
-    updated_objects.each do |managed_object, update_kind, props|
-      parser.parse(managed_object, update_kind, props)
-    end
-
+    parse_updates(updated_objects, parser)
     save_inventory(persister)
 
     version
@@ -143,6 +140,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     updates
   end
 
+  def parse_updates(updated_objects, parser)
+    updated_objects.each do |managed_object, update_kind, cached_props|
+      uncached_props = retrieve_uncached_props(managed_object)
+      props          = uncached_props.present? ? cached_props.deep_merge(uncached_props) : cached_props
+
+      parser.parse(managed_object, update_kind, props)
+    end
+  end
+
   def process_object_update_set(object_update_set)
     object_update_set.map do |object_update|
       process_object_update(object_update)
@@ -175,6 +181,35 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def process_object_update_leave(obj)
     inventory_cache.delete(obj)
+  end
+
+  def retrieve_uncached_props(obj)
+    prop_set = uncached_prop_set(obj)
+    return if prop_set.nil?
+
+    props = obj.collect!(*prop_set)
+    return if props.nil?
+
+    props.each_with_object({}) do |(name, val), result|
+      h, prop_str = hash_target(result, name)
+      tag, _key   = tag_and_key(prop_str)
+
+      h[tag] = val
+    end
+  end
+
+  def uncached_prop_set(obj)
+    @uncached_prop_set ||= {
+      "HostSystem" => [
+        "config.storageDevice.hostBusAdapter",
+        "config.storageDevice.scsiLun",
+        "config.storageDevice.scsiTopology.adapter",
+      ]
+    }.freeze
+
+    return if obj.nil?
+
+    @uncached_prop_set[obj.class.wsdl_name]
   end
 
   def save_inventory(persister)
