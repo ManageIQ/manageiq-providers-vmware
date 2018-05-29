@@ -172,11 +172,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def process_object_update_enter(obj, change_set, _missing_set = [])
-    inventory_cache.insert(obj, change_set)
+    inventory_cache.insert(obj, process_change_set(change_set))
   end
 
   def process_object_update_modify(obj, change_set, _missing_set = [])
-    inventory_cache.update(obj, change_set)
+    inventory_cache.update(obj) do |props|
+      process_change_set(change_set, props)
+    end
   end
 
   def process_object_update_leave(obj)

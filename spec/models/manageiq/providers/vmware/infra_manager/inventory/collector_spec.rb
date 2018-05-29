@@ -707,4 +707,184 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(vm.parent_resource_pool.ems_ref).to eq("resgroup-19")
     end
   end
+
+  context "#process_change_set" do
+    let(:vm) { RbVmomi::VIM.VirtualMachine(nil, "vm-123") }
+    let(:vm_folder) { RbVmomi::VIM.Folder(nil, "group-v3") }
+    let(:folder_change_set) do
+      [
+        RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "name",        :op => "assign", :val => "vm"),
+        RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity", :op => "assign", :val => [vm]),
+      ]
+    end
+    let(:vm_change_set) do
+      [
+        RbVmomi::VIM::PropertyChange(
+          :dynamicProperty => [],
+          :name            => "config.hardware.device",
+          :op              => "assign",
+          :val             => [
+            RbVmomi::VIM::VirtualLsiLogicController(
+              :dynamicProperty    => [],
+              :key                => 1000,
+              :deviceInfo         => RbVmomi::VIM::Description(:label => "SCSI controller 0", :summary => "LSI Logic"),
+              :controllerKey      => 100,
+              :unitNumber         => 3,
+              :busNumber          => 0,
+              :device             => [2000],
+              :hotAddRemove       => true,
+              :sharedBus          => "noSharing",
+              :scsiCtlrUnitNumber => 7,
+            ),
+            RbVmomi::VIM::VirtualDisk(
+              :dynamicProperty => [],
+              :key             => 2000,
+              :deviceInfo      => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
+              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
+                :fileName        => "[datastore] vm1/vm1.vmdk",
+                :datastore       => RbVmomi::VIM::Datastore(nil, "datastore-1"),
+                :diskMode        => "persistent",
+                :thinProvisioned => true,
+                :uuid            => "6000C294-264b-3f91-8e5c-8c2ebac1bfe8",
+              ),
+              :controllerKey   => 1000,
+              :unitNumber      => 0,
+              :capacityInKB    => 41_943_040,
+            ),
+          ]
+        ),
+        RbVmomi::VIM::PropertyChange(
+          :dynamicProperty => [],
+          :name            => "config.version",
+          :op              => "assign",
+          :val             => "vmx-08"
+        ),
+        RbVmomi::VIM::PropertyChange(
+          :dynamicProperty => [],
+          :name            => "name",
+          :op              => "assign",
+          :val             => "vm1"
+        ),
+        RbVmomi::VIM::PropertyChange(
+          :dynamicProperty => [],
+          :name            => "parent",
+          :op              => "assign",
+          :val             => vm_folder
+        ),
+      ]
+    end
+
+    let(:vm_props) { collector.process_change_set(vm_change_set) }
+    let(:folder_props) { collector.process_change_set(folder_change_set) }
+
+    context "initial" do
+      it "processes initial change set" do
+        expect(vm_props.keys).to include(:config, :name, :parent)
+      end
+    end
+
+    context "update" do
+      it "updates a value in an array" do
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[1000].device",
+            :op              => "assign",
+            :val             => [2000, 2001]
+          ),
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2002]",
+            :op              => "add",
+            :val             => RbVmomi::VIM::VirtualDisk(
+              :dynamicProperty => [],
+              :key             => 2001,
+              :deviceInfo      => RbVmomi::VIM::Description(:dynamicProperty => [], :label => "Hard disk 2", :summary => "16,777,216 KB"),
+              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(),
+              :controllerKey   => 1000,
+              :unitNumber      => 2,
+              :capacityInKB    => 16_777_216,
+            )
+          ),
+        ]
+
+        props = collector.process_change_set(update_change_set, vm_props)
+
+        controller = props[:config][:hardware][:device].detect { |dev| dev.key == 1000 }
+        expect(controller[:device]).to match_array([2000, 2001])
+      end
+
+      it "removes a managed entity in an array by mor" do
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity[\"vm-123\"]", :op => "remove")
+        ]
+
+        props = collector.process_change_set(update_change_set, folder_props)
+        expect(props[:childEntity]).not_to include(vm)
+      end
+
+      it "removes a data object in an array by key" do
+        update_change_set = [
+          RbVmomi::VIM.PropertyChange(:name => "config.hardware.device[1000].device", :op => "assign", :val => []),
+          RbVmomi::VIM.PropertyChange(:name => "config.hardware.device[2000]", :op => "remove"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.storage.committed", :op => "assign", :val => 1422),
+          RbVmomi::VIM.PropertyChange(:name => "summary.storage.unshared", :op => "assign", :val => 0),
+        ]
+
+        props = collector.process_change_set(update_change_set, vm_props)
+
+        device_keys = props[:config][:hardware][:device].map(&:key)
+        expect(device_keys).not_to include(2000)
+      end
+
+      it "assigns to array with a ref as an array key" do
+        datastore_host = [
+          RbVmomi::VIM.DatastoreHostMount(
+            :key       => RbVmomi::VIM.HostSystem(nil, "host-815"),
+            :mountInfo => RbVmomi::VIM.HostMountInfo(
+              :path       => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode => "readWrite",
+              :mounted    => true,
+              :accessible => true
+            )
+          ),
+          RbVmomi::VIM.DatastoreHostMount(
+            :key       => RbVmomi::VIM.HostSystem(nil, "host-244"),
+            :mountInfo => RbVmomi::VIM.HostMountInfo(
+              :path       => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode => "readWrite",
+              :mounted    => true,
+              :accessible => true
+            )
+          ),
+        ]
+
+        initial_change_set = [
+          RbVmomi::VIM.PropertyChange(:dynamicProperty => [], :name => "host", :op => "assign", :val => datastore_host),
+        ]
+
+        ds_props = collector.process_change_set(initial_change_set)
+
+        update_change_set = [
+          RbVmomi::VIM::PropertyChange(
+            :dynamicProperty => [],
+            :name            => "host[\"host-244\"].mountInfo",
+            :op              => "assign",
+            :val             => RbVmomi::VIM::HostMountInfo(
+              :dynamicProperty => [],
+              :path            => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode      => "readWrite",
+              :mounted         => false,
+              :accessible      => false
+            )
+          )
+        ]
+
+        props = collector.process_change_set(update_change_set, ds_props)
+
+        host_mount = props[:host].detect { |h| h.key._ref == "host-244" }
+        expect(host_mount.mountInfo.props).to include(:mounted => false, :accessible => false)
+      end
+    end
+  end
 end

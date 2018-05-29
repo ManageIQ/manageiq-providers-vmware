@@ -283,6 +283,39 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     )
   end
 
+  def process_change_set(change_set, props = {})
+    change_set.each do |prop_change|
+      process_prop_change(props, prop_change)
+    end
+
+    props
+  end
+
+  def process_prop_change(prop_hash, prop_change)
+    h, prop_str = hash_target(prop_hash, prop_change.name)
+    tag, key    = tag_and_key(prop_str)
+
+    case prop_change.op
+    when "add"
+      h[tag] ||= []
+      h[tag] << prop_change.val
+    when "remove", "indirectRemove"
+      if key
+        a, i = get_array_entry(h[tag], key)
+        a.delete_at(i)
+      else
+        h.delete(tag)
+      end
+    when "assign"
+      if key
+        # TODO
+        raise "Array properties aren't supported yet"
+      else
+        h[tag] = prop_change.val
+      end
+    end
+  end
+
   def hash_target(base_hash, key_string)
     h = base_hash
     prop_keys = split_prop_path(key_string)
