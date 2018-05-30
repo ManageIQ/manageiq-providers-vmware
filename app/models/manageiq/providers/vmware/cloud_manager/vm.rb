@@ -12,6 +12,7 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
   supports :reconfigure_disksize do
     unsupported_reason_add(:reconfigure_disksize, 'Cannot resize disks of a VM with snapshots') unless snapshots.empty?
   end
+  supports :reconfigure_network_adapters
 
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect

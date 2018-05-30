@@ -191,6 +191,10 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
     end
 
+    it 'supports reconfigure_network_adapters' do
+      expect(vm.supports_reconfigure_network_adapters?).to be_truthy
+    end
+
     it '.vm_reconfigure' do
       expect(connection).to receive(:get_vapp).with(vm.ems_ref, :parser => 'xml').and_return(double(:body => vm_xml))
       expect(connection).to receive(:post_reconfigure_vm).with(vm.ems_ref, vm_xml, 'fog-options').and_return(double(:body => nil))

@@ -63,7 +63,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_subnet
       expect(vdc_subnet).to have_attributes(
-        :name                           => 'subnet-RedHat external network',
+        :name                           => 'RedHat external network',
         :cidr                           => '10.12.0.1/16',
         :status                         => nil,
         :dhcp_enabled                   => nil,
@@ -88,7 +88,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_network_port
       expect(net_port).to have_attributes(
-        :name                  => 'RHEL7-001#NIC#0',
+        :name                  => 'NIC#0',
         :mac_address           => '00:50:56:01:00:09',
         :device_type           => 'VmOrTemplate',
         :source                => 'refresh',
@@ -151,7 +151,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_subnet
       expect(vapp_subnet).to have_attributes(
-        :name                  => 'subnet-vApp network test (RHEL7-web-002)',
+        :name                  => 'vApp network test (RHEL7-web-002)',
         :cidr                  => '192.168.2.1/24',
         :dhcp_enabled          => true,
         :gateway               => '192.168.2.1',
@@ -167,7 +167,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_network_port
       expect(net_port).to have_attributes(
-        :name                  => 'vAppRHEL7-w-002#NIC#0',
+        :name                  => 'NIC#0',
         :mac_address           => '00:50:56:01:00:0c',
         :device_type           => 'VmOrTemplate',
         :source                => 'refresh',
