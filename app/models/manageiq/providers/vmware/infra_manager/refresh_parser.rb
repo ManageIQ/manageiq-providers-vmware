@@ -1045,6 +1045,7 @@ module ManageIQ::Providers
             :controller_type => 'ethernet',
             :present         => data.fetch_path('connectable', 'connected').to_s.downcase == 'true',
             :start_connected => data.fetch_path('connectable', 'startConnected').to_s.downcase == 'true',
+            :model           => data.xsiType,
             :address         => address,
           }
           new_result[:lan] = lan unless lan.nil?

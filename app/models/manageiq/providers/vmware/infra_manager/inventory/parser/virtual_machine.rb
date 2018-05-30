@@ -252,6 +252,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :controller_type => 'ethernet',
           :present         => present,
           :start_connected => start_connected,
+          :model           => device.class.wsdl_name,
           :address         => address,
           :lan             => parse_virtual_machine_guest_device_lan(vm, device),
         }
