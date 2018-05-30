@@ -666,6 +666,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :device_name     => "Network adapter 1",
         :device_type     => "ethernet",
         :controller_type => "ethernet",
+        :present         => true,
+        :start_connected => true,
+        :model           => "VirtualE1000",
         :address         => "00:50:56:ab:a2:e2",
         :uid_ems         => "00:50:56:ab:a2:e2",
       )

@@ -734,6 +734,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :controller_type => "ethernet",
       :present         => false,
       :start_connected => true,
+      :model           => "VirtualE1000",
       :address         => "00:50:56:af:00:73"
     )
     expect(nic.lan).to eq(@lan)
