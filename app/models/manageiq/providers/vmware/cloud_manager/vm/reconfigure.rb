@@ -28,6 +28,11 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure
     'LSI Logic Parallel SCSI'
   end
 
+  def available_adapter_names
+    available = (0..3).to_a - network_ports.map { |nic| nic_idx(nic.name) }.map(&:to_i)
+    available.map { |idx| "NIC##{idx}" }
+  end
+
   def validate_config_spec(options)
     if vm_powered_on?
       if options[:number_of_cpus]
@@ -62,12 +67,31 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure
       Array(options[:disk_remove]).each_with_object(new_hw[:disk]) { |d, res| res << { :id => disk_id(d[:disk_name]), :capacity_mb => -1 } }
     end
 
-    new_hw.empty? ? {} : { :hardware => new_hw }
+    # Network connection modifications.
+    nics = []
+    Array(options[:network_adapter_add]).each { |a| nics << { :new_idx => nic_idx(a[:name]), :name => vapp_net_name(a[:cloud_network]) } }
+    Array(options[:network_adapter_remove]).each { |a| nics << { :idx => nic_idx(a[:network][:name]), :new_idx => -1 } }
+
+    res = {}
+    res[:hardware] = new_hw unless new_hw.empty?
+    res[:networks] = nics unless nics.empty?
+    res
   end
 
   def disk_id(disk_name)
     disk = disks.detect { |d| d.filename == disk_name }
     # Disk location is stored as "{addr}/{parent_addr}/{disk_id}" e.g. "0/3/2000"
     disk.location.to_s.split('/').last
+  end
+
+  def nic_idx(nic_name)
+    # NIC name is stored as "{vm_name}#NIC#{nic_index}"
+    nic_name.to_s.split('#').last
+  end
+
+  def vapp_net_name(name)
+    return 'none' if name.blank?
+    # vApp network name is stored as "{name} ({vapp_name})"
+    name.to_s.chomp(" (#{orchestration_stack.name})")
   end
 end
