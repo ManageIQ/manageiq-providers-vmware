@@ -40,6 +40,28 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes.merge!(extra_attributes)
     end
 
+    def miq_scsi_targets(extra_attributes = {})
+      attributes = {
+        :model_class                  => ::MiqScsiTarget,
+        :association                  => :miq_scsi_targets,
+        :manager_ref                  => %i(guest_device uid_ems),
+        :parent_inventory_collections => [:hosts],
+      }
+
+      attributes.merge!(extra_attributes)
+    end
+
+    def miq_scsi_luns(extra_attributes = {})
+      attributes = {
+        :model_class                  => ::MiqScsiLun,
+        :association                  => :miq_scsi_luns,
+        :manager_ref                  => %i(miq_scsi_target uid_ems),
+        :parent_inventory_collections => [:hosts],
+      }
+
+      attributes.merge!(extra_attributes)
+    end
+
     def ems_folders(extra_attributes = {})
       attributes = {:attributes_blacklist => %i(parent)}
       super(attributes.merge(extra_attributes))

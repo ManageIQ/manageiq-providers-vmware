@@ -52,12 +52,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       guest_devices
       hardwares
       hosts
+      host_guest_devices
       host_hardwares
       host_networks
       host_storages
       host_switches
       host_operating_systems
       lans
+      miq_scsi_luns
+      miq_scsi_targets
       networks
       operating_systems
       resource_pools

@@ -497,6 +497,46 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems         => "vmnic0",
         # TODO: :switch          => switch,
       )
+
+      hba = host.hardware.guest_devices.find_by(:uid_ems => "vmhba1")
+
+      expect(hba).not_to be_nil
+      expect(hba).to have_attributes(
+        :device_name     => "vmhba1",
+        :device_type     => "storage",
+        :location        => "0e:00.0",
+        :controller_type => "Block",
+        :model           => "Smart Array P400",
+        :present         => true,
+        :start_connected => true,
+        :uid_ems         => "vmhba1",
+      )
+
+      expect(hba.miq_scsi_targets.count).to eq(1)
+
+      scsi_target = hba.miq_scsi_targets.first
+      expect(scsi_target).to have_attributes(
+        :target      => 0,
+        :uid_ems     => "0",
+        :iscsi_name  => nil,
+        :iscsi_alias => nil,
+        :address     => nil,
+      )
+
+      expect(scsi_target.miq_scsi_luns.count).to eq(1)
+
+      scsi_lun = scsi_target.miq_scsi_luns.first
+      expect(scsi_lun).to have_attributes(
+        :lun            => 0,
+        :canonical_name => "disk",
+        :lun_type       => nil,
+        :device_name    => "/vmfs/devices/disks/mpx.vmhba1:C0:T0:L0",
+        :device_type    => "disk",
+        :block          => 1_146_734_896,
+        :block_size     => 512,
+        :capacity       => 573_367_448,
+        :uid_ems        => "0000000000766d686261313a303a30",
+      )
     end
 
     def assert_specific_cluster

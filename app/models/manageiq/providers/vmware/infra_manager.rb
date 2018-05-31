@@ -27,6 +27,9 @@ module ManageIQ::Providers
     supports :provisioning
     supports :smartstate_analysis
 
+    has_many :miq_scsi_targets, -> { distinct }, :through => :host_guest_devices
+    has_many :miq_scsi_luns, -> { distinct }, :through => :miq_scsi_targets
+
     def self.ems_type
       @ems_type ||= "vmwarews".freeze
     end
