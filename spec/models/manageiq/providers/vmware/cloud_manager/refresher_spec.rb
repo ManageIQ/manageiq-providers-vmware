@@ -158,7 +158,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_powered_on
-    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec1-vm1 (WebServerVM)")
+    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec1-vm1")
     expect(v).to have_attributes(
       :template              => false,
       :ems_ref               => "vm-f9ceb77c-b9d9-400c-8c06-72c785e884af",
@@ -242,7 +242,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_powered_off
-    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1 (WebServerVM3)")
+    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1")
     expect(v).to have_attributes(
       :template              => false,
       :ems_ref               => "vm-a28be0c0-d70d-4047-92f8-fc217bbaa7f6",
@@ -331,8 +331,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
                             .find_by(:name => "spec-1")
     @orchestration_stack2 = ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack
                             .find_by(:name => "spec2")
-    vm1 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec1-vm1 (WebServerVM)")
-    vm2 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1 (WebServerVM3)")
+    vm1 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec1-vm1")
+    vm2 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1")
 
     expect(vm1.orchestration_stack).to eq(@orchestration_stack1)
     expect(vm2.orchestration_stack).to eq(@orchestration_stack2)
@@ -352,7 +352,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_with_snapshot
-    vm = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1 (WebServerVM3)")
+    vm = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => "spec2-vm1")
 
     expect(vm.snapshots.first).not_to be_nil
     expect(vm.snapshots.first).to have_attributes(
