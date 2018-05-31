@@ -495,7 +495,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :location        => "03:00.0",
         :controller_type => "ethernet",
         :uid_ems         => "vmnic0",
-        # TODO: :switch          => switch,
+        :switch          => switch,
       )
 
       hba = host.hardware.guest_devices.find_by(:uid_ems => "vmhba1")

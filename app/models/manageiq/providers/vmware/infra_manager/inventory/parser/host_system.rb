@@ -99,10 +99,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       host_hash[:service_tag] = service_tag
     end
 
-    def parse_host_system_children(host_hash, props)
-      # TODO
-    end
-
     def parse_host_system_operating_system(host, props)
       persister.host_operating_systems.build(
         :host         => host,
@@ -176,7 +172,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :present         => true,
           :controller_type => 'ethernet',
           :address         => pnic.mac,
-          # TODO: :switch          => persister.switches.lazy_find(pnic.device)
         )
       end
     end
@@ -312,7 +307,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           mac_changes       = security_policy[:macChanges]
         end
 
-        persister.switches.build(
+        persister_switch = persister.switches.build(
           :uid_ems           => uid,
           :name              => switch[:name],
           :type              => type,
@@ -322,6 +317,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :forged_transmits  => forged_transmits,
           :mac_changes       => mac_changes,
         )
+
+        switch.pnic.to_a.each do |pnic|
+          pnic_uid_ems = pnic.split("-").last
+          next if pnic_uid_ems.nil?
+
+          hardware = persister.host_hardwares.find(host)
+          persister_guest_device = persister.host_guest_devices.find_or_build_by(:hardware => hardware, :uid_ems => pnic_uid_ems)
+          persister_guest_device.assign_attributes(
+            :switch => persister_switch
+          )
+        end
+
+        persister_switch
       end
     end
 
