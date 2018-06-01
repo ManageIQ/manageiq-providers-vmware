@@ -99,7 +99,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_vm_networking
       expect(vm).to have_attributes(
-        :name           => 'RHEL7-001',
+        :name           => 'RHEL7-001 (RHEL-001)',
         :ipaddresses    => ['10.12.6.17'],
         :mac_addresses  => [net_port.mac_address],
         :cloud_networks => [vdc_net],
@@ -200,7 +200,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
 
     def assert_specific_vm_networking
       expect(vm).to have_attributes(
-        :name           => 'vAppRHEL7-w-002',
+        :name           => 'vAppRHEL7-w-002 (vAppRHEL7-w-001)',
         :ipaddresses    => ['192.168.2.100', floating_ip.address],
         :mac_addresses  => [net_port.mac_address],
         :cloud_networks => [vapp_net],
@@ -220,7 +220,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
     it "full refresh" do
       refresh_network_manager(described_class.name.underscore) do
         expect(vm).to have_attributes(
-          :name         => 'RHEL01-rspec',
+          :name         => 'RHEL01-rspec (RHEL-01)',
           :floating_ips => [floating_ip]
         )
 
@@ -237,7 +237,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
     2.times do # Run twice to verify that a second run with existing data does not change anything
       @ems.reload
       @ems_network.reload
-      VCR.use_cassette(cassete) do
+      VCR.use_cassette(cassete, :allow_unused_http_interactions => true) do
         EmsRefresh.refresh(@ems)
         EmsRefresh.refresh(@ems_network)
       end

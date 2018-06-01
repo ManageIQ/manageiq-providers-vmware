@@ -12610,4 +12610,322 @@ http_interactions:
         </SnapshotSection>
     http_version:
   recorded_at: Fri, 23 Feb 2018 12:50:19 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>1a5ebd7d-c507-4ddd-b554-489ee5964dab</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>vAppRHEL7-w-001</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-1a5ebd7d-c507-4ddd-b554-489ee5964dab/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-6850d9ee-ce30-42e0-aaad-3909e1861c48/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-6850d9ee-ce30-42e0-aaad-3909e1861c48/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>6850d9ee-ce30-42e0-aaad-3909e1861c48</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>RHEL-001</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-6850d9ee-ce30-42e0-aaad-3909e1861c48/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-796ea504-ea50-4952-b7f7-a67ae40ba3a0/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-796ea504-ea50-4952-b7f7-a67ae40ba3a0/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>796ea504-ea50-4952-b7f7-a67ae40ba3a0</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>RHEL-001</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-796ea504-ea50-4952-b7f7-a67ae40ba3a0/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-6294e7eb-2f02-42fe-8cde-6e727115bb63/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-6294e7eb-2f02-42fe-8cde-6e727115bb63/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>6294e7eb-2f02-42fe-8cde-6e727115bb63</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>vAppRHEL7-w-001</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-6294e7eb-2f02-42fe-8cde-6e727115bb63/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-e9404ecd-a2b8-4781-8e10-8fe6ca450305/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-e9404ecd-a2b8-4781-8e10-8fe6ca450305/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>e9404ecd-a2b8-4781-8e10-8fe6ca450305</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>RHEL-002</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-e9404ecd-a2b8-4781-8e10-8fe6ca450305/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
+- request:
+    method: get
+    uri: https://VMWARE_CLOUD_HOST/api/vApp/vm-37ff4eb7-a711-4baa-82cf-3075f099ebb0/guestCustomizationSection
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:31 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 6eb71b73-35f4-4117-b627-dc5c9611e768
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.guestcustomizationsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1741'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <GuestCustomizationSection href="https://VMWARE_CLOUD_HOST/api/vApp/vm-37ff4eb7-a711-4baa-82cf-3075f099ebb0/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <Enabled>true</Enabled>
+            <ChangeSid>false</ChangeSid>
+            <VirtualMachineId>37ff4eb7-a711-4baa-82cf-3075f099ebb0</VirtualMachineId>
+            <JoinDomainEnabled>false</JoinDomainEnabled>
+            <UseOrgSettings>false</UseOrgSettings>
+            <AdminPasswordEnabled>false</AdminPasswordEnabled>
+            <AdminPasswordAuto>true</AdminPasswordAuto>
+            <ResetPasswordRequired>false</ResetPasswordRequired>
+            <ComputerName>RHEL-01</ComputerName>
+            <Link rel="edit" href="https://VMWARE_CLOUD_HOST/api/vApp/vm-37ff4eb7-a711-4baa-82cf-3075f099ebb0/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+        </GuestCustomizationSection>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:31 GMT
 recorded_with: VCR 3.0.3
