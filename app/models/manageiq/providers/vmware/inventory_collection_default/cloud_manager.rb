@@ -38,7 +38,6 @@ class ManageIQ::Providers::Vmware::InventoryCollectionDefault::CloudManager < Ma
           uid_ems
           ems_ref
           name
-          hostname
           vendor
           raw_power_state
           snapshots

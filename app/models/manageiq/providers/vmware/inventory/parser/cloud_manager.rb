@@ -31,8 +31,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
     collector.vms.each do |vm|
       parsed_vm = persister.vms.find_or_build(vm[:vm].id).assign_attributes(
         :uid_ems                => vm[:vm].id,
-        :name                   => vm[:vm].name,
-        :hostname               => vm[:hostname],
+        :name                   => vm[:hostname].present? ? "#{vm[:vm].name} (#{vm[:hostname]})" : vm[:vm].name,
         :vendor                 => 'vmware',
         :raw_power_state        => vm[:vm].status,
         :orchestration_stack    => persister.orchestration_stacks.lazy_find(vm[:vm].vapp_id),

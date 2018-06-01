@@ -197,7 +197,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_powered_on
-    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec1-vm1')
+    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec1-vm1 (spec1-vm1)')
     expect(v).to have_attributes(
       :template               => false,
       :ems_ref                => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
@@ -222,8 +222,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :cpu_limit              => nil,
       :cpu_shares             => nil,
       :cpu_shares_level       => nil,
-      :cpu_hot_add_enabled    => true,
-      :hostname               => 'spec1-vm1'
+      :cpu_hot_add_enabled    => true
     )
 
     expect(v.ext_management_system).to eq(@ems)
@@ -287,7 +286,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_powered_off
-    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1')
+    v = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1 (spec2-vm1)')
     expect(v).to have_attributes(
       :template              => false,
       :ems_ref               => 'vm-aaf94123-cbf9-4de9-841c-41dd41ac310e',
@@ -310,8 +309,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :cpu_reserve_expand    => nil,
       :cpu_limit             => nil,
       :cpu_shares            => nil,
-      :cpu_shares_level      => nil,
-      :hostname              => 'spec2-vm1'
+      :cpu_shares_level      => nil
     )
 
     expect(v.ext_management_system).to eq(@ems)
@@ -380,8 +378,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
                             .find_by(:name => 'spec1-vapp')
     @orchestration_stack2 = ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack
                             .find_by(:name => 'spec2-vapp')
-    vm1 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec1-vm1')
-    vm2 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1')
+    vm1 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec1-vm1 (spec1-vm1)')
+    vm2 = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1 (spec2-vm1)')
 
     expect(vm1.orchestration_stack).to eq(@orchestration_stack1)
     expect(vm2.orchestration_stack).to eq(@orchestration_stack2)
@@ -401,7 +399,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   end
 
   def assert_specific_vm_with_snapshot
-    vm = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1')
+    vm = ManageIQ::Providers::Vmware::CloudManager::Vm.find_by(:name => 'spec2-vm1 (spec2-vm1)')
 
     expect(vm.snapshots.first).not_to be_nil
     expect(vm.snapshots.first).to have_attributes(
