@@ -9,6 +9,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
     unsupported_reason_add(:clone, _('Clone operation is not supported')) if blank? || orphaned? || archived?
   end
 
+  has_many :network_ports, :as => :device
+
   supports :reconfigure_disks
   supports :reconfigure_network_adapters
   supports :reconfigure_disksize
