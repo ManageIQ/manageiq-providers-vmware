@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 87 ending 2018-06-04
+
+### Added
+- Parse the VirtualEthernetCard model type [(#279)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/279)
+- Don't cache host config.storageDevice [(#278)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/278)
+- Add ems_ref_obj to streaming refresh parser [(#275)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/275)
+- Recognize deployed vApp even if not powered on [(#273)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/273)
+- Reconfigure VM network connectivity aka. NICs [(#272)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/272)
+- Parse the lan from a guest_device [(#266)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/266)
+
 ## Unreleased as of Sprint 86 ending 2018-05-21
 
 ### Added
