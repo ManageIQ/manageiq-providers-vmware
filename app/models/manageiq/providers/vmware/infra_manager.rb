@@ -26,6 +26,9 @@ module ManageIQ::Providers
 
     supports :provisioning
     supports :smartstate_analysis
+    supports :streaming_refresh do
+      unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
+    end
 
     has_many :miq_scsi_targets, -> { distinct }, :through => :host_guest_devices
     has_many :miq_scsi_luns, -> { distinct }, :through => :miq_scsi_targets
@@ -50,6 +53,10 @@ module ManageIQ::Providers
 
     def supported_catalog_types
       %w(vmware)
+    end
+
+    def streaming_refresh_enabled?
+      Settings.prototype.ems_vmware.update_driven_refresh
     end
 
     def remote_console_vmrc_acquire_ticket
