@@ -69,6 +69,13 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     validate_remote_console_acquire_ticket("webmks")
     ticket = ext_management_system.vm_remote_console_webmks_acquire_ticket(self)
 
+    # Enable WebMKS on this Vm by disabling VNC
+    with_provider_object do |vim_vm|
+      _log.info("Disabling VNC on #{self.class.name} id: [#{id}] name: [#{name}]")
+      vim_vm.setRemoteDisplayVncAttributes(:enabled => false, :port => nil, :password => nil)
+    end
+    update_attributes(:vnc_port => nil)
+
     SystemConsole.force_vm_invalid_token(id)
 
     console_args = {
