@@ -29,6 +29,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       .and_raise(StandardError.new(error))
     expect do
       EmsRefresh.refresh(ems)
-    end.to raise_error(EmsRefresh::Refreshers::EmsRefresherMixin::PartialRefreshError)
+    end.to raise_error(@ems.refresher::PartialRefreshError)
   end
 end
