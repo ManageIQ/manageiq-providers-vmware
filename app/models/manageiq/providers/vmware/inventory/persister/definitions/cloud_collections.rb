@@ -6,15 +6,12 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudColl
   end
 
   def initialize_cloud_inventory_collections
-    %i(
-       vms
+    %i(vms
        availability_zones
        disks
        hardwares
        operating_systems
-       snapshots
-
-       ).each do |name|
+       snapshots).each do |name|
 
       add_collection(cloud, name)
     end
@@ -43,7 +40,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudColl
 
   def add_orchestration_templates
     add_collection(cloud, :orchestration_templates) do |builder|
-      builder.add_builder_params(:ems_id => manager.id )
+      builder.add_builder_params(:ems_id => manager.id)
     end
   end
 end
