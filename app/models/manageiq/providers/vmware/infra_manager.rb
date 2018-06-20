@@ -249,6 +249,10 @@ module ManageIQ::Providers
       invoke_vim_ws(:relocateVM, vm, options[:user_event], options[:host], options[:pool], options[:datastore], options[:disk_move_type], options[:transform], options[:priority], options[:disk])
     end
 
+    def vm_move_into_folder(vm, options = {})
+      invoke_vim_ws(:moveIntoFolder, options[:folder], options[:user_event], vm.ems_ref_obj)
+    end
+
     def vm_clone(vm, options = {})
       defaults = {
         :pool          => nil,
