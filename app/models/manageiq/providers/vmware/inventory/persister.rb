@@ -7,7 +7,7 @@ class ManageIQ::Providers::Vmware::Inventory::Persister < ManagerRefresh::Invent
     ManageIQ::Providers::Vmware::InventoryCollectionDefault::CloudManager
   end
 
-  def targeted
+  def targeted?
     false
   end
 
@@ -20,7 +20,7 @@ class ManageIQ::Providers::Vmware::Inventory::Persister < ManagerRefresh::Invent
 
     settings_options.merge(
       :strategy => strategy,
-      :targeted => targeted,
+      :targeted => targeted?,
     )
   end
 end

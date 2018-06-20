@@ -33,6 +33,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
         :uid_ems                => vm[:vm].id,
         :name                   => vm[:vm].name,
         :hostname               => vm[:hostname],
+        :location               => vm[:vm].id,
         :vendor                 => 'vmware',
         :raw_power_state        => vm[:vm].status,
         :orchestration_stack    => persister.orchestration_stacks.lazy_find(vm[:vm].vapp_id),
@@ -98,6 +99,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
       persister.miq_templates.find_or_build(image[:image].id).assign_attributes(
         :uid_ems            => image[:image].id,
         :name               => image[:image].name,
+        :location           => image[:image].id,
         :vendor             => 'vmware',
         :raw_power_state    => 'never',
         :publicly_available => image[:is_published]

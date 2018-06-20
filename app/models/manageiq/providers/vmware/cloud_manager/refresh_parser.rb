@@ -141,6 +141,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :ems_ref                => uid,
       :name                   => name,
       :hostname               => hostname,
+      :location               => uid,
       :vendor                 => "vmware",
       :raw_power_state        => status,
       :snapshots              => [parse_snapshot(vm)].compact,
@@ -193,6 +194,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :uid_ems            => uid,
       :ems_ref            => uid,
       :name               => name,
+      :location           => uid,
       :vendor             => "vmware",
       :raw_power_state    => "never",
       :publicly_available => is_public
