@@ -396,8 +396,10 @@ module ManageIQ::Providers
     end
 
     def vm_remove_disk_by_file(vm, options = {})
-      invoke_vim_ws(:removeDiskByFile, vm, options[:user_event], options[:diskName], true)
+      options[:delete_backing] = true if options[:delete_backing].nil?
+      invoke_vim_ws(:removeDiskByFile, vm, options[:user_event], options[:diskName], options[:delete_backing])
     end
+    alias vm_remove_disk vm_remove_disk_by_file
 
     def vm_acquire_mks_ticket(vm, options = {})
       invoke_vim_ws(:acquireMksTicket, vm, options[:user_event])
