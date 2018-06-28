@@ -62,6 +62,29 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes.merge!(extra_attributes)
     end
 
+    def host_guest_devices(extra_attributes = {})
+      attributes = {
+        :model_class                  => ::GuestDevice,
+        :manager_ref                  => %i(hardware uid_ems),
+        :association                  => :host_guest_devices,
+        :parent_inventory_collections => [:hosts],
+        :inventory_object_attributes  => %i(
+          address
+          controller_type
+          device_name
+          device_type
+          lan
+          location
+          network
+          present
+          switch
+          uid_ems
+        ),
+      }
+
+      attributes.merge!(extra_attributes)
+    end
+
     def ems_folders(extra_attributes = {})
       attributes = {:attributes_blacklist => %i(parent)}
       super(attributes.merge(extra_attributes))
