@@ -99,10 +99,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       host_hash[:service_tag] = service_tag
     end
 
-    def parse_host_system_children(host_hash, props)
-      # TODO
-    end
-
     def parse_host_system_operating_system(host, props)
       persister.host_operating_systems.build(
         :host         => host,
@@ -115,7 +111,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_system_services(host, props)
-      # TODO
+      host_service_info = props.fetch_path(:config, :service, :service)
+      return if host_service_info.nil?
+
+      host_service_info.each do |service|
+        persister.host_system_services.build(
+          :host         => host,
+          :name         => service[:key],
+          :display_name => service[:label],
+          :running      => service[:running],
+        )
+      end
     end
 
     def parse_host_system_hardware(host, props)
@@ -158,15 +164,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       hardware = persister.host_hardwares.build(hardware_hash)
 
-      parse_host_system_guest_devices(hardware, props)
+      parse_host_system_network_adapters(hardware, props)
+      parse_host_system_storage_adapters(hardware, props)
     end
 
-    def parse_host_system_guest_devices(hardware, props)
+    def parse_host_system_network_adapters(hardware, props)
       pnics = props.fetch_path(:config, :network, :pnic)
       pnics.to_a.each do |pnic|
         name = uid = pnic.device
 
-        persister.guest_devices.build(
+        persister.host_guest_devices.build(
           :hardware        => hardware,
           :uid_ems         => uid,
           :device_name     => name,
@@ -175,11 +182,70 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :present         => true,
           :controller_type => 'ethernet',
           :address         => pnic.mac,
-          # TODO: :switch          => persister.switches.lazy_find(pnic.device)
         )
       end
+    end
 
-      hbas = props.fetch_path(:config, :storageDevice, :hostBusAdapter)
+    def parse_host_system_scsi_luns(scsi_luns)
+      scsi_luns.to_a.each_with_object({}) do |lun, result|
+        if lun.kind_of?(RbVmomi::VIM::HostScsiDisk)
+          n_blocks   = lun.capacity.block
+          block_size = lun.capacity.blockSize
+          capacity   = (n_blocks * block_size) / 1024
+        end
+
+        lun_hash = {
+          :uid_ems        => lun.uuid,
+          :canonical_name => lun.lunType,
+          :device_name    => lun.deviceName,
+          :device_type    => lun.deviceType,
+          :block          => n_blocks,
+          :block_size     => block_size,
+          :capacity       => capacity,
+        }
+
+        result[lun.key] = lun_hash
+      end
+    end
+
+    def parse_host_system_scsi_targets(scsi_adapters, scsi_lun_uids)
+      scsi_adapters.to_a.each_with_object({}) do |adapter, result|
+        result[adapter.adapter] = adapter.target.to_a.map do |target|
+          uid = target.target.to_s
+
+          transport = target.transport
+          if transport && transport.kind_of?(RbVmomi::VIM::HostInternetScsiTargetTransport)
+            iscsi_name  = target.transport.iScsiName
+            iscsi_alias = target.transport.iScsiAlias
+            address     = target.transport.address
+          end
+
+          scsi_luns = target.lun.to_a.map do |lun|
+            scsi_lun_uids[lun.scsiLun]&.merge(:lun => lun.lun.to_s)
+          end
+
+          {
+            :uid_ems       => uid,
+            :target        => uid,
+            :iscsi_name    => iscsi_name,
+            :iscsi_alias   => iscsi_alias,
+            :address       => address,
+            :miq_scsi_luns => scsi_luns,
+          }
+        end
+      end
+    end
+
+    def parse_host_system_storage_adapters(hardware, props)
+      storage_devices = props.dig(:config, :storageDevice)
+      return if storage_devices.blank?
+
+      scsi_lun_uids = parse_host_system_scsi_luns(storage_devices.dig(:scsiLun))
+
+      scsi_adapters = storage_devices.dig(:scsiTopology, :adapter)
+      scsi_targets_by_adapter = parse_host_system_scsi_targets(scsi_adapters, scsi_lun_uids)
+
+      hbas = storage_devices[:hostBusAdapter]
       hbas.to_a.each do |hba|
         name = uid = hba.device
         location = hba.pci
@@ -204,7 +270,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
                             "HBA"
                           end
 
-        persister.guest_devices.build(
+        persister_guest_device = persister.host_guest_devices.build(
           :hardware          => hardware,
           :uid_ems           => uid,
           :device_name       => name,
@@ -217,6 +283,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :chap_auth_enabled => chap_auth_enabled,
           :controller_type   => controller_type,
         )
+
+        scsi_targets_by_adapter[hba.key].to_a.each do |scsi_target|
+          miq_scsi_luns = Array.wrap(scsi_target.delete(:miq_scsi_luns))
+
+          persister_scsi_target = persister.miq_scsi_targets.build(
+            scsi_target.merge(:guest_device => persister_guest_device)
+          )
+
+          miq_scsi_luns.each do |miq_scsi_lun|
+            persister.miq_scsi_luns.build(
+              miq_scsi_lun.merge(:miq_scsi_target => persister_scsi_target)
+            )
+          end
+        end
       end
     end
 
@@ -237,7 +317,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           mac_changes       = security_policy[:macChanges]
         end
 
-        persister.switches.build(
+        persister_switch = persister.switches.build(
           :uid_ems           => uid,
           :name              => switch[:name],
           :type              => type,
@@ -247,6 +327,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :forged_transmits  => forged_transmits,
           :mac_changes       => mac_changes,
         )
+
+        switch.pnic.to_a.each do |pnic|
+          pnic_uid_ems = pnic.split("-").last
+          next if pnic_uid_ems.nil?
+
+          hardware = persister.host_hardwares.find(host)
+          persister_guest_device = persister.host_guest_devices.find_or_build_by(:hardware => hardware, :uid_ems => pnic_uid_ems)
+          persister_guest_device.assign_attributes(
+            :switch => persister_switch
+          )
+        end
+
+        persister_switch
       end
     end
 

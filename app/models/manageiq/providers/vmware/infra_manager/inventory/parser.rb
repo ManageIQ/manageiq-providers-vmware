@@ -140,7 +140,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_network(host_hash, props)
     parse_host_system_runtime(host_hash, props)
     parse_host_system_system_info(host_hash, props)
-    parse_host_system_children(host_hash, props)
 
     host_hash[:type] = if host_hash.include?(:vmm_product) && !%w(esx esxi).include?(host_hash[:vmm_product].to_s.downcase)
                          "ManageIQ::Providers::Vmware::InfraManager::Host"
