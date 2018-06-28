@@ -537,6 +537,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :capacity       => 573_367_448,
         :uid_ems        => "0000000000766d686261313a303a30",
       )
+
+      system_services = host.system_services
+      expect(system_services.count).to eq(2)
+      expect(system_services.find_by(:name => "ntpd")).to have_attributes(
+        :name         => "ntpd",
+        :display_name => "NTP Daemon",
+        :running      => true,
+      )
     end
 
     def assert_specific_cluster

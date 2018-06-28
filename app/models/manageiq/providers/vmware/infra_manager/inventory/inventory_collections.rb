@@ -85,6 +85,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::InventoryCollections
       attributes.merge!(extra_attributes)
     end
 
+    def host_system_services(extra_attributes = {})
+      attributes = {
+        :model_class                  => ::SystemService,
+        :manager_ref                  => %i(host name),
+        :association                  => :host_system_services,
+        :parent_inventory_collections => %i(hosts),
+      }
+
+      attributes.merge!(extra_attributes)
+    end
+
     def ems_folders(extra_attributes = {})
       attributes = {:attributes_blacklist => %i(parent)}
       super(attributes.merge(extra_attributes))

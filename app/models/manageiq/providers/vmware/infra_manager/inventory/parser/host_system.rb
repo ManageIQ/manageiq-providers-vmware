@@ -111,7 +111,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_system_services(host, props)
-      # TODO
+      host_service_info = props.fetch_path(:config, :service, :service)
+      return if host_service_info.nil?
+
+      host_service_info.each do |service|
+        persister.host_system_services.build(
+          :host         => host,
+          :name         => service[:key],
+          :display_name => service[:label],
+          :running      => service[:running],
+        )
+      end
     end
 
     def parse_host_system_hardware(host, props)

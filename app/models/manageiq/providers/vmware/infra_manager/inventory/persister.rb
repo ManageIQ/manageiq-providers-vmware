@@ -57,6 +57,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerR
       host_networks
       host_storages
       host_switches
+      host_system_services
       host_operating_systems
       lans
       miq_scsi_luns
