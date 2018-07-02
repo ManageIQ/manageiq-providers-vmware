@@ -8,4 +8,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Template < ManageIQ::Providers:
       unsupported_reason_add(:provisioning, _('not connected to ems'))
     end
   end
+
+  supports :rename
 end

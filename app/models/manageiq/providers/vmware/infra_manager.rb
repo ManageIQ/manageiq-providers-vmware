@@ -274,6 +274,10 @@ module ManageIQ::Providers
       invoke_vim_ws(:cloneVM, vm, options[:user_event], options[:name], options[:folder], options[:pool], options[:host], options[:datastore], options[:powerOn], options[:template], options[:transform], options[:config], options[:customization], options[:disk])
     end
 
+    def vm_rename(vm, options = {})
+      invoke_vim_ws(:renameVM, vm, options[:user_event], options[:new_name])
+    end
+
     def vm_connect_all(vm, options = {})
       defaults = {:onStartup => false}
       options  = defaults.merge(options)
