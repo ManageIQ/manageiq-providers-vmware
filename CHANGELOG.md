@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 89 ending 2018-07-02
+
+### Added
+- Add the ability to rename a VM [(#291)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/291)
+- Add alias for vm_remove_disk_by_file [(#290)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/290)
+- Add method vm_move_into_folder. [(#285)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/285)
+- Finish parsing of host properties [(#280)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/280)
+
 ## Unreleased as of Sprint 88 ending 2018-06-18
 
 ### Fixed
