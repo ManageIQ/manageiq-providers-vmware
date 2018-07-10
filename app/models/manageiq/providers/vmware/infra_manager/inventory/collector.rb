@@ -3,10 +3,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include Vmdb::Logging
 
   attr_reader   :ems, :inventory_cache, :run_once, :saver
-  attr_accessor :exit_requested
+  attr_accessor :exit_requested, :initial
 
   def initialize(ems, run_once: false, threaded: true)
     @ems             = ems
+    @initial         = true
     @inventory_cache = ems.class::Inventory::Cache.new
     @run_once        = run_once
     @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
@@ -25,6 +26,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.info("Refreshing initial inventory")
     version = initial_refresh(vim, property_filter)
     _log.info("Refreshing initial inventory...Complete")
+
+    self.initial = false
 
     return if run_once
 
@@ -158,6 +161,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def process_object_update(object_update)
     managed_object = object_update.obj
 
+    log_object_update(object_update)
+
     props =
       case object_update.kind
       when "enter"
@@ -216,6 +221,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def save_inventory(persister)
     saver.queue_save_inventory(persister)
+  end
+
+  def log_object_update(object_update)
+    return if initial
+
+    _log.debug do
+      object_str = "#{object_update.obj.class.wsdl_name}:#{object_update.obj._ref}"
+
+      prop_changes = object_update.changeSet.map(&:name).take(5).join(", ")
+      prop_changes << ", ..." if object_update.changeSet.length > 5
+
+      s =  "Object: [#{object_str}] Kind: [#{object_update.kind}]"
+      s << " Props: [#{prop_changes}]" if object_update.kind == "modify"
+    end
   end
 
   def full_persister_klass
