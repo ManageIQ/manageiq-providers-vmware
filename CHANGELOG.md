@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Gaprindashvili-4
+
+### Added
+- Enhance disk and CPU inventoring [(#261)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/261)
+- Shift fog-vcloud-director gem version [(#267)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/267)
+- Support CPU/MEM/HDD reconfiguration [(#231)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/231)
+- Reconfigure VM network connectivity aka. NICs [(#272)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/272)
+- Resize disk from reconfigure screen [(#164)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/164)
+- Reconfigure VM: Add / Remove Network Adapters [(#163)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/163)
+- Inventory VM's hostname as part of name [(#281)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/281)
+- Recognize deployed vApp even if not powered on [(#273)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/273)
+- Split vApp provisioning customization into three tabs [(#242)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/242)
+- Implement graph inventory refresh for cloud manager [(#217)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/217)
+
+### Fixed
+- Bump version of vmware_web_service [(#247)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/247)
+
 ## Gaprindashvili-3
 
 ### Added
