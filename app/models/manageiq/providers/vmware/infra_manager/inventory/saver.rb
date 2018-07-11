@@ -86,10 +86,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
     persister.persist!
     update_ems_refresh_stats(persister.manager)
   rescue => err
+    log_header = log_header_for_ems(persister.manager)
+
+    _log.error("#{log_header} Save Inventory failed")
+    _log.log_backtrace(err)
+
     update_ems_refresh_stats(persister.manager, :error => err.to_s)
   end
 
   def update_ems_refresh_stats(ems, error: nil)
     ems.update_attributes(:last_refresh_error => error, :last_refresh_date => Time.now.utc)
+  end
+
+  def log_header_for_ems(ems)
+    "EMS: [#{ems.name}], id: [#{ems.id}]"
   end
 end
