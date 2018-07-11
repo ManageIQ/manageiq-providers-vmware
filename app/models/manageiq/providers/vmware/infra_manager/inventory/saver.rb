@@ -84,5 +84,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
 
   def save_inventory(persister)
     persister.persist!
+    update_ems_refresh_stats(persister.manager)
+  rescue => err
+    update_ems_refresh_stats(persister.manager, :error => err.to_s)
+  end
+
+  def update_ems_refresh_stats(ems, error: nil)
+    ems.update_attributes(:last_refresh_error => error, :last_refresh_date => Time.now.utc)
   end
 end

@@ -16,16 +16,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def run
-    _log.info("Monitor updates thread started")
+    _log.info("#{log_header} Monitor updates thread started")
 
     saver.start_thread
 
     vim = connect
     property_filter = create_property_filter(vim)
 
-    _log.info("Refreshing initial inventory")
+    _log.info("#{log_header} Refreshing initial inventory")
     version = initial_refresh(vim, property_filter)
-    _log.info("Refreshing initial inventory...Complete")
+    _log.info("#{log_header} Refreshing initial inventory...Complete")
 
     self.initial = false
 
@@ -38,7 +38,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       version = monitor_updates(vim, property_filter, version, persister, parser)
     end
 
-    _log.info("Monitor updates thread exited")
+    _log.info("#{log_header} Monitor updates thread exited")
+  rescue => err
+    _log.error("#{log_header} Refresh failed")
+    _log.log_backtrace(err)
+
+    ems.update_attributes(:last_refresh_error => err.to_s, :last_refresh_time => Time.now.utc)
   ensure
     saver.stop_thread
     destroy_property_filter(property_filter)
@@ -46,7 +51,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def stop
-    _log.info("Monitor updates thread exiting...")
+    _log.info("#{log_header} Monitor updates thread exiting...")
     self.exit_requested = true
   end
 
@@ -84,7 +89,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     host = ems.hostname
     username, password = ems.auth_user_pwd
 
-    _log.info("Connecting to #{username}@#{host}...")
+    _log.info("#{log_header} Connecting to #{username}@#{host}...")
 
     vim_opts = {
       :ns       => 'urn:vim25',
@@ -102,7 +107,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       vim.serviceContent.sessionManager.Login(:userName => username, :password => password)
     end
 
-    _log.info("Connected")
+    _log.info("#{log_header} Connected")
     conn
   end
 
@@ -134,11 +139,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     object_update_set = property_filter_update.objectSet
     return if object_update_set.blank?
 
-    _log.info("Processing #{object_update_set.count} updates...")
+    _log.info("#{log_header} Processing #{object_update_set.count} updates...")
 
     updates = process_object_update_set(object_update_set)
 
-    _log.info("Processing #{object_update_set.count} updates...Complete")
+    _log.info("#{log_header} Processing #{object_update_set.count} updates...Complete")
 
     updates
   end
@@ -223,6 +228,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     saver.queue_save_inventory(persister)
   end
 
+  def log_header
+    "EMS: [#{ems.name}], id: [#{ems.id}]"
+  end
+
   def log_object_update(object_update)
     return if initial
 
@@ -232,7 +241,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       prop_changes = object_update.changeSet.map(&:name).take(5).join(", ")
       prop_changes << ", ..." if object_update.changeSet.length > 5
 
-      s =  "Object: [#{object_str}] Kind: [#{object_update.kind}]"
+      s =  "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
       s << " Props: [#{prop_changes}]" if object_update.kind == "modify"
     end
   end
