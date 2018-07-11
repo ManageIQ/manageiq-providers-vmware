@@ -5,10 +5,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   def after_initialize
     super
-    return unless update_driven_refresh?
-
-    self.ems       = @emss.first
-    self.collector = ems.class::Inventory::Collector.new(ems)
+    self.ems = @emss.first
   end
 
   def do_before_work_loop
@@ -20,15 +17,16 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   end
 
   def before_exit(_message, _exit_code)
-    return unless update_driven_refresh?
-    stop_inventory_collector
-
-    # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
-    collector_thread.join(60.seconds) # TODO: make this configurable
+    stop_inventory_collector if inventory_collector_running?
   end
 
   def do_work
-    ensure_inventory_collector if update_driven_refresh?
+    if update_driven_refresh?
+      ensure_inventory_collector
+    elsif inventory_collector_running?
+      stop_inventory_collector
+    end
+
     super
   end
 
@@ -37,6 +35,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   attr_accessor :ems, :collector, :collector_thread
 
   def start_inventory_collector
+    self.collector = ems.class::Inventory::Collector.new(ems)
     self.collector_thread = Thread.new do
       begin
         collector.run
@@ -51,7 +50,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   end
 
   def ensure_inventory_collector
-    return if collector_thread&.alive?
+    return if inventory_collector_running?
 
     _log.warn("Inventory collector thread not running, restarting...")
     start_inventory_collector
@@ -59,6 +58,16 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   def stop_inventory_collector
     collector.stop
+
+    # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
+    collector_thread.join(60.seconds) # TODO: make this configurable
+
+    self.collector_thread = nil
+    self.collector = nil
+  end
+
+  def inventory_collector_running?
+    collector_thread&.alive?
   end
 
   def update_driven_refresh?
