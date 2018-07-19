@@ -25,7 +25,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       dvs_hash[:mac_changes]       = security_policy.macChanges&.value
     end
 
-    def parser_dvs_hosts(switch, props)
+    def parse_dvs_hosts(switch, props)
       hosts = props.fetch_path(:summary, :hostMember)
       return if hosts.nil?
 

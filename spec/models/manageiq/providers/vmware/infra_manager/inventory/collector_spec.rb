@@ -480,7 +480,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
-        :uid_ems           => "host-14__vSwitch0",
+        :uid_ems           => "vSwitch0",
         :ports             => 64,
         :allow_promiscuous => false,
         :forged_transmits  => true,
@@ -608,7 +608,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
         :ports             => 64,
-        :uid_ems           => "host-14__vSwitch0",
+        :uid_ems           => "vSwitch0",
         :allow_promiscuous => false,
         :forged_transmits  => true,
         :mac_changes       => true,
@@ -637,7 +637,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :computed_mac_changes       => true,
       )
 
-      expect(lan.switch.uid_ems).to eq("host-14__vSwitch0")
+      expect(lan.switch.uid_ems).to eq("vSwitch0")
     end
 
     def assert_specific_dvswitch

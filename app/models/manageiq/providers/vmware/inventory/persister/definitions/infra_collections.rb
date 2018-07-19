@@ -35,7 +35,8 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
 
     add_lans
     add_snapshots
-    add_switches
+    add_distributed_virtual_switches
+    add_host_virtual_switches
 
     %i(ems_clusters
        ems_folders
@@ -80,7 +81,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     add_collection(infra, :lans) do |builder|
       builder.add_properties(
         :manager_ref                  => %i(switch uid_ems),
-        :parent_inventory_collections => %i(switches)
+        :parent_inventory_collections => %i(host_virtual_switches distributed_virtual_switches)
       )
     end
   end
@@ -94,11 +95,21 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     end
   end
 
-  def add_switches
-    add_collection(infra, :switches) do |builder|
+  def add_distributed_virtual_switches
+    add_collection(infra, :distributed_virtual_switches) do |builder|
       builder.add_properties(
         :attributes_blacklist => %i(parent),
+        :manager_ref          => %i(uid_ems),
         :secondary_refs       => {:by_switch_uuid => %i(switch_uuid)}
+      )
+      builder.add_default_values(:ems_id => ->(persister) { persister.manager.id })
+    end
+  end
+
+  def add_host_virtual_switches
+    add_collection(infra, :host_virtual_switches) do |builder|
+      builder.add_properties(
+        :manager_ref => %i(host uid_ems),
       )
     end
   end
