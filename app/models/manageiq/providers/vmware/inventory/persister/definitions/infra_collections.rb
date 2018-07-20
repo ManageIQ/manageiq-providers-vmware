@@ -1,4 +1,4 @@
-module ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Definitions::InfraCollections
+module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraCollections
   extend ActiveSupport::Concern
 
   def initialize_infra_inventory_collections

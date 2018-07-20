@@ -1,5 +1,8 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManagerRefresh::Inventory::Persister
-  include ::ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Definitions::InfraCollections
+  require_nested :Batch
+  require_nested :Targeted
+
+  include ::ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraCollections
 
   def initialize_inventory_collections
     initialize_infra_inventory_collections
