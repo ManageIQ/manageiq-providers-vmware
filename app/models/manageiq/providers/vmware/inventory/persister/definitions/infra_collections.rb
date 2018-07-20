@@ -6,9 +6,11 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
 
     %i(customization_specs
        host_hardwares
+       host_guest_devices
        host_networks
        host_storages
        host_switches
+       host_system_services
        host_operating_systems
        miq_scsi_luns
        miq_scsi_targets
@@ -18,8 +20,6 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     end
 
     add_hosts
-    add_host_guest_devices
-    add_host_system_services
 
     %i(disks
        guest_devices
@@ -72,26 +72,6 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
       builder.add_properties(
         :attributes_blacklist => %i(parent),
         :model_class          => ManageIQ::Providers::Vmware::InfraManager::HostEsx
-      )
-    end
-  end
-
-  def add_host_guest_devices
-    add_collection(infra, :host_guest_devices) do |builder|
-      builder.add_properties(
-        :model_class                  => ::GuestDevice,
-        :manager_ref                  => %i(hardware uid_ems),
-        :parent_inventory_collections => %i(hosts)
-      )
-    end
-  end
-
-  def add_host_system_services
-    add_collection(infra, :host_system_services) do |builder|
-      builder.add_properties(
-        :model_class                  => ::SystemService,
-        :manager_ref                  => %i(host name),
-        :parent_inventory_collections => %i(hosts)
       )
     end
   end
