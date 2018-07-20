@@ -269,7 +269,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       available_field.to_a.each { |af| key_to_name[af["key"]] = af["name"] }
 
       custom_values.to_a.each do |cv|
-        persister.custom_attributes.build(
+        persister.ems_custom_attributes.build(
           :resource => vm,
           :section  => "custom_field",
           :name     => key_to_name[cv["key"]],

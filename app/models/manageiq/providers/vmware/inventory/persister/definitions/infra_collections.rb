@@ -21,18 +21,12 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     add_host_guest_devices
     add_host_system_services
 
-    %i(custom_attributes
-       networks).each do |name|
-
-      add_collection(infra,
-                     name,
-                     :parent_inventory_collections => nil)
-    end
-
     %i(disks
        guest_devices
        hardwares
-       operating_systems).each do |name|
+       operating_systems
+       ems_custom_attributes
+       networks).each do |name|
 
       add_collection(infra,
                      name,
