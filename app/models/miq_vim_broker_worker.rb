@@ -62,11 +62,7 @@ class MiqVimBrokerWorker < MiqWorker
   end
 
   def self.drb_port
-    uri = drb_uri
-    return nil if uri.nil?
-    _scheme, _userinfo, _host, port, _registry, _path, _opaque, _query, _fragment = URI.split(uri)
-    _log.debug("Active VimBroker DRb Port is #{port}")
-    port.to_i
+    drb_uri
   end
 
   def self.broker_unavailable(err_class, message)
