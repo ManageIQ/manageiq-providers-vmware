@@ -4,8 +4,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Definiti
   def initialize_infra_inventory_collections
     add_vms_and_templates
 
-    %i(custom_attributes
-       customization_specs
+    %i(customization_specs
        host_hardwares
        host_networks
        host_storages
@@ -13,17 +12,22 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Definiti
        host_operating_systems
        miq_scsi_luns
        miq_scsi_targets
-       networks
        storage_profiles).each do |name|
 
       add_collection(infra, name)
     end
 
     add_hosts
-
     add_host_guest_devices
-
     add_host_system_services
+
+    %i(custom_attributes
+       networks).each do |name|
+
+      add_collection(infra,
+                     name,
+                     :parent_inventory_collections => nil)
+    end
 
     %i(disks
        guest_devices
@@ -36,9 +40,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Definiti
     end
 
     add_lans
-
     add_snapshots
-
     add_switches
 
     %i(ems_clusters
