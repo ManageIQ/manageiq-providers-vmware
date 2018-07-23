@@ -40,7 +40,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudColl
 
   def add_orchestration_templates
     add_collection(cloud, :orchestration_templates) do |builder|
-      builder.add_builder_params(:ems_id => manager.id)
+      builder.add_default_values(:ems_id => manager.id)
     end
   end
 end
