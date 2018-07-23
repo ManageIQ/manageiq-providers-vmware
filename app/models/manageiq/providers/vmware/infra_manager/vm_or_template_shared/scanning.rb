@@ -18,8 +18,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
     $log.debug "#{log_pref} VM = #{vm_name}"
 
     args1 = ost.args[1]
-    args1['ems'][:use_vim_broker]      = MiqServer.use_broker_for_embedded_proxy?(args1['ems']['connect_to'])
-    args1['ems'][:vim_broker_drb_port] = MiqVimBrokerWorker.drb_port if args1['ems'][:use_vim_broker]
+    args1['ems'][:use_vim_broker]     = MiqServer.use_broker_for_embedded_proxy?(args1['ems']['connect_to'])
+    args1['ems'][:vim_broker_drb_uri] = MiqVimBrokerWorker.drb_uri if args1['ems'][:use_vim_broker]
 
     begin
       @vm_cfg_file = vm_name
@@ -66,7 +66,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
         begin
           require 'VMwareWebService/miq_fault_tolerant_vim'
           # TODO: Should this move to the EMS?
-          ost.miqVim = MiqFaultTolerantVim.new(:ip => host_address, :user => miqVimHost[:username], :pass => password_decrypt, :use_broker => use_broker, :vim_broker_drb_port => ost.scanData['ems'][:vim_broker_drb_port])
+          ost.miqVim = MiqFaultTolerantVim.new(:ip => host_address, :user => miqVimHost[:username], :pass => password_decrypt, :use_broker => use_broker, :vim_broker_drb_uri => ost.scanData['ems'][:vim_broker_drb_uri])
           # ost.snapId = opts.snapId if opts.snapId
           $log.info "Connection to [#{ems_display_text}] completed for VM:[#{@vmCfgFile}] in [#{Time.now - st}] seconds"
         rescue Timeout::Error => err

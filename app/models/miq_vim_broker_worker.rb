@@ -61,10 +61,6 @@ class MiqVimBrokerWorker < MiqWorker
     broker.uri
   end
 
-  def self.drb_port
-    drb_uri
-  end
-
   def self.broker_unavailable(err_class, message)
     _log.warn("The following error was encountered, '#{message}', the broker server should be restarted on the next heartbeat")
     broker = find_current.first

@@ -7,7 +7,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
     options[:use_broker] = (self.class.respond_to?(:use_vim_broker?) ? self.class.use_vim_broker? : ManageIQ::Providers::Vmware::InfraManager.use_vim_broker?) unless options.key?(:use_broker)
-    options[:vim_broker_drb_port] ||= MiqVimBrokerWorker.method(:drb_port) if options[:use_broker]
+    options[:vim_broker_drb_uri] ||= MiqVimBrokerWorker.method(:drb_uri) if options[:use_broker]
 
     # The following require pulls in both MiqFaultTolerantVim and MiqVim
     require 'VMwareWebService/miq_fault_tolerant_vim'
