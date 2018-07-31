@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 91 ending 2018-07-30
+
+### Added
+- Change custom_attributes hosts_guest_devices and host_system_services according to core [(#303)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/303)
+
+### Fixed
+- Fix setting the last_refresh_date on error [(#301)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/301)
+
 ## Unreleased as of Sprint 90 ending 2018-07-16
 
 ### Added
