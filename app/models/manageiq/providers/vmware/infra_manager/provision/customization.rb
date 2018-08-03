@@ -13,7 +13,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     spec = load_customization_spec(custom_spec_name)
     spec = spec.spec unless spec.nil?
     _log.info "Loaded custom spec [#{custom_spec_name}].  Override flag: [#{sysprep_spec_override}]"
-    if sysprep_spec_override == false
+    if spec && sysprep_spec_override == false
       adjust_nicSettingMap(spec)
       return spec
     end
