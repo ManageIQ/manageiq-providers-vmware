@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 92 ending 2018-08-13
+
+### Fixed
+- Fix for broken customization(sysprep) during vm provisioning [(#308)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/308)
+
 ## Unreleased as of Sprint 91 ending 2018-07-30
 
 ### Added
