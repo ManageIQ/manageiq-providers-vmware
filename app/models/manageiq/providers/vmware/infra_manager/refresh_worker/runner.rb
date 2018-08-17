@@ -11,17 +11,22 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   def do_before_work_loop
     # Override Standard EmsRefreshWorker's method of queueing up a Refresh
     # This will be done by the VimBrokerWorker, when he is ready.
-    return unless update_driven_refresh?
+    return unless ems.supports_streaming_refresh?
 
     start_inventory_collector
   end
 
   def before_exit(_message, _exit_code)
-    stop_inventory_collector if inventory_collector_running?
+    stop_inventory_collector if ems.supports_streaming_refresh?
+  end
+
+  def message_delivery_suspended?
+    # If we are using streaming refresh don't dequeue EmsRefresh queue items
+    ems.supports_streaming_refresh? || super
   end
 
   def do_work
-    if update_driven_refresh?
+    if ems.supports_streaming_refresh?
       ensure_inventory_collector
     elsif inventory_collector_running?
       stop_inventory_collector
@@ -68,9 +73,5 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   def inventory_collector_running?
     collector_thread&.alive?
-  end
-
-  def update_driven_refresh?
-    Settings.prototype.ems_vmware.update_driven_refresh
   end
 end
