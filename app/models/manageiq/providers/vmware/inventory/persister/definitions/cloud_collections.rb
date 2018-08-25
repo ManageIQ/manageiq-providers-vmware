@@ -1,10 +1,6 @@
 module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudCollections
   extend ActiveSupport::Concern
 
-  def cloud
-    ::ManagerRefresh::InventoryCollection::Builder::CloudManager
-  end
-
   def initialize_cloud_inventory_collections
     %i(vms
        availability_zones
