@@ -1,4 +1,4 @@
-class ManageIQ::Providers::Vmware::Inventory::Collector < ManagerRefresh::Inventory::Collector
+class ManageIQ::Providers::Vmware::Inventory::Collector < ManageIQ::Providers::Inventory::Collector
   require_nested :CloudManager
 
   def initialize(_manager, _target)
