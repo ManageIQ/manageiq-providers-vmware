@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 93 ending 2018-08-27
+
+### Added
+- Add plugin display name [(#312)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/312)
+- Don't run EmsRefresh if using streaming refresh [(#284)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/284)
+
 ## Unreleased as of Sprint 92 ending 2018-08-13
 
 ### Fixed
