@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 94 ending 2018-09-10
+
+### Added
+- Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
+
+## Gaprindashvili-5 - Released 2018-09-07
+
+### Fixed
+- Try to get VM UUID from summary.config or config [(#246)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/246)
+- Use the full URI for the broker connection [(#305)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/305)
+
 ## Unreleased as of Sprint 93 ending 2018-08-27
 
 ### Added
@@ -87,7 +98,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 - Fixes ProvisionWorkflow#available_vlans_and_hosts [(#269)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/269)
-- Try to get VM UUID from summary.config or config [(#246)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/246)
 
 ## Unreleased as of Sprint 85 ending 2018-05-07
 
