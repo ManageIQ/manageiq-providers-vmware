@@ -275,6 +275,15 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
   end
 
   def deployment_options(_manager_class = nil)
+    stack_name_opt = OrchestrationTemplate::OrchestrationParameter.new(
+      :name           => "stack_name",
+      :label          => "vApp Name",
+      :data_type      => "string",
+      :description    => "Desired name of the vApp we're about to create",
+      :required       => true,
+      :reconfigurable => false
+    )
+
     availability_opt = OrchestrationTemplate::OrchestrationParameter.new(
       :name        => "availability_zone",
       :label       => "Availability zone",
@@ -301,7 +310,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < Orchest
       ]
     )
 
-    super << availability_opt << vapp_template
+    [stack_name_opt, availability_opt, vapp_template]
   end
 
   def self.eligible_manager_types

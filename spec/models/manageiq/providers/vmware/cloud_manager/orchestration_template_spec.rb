@@ -77,9 +77,9 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
 
       it 'creates correct deployment options' do
         options = tabs[0][:stack_group]
-        assert_deployment_option(options[0], 'tenant_name', :OrchestrationParameterAllowedDynamic)
-        assert_deployment_option(options[1], 'stack_name', :OrchestrationParameterPattern)
-        assert_deployment_option(options[2], 'availability_zone', :OrchestrationParameterAllowedDynamic)
+        assert_deployment_option(options[0], 'stack_name')
+        assert_deployment_option(options[1], 'availability_zone', :OrchestrationParameterAllowedDynamic)
+        assert_deployment_option(options[2], 'stack_template', :OrchestrationParameterAllowed)
       end
 
       it 'creates Networks tab' do
@@ -400,14 +400,14 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
   describe '#deployment_options' do
     it do
       options = subject.deployment_options
-      assert_deployment_option(options[0], "tenant_name", :OrchestrationParameterAllowedDynamic)
-      assert_deployment_option(options[1], "stack_name", :OrchestrationParameterPattern)
-      assert_deployment_option(options[2], "availability_zone", :OrchestrationParameterAllowedDynamic)
+      assert_deployment_option(options[0], "stack_name")
+      assert_deployment_option(options[1], "availability_zone", :OrchestrationParameterAllowedDynamic)
+      assert_deployment_option(options[2], "stack_template", :OrchestrationParameterAllowed)
     end
   end
 
-  def assert_deployment_option(option, name, constraint_type)
+  def assert_deployment_option(option, name, constraint_type = nil)
     expect(option.name).to eq(name)
-    expect(option.constraints[0]).to be_kind_of("OrchestrationTemplate::#{constraint_type}".constantize)
+    expect(option.constraints[0]).to be_kind_of("OrchestrationTemplate::#{constraint_type}".constantize) if constraint_type
   end
 end
