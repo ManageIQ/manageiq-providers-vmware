@@ -52,14 +52,14 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
     it "decrypts the vcloud password" do
       encrypted = MiqPassword.encrypt("encrypted")
-      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+      expect(::Fog::VcloudDirector::Compute).to receive(:new).with(params)
 
       described_class.raw_connect("server", "port", "username", encrypted, "api_version")
     end
 
     it "validates the password if validate is true if specified" do
-      expect(described_class).to receive(:validate_connection).and_raise(Fog::Compute::VcloudDirector::Unauthorized)
-      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+      expect(described_class).to receive(:validate_connection).and_raise(Fog::VcloudDirector::Compute::Unauthorized)
+      expect(::Fog::VcloudDirector::Compute).to receive(:new).with(params)
 
       expect do
         described_class.raw_connect("server", "port", "username", "encrypted", "api_version", true)
@@ -68,7 +68,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
     it "does not validate the password unless specified" do
       expect(described_class).to_not receive(:validate_connection)
-      expect(::Fog::Compute::VcloudDirector).to receive(:new).with(params)
+      expect(::Fog::VcloudDirector::Compute).to receive(:new).with(params)
 
       described_class.raw_connect("server", "port", "username", "encrypted", "api_version")
     end
