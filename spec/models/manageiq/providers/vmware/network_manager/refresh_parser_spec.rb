@@ -274,7 +274,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::RefreshParser do
         },
         {
           :name     => 'error response',
-          :data     => -> { raise Fog::Compute::VcloudDirector::Forbidden, 'simulated error' },
+          :data     => -> { raise Fog::VcloudDirector::Compute::Forbidden, 'simulated error' },
           :expected => []
         }
       ].each do |test_case|
@@ -299,7 +299,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::RefreshParser do
         },
         {
           :name     => 'error response',
-          :data     => -> { raise Fog::Compute::VcloudDirector::Forbidden, 'simulated error' },
+          :data     => -> { raise Fog::VcloudDirector::Compute::Forbidden, 'simulated error' },
           :expected => []
         }
       ].each do |test_case|

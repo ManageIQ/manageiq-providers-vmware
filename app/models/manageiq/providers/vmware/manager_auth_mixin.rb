@@ -51,7 +51,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
         }
       }
 
-      connect = Fog::Compute::VcloudDirector.new(params)
+      connect = Fog::VcloudDirector::Compute.new(params)
       connection_rescue_block { validate_connection(connect) } if validate
       connect
     end
@@ -70,7 +70,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
 
     def translate_exception(err)
       case err
-      when Fog::Compute::VcloudDirector::Unauthorized
+      when Fog::VcloudDirector::Compute::Unauthorized
         MiqException::MiqInvalidCredentialsError.new "Login failed due to a bad username or password."
       when Excon::Errors::Timeout
         MiqException::MiqUnreachableError.new "Login attempt timed out"
