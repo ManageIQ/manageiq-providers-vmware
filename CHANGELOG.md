@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 95 ending 2018-09-24
+
+### Added
+- Shift fog-vcloud-director version to 0.3.0 [(#321)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/321)
+
+### Fixed
+- Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
+
 ## Unreleased as of Sprint 94 ending 2018-09-10
 
 ### Added
