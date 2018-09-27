@@ -128,6 +128,27 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(vm.snapshots.count).to eq(0)
       end
 
+      it "adding a new Network Adapter" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+        expect(vm.hardware.guest_devices.count).to eq(1)
+
+        run_targeted_refresh(targeted_update_set([vm_add_new_network_adapter_update]))
+
+        vm.reload
+
+        expect(vm.hardware.guest_devices.count).to eq(2)
+
+        nic_1 = vm.hardware.guest_devices.find_by(:device_name => "Network adapter 1")
+        nic_2 = vm.hardware.guest_devices.find_by(:device_name => "Network adapter 2")
+
+        expect(nic_1.lan).not_to be_nil
+        expect(nic_1.lan.uid_ems).to eq("dvportgroup-69")
+
+        expect(nic_2.lan).not_to be_nil
+        expect(nic_2.lan.uid_ems).to eq("VM Network")
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(cache, persister)
@@ -381,6 +402,54 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             :op              => "assign",
             :val             => 538,
           ),
+        ],
+        :missingSet      => [],
+      )
+    end
+
+    def vm_add_new_network_adapter_update
+      RbVmomi::VIM.ObjectUpdate(
+        :dynamicProperty => [],
+        :kind            => "modify",
+        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet       => [
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[100].device",
+            :op              => "assign",
+            :val             => [500, 12000, 1000, 15000, 4000, 4001],
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[4001]",
+            :op              => "add",
+            :val             => RbVmomi::VIM::VirtualVmxnet3(
+              :dynamicProperty  => [],
+              :key              => 4001,
+              :deviceInfo       => RbVmomi::VIM::Description(
+                :dynamicProperty => [],
+                :label           => "Network adapter 2",
+                :summary         => "VM Network"
+              ),
+              :backing          => RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(
+                :dynamicProperty => [],
+                :deviceName      => "VM Network",
+                :useAutoDetect   => false,
+                :network         => RbVmomi::VIM::Network(vim, "network-7")
+              ),
+              :connectable      => RbVmomi::VIM::VirtualDeviceConnectInfo(
+                :dynamicProperty   => [],
+                :startConnected    => true,
+                :allowGuestControl => true,
+                :connected         => false,
+                :status            => "untried"
+              ),
+              :unitNumber       => 8,
+              :addressType      => "assigned",
+              :macAddress       => "00:50:56:bc:75:ea",
+              :wakeOnLanEnabled => true,
+            )
+          )
         ],
         :missingSet      => [],
       )
