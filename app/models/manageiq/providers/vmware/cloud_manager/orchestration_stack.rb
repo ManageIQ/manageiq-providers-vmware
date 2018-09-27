@@ -15,7 +15,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
 
   def raw_delete_stack
     ext_management_system.with_provider_connection do |service|
-      raw_stack = service.vapps.get_single_vapp(ems_ref)
+      raw_stack = vapp_or_nil(service, ems_ref)
       raise MiqException::MiqOrchestrationStackNotExistError, "#{name} does not exist on #{ems.name}" unless raw_stack
 
       # First, undeploy the vApp (power off).
@@ -31,7 +31,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
   def raw_status
     ems = ext_management_system
     ems.with_provider_connection do |service|
-      raw_stack = service.vapps.get_single_vapp(ems_ref)
+      raw_stack = vapp_or_nil(service, ems_ref)
       raise MiqException::MiqOrchestrationStackNotExistError, "#{name} does not exist on #{ems.name}" unless raw_stack
 
       Status.new(raw_stack.human_status, nil)
@@ -41,5 +41,17 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
   rescue => err
     $vcloud_log.error("stack=[#{name}], error: #{err}")
     raise MiqException::MiqOrchestrationStatusError, err.to_s, err.backtrace
+  end
+
+  def vapp_or_nil(service, ems_ref)
+    service.vapps.get_single_vapp(ems_ref)
+  rescue Fog::VcloudDirector::Compute::Forbidden
+    # vCloud returns 403 Forbidden instead 404 Not Found when ems_ref is in
+    # right format but nothing is found.
+    nil
+  rescue Fog::VcloudDirector::Compute::ServiceError
+    # vCloud returns 500 Service Error instead 404 Not Found when ems_ref is in
+    # unexpected format i.e. ems_ref does not comply to regex.
+    nil
   end
 end
