@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-21 10:19+0200\n"
-"PO-Revision-Date: 2017-04-21 10:19+0200\n"
+"POT-Creation-Date: 2018-10-03 16:10+0200\n"
+"PO-Revision-Date: 2018-10-03 16:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -26,18 +26,74 @@ msgstr ""
 msgid "Clone operation is not supported"
 msgstr ""
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager.rb:93
+msgid "Cloud Provider (VMware vCloud)"
+msgid_plural "Cloud Providers (VMware vCloud)"
+msgstr[0] ""
+msgstr[1] ""
+
 #: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
 msgstr ""
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:7 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:17 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/host_esx.rb:178 ../app/models/manageiq/providers/vmware/infra_manager/host.rb:75
+msgid "Host (Vmware)"
+msgid_plural "Hosts (Vmware)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
+msgid "Host must be connected to an EMS to refresh datastore files"
+msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager.rb:569
+msgid "Infrastructure Provider (VMware)"
+msgid_plural "Infrastructure Providers (VMware)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../app/models/manageiq/providers/vmware/cloud_manager/vm.rb:36
+msgid "Instance (VMware vCloud)"
+msgid_plural "Instances (VMware vCloud)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
 msgstr ""
 
-#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:14
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9 ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
+msgstr ""
+
+#: ../lib/manageiq/providers/vmware/engine.rb:8
+msgid "VMware Provider"
+msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:38
+msgid "Virtual Machine (VMware)"
+msgid_plural "Virtual Machines (VMware)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:20
+msgid "no block given"
+msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:6
+msgid "no console credentials defined"
+msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:7
+msgid "no credentials defined"
 msgstr ""
 
 #: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
 msgstr ""
+
+#: ../app/models/manageiq/providers/vmware/cloud_manager/orchestration_template.rb:330
+msgid "vApp Template"
+msgid_plural "vApp Templates"
+msgstr[0] ""
+msgstr[1] ""
