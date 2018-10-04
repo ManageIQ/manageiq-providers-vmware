@@ -179,6 +179,7 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   end
 
   def thumbprint_sha1
+    require 'VMwareWebService/esx_thumb_print'
     ESXThumbPrint.new(ipaddress, authentication_userid, authentication_password).to_sha1
   end 
 end
