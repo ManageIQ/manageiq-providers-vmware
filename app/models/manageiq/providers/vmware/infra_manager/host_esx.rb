@@ -177,4 +177,9 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   def self.display_name(number = 1)
     n_('Host (Vmware)', 'Hosts (Vmware)', number)
   end
+
+  def thumbprint_sha1
+    require 'VMwareWebService/esx_thumb_print'
+    ESXThumbPrint.new(ipaddress, authentication_userid, authentication_password).to_sha1
+  end 
 end
