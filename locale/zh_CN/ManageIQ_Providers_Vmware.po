@@ -23,8 +23,31 @@ msgstr ""
 msgid "Clone operation is not supported"
 msgstr ""
 
+msgid "Cloud Provider (VMware vCloud)"
+msgid_plural "Cloud Providers (VMware vCloud)"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Either Host Name or Cluster Name is required"
 msgstr ""
+
+msgid "Host (Vmware)"
+msgid_plural "Hosts (Vmware)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Host must be connected to an EMS to refresh datastore files"
+msgstr ""
+
+msgid "Infrastructure Provider (VMware)"
+msgid_plural "Infrastructure Providers (VMware)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Instance (VMware vCloud)"
+msgid_plural "Instances (VMware vCloud)"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "The VM is not powered on"
 msgstr ""
@@ -32,5 +55,27 @@ msgstr ""
 msgid "The VM tools is not installed"
 msgstr ""
 
+msgid "VMware Provider"
+msgstr ""
+
+msgid "Virtual Machine (VMware)"
+msgid_plural "Virtual Machines (VMware)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "no block given"
+msgstr ""
+
+msgid "no console credentials defined"
+msgstr ""
+
+msgid "no credentials defined"
+msgstr ""
+
 msgid "not connected to ems"
 msgstr ""
+
+msgid "vApp Template"
+msgid_plural "vApp Templates"
+msgstr[0] ""
+msgstr[1] ""
