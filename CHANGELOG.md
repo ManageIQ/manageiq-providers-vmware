@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 96 ending 2018-10-08
+
+### Added
+- Add thumbprint_sha1 method to host_esx [(#328)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/328)
+
+### Fixed
+- Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
+
 ## Unreleased as of Sprint 95 ending 2018-09-24
 
 ### Added
