@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Hammer Beta-1
+## Hammer Beta-1 - Released 2018-10-12
 
 ### Added
 - Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
@@ -60,6 +60,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Support create snapshot for VM [(#189)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/189)
 - Added support for VM delete [(#184)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/184)
 - Add a method to return all valid SCSI Controller Types [(#126)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/126)
+- Update i18n catalog for hammer [(#327)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/327)
+- Add thumbprint_sha1 method to host_esx [(#328)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/328)
 
 ### Fixed
 - Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
@@ -78,6 +80,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Migrate model display names from locale/en.yml to plugin [(#174)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/174)
 - Fix the event parser for a new folder refresh [(#166)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/166)
 - Collect IP and MAC address properly [(#161)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/161)
+- Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
 
 ## Gaprindashvili-5 - Released 2018-09-07
 
