@@ -10,6 +10,6 @@ env:
   - RUBY_GC_HEAP_INIT_SLOTS=600000
   - RUBY_GC_HEAP_GROWTH_FACTOR=1.25
 addons:
-  postgresql: '9.4'
+  postgresql: '9.5'
 install: bin/setup
 after_script: bundle exec codeclimate-test-reporter
