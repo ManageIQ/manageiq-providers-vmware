@@ -1,81 +1,101 @@
-# Portuguese translations for ManageIQ_Providers_Vmware package.
-# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the ManageIQ_Providers_Vmware package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
-#
+# renata <translator01_redhat@roundtableinc.net>, 2017. #zanata
+# renata <translator01_redhat@roundtableinc.net>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2018-10-03 16:10+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Portuguese\n"
-"Language: pt_BR\n"
+"POT-Creation-Date: 2018-10-03 16:10+0200\n"
+"PO-Revision-Date: 2018-10-21 10:52+0000\n"
+"Last-Translator: renata <translator01_redhat@roundtableinc.net>\n"
+"Language-Team: Portuguese (Brazil)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Zanata 4.6.2\n"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
-msgstr ""
+msgstr "%{field_required} para cluster não habilitado para DRS"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
-msgstr ""
+msgstr "A operação de clonagem não é compatível"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager.rb:93
 msgid "Cloud Provider (VMware vCloud)"
 msgid_plural "Cloud Providers (VMware vCloud)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Provedor de nuvem (VMware vCloud)"
+msgstr[1] "Provedores de nuvem (VMware vCloud)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
-msgstr ""
+msgstr "É obrigatório informar o nome do host ou o nome do cluster"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host_esx.rb:178
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:75
 msgid "Host (Vmware)"
 msgid_plural "Hosts (Vmware)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Host (Vmware)"
+msgstr[1] "Hosts (Vmware)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
 msgid "Host must be connected to an EMS to refresh datastore files"
 msgstr ""
+"O host deve estar conectado a um EMS para atualizar arquivos de datastore"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager.rb:569
 msgid "Infrastructure Provider (VMware)"
 msgid_plural "Infrastructure Providers (VMware)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Provedor de infraestrutura (VMware)"
+msgstr[1] "Provedores de infraestrutura (VMware)"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager/vm.rb:36
 msgid "Instance (VMware vCloud)"
 msgid_plural "Instances (VMware vCloud)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Instância (VMware vCloud)"
+msgstr[1] "Instâncias (VMware vCloud)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
-msgstr ""
+msgstr "A VM não está ligada"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
-msgstr ""
+msgstr "As ferramentas VM não estão instaladas"
 
+#: ../lib/manageiq/providers/vmware/engine.rb:8
 msgid "VMware Provider"
-msgstr ""
+msgstr "Provedor do VMware"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:38
 msgid "Virtual Machine (VMware)"
 msgid_plural "Virtual Machines (VMware)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Máquina virtual (VMware)"
+msgstr[1] "Máquinas virtuais (VMware)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:20
 msgid "no block given"
-msgstr ""
+msgstr "nenhum bloco fornecido"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:6
 msgid "no console credentials defined"
-msgstr ""
+msgstr "nenhuma credencial de console definida"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:7
 msgid "no credentials defined"
-msgstr ""
+msgstr "nenhuma credencial definida"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
-msgstr ""
+msgstr "não conectado a EMS"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager/orchestration_template.rb:330
 msgid "vApp Template"
 msgid_plural "vApp Templates"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Modelo vApp"
+msgstr[1] "Modelos vApp"
