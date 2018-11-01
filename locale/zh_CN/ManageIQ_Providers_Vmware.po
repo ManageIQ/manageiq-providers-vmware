@@ -1,81 +1,107 @@
-# Chinese translations for ManageIQ_Providers_Vmware package.
-# Copyright (C) 2017 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the ManageIQ_Providers_Vmware package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
-#
+# Joy Cai <joy.sh@linguitronics.com>, 2017. #zanata
+# Tony Fu <tfu@redhat.com>, 2018. #zanata
+# puger dog <ella.cheng.sh@linguitronics.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ManageIQ_Providers_Vmware 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-04-21 10:23+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Chinese\n"
-"Language: zh_CN\n"
+"POT-Creation-Date: 2018-10-03 16:10+0200\n"
+"PO-Revision-Date: 2018-10-23 07:21+0000\n"
+"Last-Translator: puger dog <ella.cheng.sh@linguitronics.com>\n"
+"Language-Team: Chinese (Simplified, China)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"\n"
+"Language: zh_Hans_CN\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 4.6.2\n"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:12
 msgid "%{field_required} for Non-DRS enabled cluster"
-msgstr ""
+msgstr "启用非 DRS 集群的 %{field_required}"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:9
 msgid "Clone operation is not supported"
-msgstr ""
+msgstr "不支持克隆操作"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager.rb:93
 msgid "Cloud Provider (VMware vCloud)"
 msgid_plural "Cloud Providers (VMware vCloud)"
 msgstr[0] ""
-msgstr[1] ""
+"云供应商 (VMware vCloud)\n"
+"云供应商 (VMware vCloud)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/provision_workflow/dialog_field_validation.rb:10
 msgid "Either Host Name or Cluster Name is required"
-msgstr ""
+msgstr "主机名称或集群名称为必填项"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host_esx.rb:178
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:75
 msgid "Host (Vmware)"
 msgid_plural "Hosts (Vmware)"
 msgstr[0] ""
-msgstr[1] ""
+"主机 (Vmware)\n"
+"主机 (Vmware)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/host.rb:28
 msgid "Host must be connected to an EMS to refresh datastore files"
-msgstr ""
+msgstr "主机需要连接到一个 EMS 来刷新数据存储文件"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager.rb:569
 msgid "Infrastructure Provider (VMware)"
 msgid_plural "Infrastructure Providers (VMware)"
 msgstr[0] ""
-msgstr[1] ""
+"基础架构供应商 (Vmware)\n"
+"基础架构供应商 (Vmware)"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager/vm.rb:36
 msgid "Instance (VMware vCloud)"
 msgid_plural "Instances (VMware vCloud)"
 msgstr[0] ""
-msgstr[1] ""
+"实例 (VMware vCloud)\n"
+"实例 (VMware vCloud)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:12
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:23
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:29
 msgid "The VM is not powered on"
-msgstr ""
+msgstr "虚拟机未开启"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:9
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm/operations/guest.rb:20
 msgid "The VM tools is not installed"
-msgstr ""
+msgstr "VM 工具未安装"
 
+#: ../lib/manageiq/providers/vmware/engine.rb:8
 msgid "VMware Provider"
-msgstr ""
+msgstr "VMware 供应商"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vm.rb:38
 msgid "Virtual Machine (VMware)"
 msgid_plural "Virtual Machines (VMware)"
 msgstr[0] ""
-msgstr[1] ""
+"虚拟机 (VMware)\n"
+"虚拟机 (VMware)"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:20
 msgid "no block given"
-msgstr ""
+msgstr "没有指定块"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:6
 msgid "no console credentials defined"
-msgstr ""
+msgstr "没有定义控制台凭证"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/vim_connect_mixin.rb:7
 msgid "no credentials defined"
-msgstr ""
+msgstr "没有定义凭证"
 
+#: ../app/models/manageiq/providers/vmware/infra_manager/template.rb:8
 msgid "not connected to ems"
-msgstr ""
+msgstr "未连接至 EMS"
 
+#: ../app/models/manageiq/providers/vmware/cloud_manager/orchestration_template.rb:330
 msgid "vApp Template"
 msgid_plural "vApp Templates"
 msgstr[0] ""
-msgstr[1] ""
+"vApp 模板\n"
+"vApp 模板"
