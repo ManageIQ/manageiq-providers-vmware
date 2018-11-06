@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Gaprindashvili-6
+
+### Fixed
+- Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
+- Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
+
 ## Gaprindashvili-5
 
 ### Fixed
