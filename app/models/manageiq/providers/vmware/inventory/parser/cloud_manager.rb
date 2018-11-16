@@ -36,6 +36,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
         :location               => vm[:vm].id,
         :vendor                 => 'vmware',
         :raw_power_state        => vm[:vm].status,
+        :connection_state       => 'connected',
         :orchestration_stack    => persister.orchestration_stacks.lazy_find(vm[:vm].vapp_id),
         :snapshots              => [],
         :cpu_hot_add_enabled    => vm[:vm].cpu_hot_add,
