@@ -83,5 +83,13 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm do
         vm.raw_suspend
       end
     end
+
+    it '.disconnected' do
+      expect(subject.disconnected).to be_falsey
+    end
+
+    it '.disconnected?' do
+      expect(subject.disconnected).to be_falsey
+    end
   end
 end
