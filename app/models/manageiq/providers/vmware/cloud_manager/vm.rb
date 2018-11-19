@@ -27,6 +27,14 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
     "suspended" => "suspended"
   }.freeze
 
+  def disconnected
+    false
+  end
+
+  def disconnected?
+    false
+  end
+
   def self.calculate_power_state(raw_power_state)
     # https://github.com/xlab-si/fog-vcloud-director/blob/master/lib/fog/vcloud_director/parsers/compute/vm.rb#L70
     POWER_STATES[raw_power_state.to_s] || "terminated"
