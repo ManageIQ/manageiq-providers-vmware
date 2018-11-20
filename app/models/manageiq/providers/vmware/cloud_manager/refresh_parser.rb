@@ -143,6 +143,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :hostname               => hostname,
       :location               => uid,
       :vendor                 => "vmware",
+      :connection_state       => "connected",
       :raw_power_state        => status,
       :snapshots              => [parse_snapshot(vm)].compact,
       :cpu_hot_add_enabled    => cpu_hot_add,
@@ -196,6 +197,7 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshParser < ManageIQ::Provi
       :name               => name,
       :location           => uid,
       :vendor             => "vmware",
+      :connection_state   => "connected",
       :raw_power_state    => "never",
       :publicly_available => is_public
     }

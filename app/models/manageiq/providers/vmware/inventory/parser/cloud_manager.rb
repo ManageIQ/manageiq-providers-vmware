@@ -35,6 +35,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
         :hostname               => vm[:hostname],
         :location               => vm[:vm].id,
         :vendor                 => 'vmware',
+        :connection_state       => "connected",
         :raw_power_state        => vm[:vm].status,
         :orchestration_stack    => persister.orchestration_stacks.lazy_find(vm[:vm].vapp_id),
         :snapshots              => [],
@@ -101,6 +102,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser::CloudManager < ManageIQ::P
         :name               => image[:image].name,
         :location           => image[:image].id,
         :vendor             => 'vmware',
+        :connection_state   => "connected",
         :raw_power_state    => 'never',
         :publicly_available => image[:is_published]
       )
