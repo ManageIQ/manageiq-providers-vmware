@@ -1,8 +1,8 @@
 require 'rbvmomi'
-require 'trollop'
+require 'optimist'
 
 def parse_args(argv)
-  opts = Trollop.options do
+  opts = Optimist.options do
     banner <<-EOS
 Print all event history from the VC specified by the ems parameter
 
