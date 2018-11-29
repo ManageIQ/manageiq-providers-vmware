@@ -73,9 +73,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "deleting a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
-        expect(vm.orphaned?).to be_falsy
+        expect(vm.archived?).to be_falsy
         run_targeted_refresh(targeted_update_set(vm_delete_object_updates))
-        expect(vm.reload.orphaned?).to be_truthy
+        expect(vm.reload.archived?).to be_truthy
       end
 
       it "moving a vm to a new folder and resource-pool" do
