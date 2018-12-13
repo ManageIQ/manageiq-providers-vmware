@@ -1,7 +1,7 @@
 # manageiq-providers-vmware
 
 [![Gem Version](https://badge.fury.io/rb/manageiq-providers-vmware.svg)](http://badge.fury.io/rb/manageiq-providers-vmware)
-[![Build Status](https://travis-ci.org/ManageIQ/manageiq-providers-vmware.svg)](https://travis-ci.org/ManageIQ/manageiq-providers-vmware)
+[![Build Status](https://travis-ci.org/ManageIQ/manageiq-providers-vmware.svg?branch=master)](https://travis-ci.org/ManageIQ/manageiq-providers-vmware)
 [![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/coverage)
 [![Dependency Status](https://gemnasium.com/ManageIQ/manageiq-providers-vmware.svg)](https://gemnasium.com/ManageIQ/manageiq-providers-vmware)
