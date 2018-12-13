@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Gaprindashvili-6
+## Gaprindashvili-7
+
+### Fixed
+- Check EmsEvents when disconnecting storage [(#336)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/336)
+
+## Gaprindashvili-6 - Released 2018-11-06
 
 ### Fixed
 - Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
 - Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
 
-## Gaprindashvili-5
+## Gaprindashvili-5 - Released 2018-09-07
 
 ### Fixed
 - Try to get VM UUID from summary.config or config [(#246)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/246)
