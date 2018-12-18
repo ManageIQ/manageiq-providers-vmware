@@ -9,12 +9,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
 
   context "as vmware" do
     before :each do
-      @ems_vmware = FactoryGirl.create(:ems_vmware, :zone => @zone)
+      @ems_vmware = FactoryBot.create(:ems_vmware, :zone => @zone)
     end
 
     context "with a vm" do
       before(:each) do
-        @vm = FactoryGirl.create(:vm_perf, :ext_management_system => @ems_vmware)
+        @vm = FactoryBot.create(:vm_perf, :ext_management_system => @ems_vmware)
       end
 
       context "and a fake vim handle" do

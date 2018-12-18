@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationServiceOptionConverter do
   let(:converter)      { described_class.new(nil) }
-  let(:valid_template) { FactoryGirl.create(:orchestration_template_vmware_cloud_in_xml) }
+  let(:valid_template) { FactoryBot.create(:orchestration_template_vmware_cloud_in_xml) }
   let(:dialog_options) do
     {
       # 1st vapp network

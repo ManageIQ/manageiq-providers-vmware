@@ -1,7 +1,7 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Vm::RemoteConsole do
-  let(:user) { FactoryGirl.create(:user) }
-  let(:ems)  { FactoryGirl.create(:ems_vmware_cloud, :api_version => 5.5) }
-  let(:vm)   { FactoryGirl.create(:vm_vcloud, :ext_management_system => ems, :raw_power_state => 'on') }
+  let(:user) { FactoryBot.create(:user) }
+  let(:ems)  { FactoryBot.create(:ems_vmware_cloud, :api_version => 5.5) }
+  let(:vm)   { FactoryBot.create(:vm_vcloud, :ext_management_system => ems, :raw_power_state => 'on') }
 
   context '#remote_console_acquire_ticket' do
     it 'with :webmks' do

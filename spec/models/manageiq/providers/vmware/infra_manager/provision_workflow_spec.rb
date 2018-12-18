@@ -3,8 +3,8 @@ silence_warnings { ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow.
 describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   include Spec::Support::WorkflowHelper
 
-  let(:admin)    { FactoryGirl.create(:user_with_group) }
-  let(:template) { FactoryGirl.create(:template_vmware) }
+  let(:admin)    { FactoryBot.create(:user_with_group) }
+  let(:template) { FactoryBot.create(:template_vmware) }
 
   before do
     EvmSpecHelper.local_miq_server
@@ -29,10 +29,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   end
 
   describe "#init_from_dialog" do
-    let(:user)     { FactoryGirl.create(:user_with_email, :role => 'super_administrator', :password => 'x') }
-    let(:ems)      { FactoryGirl.create(:ems_vmware_with_authentication) }
-    let(:template) { FactoryGirl.create(:template_vmware, :ext_management_system => ems) }
-    let(:req)      { FactoryGirl.create(:miq_provision_request, :requester => user, :source => template) }
+    let(:user)     { FactoryBot.create(:user_with_email, :role => 'super_administrator', :password => 'x') }
+    let(:ems)      { FactoryBot.create(:ems_vmware_with_authentication) }
+    let(:template) { FactoryBot.create(:template_vmware, :ext_management_system => ems) }
+    let(:req)      { FactoryBot.create(:miq_provision_request, :requester => user, :source => template) }
     let(:options)  { req.get_options.merge(:org_controller=>"vm") }
 
     subject        { req.workflow(options) }
@@ -48,7 +48,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   end
 
   describe "#make_request" do
-    let(:alt_user) { FactoryGirl.create(:user_with_group) }
+    let(:alt_user) { FactoryBot.create(:user_with_group) }
     it "creates and update a request" do
       stub_dialog(:get_pre_dialogs)
       stub_dialog(:get_dialogs)
@@ -98,17 +98,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   context 'provisioning a VM' do
     let(:workflow) { described_class.new({}, admin.userid) }
     before do
-      @ems    = FactoryGirl.create(:ems_vmware)
-      @host1  = FactoryGirl.create(:host_vmware, :ems_id => @ems.id)
-      @host2  = FactoryGirl.create(:host_vmware, :ems_id => @ems.id)
-      @src_vm = FactoryGirl.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
+      @ems    = FactoryBot.create(:ems_vmware)
+      @host1  = FactoryBot.create(:host_vmware, :ems_id => @ems.id)
+      @host2  = FactoryBot.create(:host_vmware, :ems_id => @ems.id)
+      @src_vm = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
       stub_dialog(:get_dialogs)
       workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => @src_vm.id)
       workflow.instance_variable_set(:@target_resource, nil)
     end
 
     context '#allowed_storage_profiles' do
-      let(:profile) { FactoryGirl.create(:storage_profile, :name => 'Gold') }
+      let(:profile) { FactoryBot.create(:storage_profile, :name => 'Gold') }
       it 'when storage_profile selection is set, will not touch storage_profile selection value' do
         selected = []
         workflow.instance_variable_set(:@values, :src_vm_id => template.id, :placement_storage_profile => selected)
@@ -119,7 +119,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
 
       context 'when storage_profile selection is not set' do
         it 'set storage_profile selection to [nil, nil] if template has no storage_profile' do
-          template = FactoryGirl.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
+          template = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
           workflow.instance_variable_set(:@values, :src_vm_id => template.id, :placement_storage_profile => nil)
           workflow.allowed_storage_profiles
           values = workflow.instance_variable_get(:@values)
@@ -127,7 +127,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         end
 
         it 'set storage_profile selection to that of template if template has one' do
-          template = FactoryGirl.create(:vm_vmware, :host => @host1, :ems_id => @ems.id, :storage_profile => profile)
+          template = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id, :storage_profile => profile)
           workflow.instance_variable_set(:@values, :src_vm_id => template.id, :placement_storage_profile => nil)
           workflow.allowed_storage_profiles
           values = workflow.instance_variable_get(:@values)
@@ -136,8 +136,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       context 'storage_profile filter' do
-        let(:ems) { FactoryGirl.create(:ems_vmware, :storage_profiles => [profile]) }
-        let(:template) { FactoryGirl.create(:vm_vmware, :ems_id => ems.id) }
+        let(:ems) { FactoryBot.create(:ems_vmware, :storage_profiles => [profile]) }
+        let(:template) { FactoryBot.create(:vm_vmware, :ems_id => ems.id) }
         it 'list storage_profiles associated with ems' do
           workflow.instance_variable_set(:@values, :src_vm_id => template.id, :src_ems_id => ems.id)
           workflow.allowed_storage_profiles
@@ -166,22 +166,22 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
     end
 
     context 'network selection' do
-      let(:s11) { FactoryGirl.create(:switch, :name => "A") }
-      let(:s12) { FactoryGirl.create(:switch, :name => "B") }
-      let(:s13) { FactoryGirl.create(:switch, :name => "C") }
-      let(:s14) { FactoryGirl.create(:switch, :name => "DVS14", :shared => true) }
-      let(:s15) { FactoryGirl.create(:switch, :name => "DVS15", :shared => true) }
-      let(:s21) { FactoryGirl.create(:switch, :name => "DVS21", :shared => true) }
-      let(:s22) { FactoryGirl.create(:switch, :name => "DVS22", :shared => true) }
+      let(:s11) { FactoryBot.create(:switch, :name => "A") }
+      let(:s12) { FactoryBot.create(:switch, :name => "B") }
+      let(:s13) { FactoryBot.create(:switch, :name => "C") }
+      let(:s14) { FactoryBot.create(:switch, :name => "DVS14", :shared => true) }
+      let(:s15) { FactoryBot.create(:switch, :name => "DVS15", :shared => true) }
+      let(:s21) { FactoryBot.create(:switch, :name => "DVS21", :shared => true) }
+      let(:s22) { FactoryBot.create(:switch, :name => "DVS22", :shared => true) }
 
       before do
-        @lan11 = FactoryGirl.create(:lan, :name => "lan_A",   :switch_id => s11.id)
-        @lan12 = FactoryGirl.create(:lan, :name => "lan_B",   :switch_id => s12.id)
-        @lan13 = FactoryGirl.create(:lan, :name => "lan_C",   :switch_id => s13.id)
-        @lan14 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s14.id)
-        @lan15 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s15.id)
-        @lan21 = FactoryGirl.create(:lan, :name => "lan_DVS", :switch_id => s21.id)
-        @lan22 = FactoryGirl.create(:lan, :name => "lan_A",   :switch_id => s22.id)
+        @lan11 = FactoryBot.create(:lan, :name => "lan_A",   :switch_id => s11.id)
+        @lan12 = FactoryBot.create(:lan, :name => "lan_B",   :switch_id => s12.id)
+        @lan13 = FactoryBot.create(:lan, :name => "lan_C",   :switch_id => s13.id)
+        @lan14 = FactoryBot.create(:lan, :name => "lan_DVS", :switch_id => s14.id)
+        @lan15 = FactoryBot.create(:lan, :name => "lan_DVS", :switch_id => s15.id)
+        @lan21 = FactoryBot.create(:lan, :name => "lan_DVS", :switch_id => s21.id)
+        @lan22 = FactoryBot.create(:lan, :name => "lan_A",   :switch_id => s22.id)
       end
 
       it '#allowed_vlans' do

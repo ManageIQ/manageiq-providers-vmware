@@ -2,7 +2,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
   context "A new provision request," do
     before(:each) do
       @os = OperatingSystem.new(:product_name => 'Microsoft Windows')
-      @admin = FactoryGirl.create(:user_admin)
+      @admin = FactoryBot.create(:user_admin)
       @target_vm_name = 'clone test'
       @options = {
         :pass          => 1,
@@ -15,12 +15,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
     context "VMware provisioning" do
       before(:each) do
-        @ems         = FactoryGirl.create(:ems_vmware_with_authentication, :api_version => '6.0')
-        @vm_template = FactoryGirl.create(:template_vmware, :name => "template1", :ext_management_system => @ems, :operating_system => @os, :cpu_limit => -1, :cpu_reserve => 0)
-        @vm          = FactoryGirl.create(:vm_vmware, :name => "vm1", :location => "abc/def.vmx")
-        @pr          = FactoryGirl.create(:miq_provision_request, :requester => @admin, :src_vm_id => @vm_template.id)
+        @ems         = FactoryBot.create(:ems_vmware_with_authentication, :api_version => '6.0')
+        @vm_template = FactoryBot.create(:template_vmware, :name => "template1", :ext_management_system => @ems, :operating_system => @os, :cpu_limit => -1, :cpu_reserve => 0)
+        @vm          = FactoryBot.create(:vm_vmware, :name => "vm1", :location => "abc/def.vmx")
+        @pr          = FactoryBot.create(:miq_provision_request, :requester => @admin, :src_vm_id => @vm_template.id)
         @options[:src_vm_id] = [@vm_template.id, @vm_template.name]
-        @vm_prov = FactoryGirl.create(:miq_provision_vmware, :userid => @admin.userid, :miq_request => @pr, :source => @vm_template, :request_type => 'template', :state => 'pending', :status => 'Ok', :options => @options)
+        @vm_prov = FactoryBot.create(:miq_provision_vmware, :userid => @admin.userid, :miq_request => @pr, :source => @vm_template, :request_type => 'template', :state => 'pending', :status => 'Ok', :options => @options)
       end
 
       it "#workflow" do
@@ -54,7 +54,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       end
 
       it "should detect when a reconfigure_hardware_on_destination call is required" do
-        target_vm = FactoryGirl.create(:vm_vmware, :name => "target_vm1", :location => "abc/def.vmx", :cpu_limit => @vm_prov.options[:cpu_limit])
+        target_vm = FactoryBot.create(:vm_vmware, :name => "target_vm1", :location => "abc/def.vmx", :cpu_limit => @vm_prov.options[:cpu_limit])
         @vm_prov.destination = target_vm
         expect(@vm_prov.reconfigure_hardware_on_destination?).to eq(false)
         @vm_prov.options[:cpu_limit] = 100
@@ -111,7 +111,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       end
 
       it "eligible_hosts" do
-        host = FactoryGirl.create(:host, :ext_management_system => @ems)
+        host = FactoryBot.create(:host, :ext_management_system => @ems)
         host_struct = [MiqHashStruct.new(:id => host.id, :evm_object_class => host.class.base_class.name.to_sym)]
         allow_any_instance_of(MiqProvisionWorkflow).to receive(:allowed_hosts).and_return(host_struct)
         expect(@vm_prov.eligible_resources(:hosts)).to eq([host])
@@ -164,11 +164,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       end
 
       context "#dest_folder" do
-        let(:user_folder) { FactoryGirl.create(:ems_folder) }
+        let(:user_folder) { FactoryBot.create(:ems_folder) }
 
         let(:dc) do
-          FactoryGirl.create(:datacenter).tap do |f|
-            f.parent = FactoryGirl.create(:ems_folder, :name => 'Datacenters').tap { |d| d.parent = @ems; }
+          FactoryBot.create(:datacenter).tap do |f|
+            f.parent = FactoryBot.create(:ems_folder, :name => 'Datacenters').tap { |d| d.parent = @ems; }
           end
         end
 
@@ -177,19 +177,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         end
 
         let(:vm_folder_nested) do
-          FactoryGirl.create(:ems_folder, :name => 'vm', :ems_id => @ems.id).tap { |v| v.parent = dc_nested }
+          FactoryBot.create(:ems_folder, :name => 'vm', :ems_id => @ems.id).tap { |v| v.parent = dc_nested }
         end
 
         let(:vm_folder) do
-          FactoryGirl.create(:ems_folder, :name => 'vm', :ems_id => @ems.id).tap { |v| v.parent = dc }
+          FactoryBot.create(:ems_folder, :name => 'vm', :ems_id => @ems.id).tap { |v| v.parent = dc }
         end
 
         let(:dest_host_nested) do
-          FactoryGirl.create(:host_vmware, :ext_management_system => @ems).tap { |h| h.parent = dc_nested }
+          FactoryBot.create(:host_vmware, :ext_management_system => @ems).tap { |h| h.parent = dc_nested }
         end
 
         let(:dest_host) do
-          FactoryGirl.create(:host_vmware, :ext_management_system => @ems).tap { |h| h.parent = dc }
+          FactoryBot.create(:host_vmware, :ext_management_system => @ems).tap { |h| h.parent = dc }
         end
 
         it "uses folder set from option" do
@@ -211,20 +211,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       end
 
       context "#dest_resource_pool" do
-        let(:resource_pool) { FactoryGirl.create(:resource_pool) }
+        let(:resource_pool) { FactoryBot.create(:resource_pool) }
 
         let(:dest_host) do
-          host = FactoryGirl.create(:host_vmware, :ext_management_system => @ems)
-          FactoryGirl.create(:resource_pool).parent = host
+          host = FactoryBot.create(:host_vmware, :ext_management_system => @ems)
+          FactoryBot.create(:resource_pool).parent = host
           host
         end
 
         let(:cluster) do
-          cluster = FactoryGirl.create(:ems_cluster)
-          FactoryGirl.create(:resource_pool).parent = cluster
+          cluster = FactoryBot.create(:ems_cluster)
+          FactoryBot.create(:resource_pool).parent = cluster
         end
 
-        let(:dest_host_with_cluster) { FactoryGirl.create(:host_vmware, :ems_cluster => cluster) }
+        let(:dest_host_with_cluster) { FactoryBot.create(:host_vmware, :ems_cluster => cluster) }
 
         it "uses the resource pool from options" do
           @vm_prov.options[:placement_rp_name] = resource_pool.id
@@ -250,7 +250,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       end
 
       context "#dest_storage_profile" do
-        let(:storage_profile) { FactoryGirl.create(:storage_profile, :name => "Gold") }
+        let(:storage_profile) { FactoryBot.create(:storage_profile, :name => "Gold") }
 
         it "returns nil if no placement_storage_profile is given" do
           @vm_prov.options[:placement_storage_profile] = nil
@@ -272,11 +272,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       context "#start_clone" do
         before(:each) do
           ds_mor = "datastore-0"
-          storage = FactoryGirl.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_obj => ds_mor)
+          storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_obj => ds_mor)
 
           Array.new(2) do |i|
             cluster_mor = "cluster-#{i}"
-            cluster     = FactoryGirl.create(:ems_cluster, :ems_ref => cluster_mor)
+            cluster     = FactoryBot.create(:ems_cluster, :ems_ref => cluster_mor)
 
             host_mor = "host-#{i}"
             host_props = {
@@ -286,7 +286,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
               :ems_ref_obj           => host_mor
             }
 
-            FactoryGirl.create(:host_vmware, host_props).tap do |host|
+            FactoryBot.create(:host_vmware, host_props).tap do |host|
               host.storages = [storage]
               hs = host.host_storages.first
               hs.ems_ref = "datastore-#{i}"

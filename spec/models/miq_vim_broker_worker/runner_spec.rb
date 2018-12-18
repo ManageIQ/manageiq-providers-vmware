@@ -5,12 +5,12 @@ describe MiqVimBrokerWorker::Runner do
   before do
     _guid_2, _server_2, @zone_2 = EvmSpecHelper.create_guid_miq_server_zone
     _guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
-    @ems = FactoryGirl.create(:ems_vmware_with_authentication, :zone => @zone)
-    FactoryGirl.create(:ems_vmware_with_authentication, :zone => @zone)
+    @ems = FactoryBot.create(:ems_vmware_with_authentication, :zone => @zone)
+    FactoryBot.create(:ems_vmware_with_authentication, :zone => @zone)
 
     # General stubbing for testing any worker (methods called during initialize)
     @worker_guid = SecureRandom.uuid
-    @worker_record = FactoryGirl.create(:miq_vim_broker_worker, :guid => @worker_guid, :miq_server_id => server.id)
+    @worker_record = FactoryBot.create(:miq_vim_broker_worker, :guid => @worker_guid, :miq_server_id => server.id)
     @drb_uri = "drb://127.0.0.1:12345"
     allow(DRb).to receive(:uri).and_return(@drb_uri)
     allow_any_instance_of(described_class).to receive(:sync_config)
@@ -213,7 +213,7 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will handle queued Vm updates properly" do
-          vm = FactoryGirl.create(:vm_with_ref, :ext_management_system => @ems)
+          vm = FactoryBot.create(:vm_with_ref, :ext_management_system => @ems)
           event = {
             :server       => @ems.address,
             :username     => @ems.authentication_userid,
@@ -235,7 +235,7 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will handle queued Host updates properly" do
-          host = FactoryGirl.create(:host_with_ref, :ext_management_system => @ems)
+          host = FactoryBot.create(:host_with_ref, :ext_management_system => @ems)
           event = {
             :server       => @ems.address,
             :username     => @ems.authentication_userid,
@@ -291,7 +291,7 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will ignore updates to unknown properties" do
-          vm = FactoryGirl.create(:vm_with_ref, :ext_management_system => @ems)
+          vm = FactoryBot.create(:vm_with_ref, :ext_management_system => @ems)
           @vim_broker_worker.instance_variable_get(:@queue).enq(:server       => @ems.address,
                                                                 :username     => @ems.authentication_userid,
                                                                 :objType      => "VirtualMachine",
@@ -308,7 +308,7 @@ describe MiqVimBrokerWorker::Runner do
         it "will ignore updates to excluded properties" do
           @vim_broker_worker.instance_variable_set(:@exclude_props, "VirtualMachine" => {"summary.runtime.powerState" => nil})
 
-          vm = FactoryGirl.create(:vm_with_ref, :ext_management_system => @ems)
+          vm = FactoryBot.create(:vm_with_ref, :ext_management_system => @ems)
           @vim_broker_worker.instance_variable_get(:@queue).enq(:server       => @ems.address,
                                                                 :username     => @ems.authentication_userid,
                                                                 :objType      => "VirtualMachine",
@@ -323,7 +323,7 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will ignore updates to unknown connections" do
-          vm = FactoryGirl.create(:vm_with_ref, :ext_management_system => @ems)
+          vm = FactoryBot.create(:vm_with_ref, :ext_management_system => @ems)
           @vim_broker_worker.instance_variable_get(:@queue).enq(:server       => "XXX.XXX.XXX.XXX",
                                                                 :username     => "someuser",
                                                                 :objType      => "VirtualMachine",
@@ -338,8 +338,8 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will handle updates to valid connections that it previously did not know about" do
-          ems2 = FactoryGirl.create(:ems_vmware_with_authentication, :zone_id => @zone.id)
-          vm2  = FactoryGirl.create(:vm_with_ref, :ext_management_system => ems2)
+          ems2 = FactoryBot.create(:ems_vmware_with_authentication, :zone_id => @zone.id)
+          vm2  = FactoryBot.create(:vm_with_ref, :ext_management_system => ems2)
 
           event = {
             :server       => ems2.address,
@@ -376,7 +376,7 @@ describe MiqVimBrokerWorker::Runner do
         end
 
         it "will not reconnect to an EMS in another zone" do
-          ems_2 = FactoryGirl.create(:ems_vmware_with_authentication, :zone => @zone_2)
+          ems_2 = FactoryBot.create(:ems_vmware_with_authentication, :zone => @zone_2)
 
           event = {
             :server   => ems_2.address,

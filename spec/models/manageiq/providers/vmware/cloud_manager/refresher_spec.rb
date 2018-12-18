@@ -34,7 +34,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     @port = host_uri.port == 443 ? nil : host_uri.port
 
     _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
-    @ems = FactoryGirl.create(
+    @ems = FactoryBot.create(
       :ems_vmware_cloud,
       :zone        => zone,
       :hostname    => @hostname,
@@ -60,7 +60,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :password => @password
     }
 
-    @ems.authentications << FactoryGirl.create(:authentication, cred)
+    @ems.authentications << FactoryBot.create(:authentication, cred)
   end
 
   it '.ems_type' do

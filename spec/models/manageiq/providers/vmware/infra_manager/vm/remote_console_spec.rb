@@ -1,13 +1,13 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:ems) do
-    FactoryGirl.create(:ems_vmware,
+    FactoryBot.create(:ems_vmware,
                        :hostname    => '192.168.252.16',
                        :ipaddress   => '192.168.252.16',
                        :api_version => '5.0',
                        :uid_ems     => '2E1C1E82-BD83-4E54-9271-630C6DFAD4D1')
   end
-  let(:vm) { FactoryGirl.create(:vm_with_ref, :ext_management_system => ems) }
+  let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems) }
 
   context '#remote_console_acquire_ticket' do
     it 'with :mks' do
@@ -93,7 +93,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
   context '#validate_remote_console_webmks_support' do
     before do
-      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
+      ems.authentications << FactoryBot.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
     end
 
     it 'normal case' do
@@ -122,7 +122,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     it 'normal case' do
       EvmSpecHelper.create_guid_miq_server_zone
       ems.update_attributes(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
-      auth = FactoryGirl.create(:authentication,
+      auth = FactoryBot.create(:authentication,
                                 :userid   => 'dev1',
                                 :password => 'dev1pass',
                                 :authtype => 'console')
@@ -148,7 +148,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
   context '#validate_remote_console_vmrc_support' do
     before do
-      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
+      ems.authentications << FactoryBot.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
     end
 
     it 'normal case' do
@@ -173,20 +173,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   end
 
   context '#remote_console_vnc_acquire_ticket' do
-    let(:ems) { FactoryGirl.create(:ems_vmware) }
+    let(:ems) { FactoryBot.create(:ems_vmware) }
     let(:host) do
-      FactoryGirl.create(:host_vmware,
+      FactoryBot.create(:host_vmware,
                          :ext_management_system   => ems,
                          :hostname                => '192.168.252.4',
                          :ipaddress               => '192.168.252.4',
                          :next_available_vnc_port => 5901)
     end
-    let(:vm) { FactoryGirl.create(:vm_with_ref, :ext_management_system => ems, :host => host) }
+    let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems, :host => host) }
 
     let(:server) { double('MiqServer') }
 
     before(:each) do
-      ems.authentications << FactoryGirl.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
+      ems.authentications << FactoryBot.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
       allow(server).to receive_messages(:id => 1)
       allow(MiqServer).to receive_messages(:my_server => server)
     end
@@ -228,7 +228,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
     it 'will reclaim the port number from old VMs' do
       allow_any_instance_of(ManageIQ::Providers::Vmware::InfraManager::Vm).to receive(:with_provider_object)
-      vm_old = FactoryGirl.create(:vm_with_ref, :host => host, :vnc_port => 5901)
+      vm_old = FactoryBot.create(:vm_with_ref, :host => host, :vnc_port => 5901)
 
       vm.remote_console_vnc_acquire_ticket(user.userid, 1)
 

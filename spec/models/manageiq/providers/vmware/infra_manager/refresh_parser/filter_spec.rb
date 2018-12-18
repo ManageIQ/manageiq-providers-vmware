@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
   context "filter_vc_data" do
-    let(:ems) { FactoryGirl.create(:ems_vmware) }
+    let(:ems) { FactoryBot.create(:ems_vmware) }
 
     before do
       @refresher = ems.refresher.new([ems])
@@ -8,15 +8,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
     end
 
     context "with 1 host and 1 vm" do
-      let(:dc1)         { FactoryGirl.create(:vmware_datacenter) }
-      let(:dc2)         { FactoryGirl.create(:vmware_datacenter) }
-      let(:root_folder) { FactoryGirl.create(:vmware_folder_root) }
-      let(:vm_folder)   { FactoryGirl.create(:vmware_folder_vm) }
-      let(:folder1)     { FactoryGirl.create(:vmware_folder) }
-      let(:folder2)     { FactoryGirl.create(:vmware_folder) }
-      let(:host_folder) { FactoryGirl.create(:vmware_folder_vm) }
-      let(:vm)          { FactoryGirl.create(:vm_with_ref) }
-      let(:host)        { FactoryGirl.create(:host_with_ref) }
+      let(:dc1)         { FactoryBot.create(:vmware_datacenter) }
+      let(:dc2)         { FactoryBot.create(:vmware_datacenter) }
+      let(:root_folder) { FactoryBot.create(:vmware_folder_root) }
+      let(:vm_folder)   { FactoryBot.create(:vmware_folder_vm) }
+      let(:folder1)     { FactoryBot.create(:vmware_folder) }
+      let(:folder2)     { FactoryBot.create(:vmware_folder) }
+      let(:host_folder) { FactoryBot.create(:vmware_folder_vm) }
+      let(:vm)          { FactoryBot.create(:vm_with_ref) }
+      let(:host)        { FactoryBot.create(:host_with_ref) }
       let(:vc_data) do
         inv = Hash.new { |h, k| h[k] = {} }
 
@@ -160,10 +160,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter do
     end
 
     context "with a vm and no host" do
-      let(:vm)          { FactoryGirl.create(:vm_with_ref) }
-      let(:dc)          { FactoryGirl.create(:datacenter, :ems_ref => "datacenter-1", :name => "dc1") }
-      let(:root_folder) { FactoryGirl.create(:ems_folder, :ems_ref => "group-d1",     :name => "Datacenters") }
-      let(:vm_folder)   { FactoryGirl.create(:ems_folder, :ems_ref => "group-v3",     :name => "vm") }
+      let(:vm)          { FactoryBot.create(:vm_with_ref) }
+      let(:dc)          { FactoryBot.create(:datacenter, :ems_ref => "datacenter-1", :name => "dc1") }
+      let(:root_folder) { FactoryBot.create(:ems_folder, :ems_ref => "group-d1",     :name => "Datacenters") }
+      let(:vm_folder)   { FactoryBot.create(:ems_folder, :ems_ref => "group-v3",     :name => "vm") }
 
       let(:vc_data) do
         inv = Hash.new { |h, k| h[k] = {} }

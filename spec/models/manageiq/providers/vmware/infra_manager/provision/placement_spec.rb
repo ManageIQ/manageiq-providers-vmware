@@ -1,15 +1,15 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Provision do
   context "::Placement" do
     before do
-      ems      = FactoryGirl.create(:ems_vmware_with_authentication)
-      template = FactoryGirl.create(:template_vmware, :ext_management_system => ems)
-      vm       = FactoryGirl.create(:vm_vmware)
-      @storage = FactoryGirl.create(:storage)
-      @cluster = FactoryGirl.create(:ems_cluster)
-      @host    = FactoryGirl.create(:host, :ext_management_system => ems, :storages => [@storage], :ems_cluster => @cluster)
+      ems      = FactoryBot.create(:ems_vmware_with_authentication)
+      template = FactoryBot.create(:template_vmware, :ext_management_system => ems)
+      vm       = FactoryBot.create(:vm_vmware)
+      @storage = FactoryBot.create(:storage)
+      @cluster = FactoryBot.create(:ems_cluster)
+      @host    = FactoryBot.create(:host, :ext_management_system => ems, :storages => [@storage], :ems_cluster => @cluster)
       options  = {:src_vm_id => template.id}
 
-      @task = FactoryGirl.create(:miq_provision_vmware, :source       => template,
+      @task = FactoryBot.create(:miq_provision_vmware, :source       => template,
                                                         :destination  => vm,
                                                         :request_type => 'template',
                                                         :state        => 'pending',

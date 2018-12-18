@@ -1,7 +1,7 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm do
-  let(:ems)  { FactoryGirl.create(:ems_vmware) }
-  let(:host) { FactoryGirl.create(:host_vmware_esx, :ext_management_system => ems) }
-  let(:vm)   { FactoryGirl.create(:vm_vmware, :ext_management_system => ems, :host => host) }
+  let(:ems)  { FactoryBot.create(:ems_vmware) }
+  let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems) }
+  let(:vm)   { FactoryBot.create(:vm_vmware, :ext_management_system => ems, :host => host) }
   let(:power_state_on)        { "poweredOn" }
   let(:power_state_suspended) { "poweredOff" }
 
@@ -139,11 +139,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
   end
 
   context "vim" do
-    let(:ems) { FactoryGirl.create(:ems_vmware) }
+    let(:ems) { FactoryBot.create(:ems_vmware) }
     let(:provider_object) do
       double("vm_vmware_provider_object", :destroy => nil).as_null_object
     end
-    let(:vm)  { FactoryGirl.create(:vm_vmware, :ext_management_system => ems) }
+    let(:vm)  { FactoryBot.create(:vm_vmware, :ext_management_system => ems) }
 
     it "#invoke_vim_ws" do
       expect(vm).to receive(:with_provider_object).and_yield(provider_object)

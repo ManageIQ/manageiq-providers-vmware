@@ -3,7 +3,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     EmsRefresh.debug_failures = false
 
     _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
-    @ems = FactoryGirl.create(
+    @ems = FactoryBot.create(
       :ems_vmware,
       :zone      => zone,
       :hostname  => "1.2.3.4",

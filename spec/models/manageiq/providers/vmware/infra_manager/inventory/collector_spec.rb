@@ -4,7 +4,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
   let(:ems) do
     _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
     hostname = Rails.application.secrets.vmware.try(:[], "hostname") || "HOSTNAME"
-    FactoryGirl.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
+    FactoryBot.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
       # NOTE: VCR filter_sensitive_data was replacing rootFolder with VMWARE_USERNAME and
       # vmware_soap_string_abcdef with VMWARE_PASSWORD_string_abcdef, given these are the
       # default credentials for a virtual center this doesn't need to be hidden

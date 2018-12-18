@@ -23,7 +23,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
 
   before(:example) do
     _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
-    @ems = FactoryGirl.create(
+    @ems = FactoryBot.create(
       :ems_vmware_cloud,
       :zone     => zone,
       :hostname => @hostname,
@@ -108,7 +108,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       allow(@ems).to receive(:with_provider_connection).and_yield(connection)
     end
 
-    let(:vm) { FactoryGirl.create(:vm_vcloud, :ext_management_system => @ems) }
+    let(:vm) { FactoryBot.create(:vm_vcloud, :ext_management_system => @ems) }
     let(:response) { double("response", :body => nil) }
     let(:connection) { double('connection') }
 
@@ -127,7 +127,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
 
       it 'supports snapshot create (for second snapshot)' do
-        FactoryGirl.create(:snapshot, :vm_or_template_id => vm.id)
+        FactoryBot.create(:snapshot, :vm_or_template_id => vm.id)
         expect(vm.supports_snapshot_create?).to be_truthy
       end
     end
@@ -168,7 +168,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       allow(@ems).to receive(:with_provider_connection).and_yield(connection)
     end
 
-    let(:vm)         { FactoryGirl.create(:vm_vcloud, :ext_management_system => @ems) }
+    let(:vm)         { FactoryBot.create(:vm_vcloud, :ext_management_system => @ems) }
     let(:connection) { double('connection') }
     let(:vm_xml)     { double('vm_xml') }
     let(:options)    { { :spec => 'fog-options' } }
@@ -183,7 +183,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
 
       context 'with snapshots' do
-        before { FactoryGirl.create(:snapshot, :vm_or_template => vm) }
+        before { FactoryBot.create(:snapshot, :vm_or_template => vm) }
 
         it do
           expect(vm.supports_reconfigure_disksize?).to be_falsey

@@ -1,8 +1,8 @@
 describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack do
-  let(:ems) { FactoryGirl.create(:ems_vmware_cloud) }
-  let(:template) { FactoryGirl.create(:orchestration_template_vmware_cloud_in_xml) }
+  let(:ems) { FactoryBot.create(:ems_vmware_cloud) }
+  let(:template) { FactoryBot.create(:orchestration_template_vmware_cloud_in_xml) }
   let(:orchestration_stack) do
-    FactoryGirl.create(:orchestration_stack_vmware_cloud,
+    FactoryBot.create(:orchestration_stack_vmware_cloud,
                        :ext_management_system => ems,
                        :name                  => 'test',
                        :ems_ref               => 'one_id')

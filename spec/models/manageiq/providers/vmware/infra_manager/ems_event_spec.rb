@@ -3,7 +3,7 @@ describe EmsEvent do
 
   context ".add" do
     before(:each) do
-      @zone = FactoryGirl.create(:small_environment)
+      @zone = FactoryBot.create(:small_environment)
       @ems = @zone.ext_management_systems.first
       @host = @ems.hosts.first
       @vm1, @vm2 = @host.vms.sort_by(&:id)
