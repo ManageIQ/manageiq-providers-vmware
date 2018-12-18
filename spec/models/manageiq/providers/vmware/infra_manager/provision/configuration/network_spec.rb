@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Network do
   describe '#normalize_network_adapter_settings' do
-    let(:miq_provision) { FactoryGirl.build(:miq_provision_vmware, :options => options) }
+    let(:miq_provision) { FactoryBot.build(:miq_provision_vmware, :options => options) }
 
     shared_examples_for 'normalize_network_adapter_settings' do
       it 'updates network options' do

@@ -1,17 +1,17 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
-  let(:storage) { FactoryGirl.create(:storage_vmware) }
+  let(:storage) { FactoryBot.create(:storage_vmware) }
   let(:host) do
-    FactoryGirl.create(:host_vmware_esx).tap do |host|
+    FactoryBot.create(:host_vmware_esx).tap do |host|
       host.host_storages.create(:storage_id => storage.id, :host_id => host.id, :ems_ref => "datastore-1")
     end
   end
   let(:vm) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :vm_vmware,
       :name            => 'test_vm',
       :raw_power_state => 'poweredOff',
-      :storage         => FactoryGirl.create(:storage, :name => 'storage'),
-      :hardware        => FactoryGirl.create(:hardware, :cpu4x2, :ram1GB, :virtual_hw_version => "07"),
+      :storage         => FactoryBot.create(:storage, :name => 'storage'),
+      :hardware        => FactoryBot.create(:hardware, :cpu4x2, :ram1GB, :virtual_hw_version => "07"),
       :host            => host,
     )
   end
@@ -22,7 +22,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
 
   context "#max_total_vcpus" do
     before do
-      @host = FactoryGirl.create(:host, :hardware => FactoryGirl.create(:hardware, :cpu_total_cores => 160))
+      @host = FactoryBot.create(:host, :hardware => FactoryBot.create(:hardware, :cpu_total_cores => 160))
       vm.host = @host
     end
     subject { vm.max_total_vcpus }
@@ -295,8 +295,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
     end
 
     it 'with primary disk' do
-      datastore = FactoryGirl.create(:storage, :name => "test_datastore")
-      FactoryGirl.create(
+      datastore = FactoryBot.create(:storage, :name => "test_datastore")
+      FactoryBot.create(
         :disk,
         :device_type => "disk",
         :storage     => datastore,

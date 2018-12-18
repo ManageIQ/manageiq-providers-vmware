@@ -1,7 +1,7 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
   before { EvmSpecHelper.create_guid_miq_server_zone }
   let(:vm) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :vm_vmware_cloud,
       :name                   => 'test_vm',
       :raw_power_state        => 'off',
@@ -9,21 +9,21 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
       :cpu_hot_remove_enabled => true,
       :memory_hot_add_enabled => true,
       :orchestration_stack    => orchestration_stack,
-      :network_ports          => [FactoryGirl.create(:network_port, :name => 'NIC#0')],
-      :hardware               => FactoryGirl.create(
+      :network_ports          => [FactoryBot.create(:network_port, :name => 'NIC#0')],
+      :hardware               => FactoryBot.create(
         :hardware,
         :cpu4x2,
         :ram1GB,
         :disks => [
-          FactoryGirl.create(:disk, :size => 1024, :filename => 'Disk 0', :location => '0/1/2000'),
-          FactoryGirl.create(:disk, :size => 2048, :filename => 'Disk 1', :location => '0/2/2001'),
+          FactoryBot.create(:disk, :size => 1024, :filename => 'Disk 0', :location => '0/1/2000'),
+          FactoryBot.create(:disk, :size => 2048, :filename => 'Disk 1', :location => '0/2/2001'),
         ]
       )
     )
   end
   let(:orchestration_stack) do
-    stack = FactoryGirl.create(:orchestration_stack, :name => 'vapp name')
-    FactoryGirl.create(:cloud_network, :name => 'vApp network name (vapp name)', :orchestration_stack => stack)
+    stack = FactoryBot.create(:orchestration_stack, :name => 'vapp name')
+    FactoryBot.create(:cloud_network, :name => 'vApp network name (vapp name)', :orchestration_stack => stack)
     stack
   end
 
@@ -166,7 +166,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
     end
 
     context 'VM with snapshot' do
-      before { FactoryGirl.create(:snapshot, :vm_or_template => vm) }
+      before { FactoryBot.create(:snapshot, :vm_or_template => vm) }
 
       describe 'disks' do
         it 'resize' do

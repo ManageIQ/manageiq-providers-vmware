@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
   before(:each) do
-    @ems = FactoryGirl.create(:ems_vmware_with_vcr_authentication, :port => 443, :api_version => "v5_0", :security_protocol => "ssl-with-validation")
+    @ems = FactoryBot.create(:ems_vmware_with_vcr_authentication, :port => 443, :api_version => "v5_0", :security_protocol => "ssl-with-validation")
     @ems_network = @ems.network_manager
   end
 

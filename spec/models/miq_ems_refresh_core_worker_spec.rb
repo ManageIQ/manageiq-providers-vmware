@@ -1,7 +1,7 @@
 describe MiqEmsRefreshCoreWorker do
   # enable role "ems_inventory" ( .has_required_role? == true)
   before do
-    FactoryGirl.create(:server_role, :name => 'ems_inventory')
+    FactoryBot.create(:server_role, :name => 'ems_inventory')
     my_server = EvmSpecHelper.local_miq_server
     my_server.update_attributes(:role => "ems_inventory")
     my_server.activate_roles("ems_inventory")

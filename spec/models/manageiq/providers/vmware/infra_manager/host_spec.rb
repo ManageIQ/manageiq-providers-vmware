@@ -1,12 +1,12 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Host do
   before(:each) do
-    @host = FactoryGirl.create(:host_vmware)
+    @host = FactoryBot.create(:host_vmware)
   end
 
   context "#reserve_next_available_vnc_port" do
     context "without EMS defaults set" do
       before(:each) do
-        @ems = FactoryGirl.create(:ems_vmware, :host_default_vnc_port_start => nil, :host_default_vnc_port_end => nil)
+        @ems = FactoryBot.create(:ems_vmware, :host_default_vnc_port_start => nil, :host_default_vnc_port_end => nil)
         @host.ext_management_system = @ems
       end
 
@@ -48,7 +48,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Host do
 
     context "with EMS defaults set" do
       before(:each) do
-        @ems = FactoryGirl.create(:ems_vmware, :host_default_vnc_port_start => 5925, :host_default_vnc_port_end => 5930)
+        @ems = FactoryBot.create(:ems_vmware, :host_default_vnc_port_start => 5925, :host_default_vnc_port_end => 5930)
         @host.ext_management_system = @ems
       end
 

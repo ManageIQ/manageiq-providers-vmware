@@ -1,10 +1,10 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
   let(:custom_spec_name) { 'custom_spec_name' }
   let(:target_vm_name)   { 'computerName' }
-  let(:os)               { FactoryGirl.create(:operating_system, :product_name => 'Microsoft Windows') }
-  let(:ems)              { FactoryGirl.create(:ems_vmware_with_authentication, :api_version => '6.0', :customization_specs => [custom_spec]) }
-  let(:custom_spec)      { FactoryGirl.create(:customization_spec, :name => custom_spec_name, :spec => spec) }
-  let(:prov_request)     { FactoryGirl.create(:miq_provision_request, :src_vm_id => vm_template.id) }
+  let(:os)               { FactoryBot.create(:operating_system, :product_name => 'Microsoft Windows') }
+  let(:ems)              { FactoryBot.create(:ems_vmware_with_authentication, :api_version => '6.0', :customization_specs => [custom_spec]) }
+  let(:custom_spec)      { FactoryBot.create(:customization_spec, :name => custom_spec_name, :spec => spec) }
+  let(:prov_request)     { FactoryBot.create(:miq_provision_request, :src_vm_id => vm_template.id) }
   let(:options) do
     {
       :pass                        => 1,
@@ -21,7 +21,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
     }
   end
   let(:prov_vm) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :miq_provision_vmware,
       :miq_request  => prov_request,
       :source       => @vm_template,
@@ -32,7 +32,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
     )
   end
   let(:vm_template) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :template_vmware,
       :ext_management_system => ems,
       :operating_system      => os,

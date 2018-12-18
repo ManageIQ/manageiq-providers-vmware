@@ -6,8 +6,8 @@ describe ManageIQ::Providers::Vmware::NetworkManager::RefreshParser do
       allow($vcloud_log).to receive(:info)
     end
     let(:ems) do
-      FactoryGirl.create(:ems_vmware_cloud).tap do |ems|
-        ems.authentications << FactoryGirl.create(:authentication, :status => "Valid")
+      FactoryBot.create(:ems_vmware_cloud).tap do |ems|
+        ems.authentications << FactoryBot.create(:authentication, :status => "Valid")
       end
     end
     let(:refresher) { described_class.new(ems) }

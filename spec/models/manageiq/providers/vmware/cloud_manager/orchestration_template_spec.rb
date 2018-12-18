@@ -7,7 +7,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
     end
   end
 
-  let(:valid_template) { FactoryGirl.create(:orchestration_template_vmware_cloud_in_xml) }
+  let(:valid_template) { FactoryBot.create(:orchestration_template_vmware_cloud_in_xml) }
 
   describe '#validate_format' do
     it 'passes validation if no content' do
@@ -25,15 +25,15 @@ describe ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate do
   end
 
   describe "OVF content of vApp template" do
-    let(:vdc_net1) { FactoryGirl.create(:cloud_network_vmware_vdc, :name => "VDC1", :ems_ref => "vdc_net1") }
-    let(:vapp_net) { FactoryGirl.create(:cloud_network_vmware_vapp, :name => "vapp", :ems_ref => "vapp") }
+    let(:vdc_net1) { FactoryBot.create(:cloud_network_vmware_vdc, :name => "VDC1", :ems_ref => "vdc_net1") }
+    let(:vapp_net) { FactoryBot.create(:cloud_network_vmware_vapp, :name => "vapp", :ems_ref => "vapp") }
     let(:ems) do
-      FactoryGirl.create(:ems_vmware_cloud) do |ems|
+      FactoryBot.create(:ems_vmware_cloud) do |ems|
         ems.cloud_networks << vdc_net1
         ems.cloud_networks << vapp_net
       end
     end
-    let(:orchestration_template) { FactoryGirl.create(:orchestration_template_vmware_cloud_in_xml, :ems_id => ems.id) }
+    let(:orchestration_template) { FactoryBot.create(:orchestration_template_vmware_cloud_in_xml, :ems_id => ems.id) }
 
     context "orchestration template OVF file" do
       it "is properly read" do

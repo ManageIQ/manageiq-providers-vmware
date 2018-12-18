@@ -2,7 +2,7 @@ require "spec_helper"
 require "timecop"
 
 describe ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner do
-  let(:ems)      { FactoryGirl.create(:ems_vmware, :hostname => "hostname") }
+  let(:ems)      { FactoryBot.create(:ems_vmware, :hostname => "hostname") }
   let(:catcher)  { ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner.new(:ems_id => ems.id) }
   let(:settings) { {:flooding_monitor_enabled => false} }
 

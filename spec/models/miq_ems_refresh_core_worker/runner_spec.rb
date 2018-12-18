@@ -1,10 +1,10 @@
 describe MiqEmsRefreshCoreWorker::Runner do
   before do
     _guid, server, zone = EvmSpecHelper.create_guid_miq_server_zone
-    @ems = FactoryGirl.create(:ems_vmware_with_authentication, :zone => zone)
+    @ems = FactoryBot.create(:ems_vmware_with_authentication, :zone => zone)
 
     # General stubbing for testing any worker (methods called during initialize)
-    @worker_record = FactoryGirl.create(:miq_ems_refresh_core_worker, :queue_name => "ems_#{@ems.id}", :miq_server => server)
+    @worker_record = FactoryBot.create(:miq_ems_refresh_core_worker, :queue_name => "ems_#{@ems.id}", :miq_server => server)
     allow_any_instance_of(described_class).to receive(:sync_config)
     allow_any_instance_of(described_class).to receive(:set_connection_pool_size)
     allow_any_instance_of(described_class).to receive(:heartbeat_using_drb?).and_return(false)
@@ -17,7 +17,7 @@ describe MiqEmsRefreshCoreWorker::Runner do
     context "against a ManageIQ::Providers::Vmware::InfraManager::Vm" do
       before do
         Timecop.travel(1.day.ago) do
-          @vm = FactoryGirl.create(:vm_with_ref, :ext_management_system => @ems, :raw_power_state => "unknown")
+          @vm = FactoryBot.create(:vm_with_ref, :ext_management_system => @ems, :raw_power_state => "unknown")
         end
       end
 
@@ -88,8 +88,8 @@ describe MiqEmsRefreshCoreWorker::Runner do
 
         context "and networks already persisted" do
           before do
-            @hw = FactoryGirl.create(:hardware, :vm_or_template => @vm)
-            @nics = (1..2).collect { FactoryGirl.create(:guest_device_nic_with_network, :hardware => @hw) }.sort_by(&:address)
+            @hw = FactoryBot.create(:hardware, :vm_or_template => @vm)
+            @nics = (1..2).collect { FactoryBot.create(:guest_device_nic_with_network, :hardware => @hw) }.sort_by(&:address)
             @expected_addresses = @nics.collect { |n| [n.network.ipaddress, n.network.ipv6address] }
           end
 
@@ -146,7 +146,7 @@ describe MiqEmsRefreshCoreWorker::Runner do
     context "against a ManageIQ::Providers::Vmware::InfraManager::Template" do
       before do
         Timecop.travel(1.day.ago) do
-          @template = FactoryGirl.create(:template_vmware_with_ref, :ext_management_system => @ems)
+          @template = FactoryBot.create(:template_vmware_with_ref, :ext_management_system => @ems)
         end
       end
 

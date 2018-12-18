@@ -16,7 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "#validate_remote_console_vmrc_support" do
     before(:each) do
-      @ems = FactoryGirl.create(:ems_vmware)
+      @ems = FactoryBot.create(:ems_vmware)
     end
 
     it "not raise for api_version == 5.0" do
@@ -42,7 +42,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "#remote_console_vmrc_support_known?" do
     before(:each) do
-      @ems = FactoryGirl.create(:ems_vmware)
+      @ems = FactoryBot.create(:ems_vmware)
     end
 
     it "true with nothing missing/blank" do
@@ -79,13 +79,13 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   context "#remote_console_vmrc_acquire_ticket" do
     let(:ems) do
       _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
-      FactoryGirl.create(:ems_vmware, :zone => zone)
+      FactoryBot.create(:ems_vmware, :zone => zone)
     end
 
     context "with console credentials" do
       before do
-        ems.authentications << FactoryGirl.create(:authentication, :userid => "root", :password => "vmware")
-        ems.authentications << FactoryGirl.create(:authentication, :authtype => "console", :userid => "readonly", :password => "1234")
+        ems.authentications << FactoryBot.create(:authentication, :userid => "root", :password => "vmware")
+        ems.authentications << FactoryBot.create(:authentication, :authtype => "console", :userid => "readonly", :password => "1234")
       end
 
       it "uses the console credentials" do
@@ -102,7 +102,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
     context "without console credentials" do
       before do
-        ems.authentications << FactoryGirl.create(:authentication, :userid => "root", :password => "vmware")
+        ems.authentications << FactoryBot.create(:authentication, :userid => "root", :password => "vmware")
       end
 
       it "raises an exception" do
@@ -116,7 +116,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   context "handling changes that may require EventCatcher restart" do
     before(:each) do
       guid, server, zone = EvmSpecHelper.create_guid_miq_server_zone
-      @ems = FactoryGirl.create(:ems_vmware, :zone => zone)
+      @ems = FactoryBot.create(:ems_vmware, :zone => zone)
     end
 
     it "will restart EventCatcher when ipaddress changes" do
@@ -148,7 +148,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "catalog types" do
     it "#supported_catalog_types" do
-      ems = FactoryGirl.create(:ems_vmware)
+      ems = FactoryBot.create(:ems_vmware)
       expect(ems.supported_catalog_types).to eq(%w(vmware))
     end
   end

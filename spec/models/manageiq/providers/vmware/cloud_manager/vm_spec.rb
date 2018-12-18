@@ -1,7 +1,7 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Vm do
   context "#is_available?" do
-    let(:ems)                   { FactoryGirl.create(:ems_vmware_cloud) }
-    let(:vm)                    { FactoryGirl.create(:vm_vmware_cloud, :ext_management_system => ems) }
+    let(:ems)                   { FactoryBot.create(:ems_vmware_cloud) }
+    let(:vm)                    { FactoryBot.create(:vm_vmware_cloud, :ext_management_system => ems) }
     let(:power_state_on)        { "on" }
     let(:power_state_suspended) { "suspended" }
 
@@ -42,8 +42,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm do
   end
 
   context "when destroyed" do
-    let(:ems) { FactoryGirl.create(:ems_vmware_cloud) }
-    let(:vm) { FactoryGirl.create(:vm_vmware_cloud, :ext_management_system => ems) }
+    let(:ems) { FactoryBot.create(:ems_vmware_cloud) }
+    let(:vm) { FactoryBot.create(:vm_vmware_cloud, :ext_management_system => ems) }
     let(:connection) { double("connection") }
     let(:response) { double("response", :body => nil) }
 
@@ -61,8 +61,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Vm do
       allow(ems).to receive(:with_provider_connection).and_yield(connection)
     end
 
-    let(:ems)        { FactoryGirl.create(:ems_vmware_cloud) }
-    let(:vm)         { FactoryGirl.create(:vm_vcloud, :ext_management_system => ems, :ems_ref => 'id') }
+    let(:ems)        { FactoryBot.create(:ems_vmware_cloud) }
+    let(:vm)         { FactoryBot.create(:vm_vcloud, :ext_management_system => ems, :ems_ref => 'id') }
     let(:connection) { double('connection') }
     let(:response)   { double('response', :body => nil) }
 

@@ -3,7 +3,7 @@ require ManageIQ::Providers::Vmware::Engine.root.join('spec/tools/vim_data/vim_d
 describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   let(:zone) { EvmSpecHelper.create_guid_miq_server_zone[2] }
   let(:ems) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :ems_vmware_with_authentication,
       :zone => zone, :name => "VC41Test-Prod",
       :hostname => "VC41Test-Prod.MIQTEST.LOCAL",
