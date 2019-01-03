@@ -112,7 +112,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(vm.snapshots.first).to have_attributes(
           :uid         => "2018-05-19T06:47:56.000000Z",
           :parent_uid  => nil,
-          :name        => "VM Snapshot 5%2f19%2f2018, 9:54:04 AM",
+          :name        => "VM Snapshot 5%2f19%2f2018, 6:47:56 AM",
           :description => "",
           :current     => 1,
           :create_time => Time.parse("2018-05-19 06:47:56 UTC").utc,
@@ -126,6 +126,22 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         vm.reload
 
         expect(vm.snapshots.count).to eq(0)
+      end
+
+      it "creating a snapshot with a parent" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+        expect(vm.snapshots.count).to eq(0)
+
+        run_targeted_refresh(targeted_update_set([vm_create_snapshot_object_update, vm_create_child_snapshot_object_update]))
+
+        vm.reload
+
+        expect(vm.snapshots.count).to eq(2)
+        root_snapshot = vm.snapshots.find_by(:ems_ref => "snapshot-1100")
+        child_snapshot = vm.snapshots.find_by(:ems_ref => "snapshot-1101")
+
+        expect(child_snapshot.parent).to eq(root_snapshot)
       end
 
       def run_targeted_refresh(update_set)
@@ -308,7 +324,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
                   :dynamicProperty   => [],
                   :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
                   :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-                  :name              => "VM Snapshot 5%252f19%252f2018, 9:54:04 AM",
+                  :name              => "VM Snapshot 5%252f19%252f2018, 6:47:56 AM",
                   :description       => "",
                   :id                => 5,
                   :createTime        => Time.parse("2018-05-19 06:47:56 UTC").utc,
@@ -380,6 +396,109 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             :name            => "summary.storage.unshared",
             :op              => "assign",
             :val             => 538,
+          ),
+        ],
+        :missingSet      => [],
+      )
+    end
+
+    def vm_create_child_snapshot_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :dynamicProperty => [],
+        :kind            => "modify",
+        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet       => [
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op              => "assign",
+            :val             => "redoLogFormat",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op              => "assign",
+            :val             => "vmfsSparseVariant",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.fileName",
+            :op              => "assign",
+            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000002.vmdk",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.parent.fileName",
+            :op              => "assign",
+            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk",
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "config.hardware.device[2000].backing.parent.parent",
+            :op              => "assign",
+            :val             => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
+              :dynamicProperty => [],
+              :fileName        => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
+              :datastore       => RbVmomi::VIM.Datastore(vim, "datastore-15"),
+              :backingObjectId => "",
+              :diskMode        => "persistent",
+              :thinProvisioned => true,
+              :uuid            => "52dab7a1-6c3e-1f7b-fe00-a2c6213343b7",
+              :contentId       => "2929a7a583fe0c83749f9402fffffffe",
+              :digestEnabled   => false,
+            ),
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "snapshot.currentSnapshot",
+            :op              => "assign",
+            :val             => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1101"),
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "snapshot.rootSnapshotList",
+            :op              => "assign",
+            :val             => [
+              RbVmomi::VIM.VirtualMachineSnapshotTree(
+                :dynamicProperty   => [],
+                :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
+                :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+                :name              => "VM Snapshot 5%252f19%252f2018, 6:47:56 AM",
+                :description       => "",
+                :id                => 5,
+                :createTime        => Time.parse("2018-05-19 06:47:56 UTC").utc,
+                :state             => "poweredOff",
+                :quiesced          => false,
+                :childSnapshotList => [
+                  RbVmomi::VIM.VirtualMachineSnapshotTree(
+                    :dynamicProperty   => [],
+                    :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1101"),
+                    :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+                    :name              => "VM Snapshot 5%252f19%252f2018, 9:54:05 AM",
+                    :description       => "",
+                    :id                => 5,
+                    :createTime        => Time.parse("2018-05-19 09:54:05 UTC").utc,
+                    :state             => "poweredOff",
+                    :quiesced          => false,
+                    :childSnapshotList => [],
+                    :replaySupported   => false,
+                  )
+                ],
+                :replaySupported   => false,
+              ),
+            ],
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.committed",
+            :op              => "assign",
+            :val             => 54_177,
+          ),
+          RbVmomi::VIM.PropertyChange(
+            :dynamicProperty => [],
+            :name            => "summary.storage.unshared",
+            :op              => "assign",
+            :val             => 41_855,
           ),
         ],
         :missingSet      => [],

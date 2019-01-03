@@ -296,6 +296,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       return if snap.nil?
 
       create_time = snapshot[:createTime]
+      parent = persister.snapshots.lazy_find(:vm_or_template => vm, :uid => Time.parse(parent_uid).iso8601(6)) if parent_uid
 
       snapshot_hash = {
         :vm_or_template => vm,
@@ -304,6 +305,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :uid_ems        => create_time.to_s,
         :uid            => create_time.iso8601(6),
         :parent_uid     => parent_uid,
+        :parent         => parent,
         :name           => CGI.unescape(snapshot[:name]),
         :description    => snapshot[:description],
         :create_time    => create_time.to_s,

@@ -51,7 +51,6 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     add_vm_parent_blue_folders
     add_vm_resource_pools
     add_root_folder_relationship
-    add_snapshot_parent
   end
 
   # ------ IC provider specific definitions -------------------------
@@ -170,18 +169,6 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
 
       builder.add_dependency_attributes(
         :ems_folders => [collections[:ems_folders]]
-      )
-    end
-  end
-
-  def add_snapshot_parent
-    add_collection(infra,
-                   :snapshot_parent,
-                   shared_options_overrides,
-                   :without_model_class => true) do |builder|
-
-      builder.add_dependency_attributes(
-        :snapshots => [collections[:snapshots]]
       )
     end
   end
