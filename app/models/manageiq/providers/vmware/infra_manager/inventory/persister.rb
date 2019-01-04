@@ -8,36 +8,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     initialize_infra_inventory_collections
   end
 
-  def complete
-    true
-  end
-
-  def saver_strategy
-    :default
-  end
-
-  def strategy
-    nil
-  end
-
-  def targeted?
-    false
-  end
-
-  def parent
-    manager.presence
-  end
-
-  def shared_options
-    {
-      :complete       => complete,
-      :saver_strategy => saver_strategy,
-      :strategy       => strategy,
-      :targeted       => targeted?,
-      :parent         => parent
-    }
-  end
-
   def vim_class_to_collection(managed_object)
     case managed_object
     when RbVmomi::VIM::ComputeResource
