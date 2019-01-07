@@ -4,12 +4,4 @@ class ManageIQ::Providers::Vmware::Inventory::Persister::CloudManager < ManageIQ
   def initialize_inventory_collections
     initialize_cloud_inventory_collections
   end
-
-  def shared_options
-    {
-      :strategy => strategy,
-      :targeted => targeted?,
-      :parent   => manager.presence
-    }
-  end
 end
