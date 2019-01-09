@@ -5,64 +5,94 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Hammer-1
+
+### Added
+- Forcibly mark vCloud VMs as not disconnected [(#339)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/339)
+- Shift fog-vcloud-director version to 0.3.0 [(#321)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/321)
+- Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
+- Add plugin display name [(#312)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/312)
+- Don't run EmsRefresh if using streaming refresh [(#284)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/284)
+- Change custom_attributes hosts_guest_devices and host_system_services according to core [(#303)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/303)
+- Log error and backtrace if save_inventory fails [(#297)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/297)
+- Set the ems last_refresh error/time attributes [(#296)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/296)
+- Allow streaming refresh to be enabled dynamically [(#295)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/295)
+- Add debug logging for object updates from the VC [(#293)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/293)
+- Add the ability to rename a VM [(#291)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/291)
+- Add alias for vm_remove_disk_by_file [(#290)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/290)
+- Add method vm_move_into_folder. [(#285)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/285)
+- Finish parsing of host properties [(#280)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/280)
+- Parse the VirtualEthernetCard model type [(#279)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/279)
+- Don't cache host config.storageDevice [(#278)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/278)
+- Add ems_ref_obj to streaming refresh parser [(#275)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/275)
+- Parse the lan from a guest_device [(#266)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/266)
+- Parse VM Snapshots [(#270)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/270)
+- Improve streaming refresh in a Refresh Worker [(#265)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/265)
+- Set the root folder's parent and set hidden/is_default for folders and resource pools [(#263)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/263)
+- Make nested lazy find with secondary ref work [(#262)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/262)
+- Set api_version and uid_ems in streaming refresh [(#259)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/259)
+- Use new interface for targeted_scope [(#258)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/258)
+- Fix storage parsing to use datastore url [(#256)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/256)
+- Add spec test for deleting a VM [(#255)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/255)
+- Save ems cluster for a vm [(#254)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/254)
+- Parse parent for most collections [(#251)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/251)
+- Add support for reconfigure cdrom [(#244)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/244)
+- Parse Switches for Streaming Refresh [(#236)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/236)
+- Add save inventory thread for streaming refresh [(#233)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/233)
+- Update driven refresh [(#186)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/186)
+- Shift fog-vcloud-director version to 0.1.10 [(#224)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/224)
+- Actually apply CloudManager's api_version [(#219)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/219)
+- Add support for vCloud console access via WebMKS [(#218)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/218)
+- Add guest customization field to service catalog order form [(#215)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/215)
+- Add Distributed and Host VirtualSwitch models [(#212)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/212)
+- Prevent vapp templates from being duplicated [(#209)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/209)
+- Update disk's controller type parsing [(#207)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/207)
+- Support update VM snapshot [(#205)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/205)
+- Completely stop/suspend VM not just partially [(#206)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/206)
+- Use utility function vm_powered_on? instead manual comparison [(#204)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/204)
+- Don't run EventCatcher when "none" was selected on GUI [(#199)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/199)
+- Allow user to pick administrator password upon vApp provisioning [(#196)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/196)
+- Render hostname for vm [(#193)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/193)
+- Support revert to snapshot for vm [(#192)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/192)
+- Support delete snapshot for VM [(#191)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/191)
+- Render snapshot for VM [(#190)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/190)
+- Allow vApp customization prior provisioning [(#185)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/185)
+- Support create snapshot for VM [(#189)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/189)
+- Added support for VM delete [(#184)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/184)
+- Add a method to return all valid SCSI Controller Types [(#126)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/126)
+- Update i18n catalog for hammer [(#327)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/327)
+- Add thumbprint_sha1 method to host_esx [(#328)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/328)
+
+### Fixed
+- Check EmsEvents when disconnecting storage [(#336)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/336)
+- Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
+- Fix for broken customization(sysprep) during vm provisioning [(#308)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/308)
+- Fix setting the last_refresh_date on error [(#301)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/301)
+- Change expected partial refresh error expection [(#286)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/286)
+- Fixes ProvisionWorkflow#available_vlans_and_hosts [(#269)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/269)
+- Don't save_inventory when WaitForUpdates times out [(#248)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/248)
+- Add supports revert to snapshot [(#230)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/230)
+- Sort unitNumber as an integer not a string [(#223)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/223)
+- VMware provider IP discovery fix [(#221)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/221)
+- Fix update driven vm refresh operating systems [(#214)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/214)
+- Fix WebMKS/VNC console access [(#211)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/211)
+- Skip "none" vApp network when inventoring [(#198)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/198)
+- Add VM uuid as the vm_uid_ems to the event payload [(#179)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/179)
+- Migrate model display names from locale/en.yml to plugin [(#174)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/174)
+- Fix the event parser for a new folder refresh [(#166)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/166)
+- Collect IP and MAC address properly [(#161)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/161)
+- Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
+
 ## Unreleased as of Sprint 99 ending 2018-11-19
 
 ### Fixed
 - Always set vm_or_template.connection_state [(#338)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/338)
-
-## Unreleased as of Sprint 96 ending 2018-10-08
-
-### Added
-- Add thumbprint_sha1 method to host_esx [(#328)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/328)
-
-### Fixed
-- Don't crash when probing deleted vApp for status [(#324)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/324)
-
-## Unreleased as of Sprint 95 ending 2018-09-24
-
-### Added
-- Shift fog-vcloud-director version to 0.3.0 [(#321)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/321)
-
-### Fixed
-- Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
-
-## Unreleased as of Sprint 94 ending 2018-09-10
-
-### Added
-- Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
 
 ## Gaprindashvili-5 - Released 2018-09-07
 
 ### Fixed
 - Try to get VM UUID from summary.config or config [(#246)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/246)
 - Use the full URI for the broker connection [(#305)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/305)
-
-## Unreleased as of Sprint 93 ending 2018-08-27
-
-### Added
-- Add plugin display name [(#312)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/312)
-- Don't run EmsRefresh if using streaming refresh [(#284)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/284)
-
-## Unreleased as of Sprint 92 ending 2018-08-13
-
-### Fixed
-- Fix for broken customization(sysprep) during vm provisioning [(#308)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/308)
-
-## Unreleased as of Sprint 91 ending 2018-07-30
-
-### Added
-- Change custom_attributes hosts_guest_devices and host_system_services according to core [(#303)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/303)
-
-### Fixed
-- Fix setting the last_refresh_date on error [(#301)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/301)
-
-## Unreleased as of Sprint 90 ending 2018-07-16
-
-### Added
-- Log error and backtrace if save_inventory fails [(#297)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/297)
-- Set the ems last_refresh error/time attributes [(#296)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/296)
-- Allow streaming refresh to be enabled dynamically [(#295)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/295)
-- Add debug logging for object updates from the VC [(#293)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/293)
 
 ## Gaprindashvili-4 - Released 2018-07-16
 
@@ -81,117 +111,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Fixed
 - Bump version of vmware_web_service [(#247)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/247)
 
-## Unreleased as of Sprint 89 ending 2018-07-02
-
-### Added
-- Add the ability to rename a VM [(#291)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/291)
-- Add alias for vm_remove_disk_by_file [(#290)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/290)
-- Add method vm_move_into_folder. [(#285)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/285)
-- Finish parsing of host properties [(#280)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/280)
-
-## Unreleased as of Sprint 88 ending 2018-06-18
-
-### Fixed
-- Change expected partial refresh error expection [(#286)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/286)
-
-## Unreleased as of Sprint 87 ending 2018-06-04
-
-### Added
-- Parse the VirtualEthernetCard model type [(#279)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/279)
-- Don't cache host config.storageDevice [(#278)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/278)
-- Add ems_ref_obj to streaming refresh parser [(#275)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/275)
-- Parse the lan from a guest_device [(#266)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/266)
-
-## Unreleased as of Sprint 86 ending 2018-05-21
-
-### Added
-- Parse VM Snapshots [(#270)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/270)
-- Improve streaming refresh in a Refresh Worker [(#265)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/265)
-- Set the root folder's parent and set hidden/is_default for folders and resource pools [(#263)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/263)
-- Make nested lazy find with secondary ref work [(#262)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/262)
-- Set api_version and uid_ems in streaming refresh [(#259)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/259)
-- Use new interface for targeted_scope [(#258)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/258)
-- Fix storage parsing to use datastore url [(#256)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/256)
-- Add spec test for deleting a VM [(#255)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/255)
-- Save ems cluster for a vm [(#254)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/254)
-- Parse parent for most collections [(#251)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/251)
-- Add support for reconfigure cdrom [(#244)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/244)
-
-### Fixed
-- Fixes ProvisionWorkflow#available_vlans_and_hosts [(#269)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/269)
-
-## Unreleased as of Sprint 85 ending 2018-05-07
-
-### Added
-- Parse Switches for Streaming Refresh [(#236)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/236)
-
-### Fixed
-- Don't save_inventory when WaitForUpdates times out [(#248)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/248)
-
-## Unreleased as of Sprint 84 ending 2018-04-26
-
-### Added
-- Add save inventory thread for streaming refresh [(#233)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/233)
-- Update driven refresh [(#186)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/186)
-
-### Fixed
-- Add supports revert to snapshot [(#230)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/230)
-
-## Unreleased as of Sprint 83 ending 2018-04-09
-
-### Added
-- Shift fog-vcloud-director version to 0.1.10 [(#224)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/224)
-- Actually apply CloudManager's api_version [(#219)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/219)
-- Add support for vCloud console access via WebMKS [(#218)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/218)
-- Add guest customization field to service catalog order form [(#215)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/215)
-- Add Distributed and Host VirtualSwitch models [(#212)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/212)
-
-### Fixed
-- Sort unitNumber as an integer not a string [(#223)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/223)
-- VMware provider IP discovery fix [(#221)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/221)
-
-## Unreleased as of Sprint 82 ending 2018-03-26
-
-### Added
-- Prevent vapp templates from being duplicated [(#209)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/209)
-- Update disk's controller type parsing [(#207)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/207)
-- Support update VM snapshot [(#205)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/205)
-
-### Fixed
-- Fix update driven vm refresh operating systems [(#214)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/214)
-- Fix WebMKS/VNC console access [(#211)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/211)
-
-## Unreleased as of Sprint 81 ending 2018-03-12
-
-### Added
-- Completely stop/suspend VM not just partially [(#206)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/206)
-- Use utility function vm_powered_on? instead manual comparison [(#204)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/204)
-- Don't run EventCatcher when "none" was selected on GUI [(#199)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/199)
-- Allow user to pick administrator password upon vApp provisioning [(#196)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/196)
-- Render hostname for vm [(#193)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/193)
-- Support revert to snapshot for vm [(#192)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/192)
-- Support delete snapshot for VM [(#191)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/191)
-- Render snapshot for VM [(#190)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/190)
-- Allow vApp customization prior provisioning [(#185)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/185)
-
-### Fixed
-- Skip "none" vApp network when inventoring [(#198)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/198)
-
 ## Gaprindashvili-2 released 2018-03-06
 
 ### Added
 - Update gettext catalogs for Gaprindashvili update release [(#188)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/188)
-
-## Unreleased as of Sprint 80 ending 2018-02-26
-
-### Added
-- Support create snapshot for VM [(#189)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/189)
-- Added support for VM delete [(#184)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/184)
-
-## Unreleased as of Sprint 79 ending 2018-02-12
-
-### Fixed
-- Add VM uuid as the vm_uid_ems to the event payload [(#179)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/179)
 
 ## Gaprindashvili-1 - Release 2018-01-31
 
@@ -230,18 +153,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Update vmware_web_service for smartstate fix [(#165)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/165)
 - SSA connect to use :hostname or :ipaddress instead of :address [(#143)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/143)
 - Refresh datastore files through EMS [(#170)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/170)
-
-## Unreleased as of Sprint 78 ending 2018-01-29
-
-### Fixed
-- Migrate model display names from locale/en.yml to plugin [(#174)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/174)
-- Fix the event parser for a new folder refresh [(#166)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/166)
-- Collect IP and MAC address properly [(#161)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/161)
-
-## Unreleased as of Sprint 72 ending 2017-10-30
-
-### Added
-- Add a method to return all valid SCSI Controller Types [(#126)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/126)
 
 ## Fine-3
 
