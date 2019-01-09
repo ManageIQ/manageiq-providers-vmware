@@ -5,15 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Hammer RC-2
+## Hammer-1
 
 ### Added
 - Forcibly mark vCloud VMs as not disconnected [(#339)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/339)
-
-## Hammer Beta-1 - Released 2018-10-12
-
-### Added
-- Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
 - Shift fog-vcloud-director version to 0.3.0 [(#321)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/321)
 - Moving Inventory Builder functionality to Inventory [(#316)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/316)
 - Add plugin display name [(#312)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/312)
@@ -69,6 +64,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Add thumbprint_sha1 method to host_esx [(#328)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/328)
 
 ### Fixed
+- Check EmsEvents when disconnecting storage [(#336)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/336)
 - Don't require cloud tenant upon vApp instantiation [(#322)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/322)
 - Fix for broken customization(sysprep) during vm provisioning [(#308)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/308)
 - Fix setting the last_refresh_date on error [(#301)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/301)
