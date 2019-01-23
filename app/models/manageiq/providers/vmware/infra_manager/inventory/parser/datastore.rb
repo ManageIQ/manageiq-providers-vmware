@@ -30,10 +30,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     def parse_datastore_host_mount(storage, datastore_ref, props)
       props[:host].to_a.each do |host_mount|
         persister.host_storages.build(
-          :storage   => storage,
-          :host      => persister.hosts.lazy_find(host_mount.key._ref),
-          :ems_ref   => datastore_ref,
-          :read_only => host_mount.mountInfo.accessMode == "readOnly",
+          :storage    => storage,
+          :host       => persister.hosts.lazy_find(host_mount.key._ref),
+          :ems_ref    => datastore_ref,
+          :read_only  => host_mount.mountInfo.accessMode == "readOnly",
+          :accessible => host_mount.mountInfo.accessible,
         )
       end
     end
