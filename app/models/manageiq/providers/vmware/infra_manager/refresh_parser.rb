@@ -768,12 +768,15 @@ module ManageIQ::Providers
           host_mount = Array.wrap(s_inv["host"]).detect { |host| host["key"] == inv["MOR"] }
           next if host_mount.nil?
 
-          read_only = host_mount.fetch_path("mountInfo", "accessMode") == "readOnly"
+          mount_info = host_mount["mountInfo"] || {}
+          read_only  = mount_info["accessMode"] == "readOnly"
+          accessible = mount_info["accessible"].present? ? mount_info["accessible"].to_s.downcase == "true" : true
 
           result << {
-            :storage   => storage_uids[s_mor],
-            :read_only => read_only,
-            :ems_ref   => s_mor
+            :storage    => storage_uids[s_mor],
+            :read_only  => read_only,
+            :accessible => accessible,
+            :ems_ref    => s_mor
           }
         end
 

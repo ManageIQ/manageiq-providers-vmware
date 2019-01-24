@@ -469,6 +469,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :location           => "4dce5b88-623e8e7e-0dc0-00188b404015"
     )
 
+    expect(@host.host_storages.where(:accessible => false).count).to eq(1)
+    inaccessible_host_storage = @host.host_storages.find_by(:accessible => false)
+    expect(inaccessible_host_storage.storage).to have_attributes(
+      :ems_ref => "datastore-12281",
+      :name    => "StarM1-Backup1",
+    )
+
     expect(@host.operating_system).to have_attributes(
       :name         => "VI4ESXM1.manageiq.com",
       :product_name => "ESXi",
