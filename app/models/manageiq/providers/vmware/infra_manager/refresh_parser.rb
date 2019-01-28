@@ -772,11 +772,15 @@ module ManageIQ::Providers
           read_only  = mount_info["accessMode"] == "readOnly"
           accessible = mount_info["accessible"].present? ? mount_info["accessible"].to_s.downcase == "true" : true
 
+          # For backport purposes where we do not have the host_storages.accessible
+          # column we can override the read_only column to prevent inaccessible
+          # datastore from being selected for provisioning.
+          read_only ||= !accessible
+
           result << {
-            :storage    => storage_uids[s_mor],
-            :read_only  => read_only,
-            :accessible => accessible,
-            :ems_ref    => s_mor
+            :storage   => storage_uids[s_mor],
+            :read_only => read_only,
+            :ems_ref   => s_mor
           }
         end
 
