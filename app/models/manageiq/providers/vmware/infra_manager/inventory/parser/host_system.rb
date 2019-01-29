@@ -1,10 +1,16 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module HostSystem
+    def parse_host_system_summary(host_hash, props)
+      summary = props[:summary]
+      return if summary.nil?
+
+      host_hash[:uid_ems] = summary.fetch_path(:config, :name)
+    end
+
     def parse_host_system_config(host_hash, props)
       config = props[:config]
       return if config.nil?
 
-      host_hash[:uid_ems]        = config[:name]
       host_hash[:admin_disabled] = config[:adminDisabled].to_s.downcase == "true"
       host_hash[:hyperthreading] = config.fetch_path(:hyperThread, :active).to_s.downcase == "true"
     end

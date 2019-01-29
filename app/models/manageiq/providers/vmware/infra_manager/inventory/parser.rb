@@ -135,6 +135,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :parent      => cluster,
     }
 
+    parse_host_system_summary(host_hash, props)
     parse_host_system_config(host_hash, props)
     parse_host_system_product(host_hash, props)
     parse_host_system_network(host_hash, props)
