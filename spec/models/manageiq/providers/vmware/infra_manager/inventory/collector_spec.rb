@@ -702,7 +702,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :cpu_reserve           => 47_984,
         :cpu_reserve_expand    => true,
         :cpu_shares            => 4_000,
-        :cpu_shares_level      => nil,
+        :cpu_shares_level      => "normal",
         :memory_limit          => 59_872,
         :memory_reserve        => 59_872,
         :memory_reserve_expand => true,
