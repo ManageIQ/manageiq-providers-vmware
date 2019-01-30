@@ -1,7 +1,7 @@
 require 'rbvmomi/vim'
 
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
-  let(:ems) do
+  let!(:ems) do
     _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
     hostname = Rails.application.secrets.vmware.try(:[], "hostname") || "HOSTNAME"
     FactoryBot.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
@@ -35,6 +35,58 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_specific_dvswitch
           assert_specific_dvportgroup
           assert_specific_vm
+        end
+      end
+
+      it "Same as classic refresh" do
+        with_vcr("classic") { EmsRefresh.init_console; EmsRefresh.refresh(ems) }
+        inventory_after_classic_refresh = serialize_inventory
+
+        with_vcr("graph")   { collector.run }
+        inventory_after_graph_refresh = serialize_inventory
+
+        assert_inventory_not_changed(inventory_after_classic_refresh, inventory_after_graph_refresh)
+      end
+
+      def with_vcr(suffix, &block)
+        path = described_class.name
+        path << "::#{suffix}"
+
+        VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { block.call }
+      end
+
+      def serialize_inventory
+        tables = [:vms, :hosts, :storages, :host_storages, :hardwares, :guest_devices,
+                  :disks, :networks, :system_services, :snapshots, :operating_systems,
+                  :custom_attributes, :ems_clusters, :resource_pools, :subnets,
+                  #:ems_folders, :switches, :lans
+                  :miq_scsi_luns, :miq_scsi_targets, :storage_profiles, :customization_specs]
+
+        global_skip_attrs = ["created_on", "updated_on"]
+        table_skip_attrs = {
+          :storages => ["ems_ref", "ems_ref_obj"],
+          :vms      => ["state_changed_on"],
+        }
+
+        tables.each_with_object({}) do |table, inventory|
+          model = table.to_s.classify.constantize
+
+          inventory[table] = model.all.map do |rec|
+            skip_attrs = global_skip_attrs + table_skip_attrs[table].to_a
+            rec.attributes.except(*skip_attrs)
+          end.sort { |rec| rec["id"] }
+        end
+      end
+
+      def assert_inventory_not_changed(before, after)
+        expect(before.keys).to match_array(after.keys)
+        before.keys.each do |model|
+          expect(before[model].count).to eq(after[model].count)
+
+          before[model].each do |item_before|
+            item_after = after[model].detect { |i| i["id"] == item_before["id"]}
+            expect(item_before).to eq(item_after)
+          end
         end
       end
     end
@@ -702,7 +754,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :cpu_reserve           => 47_984,
         :cpu_reserve_expand    => true,
         :cpu_shares            => 4_000,
-        :cpu_shares_level      => nil,
+        :cpu_shares_level      => "normal",
         :memory_limit          => 59_872,
         :memory_reserve        => 59_872,
         :memory_reserve_expand => true,

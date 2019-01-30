@@ -19,7 +19,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       cluster_hash[:cpu_reserve_expand] = cpu_allocation[:expandableReservation].to_s.downcase == "true"
       cluster_hash[:cpu_limit] = cpu_allocation[:limit]
       cluster_hash[:cpu_shares] = cpu_allocation.fetch_path(:shares, :shares)
-      cluster_hash[:cpu_shares_level] = cpu_allocation.fetch_path(:limit, :limit)
+      cluster_hash[:cpu_shares_level] = cpu_allocation.fetch_path(:shares, :level)
     end
   end
 end

@@ -114,7 +114,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref     => object._ref,
       :ems_ref_obj => managed_object_to_vim_string(object),
       :uid_ems     => object._ref,
-      :type        => "EmsFolder",
       :name        => CGI.unescape(props[:name]),
       :parent      => lazy_find_managed_object(props[:parent]),
       :hidden      => hidden,
@@ -135,6 +134,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :parent      => cluster,
     }
 
+    parse_host_system_summary(host_hash, props)
     parse_host_system_config(host_hash, props)
     parse_host_system_product(host_hash, props)
     parse_host_system_network(host_hash, props)
