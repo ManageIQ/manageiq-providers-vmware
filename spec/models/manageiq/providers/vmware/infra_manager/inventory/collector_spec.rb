@@ -701,8 +701,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       scsi_lun = scsi_target.miq_scsi_luns.first
       expect(scsi_lun).to have_attributes(
         :lun            => 0,
-        :canonical_name => "disk",
-        :lun_type       => nil,
+        :canonical_name => "mpx.vmhba1:C0:T0:L0",
+        :lun_type       => "disk",
         :device_name    => "/vmfs/devices/disks/mpx.vmhba1:C0:T0:L0",
         :device_type    => "disk",
         :block          => 1_146_734_896,
