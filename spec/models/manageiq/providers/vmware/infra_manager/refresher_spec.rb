@@ -23,23 +23,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   end
 
   it "will perform a full refresh" do
-    EmsRefresh.refresh(@ems)
-    @ems.reload
+    2.times do
+      EmsRefresh.refresh(@ems)
+      @ems.reload
 
-    assert_table_counts
-    assert_ems
-    assert_specific_datacenter
-    assert_specific_folder
-    assert_specific_cluster
-    assert_specific_storage
-    assert_specific_storage_cluster
-    assert_specific_storage_profile
-    assert_specific_dvportgroup
-    assert_specific_host
-    assert_specific_vm
-    assert_specific_vm_missing_uuid
-    assert_cpu_layout
-    assert_relationship_tree
+      assert_table_counts
+      assert_ems
+      assert_specific_datacenter
+      assert_specific_folder
+      assert_specific_cluster
+      assert_specific_storage
+      assert_specific_storage_cluster
+      assert_specific_storage_profile
+      assert_specific_dvportgroup
+      assert_specific_host
+      assert_specific_vm
+      assert_specific_vm_missing_uuid
+      assert_cpu_layout
+      assert_relationship_tree
+    end
   end
 
   it 'handles switch deletion' do
@@ -252,7 +254,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(VmOrTemplate.count).to eq(101)
     expect(Vm.count).to eq(92)
     expect(MiqTemplate.count).to eq(9)
-    expect(Storage.count).to eq(50)
+    expect(Storage.count).to eq(33)
     expect(StorageProfile.count).to eq(6)
 
     expect(CustomAttribute.count).to eq(3)
@@ -282,7 +284,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@ems.ems_folders.size).to eq(32)
     expect(@ems.ems_clusters.size).to eq(1)
     expect(@ems.resource_pools.size).to eq(17)
-    expect(@ems.storages.size).to eq(47)
+    expect(@ems.storages.size).to eq(30)
     expect(@ems.hosts.size).to eq(4)
     expect(@ems.vms_and_templates.size).to eq(101)
     expect(@ems.vms.size).to eq(92)
