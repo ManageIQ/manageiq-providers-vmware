@@ -137,7 +137,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       if hardware
         hardware_hash[:cpu_speed] = hardware[:cpuMhz]
         hardware_hash[:cpu_type] = hardware[:cpuModel]
-        hardware_hash[:manufacturer] = hardware[:manufacturer]
+        hardware_hash[:manufacturer] = hardware[:vendor]
         hardware_hash[:model] = hardware[:model]
         hardware_hash[:number_of_nics] = hardware[:numNics]
 
@@ -202,7 +202,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
         lun_hash = {
           :uid_ems        => lun.uuid,
-          :canonical_name => lun.lunType,
+          :lun_type       => lun.lunType,
+          :canonical_name => lun.canonicalName,
           :device_name    => lun.deviceName,
           :device_type    => lun.deviceType,
           :block          => n_blocks,
