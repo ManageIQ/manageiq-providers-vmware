@@ -13,6 +13,7 @@ module ManageIQ::Providers
 
         result[:distributed_virtual_switches], uids[:distributed_virtual_switches] = dvs_inv_to_hashes(inv[:dvswitch])
         dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
+
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
@@ -77,8 +78,7 @@ module ManageIQ::Providers
           result << new_result
           result_uids[new_result[:uid_ems]] = new_result
 
-          hosts = Array(summary["hostMember"])
-
+          hosts = get_dvswitch_hosts(inv, new_result[:uid_ems])
           hosts.each { |host_mor| result_uids[:by_host_mor][host_mor] << new_result }
         end
 
@@ -181,6 +181,13 @@ module ManageIQ::Providers
         end unless profile_inv.nil?
 
         return result, result_uids
+      end
+
+      def self.get_dvswitch_hosts(dvswitch_inv, switch_mor)
+        hosts_list = dvswitch_inv.fetch_path(switch_mor, 'config', 'host') || []
+        hosts = hosts_list.collect { |host_data| host_data.fetch_path('config', 'host') }
+        hosts += dvswitch_inv.fetch_path(switch_mor, 'summary', 'hostMember') || []
+        hosts.uniq
       end
 
       def self.host_inv_to_hashes(inv, ems_inv, storage_uids, cluster_uids, dvs_uids)
