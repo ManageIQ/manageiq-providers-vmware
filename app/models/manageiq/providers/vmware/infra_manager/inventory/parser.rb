@@ -80,7 +80,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_distributed_virtual_switch(object, kind, props)
-    persister.switches.targeted_scope << object._ref
+    persister.distributed_virtual_switches.targeted_scope << object._ref
     return if kind == "leave"
 
     type = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.name
@@ -94,7 +94,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_dvs_config(switch_hash, props[:config])
     parse_dvs_summary(switch_hash, props[:summary])
 
-    persister_switch = persister.switches.build(switch_hash)
+    persister_switch = persister.distributed_virtual_switches.build(switch_hash)
 
     parser_dvs_hosts(persister_switch, props)
   end
@@ -177,7 +177,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     dvs    = props.fetch_path(:config, :distributedVirtualSwitch)
-    switch = persister.switches.lazy_find(dvs._ref) unless dvs.nil?
+    switch = persister.distributed_virtual_switches.lazy_find(dvs._ref) unless dvs.nil?
 
     lan_hash = {
       :uid_ems           => object._ref,
