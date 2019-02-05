@@ -12,13 +12,17 @@ module ManageIQ::Providers
         result = {:uid_lookup => uids}
 
         result[:distributed_virtual_switches], uids[:distributed_virtual_switches] = dvs_inv_to_hashes(inv[:dvswitch])
-        dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
+        dvpg_uids = dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
 
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
 
         result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters], uids[:distributed_virtual_switches])
+
+        # Merge dvportgroup and vm network lan uids
+        uids[:lans].merge!(dvpg_uids)
+
         result[:vms], uids[:vms] = vm_inv_to_hashes(
           inv[:vm],
           inv[:storage],
@@ -86,6 +90,8 @@ module ManageIQ::Providers
       end
 
       def self.dvpg_inv_to_hashes(inv, dvs_uids)
+        result_uids = Hash.new { |h, k| h[k] = {} }
+
         inv.to_a.each do |mor, dvpg_inv|
           # skip uplink portgroup
           next if dvpg_inv['tag'].detect { |e| e['key'] == 'SYSTEM/DVS.UPLINKPG' }
@@ -109,7 +115,10 @@ module ManageIQ::Providers
           }
 
           dvs[:lans] << new_result
+          dvpg_inv["host"].each { |h| result_uids[h][new_result[:uid_ems]] = new_result }
         end
+
+        result_uids
       end
 
       def self.storage_inv_to_hashes(inv)
