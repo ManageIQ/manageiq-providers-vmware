@@ -328,7 +328,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :name              => switch[:name],
           :type              => type,
           :ports             => switch[:numPorts],
-          :mtu               => switch[:mtu],
           :allow_promiscuous => allow_promiscuous,
           :forged_transmits  => forged_transmits,
           :mac_changes       => mac_changes,
