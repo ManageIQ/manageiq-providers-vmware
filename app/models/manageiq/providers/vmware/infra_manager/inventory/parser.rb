@@ -163,6 +163,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_distributed_virtual_portgroup(object, kind, props)
     return if kind == "leave"
+    return if props[:tag].detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
     name = CGI.unescape(name) unless name.nil?
