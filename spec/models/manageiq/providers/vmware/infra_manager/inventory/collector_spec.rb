@@ -57,12 +57,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       def serialize_inventory
         internal_models = [MiqRegionRemote, VmdbDatabaseConnection, VmdbDatabaseLock, VmdbDatabaseSetting]
-        temp_failures = [GuestDevice, HostSwitch, Lan, Relationship, Switch]
-        models = ApplicationRecord.subclasses - internal_models - temp_failures
+        models = ApplicationRecord.subclasses - internal_models
 
         global_skip_attrs = ["created_on", "updated_on"]
         table_skip_attrs = {
-          "EmsFolder"           => ["hidden"],
           "ExtManagementSystem" => ["last_refresh_date"],
         }
 
