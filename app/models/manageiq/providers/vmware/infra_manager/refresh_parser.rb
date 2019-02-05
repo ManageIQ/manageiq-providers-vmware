@@ -12,13 +12,14 @@ module ManageIQ::Providers
         result = {:uid_lookup => uids}
 
         result[:distributed_virtual_switches], uids[:distributed_virtual_switches] = dvs_inv_to_hashes(inv[:dvswitch])
-        dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
+        uids[:distributed_virtual_portgroups] = dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
 
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
 
-        result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters], uids[:distributed_virtual_switches])
+        result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters], uids[:distributed_virtual_switches], uids[:distributed_virtual_portgroups])
+
         result[:vms], uids[:vms] = vm_inv_to_hashes(
           inv[:vm],
           inv[:storage],
@@ -86,6 +87,8 @@ module ManageIQ::Providers
       end
 
       def self.dvpg_inv_to_hashes(inv, dvs_uids)
+        result_uids = Hash.new { |h, k| h[k] = {} }
+
         inv.to_a.each do |mor, dvpg_inv|
           # skip uplink portgroup
           next if dvpg_inv['tag'].detect { |e| e['key'] == 'SYSTEM/DVS.UPLINKPG' }
@@ -109,7 +112,10 @@ module ManageIQ::Providers
           }
 
           dvs[:lans] << new_result
+          dvpg_inv["host"].to_miq_a.each { |h| result_uids[h][new_result[:uid_ems]] = new_result }
         end
+
+        result_uids
       end
 
       def self.storage_inv_to_hashes(inv)
@@ -190,7 +196,7 @@ module ManageIQ::Providers
         hosts.uniq
       end
 
-      def self.host_inv_to_hashes(inv, ems_inv, storage_uids, cluster_uids, dvs_uids)
+      def self.host_inv_to_hashes(inv, ems_inv, storage_uids, cluster_uids, dvs_uids, dvpg_uids)
         result = []
         result_uids = {}
         cluster_uids_by_host = {}
@@ -260,7 +266,7 @@ module ManageIQ::Providers
 
           # Collect the hardware, networking, and scsi inventories
           switches, switch_uids[mor] = host_inv_to_switch_hashes(host_inv)
-          _lans, lan_uids[mor] = host_inv_to_lan_hashes(host_inv, switch_uids[mor])
+          _lans, lan_uids[mor] = host_inv_to_lan_hashes(host_inv, switch_uids[mor], dvpg_uids[mor])
 
           hardware = host_inv_to_hardware_hash(host_inv)
           hardware[:guest_devices], guest_device_uids[mor] = host_inv_to_guest_device_hashes(host_inv, switch_uids[mor])
@@ -496,11 +502,11 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
-      def self.host_inv_to_lan_hashes(inv, switch_uids)
+      def self.host_inv_to_lan_hashes(inv, switch_uids, dvpg_uids)
         inv = inv.fetch_path('config', 'network')
 
         result = []
-        result_uids = {}
+        result_uids = dvpg_uids || {}
         return result, result_uids if inv.nil?
 
         inv['portgroup'].to_miq_a.each do |data|
