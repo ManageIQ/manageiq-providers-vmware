@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 104 ending 2019-02-04
+
+### Fixed
+- Fix host hardware and miq_scsi_lun inconsistencies [(#363)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/363)
+- Handle duplicate storages in the refresh parser [(#361)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/361)
+- Add a test comparing classic and graph refresh for vmware [(#360)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/360)
+- Parse if a datastore is accessible from a host [(#356)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/356)
+
 ## Hammer-1
 
 ### Added
