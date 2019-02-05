@@ -582,7 +582,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.storages.count).to eq(1)
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
-      expect(ems.lans.count).to eq(38)
+      expect(ems.lans.count).to eq(36)
     end
 
     def assert_specific_datacenter
@@ -656,7 +656,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :allow_promiscuous => false,
         :forged_transmits  => true,
         :mac_changes       => true,
-        :mtu               => 1500,
         :type              => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
       )
 
@@ -783,7 +782,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :allow_promiscuous => false,
         :forged_transmits  => true,
         :mac_changes       => true,
-        :mtu               => 1500,
       )
 
       expect(switch.lans.count).to eq(2)
@@ -826,7 +824,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :mac_changes       => false,
       )
 
-      expect(dvs.lans.count).to eq(3)
+      expect(dvs.lans.count).to eq(2)
       expect(dvs.hosts.count).to eq(8)
     end
 
