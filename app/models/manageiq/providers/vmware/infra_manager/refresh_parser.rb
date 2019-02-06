@@ -1245,7 +1245,10 @@ module ManageIQ::Providers
         inv.each do |mor, data|
           mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
 
-          child_mors = get_mors(data, 'childEntity')
+          # Since datastores living in multiple datacenters map to a single Storage record
+          # the same record will live in multiple folders.  This leads to Multiple parents found
+          # exceptions if we allow datastores to be in child_uids.
+          child_mors = get_mors(data, 'childEntity').reject { |child| child.vimType == "Datastore" }
 
           new_result = {
             :type        => EmsFolder.name,

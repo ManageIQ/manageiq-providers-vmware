@@ -220,7 +220,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
         child_recs.each do |model_class, children_by_id|
           children_by_id.each_value do |child|
             new_parent_klass, new_parent_id = parent_by_child[model_class][child.id]
-            prev_parent = child.with_relationship_type(relationship_type) { child.parent(:of_type => parent_type) }
+            prev_parent = child.with_relationship_type(relationship_type) { child.parents(:of_type => parent_type)&.first }
 
             next if prev_parent && (prev_parent.class.base_class == new_parent_klass && prev_parent.id == new_parent_id)
 
