@@ -158,7 +158,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       hardware = persister.hardwares.build(hardware_hash)
 
       parse_virtual_machine_disks(vm, hardware, props)
-      parse_virtual_machine_guest_devices(vm, hardware, props)
+      guest_devices = parse_virtual_machine_guest_devices(vm, hardware, props)
+      parse_virtual_machine_networks(vm, props, hardware, guest_devices)
     end
 
     def parse_virtual_machine_disks(_vm, hardware, props)
@@ -235,7 +236,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       devices = props.fetch_path(:config, :hardware, :device).to_a
 
       veth_devices = devices.select { |dev| dev.kind_of?(RbVmomi::VIM::VirtualEthernetCard) }
-      veth_devices.each do |device|
+      veth_devices.map do |device|
         next if device.macAddress.nil?
         uid = address = device.macAddress
 
@@ -258,6 +259,33 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         }
 
         persister.guest_devices.build(guest_device_hash)
+      end
+    end
+
+    def parse_virtual_machine_networks(vm, props, hardware, guest_devices)
+      summary_guest = props.fetch_path(:summary, :guest)
+      return if summary_guest.nil?
+
+      hostname = summary_guest[:hostName]
+      guest_ip = summary_guest[:ipAddress]
+      if hostname || guest_ip
+        props.fetch_path(:guest, :net).to_a.each do |net|
+          ipv4, ipv6 = net[:ipAddress].to_a.compact.collect(&:to_s).sort.partition { |ip| ip =~ /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
+          ipv4 << nil if ipv4.empty?
+          ipaddresses = ipv4.zip_stretched(ipv6)
+
+          guest_device = guest_devices.detect { |gd| gd.data[:address] == net[:macAddress] }
+
+          ipaddresses.each do |ipaddress, ipv6address|
+            persister.networks.build(
+              :hardware     => hardware,
+              :guest_device => guest_device,
+              :hostname     => hostname,
+              :ipaddress    => ipaddress,
+              :ipv6address  => ipv6address,
+            )
+          end
+        end
       end
     end
 
