@@ -56,10 +56,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def serialize_inventory
-        tables = [:vms, :hosts, :storages, :host_storages, :hardwares, :guest_devices,
-                  :disks, :networks, :system_services, :snapshots, :operating_systems,
+        tables = [:vms, :hosts, :storages, :host_storages, :hardwares,
+                  :disks, :system_services, :snapshots, :operating_systems,
                   :custom_attributes, :ems_clusters, :resource_pools, :subnets,
-                  #:ems_folders, :switches, :lans
+                  #:ems_folders, :switches, :lans, :guest_devices, :networks
                   :miq_scsi_luns, :miq_scsi_targets, :storage_profiles, :customization_specs]
 
         global_skip_attrs = ["created_on", "updated_on"]

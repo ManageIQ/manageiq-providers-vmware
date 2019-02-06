@@ -68,7 +68,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     storage_hash = {
       :ems_ref     => object._ref,
       :ems_ref_obj => managed_object_to_vim_string(object),
-      :parent      => lazy_find_managed_object(props[:parent]),
     }
 
     parse_datastore_summary(storage_hash, props)
