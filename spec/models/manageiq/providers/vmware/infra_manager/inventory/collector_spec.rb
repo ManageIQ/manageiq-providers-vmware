@@ -645,6 +645,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
+        :mtu               => 1500,
         :uid_ems           => "vSwitch0",
         :ports             => 64,
         :allow_promiscuous => false,
@@ -771,6 +772,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
+        :mtu               => 1500,
         :ports             => 64,
         :uid_ems           => "vSwitch0",
         :allow_promiscuous => false,

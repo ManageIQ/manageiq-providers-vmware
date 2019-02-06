@@ -237,6 +237,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch0
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -286,6 +290,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch1
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -1170,6 +1178,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch0
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -1219,6 +1231,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch1
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -2141,6 +2157,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch0
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -2605,6 +2625,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch0
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -2654,6 +2678,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch1
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch
@@ -2698,6 +2726,10 @@
                   str: key-vim.host.VirtualSwitch-vSwitch2
                   vimType: 
                   xsiType: :SOAP::SOAPString
+                mtu: !ruby/string:VimString
+                  str: '1500'
+                  vimType: 
+                  xsiType: :SOAP::SOAPInt
               ivars:
                 :@vimType: 
                 :@xsiType: :HostVirtualSwitch

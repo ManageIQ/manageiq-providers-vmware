@@ -358,6 +358,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         persister_switch = persister.host_virtual_switches.build(
           :host              => host,
           :uid_ems           => switch[:name],
+          :mtu               => switch[:mtu],
           :name              => switch[:name],
           :type              => type,
           :ports             => switch[:numPorts],

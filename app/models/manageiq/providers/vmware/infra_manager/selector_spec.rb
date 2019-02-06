@@ -36,6 +36,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.network.vnic[*].spec.ip.ipAddress",
       "config.network.vnic[*].spec.ip.subnetMask",
       "config.network.vswitch[*].key",
+      "config.network.vswitch[*].mtu",
       "config.network.vswitch[*].name",
       "config.network.vswitch[*].numPorts",
       "config.network.vswitch[*].pnic",

@@ -535,6 +535,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(switch).to have_attributes(
       :uid_ems           => "vSwitch0",
       :name              => "vSwitch0",
+      :mtu               => 1500,
       :ports             => 128,
       :type              => 'ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch',
       :allow_promiscuous => false,

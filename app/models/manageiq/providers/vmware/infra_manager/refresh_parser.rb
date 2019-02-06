@@ -482,6 +482,7 @@ module ManageIQ::Providers
 
           new_result = {
             :uid_ems           => uid,
+            :mtu               => data['mtu'].nil? ? nil : data['mtu'].to_i,
             :name              => name,
             :ports             => data['numPorts'],
             :type              => self.parent::HostVirtualSwitch.name,
