@@ -56,25 +56,21 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def serialize_inventory
-        tables = [:vms, :hosts, :storages, :host_storages, :hardwares,
-                  :disks, :system_services, :snapshots, :operating_systems,
-                  :custom_attributes, :ems_clusters, :resource_pools, :subnets,
-                  #:ems_folders, :switches, :lans, :guest_devices, :networks
-                  :miq_scsi_luns, :miq_scsi_targets, :storage_profiles, :customization_specs]
+        internal_models = [MiqRegionRemote, VmdbDatabaseLock, VmdbDatabaseSetting]
+        temp_failures = [GuestDevice, HostSwitch, Lan, Network, Relationship, Switch]
+        models = ApplicationRecord.subclasses - internal_models - temp_failures
 
         global_skip_attrs = ["created_on", "updated_on"]
         table_skip_attrs = {
-          :storages => ["ems_ref", "ems_ref_obj"],
-          :vms      => ["state_changed_on"],
+          "EmsFolder"           => ["hidden"],
+          "ExtManagementSystem" => ["last_refresh_date"],
         }
 
-        tables.each_with_object({}) do |table, inventory|
-          model = table.to_s.classify.constantize
-
-          inventory[table] = model.all.map do |rec|
-            skip_attrs = global_skip_attrs + table_skip_attrs[table].to_a
+        models.each_with_object({}) do |model, inventory|
+          inventory[model.name] = model.all.map do |rec|
+            skip_attrs = global_skip_attrs + table_skip_attrs[model.name].to_a
             rec.attributes.except(*skip_attrs)
-          end.sort { |rec| rec["id"] }
+          end.sort_by { |rec| rec["id"] }
         end
       end
 
