@@ -1271,7 +1271,7 @@ module ManageIQ::Providers
         inv.each do |mor, data|
           mor = data['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
 
-          child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder')
+          child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder') + get_mors(data, 'networkFolder')
 
           new_result = {
             :type        => Datacenter.name,

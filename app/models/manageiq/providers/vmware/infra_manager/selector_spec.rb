@@ -258,6 +258,8 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "hostFolder",
       "hostFolder.ManagedObjectReference",
       "name",
+      "networkFolder",
+      "networkFolder.ManagedObjectReference",
       "parent", # Used by ManageIQ::Providers::Vmware::InfraManager::RefreshParser::Filter#ems_metadata_inv_by_*
       "vmFolder",
       "vmFolder.ManagedObjectReference",
