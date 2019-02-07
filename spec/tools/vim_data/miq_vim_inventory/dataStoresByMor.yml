@@ -18,6 +18,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -36,6 +40,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'false'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -140,6 +148,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -226,6 +238,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -312,6 +328,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -394,6 +414,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -480,6 +504,10 @@
               str: readOnly
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -498,6 +526,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -580,6 +612,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -662,6 +698,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -744,6 +784,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -762,6 +806,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -848,6 +896,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -934,6 +986,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1016,6 +1072,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1034,6 +1094,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1116,6 +1180,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1198,6 +1266,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1216,6 +1288,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1298,6 +1374,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1384,6 +1464,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1466,6 +1550,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1484,6 +1572,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1566,6 +1658,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1648,6 +1744,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1666,6 +1766,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1748,6 +1852,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1766,6 +1874,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1852,6 +1964,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -1934,6 +2050,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2016,6 +2136,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2034,6 +2158,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2120,6 +2248,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2202,6 +2334,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2284,6 +2420,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2302,6 +2442,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2384,6 +2528,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2466,6 +2614,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2484,6 +2636,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2570,6 +2726,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2656,6 +2816,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2738,6 +2902,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2756,6 +2924,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2842,6 +3014,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2924,6 +3100,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -2942,6 +3122,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3028,6 +3212,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3046,6 +3234,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3132,6 +3324,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3214,6 +3410,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3232,6 +3432,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3318,6 +3522,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3336,6 +3544,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3418,6 +3630,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3436,6 +3652,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3586,6 +3806,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3668,6 +3892,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3686,6 +3914,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3768,6 +4000,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3850,6 +4086,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3932,6 +4172,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -3950,6 +4194,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4032,6 +4280,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4050,6 +4302,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4200,6 +4456,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4282,6 +4542,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4300,6 +4564,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4382,6 +4650,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4464,6 +4736,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo
@@ -4482,6 +4758,10 @@
               str: readWrite
               vimType: 
               xsiType: :SOAP::SOAPString
+            accessible: !ruby/string:VimString
+              str: 'true'
+              vimType: 
+              xsiType: :SOAP::SOAPBoolean
           ivars:
             :@vimType: 
             :@xsiType: :HostMountInfo

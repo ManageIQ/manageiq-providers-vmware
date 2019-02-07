@@ -29,11 +29,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     def parse_datastore_host_mount(storage, datastore_ref, props)
       props[:host].to_a.each do |host_mount|
+        read_only  = host_mount.mountInfo.accessMode == "readOnly"
+        accessible = host_mount.mountInfo.accessible.present? ? host_mount.mountInfo.accessible : true
+
+        # For backport purposes where we do not have the host_storages.accessible
+        # column we can override the read_only column to prevent inaccessible
+        # datastore from being selected for provisioning.
+        read_only ||= !accessible
+
         persister.host_storages.build(
           :storage   => storage,
           :host      => persister.hosts.lazy_find(host_mount.key._ref),
           :ems_ref   => datastore_ref,
-          :read_only => host_mount.mountInfo.accessMode == "readOnly",
+          :read_only => read_only,
         )
       end
     end

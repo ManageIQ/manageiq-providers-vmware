@@ -770,7 +770,14 @@ module ManageIQ::Providers
           host_mount = Array.wrap(s_inv["host"]).detect { |host| host["key"] == inv["MOR"] }
           next if host_mount.nil?
 
-          read_only = host_mount.fetch_path("mountInfo", "accessMode") == "readOnly"
+          mount_info = host_mount["mountInfo"] || {}
+          read_only  = mount_info["accessMode"] == "readOnly"
+          accessible = mount_info["accessible"].present? ? mount_info["accessible"].to_s.downcase == "true" : true
+
+          # For backport purposes where we do not have the host_storages.accessible
+          # column we can override the read_only column to prevent inaccessible
+          # datastore from being selected for provisioning.
+          read_only ||= !accessible
 
           result << {
             :storage   => storage_uids[s_mor],
