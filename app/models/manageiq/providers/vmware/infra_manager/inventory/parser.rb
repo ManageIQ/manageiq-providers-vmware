@@ -150,7 +150,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     parse_host_system_operating_system(host, props)
     parse_host_system_system_services(host, props)
-    parse_host_system_hardware(host, props)
+    hardware = parse_host_system_hardware(host, props)
+    parse_host_system_host_networks(host, hardware, props)
 
     switches = parse_host_system_switches(host, props)
     parse_host_system_host_switches(host, switches)

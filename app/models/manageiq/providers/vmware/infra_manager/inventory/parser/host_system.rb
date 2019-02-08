@@ -56,6 +56,37 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
+    def parse_host_system_host_networks(host, hardware, props)
+      network = props.fetch_path(:config, :network)
+      return if network.nil?
+
+      vnics = Array(network[:consoleVnic]) + Array(network[:vnic])
+      vnics.each do |vnic|
+        port_key = vnic.port
+        portgroup = network[:portgroup].find { |pg| pg.port.find { |p| p.key == port_key } }
+        next if portgroup.nil?
+
+        vswitch_key = portgroup[:vswitch]
+        vswitch = network[:vswitch].find { |v| v.key == vswitch_key }
+        next if vswitch.nil?
+
+        pnic_key = vswitch.pnic.first
+        pnic = network[:pnic].find { |p| p.key == pnic_key }
+        next if pnic.nil?
+
+        ip = vnic.spec&.ip
+        next if ip.nil?
+
+        persister.host_networks.build(
+          :hardware     => hardware,
+          :description  => pnic.device,
+          :dhcp_enabled => ip.dhcp,
+          :ipaddress    => ip.ipAddress,
+          :subnet_mask  => ip.subnetMask,
+        )
+      end
+    end
+
     def parse_host_system_product(host_hash, props)
       product = props.fetch_path(:summary, :config, :product)
       return if product.nil?
@@ -168,10 +199,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:memory_usage] = quick_stats[:overallMemoryUsage]
       end
 
-      hardware = persister.host_hardwares.build(hardware_hash)
+      persister_hardware = persister.host_hardwares.build(hardware_hash)
 
-      parse_host_system_network_adapters(hardware, props)
-      parse_host_system_storage_adapters(hardware, props)
+      parse_host_system_network_adapters(persister_hardware, props)
+      parse_host_system_storage_adapters(persister_hardware, props)
+
+      persister_hardware
     end
 
     def parse_host_system_network_adapters(hardware, props)
