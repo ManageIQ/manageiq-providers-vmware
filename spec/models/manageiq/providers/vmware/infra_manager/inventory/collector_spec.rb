@@ -56,7 +56,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       def serialize_inventory
-        internal_models = [MiqRegionRemote, VmdbDatabaseLock, VmdbDatabaseSetting]
+        internal_models = [MiqRegionRemote, VmdbDatabaseConnection, VmdbDatabaseLock, VmdbDatabaseSetting]
         temp_failures = [GuestDevice, HostSwitch, Lan, Network, Relationship, Switch]
         models = ApplicationRecord.subclasses - internal_models - temp_failures
 
