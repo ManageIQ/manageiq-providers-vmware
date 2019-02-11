@@ -455,10 +455,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@host.storages.size).to eq(25)
     expect(@host.storages).to      include(@storage)
 
-    expect(@host.writable_storages.size).to  eq(24)
-    expect(@host.read_only_storages.size).to eq(1)
+    expect(@host.writable_storages.size).to  eq(23)
+    expect(@host.read_only_storages.size).to eq(2)
 
-    read_only_storage = @host.read_only_storages.first
+    read_only_storage = @host.read_only_storages.find_by(:ems_ref => "datastore-12282")
     expect(read_only_storage).to have_attributes(
       :ems_ref            => "datastore-12282",
       :name               => "temp1",
@@ -467,6 +467,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :free_space         => 2667552178176,
       :multiplehostaccess => 1,
       :location           => "4dce5b88-623e8e7e-0dc0-00188b404015"
+    )
+
+    inaccessible_host_storage = @host.host_storages.find_by(:ems_ref => "datastore-12281")
+    expect(inaccessible_host_storage.read_only).to be_truthy
+    expect(inaccessible_host_storage.storage).to have_attributes(
+      :ems_ref   => "datastore-12281",
+      :name      => "StarM1-Backup1",
     )
 
     expect(@host.operating_system).to have_attributes(
