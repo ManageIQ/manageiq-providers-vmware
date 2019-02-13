@@ -637,9 +637,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(host).not_to be_nil
 
-      expect(host.parent).not_to be_nil
-      expect(host.parent.ems_ref).to eq("domain-c12")
-
       switch = host.switches.find_by(:name => "vSwitch0")
 
       expect(switch).not_to be_nil
@@ -735,7 +732,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(cluster.parent).not_to be_nil
       expect(cluster.parent.ems_ref).to eq("group-h4")
 
-      expect(cluster.children.count).to eq(5)
+      expect(cluster.children.count).to eq(1)
       expect(cluster.default_resource_pool.ems_ref).to eq("resgroup-13")
     end
 

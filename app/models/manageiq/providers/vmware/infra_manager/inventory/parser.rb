@@ -130,7 +130,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref     => object._ref,
       :ems_ref_obj => managed_object_to_vim_string(object),
       :ems_cluster => cluster,
-      :parent      => cluster,
     }
 
     parse_host_system_summary(host_hash, props)
