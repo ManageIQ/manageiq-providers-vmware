@@ -11,11 +11,15 @@ module ManageIQ::Providers
         uids = {}
         result = {:uid_lookup => uids}
 
+        result[:distributed_virtual_switches], uids[:distributed_virtual_switches] = dvs_inv_to_hashes(inv[:dvswitch])
+        uids[:distributed_virtual_portgroups] = dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
+
         result[:storages], uids[:storages] = storage_inv_to_hashes(inv[:storage])
         result[:clusters], uids[:clusters] = cluster_inv_to_hashes(inv[:cluster])
         result[:storage_profiles], uids[:storage_profiles] = storage_profile_inv_to_hashes(inv[:storage_profile], uids[:storages], inv[:storage_profile_datastore])
 
-        result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters])
+        result[:hosts], uids[:hosts], uids[:clusters_by_host], uids[:lans], uids[:switches], uids[:guest_devices], uids[:scsi_luns] = host_inv_to_hashes(inv[:host], inv, uids[:storages], uids[:clusters], uids[:distributed_virtual_switches], uids[:distributed_virtual_portgroups])
+
         result[:vms], uids[:vms] = vm_inv_to_hashes(
           inv[:vm],
           inv[:storage],
@@ -38,6 +42,80 @@ module ManageIQ::Providers
         set_default_rps(result)
 
         result
+      end
+
+      def self.dvs_inv_to_hashes(inv)
+        result = []
+        result_uids = {}
+        result_uids[:by_host_mor] = Hash.new { |h, k| h[k] = [] }
+
+        inv.to_a.each do |mor, dvs_inv|
+          config  = dvs_inv.fetch("config", {})
+          summary = dvs_inv.fetch("summary", {})
+
+          mor  = dvs_inv["MOR"]
+          name = config["name"] || summary["name"]
+          name = URI.decode(name)
+
+          security_policy   = config.fetch_path("defaultPortConfig", "securityPolicy") || {}
+          allow_promiscuous = security_policy.fetch_path('allowPromiscuous', 'value')
+          forged_transmits  = security_policy.fetch_path('forgedTransmits', 'value')
+          mac_changes       = security_policy.fetch_path('macChanges', 'value')
+
+          new_result = {
+            :uid_ems           => mor,
+            :name              => name,
+            :ports             => config["numPorts"] || 0,
+            :type              => "ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch",
+            :allow_promiscuous => allow_promiscuous.nil? ? nil : allow_promiscuous.to_s.casecmp('true') == 0,
+            :forged_transmits  => forged_transmits.nil? ? nil : forged_transmits.to_s.casecmp('true') == 0,
+            :mac_changes       => mac_changes.nil? ? nil : mac_changes.to_s.casecmp('true') == 0,
+
+            :lans              => [],
+            :switch_uuid       => config["uuid"] || summary["uuid"],
+            :shared            => true
+          }
+
+          result << new_result
+          result_uids[new_result[:uid_ems]] = new_result
+
+          hosts = get_dvswitch_hosts(inv, new_result[:uid_ems])
+          hosts.each { |host_mor| result_uids[:by_host_mor][host_mor] << new_result }
+        end
+
+        return result, result_uids
+      end
+
+      def self.dvpg_inv_to_hashes(inv, dvs_uids)
+        result_uids = Hash.new { |h, k| h[k] = {} }
+
+        inv.to_a.each do |mor, dvpg_inv|
+          # skip uplink portgroup
+          next if dvpg_inv['tag'].detect { |e| e['key'] == 'SYSTEM/DVS.UPLINKPG' }
+
+          config = dvpg_inv["config"]
+          next if config.nil?
+
+          dvs = dvs_uids[config["distributedVirtualSwitch"]]
+          next if dvs.nil?
+
+          uid = config["key"]
+          security_policy = config.fetch_path("defaultPortConfig", "securityPolicy") || {}
+
+          new_result = {
+            :uid_ems           => uid,
+            :name              => URI.decode(config["name"]),
+            :tag               => config.fetch_path("defaultPortConfig", "vlan", "vlanId").to_s,
+            :allow_promiscuous => security_policy.fetch_path('allowPromiscuous', 'value').to_s.casecmp('true') == 0,
+            :forged_transmits  => security_policy.fetch_path('forgedTransmits', 'value').to_s.casecmp('true') == 0,
+            :mac_changes       => security_policy.fetch_path('macChanges', 'value').to_s.casecmp('true') == 0,
+          }
+
+          dvs[:lans] << new_result
+          dvpg_inv["host"].to_miq_a.each { |h| result_uids[h][new_result[:uid_ems]] = new_result }
+        end
+
+        result_uids
       end
 
       def self.storage_inv_to_hashes(inv)
@@ -111,15 +189,6 @@ module ManageIQ::Providers
         return result, result_uids
       end
 
-      def self.group_dvswitch_by_host(dvswitch_inv)
-        dvswitch_by_host = Hash.new { |h, k| h[k] = [] }
-        dvswitch_inv.each do |switch_mor, data|
-          hosts = get_dvswitch_hosts(dvswitch_inv, switch_mor)
-          hosts.each { |host_mor| dvswitch_by_host[host_mor] << data }
-        end
-        dvswitch_by_host
-      end
-
       def self.get_dvswitch_hosts(dvswitch_inv, switch_mor)
         hosts_list = dvswitch_inv.fetch_path(switch_mor, 'config', 'host') || []
         hosts = hosts_list.collect { |host_data| host_data.fetch_path('config', 'host') }
@@ -127,22 +196,7 @@ module ManageIQ::Providers
         hosts.uniq
       end
 
-      def self.group_dvportgroup_by_host(dvportgroup_inv, dvswitch_inv)
-        dvportgroup_by_host = Hash.new { |h, k| h[k] = [] }
-        dvportgroup_inv.each do |_, data|
-          # skip uplink portgroup
-          next if data['tag'].detect { |e| e['key'] == 'SYSTEM/DVS.UPLINKPG' }
-
-          hosts = get_dvswitch_hosts(dvswitch_inv, data.fetch_path('config', 'distributedVirtualSwitch'))
-          hosts += data.fetch('host', [])
-          hosts.uniq.each do |h|
-            dvportgroup_by_host[h] << data
-          end
-        end
-        dvportgroup_by_host
-      end
-
-      def self.host_inv_to_hashes(inv, ems_inv, storage_uids, cluster_uids)
+      def self.host_inv_to_hashes(inv, ems_inv, storage_uids, cluster_uids, dvs_uids, dvpg_uids)
         result = []
         result_uids = {}
         cluster_uids_by_host = {}
@@ -151,11 +205,6 @@ module ManageIQ::Providers
         guest_device_uids = {}
         scsi_lun_uids = {}
         return result, result_uids, lan_uids, switch_uids, guest_device_uids, scsi_lun_uids if inv.nil?
-
-        dvswitch_by_host = group_dvswitch_by_host(ems_inv[:dvswitch])
-        dvportgroup_by_host = group_dvportgroup_by_host(ems_inv[:dvportgroup], ems_inv[:dvswitch])
-        dvswitch_uid_ems = {}
-        dvportgroup_uid_ems = {}
 
         inv.each do |mor, host_inv|
           mor = host_inv['MOR'] # Use the MOR directly from the data since the mor as a key may be corrupt
@@ -216,13 +265,8 @@ module ManageIQ::Providers
           product_name = product["name"].nil? ? nil : product["name"].to_s.gsub(/^VMware\s*/i, "")
 
           # Collect the hardware, networking, and scsi inventories
-          switches, switch_uids[mor] = host_inv_to_switch_hashes(host_inv, dvswitch_by_host[mor], dvswitch_uid_ems)
-          _lans, lan_uids[mor] = host_inv_to_lan_hashes(
-            host_inv,
-            switch_uids[mor],
-            dvportgroup_by_host[mor],
-            dvportgroup_uid_ems
-          )
+          switches, switch_uids[mor] = host_inv_to_switch_hashes(host_inv)
+          _lans, lan_uids[mor] = host_inv_to_lan_hashes(host_inv, switch_uids[mor], dvpg_uids[mor])
 
           hardware = host_inv_to_hardware_hash(host_inv)
           hardware[:guest_devices], guest_device_uids[mor] = host_inv_to_guest_device_hashes(host_inv, switch_uids[mor])
@@ -253,6 +297,8 @@ module ManageIQ::Providers
 
           # Find the host->storage mount info
           host_storages = host_inv_to_host_storages_hashes(host_inv, ems_inv[:storage], storage_uids)
+
+          host_dvswitches = dvs_uids[:by_host_mor][mor] || []
 
           # Store the host 'name' value as uid_ems to use as the lookup value with MiqVim
           uid_ems = summary.nil? ? nil : summary.fetch_path('config', 'name')
@@ -300,6 +346,7 @@ module ManageIQ::Providers
             :switches         => switches,
             :storages         => storages,
             :host_storages    => host_storages,
+            :host_switches    => switches + host_dvswitches,
 
             :child_uids       => rp_uids,
           }
@@ -420,7 +467,7 @@ module ManageIQ::Providers
         result
       end
 
-      def self.host_inv_to_switch_hashes(inv, dvswitch_inv, dvswitch_uid_ems)
+      def self.host_inv_to_switch_hashes(inv)
         inv = inv.fetch_path('config', 'network')
 
         result = []
@@ -435,6 +482,7 @@ module ManageIQ::Providers
 
           new_result = {
             :uid_ems           => uid,
+            :mtu               => data['mtu'].nil? ? nil : data['mtu'].to_i,
             :name              => name,
             :ports             => data['numPorts'],
             :type              => self.parent::HostVirtualSwitch.name,
@@ -452,41 +500,14 @@ module ManageIQ::Providers
           pnics.each { |pnic| result_uids[:pnic_id][pnic] = new_result unless pnic.blank? }
         end
 
-        dvswitch_inv.to_miq_a.each do |data|
-          config = data.fetch('config', {})
-          uid = data['MOR']
-          name              = config['name'] || data.fetch_path('summary', 'name')
-          security_policy   = config.fetch('defaultPortConfig', {}).fetch('securityPolicy', {})
-          allow_promiscuous = security_policy.fetch_path('allowPromiscuous', 'value')
-          forged_transmits  = security_policy.fetch_path('forgedTransmits', 'value')
-          mac_changes       = security_policy.fetch_path('macChanges', 'value')
-
-          dvswitch_uid_ems[uid] || dvswitch_uid_ems[uid] = {
-            :uid_ems           => uid,
-            :name              => URI.decode(name),
-            :ports             => config['numPorts'] || 0,
-            :type              => self.parent::DistributedVirtualSwitch.name,
-
-            :allow_promiscuous => allow_promiscuous.nil? ? nil : allow_promiscuous.to_s.casecmp('true') == 0,
-            :forged_transmits  => forged_transmits.nil? ? nil : forged_transmits.to_s.casecmp('true') == 0,
-            :mac_changes       => mac_changes.nil? ? nil : mac_changes.to_s.casecmp('true') == 0,
-
-            :lans              => [],
-            :switch_uuid       => config['uuid'] || data.fetch_path('summary', 'uuid'),
-            :shared            => true
-          }
-
-          result << dvswitch_uid_ems[uid]
-          result_uids[uid] = dvswitch_uid_ems[uid]
-        end
         return result, result_uids
       end
 
-      def self.host_inv_to_lan_hashes(inv, switch_uids, dvportgroup_inv, dvportgroup_uid_ems)
+      def self.host_inv_to_lan_hashes(inv, switch_uids, dvpg_uids)
         inv = inv.fetch_path('config', 'network')
 
         result = []
-        result_uids = {}
+        result_uids = dvpg_uids || {}
         return result, result_uids if inv.nil?
 
         inv['portgroup'].to_miq_a.each do |data|
@@ -518,33 +539,6 @@ module ManageIQ::Providers
           result << new_result
           result_uids[uid] = new_result
           switch[:lans] << new_result
-        end
-
-        dvportgroup_inv.to_miq_a.each do |data|
-          spec = data['config']
-          next if spec.nil?
-
-          # Find the switch to which this lan is connected
-          switch = switch_uids[spec['distributedVirtualSwitch']]
-          next if switch.nil?
-
-          uid = spec['key']
-          security_policy = spec.fetch_path('defaultPortConfig', 'securityPolicy') || {}
-
-          unless dvportgroup_uid_ems.key?(uid)
-            dvportgroup_uid_ems[uid] = {
-              :uid_ems           => uid,
-              :name              => URI.decode(spec['name']),
-              :tag               => spec.fetch_path('defaultPortConfig', 'vlan', 'vlanId').to_s,
-
-              :allow_promiscuous => security_policy.fetch_path('allowPromiscuous', 'value').to_s.casecmp('true') == 0,
-              :forged_transmits  => security_policy.fetch_path('forgedTransmits', 'value').to_s.casecmp('true') == 0,
-              :mac_changes       => security_policy.fetch_path('macChanges', 'value').to_s.casecmp('true') == 0,
-            }
-            switch[:lans] << dvportgroup_uid_ems[uid]
-          end
-          result << dvportgroup_uid_ems[uid]
-          result_uids[uid] = dvportgroup_uid_ems[uid]
         end
 
         return result, result_uids

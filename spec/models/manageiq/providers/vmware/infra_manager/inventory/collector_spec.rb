@@ -57,12 +57,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       def serialize_inventory
         internal_models = [MiqRegionRemote, VmdbDatabaseConnection, VmdbDatabaseLock, VmdbDatabaseSetting]
-        temp_failures = [GuestDevice, HostSwitch, Lan, Relationship, Switch]
-        models = ApplicationRecord.subclasses - internal_models - temp_failures
+        models = ApplicationRecord.subclasses - internal_models
 
         global_skip_attrs = ["created_on", "updated_on"]
         table_skip_attrs = {
-          "EmsFolder"           => ["hidden"],
           "ExtManagementSystem" => ["last_refresh_date"],
         }
 
@@ -578,7 +576,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.storages.count).to eq(1)
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
-      expect(ems.lans.count).to eq(38)
+      expect(ems.lans.count).to eq(36)
     end
 
     def assert_specific_datacenter
@@ -639,20 +637,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       expect(host).not_to be_nil
 
-      expect(host.parent).not_to be_nil
-      expect(host.parent.ems_ref).to eq("domain-c12")
-
       switch = host.switches.find_by(:name => "vSwitch0")
 
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
-        :uid_ems           => "host-14__vSwitch0",
+        :mtu               => 1500,
+        :uid_ems           => "vSwitch0",
         :ports             => 64,
         :allow_promiscuous => false,
         :forged_transmits  => true,
         :mac_changes       => true,
-        :mtu               => 1500,
         :type              => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
       )
 
@@ -737,7 +732,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(cluster.parent).not_to be_nil
       expect(cluster.parent.ems_ref).to eq("group-h4")
 
-      expect(cluster.children.count).to eq(5)
+      expect(cluster.children.count).to eq(1)
       expect(cluster.default_resource_pool.ems_ref).to eq("resgroup-13")
     end
 
@@ -774,12 +769,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(switch).not_to be_nil
       expect(switch).to have_attributes(
         :name              => "vSwitch0",
+        :mtu               => 1500,
         :ports             => 64,
-        :uid_ems           => "host-14__vSwitch0",
+        :uid_ems           => "vSwitch0",
         :allow_promiscuous => false,
         :forged_transmits  => true,
         :mac_changes       => true,
-        :mtu               => 1500,
       )
 
       expect(switch.lans.count).to eq(2)
@@ -804,7 +799,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :computed_mac_changes       => true,
       )
 
-      expect(lan.switch.uid_ems).to eq("host-14__vSwitch0")
+      expect(lan.switch.uid_ems).to eq("vSwitch0")
     end
 
     def assert_specific_dvswitch
@@ -822,7 +817,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :mac_changes       => false,
       )
 
-      expect(dvs.lans.count).to eq(3)
+      expect(dvs.lans.count).to eq(2)
       expect(dvs.hosts.count).to eq(8)
     end
 

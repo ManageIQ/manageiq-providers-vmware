@@ -79,7 +79,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_distributed_virtual_switch(object, kind, props)
-    persister.switches.targeted_scope << object._ref
+    persister.distributed_virtual_switches.targeted_scope << object._ref
     return if kind == "leave"
 
     type = ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch.name
@@ -93,7 +93,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_dvs_config(switch_hash, props[:config])
     parse_dvs_summary(switch_hash, props[:summary])
 
-    persister_switch = persister.switches.build(switch_hash)
+    persister_switch = persister.distributed_virtual_switches.build(switch_hash)
 
     parser_dvs_hosts(persister_switch, props)
   end
@@ -130,7 +130,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref     => object._ref,
       :ems_ref_obj => managed_object_to_vim_string(object),
       :ems_cluster => cluster,
-      :parent      => cluster,
     }
 
     parse_host_system_summary(host_hash, props)
@@ -163,6 +162,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_distributed_virtual_portgroup(object, kind, props)
     return if kind == "leave"
+    return if props[:tag].detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
     name = CGI.unescape(name) unless name.nil?
@@ -177,7 +177,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     dvs    = props.fetch_path(:config, :distributedVirtualSwitch)
-    switch = persister.switches.lazy_find(dvs._ref) unless dvs.nil?
+    switch = persister.distributed_virtual_switches.lazy_find(dvs._ref) unless dvs.nil?
 
     lan_hash = {
       :uid_ems           => object._ref,

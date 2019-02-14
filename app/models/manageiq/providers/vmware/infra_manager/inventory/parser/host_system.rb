@@ -348,8 +348,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       switches = network[:vswitch]
       switches.to_a.map do |switch|
-        uid = "#{host.ems_ref}__#{switch[:name]}"
-
         security_policy = switch.spec&.policy&.security
         if security_policy
           allow_promiscuous = security_policy[:allowPromiscuous]
@@ -357,12 +355,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           mac_changes       = security_policy[:macChanges]
         end
 
-        persister_switch = persister.switches.build(
-          :uid_ems           => uid,
+        persister_switch = persister.host_virtual_switches.build(
+          :host              => host,
+          :uid_ems           => switch[:name],
+          :mtu               => switch[:mtu],
           :name              => switch[:name],
           :type              => type,
           :ports             => switch[:numPorts],
-          :mtu               => switch[:mtu],
           :allow_promiscuous => allow_promiscuous,
           :forged_transmits  => forged_transmits,
           :mac_changes       => mac_changes,
