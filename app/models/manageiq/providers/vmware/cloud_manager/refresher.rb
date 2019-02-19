@@ -1,4 +1,4 @@
-class ManageIQ::Providers::Vmware::CloudManager::Refresher < ManageIQ::Providers::BaseManager::ManagerRefresher
+class ManageIQ::Providers::Vmware::CloudManager::Refresher < ManageIQ::Providers::BaseManager::Refresher
   def parse_legacy_inventory(ems)
     ManageIQ::Providers::Vmware::CloudManager::RefreshParser.ems_inv_to_hashes(ems, refresher_options)
   end
