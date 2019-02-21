@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Unreleased as of Sprint 105 ending 2019-02-18
+
+### Added
+- Graph refresh host networks [(#370)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/370)
+- Parse the networkFolder under a datacenter [(#368)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/368)
+- Parse VM networks for graph refresh [(#366)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/366)
+- Add relations for distributed_virtual_switches [(#364)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/364)
+
+### Fixed
+- Fix storage.parent multiple parents found error [(#367)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/367) 
+
 ## Unreleased as of Sprint 104 ending 2019-02-04
 
 ### Fixed
@@ -13,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Add a test comparing classic and graph refresh for vmware [(#360)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/360)
 - Parse if a datastore is accessible from a host [(#356)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/356)
 
-## Hammer-1
+## Hammer-1 - Released 2019-01-15
 
 ### Added
 - Forcibly mark vCloud VMs as not disconnected [(#339)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/339)
