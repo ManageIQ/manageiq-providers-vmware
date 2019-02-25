@@ -59,10 +59,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     persister = full_persister_klass.new(ems)
     parser    = parser_klass.new(inventory_cache, persister)
 
-    # Set the ems.api_version and ems.uid_ems manually until there is a way to
-    # set it with an inventory_collection
-    set_ems_attributes(vim)
-
     monitor_updates(vim, property_filter, "", persister, parser)
   end
 
@@ -77,6 +73,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       updated_objects.concat(process_update_set(property_filter, update_set))
     end while update_set.truncated
 
+    parser.parse_ext_management_system(ems, vim.serviceContent.about)
     parse_updates(updated_objects, parser)
     save_inventory(persister)
 
@@ -115,13 +112,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if vim.nil?
 
     vim.close
-  end
-
-  def set_ems_attributes(vim)
-    api_version   = vim.serviceContent.about.apiVersion
-    instance_uuid = vim.serviceContent.about.instanceUuid
-
-    ems.update_attributes(:api_version => api_version, :uid_ems => instance_uuid)
   end
 
   def wait_for_updates(vim, version)
