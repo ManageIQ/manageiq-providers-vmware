@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Hammer-1
+## Hammer-3
+
+### Fixed
+- Parse if a datastore is accessible from a host [(#356)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/356)
+
+## Hammer-1 - Released 2019-01-15
 
 ### Added
 - Forcibly mark vCloud VMs as not disconnected [(#339)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/339)
