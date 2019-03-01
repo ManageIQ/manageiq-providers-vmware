@@ -16,7 +16,6 @@ module ManageIQ::Providers
       end
 
       def collect_inventory_for_targets(ems, targets)
-        Benchmark.realtime_block(:get_ems_data) { get_ems_data(ems) }
         Benchmark.realtime_block(:get_vc_data) { get_vc_data(ems) }
 
         Benchmark.realtime_block(:get_vc_data_storage_profile) { get_vc_data_storage_profile(ems, targets) }
@@ -49,14 +48,6 @@ module ManageIQ::Providers
         _log.debug "#{log_header} Parsing VC inventory...Complete"
 
         hashes
-      end
-
-      def save_inventory(ems, target, hashes)
-        Benchmark.realtime_block(:db_save_inventory) do
-          # TODO: really wanna kill this @ems_data instance var
-          ems.update_attributes(@ems_data) unless @ems_data.nil?
-          EmsRefresh.save_ems_inventory(ems, hashes, target)
-        end
       end
 
       def post_refresh(ems, start_time)
@@ -108,6 +99,8 @@ module ManageIQ::Providers
 
         retrieve_from_vc(ems, cleanup_callback) do
           @vc_data = Hash.new { |h, k| h[k] = {} }
+
+          @vc_data[:about] = @vi.about
 
           accessors.each do |type, accessor|
             _log.info("#{log_header} Retrieving #{type.to_s.titleize} inventory...")
@@ -201,21 +194,6 @@ module ManageIQ::Providers
 
           EmsRefresh.log_inv_debug_trace(@vc_data[:host], "#{_log.prefix} #{log_header} host_inv:")
         end
-      end
-
-      def get_ems_data(ems)
-        log_header = format_ems_for_logging(ems)
-
-        cleanup_callback = proc { @ems_data = nil }
-
-        retrieve_from_vc(ems, cleanup_callback) do
-          _log.info("#{log_header} Retrieving EMS information...")
-          about = @vi.about
-          @ems_data = {:api_version => about['apiVersion'], :uid_ems => about['instanceUuid']}
-          _log.info("#{log_header} Retrieving EMS information...Complete")
-        end
-
-        EmsRefresh.log_inv_debug_trace(@ems_data, "#{_log.prefix} #{log_header} ext_management_system_inv:")
       end
 
       MAX_RETRIES = 5

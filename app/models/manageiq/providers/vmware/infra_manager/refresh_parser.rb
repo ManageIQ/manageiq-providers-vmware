@@ -11,6 +11,7 @@ module ManageIQ::Providers
         uids = {}
         result = {:uid_lookup => uids}
 
+        result[:ems] = about_inv_to_hashes(inv[:about])
         result[:distributed_virtual_switches], uids[:distributed_virtual_switches] = dvs_inv_to_hashes(inv[:dvswitch])
         uids[:distributed_virtual_portgroups] = dvpg_inv_to_hashes(inv[:dvportgroup], uids[:distributed_virtual_switches])
 
@@ -42,6 +43,13 @@ module ManageIQ::Providers
         set_default_rps(result)
 
         result
+      end
+
+      def self.about_inv_to_hashes(about)
+        {
+          :api_version => about['apiVersion'],
+          :uid_ems     => about['instanceUuid']
+        }
       end
 
       def self.dvs_inv_to_hashes(inv)
