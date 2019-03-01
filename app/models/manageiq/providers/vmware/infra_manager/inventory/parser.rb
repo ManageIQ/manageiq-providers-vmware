@@ -25,6 +25,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     send(parse_method, object, kind, props)
   end
 
+  def parse_ext_management_system(object, about)
+    api_version   = about.apiVersion
+    instance_uuid = about.instanceUuid
+
+    persister.ext_management_system.build(
+      :guid        => object.guid,
+      :api_version => api_version,
+      :uid_ems     => instance_uuid,
+    )
+  end
+
   def parse_compute_resource(object, kind, props)
     persister.ems_clusters.targeted_scope << object._ref
     return if kind == "leave"

@@ -5,6 +5,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::InfraColl
     add_vms_and_templates
 
     %i(customization_specs
+       ext_management_system
        host_hardwares
        host_guest_devices
        host_networks
