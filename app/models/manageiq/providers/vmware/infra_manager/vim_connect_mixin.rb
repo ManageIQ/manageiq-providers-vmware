@@ -36,7 +36,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       require 'handsoap'
       require 'VMwareWebService/miq_fault_tolerant_vim'
 
-      options[:pass] = MiqPassword.try_decrypt(options[:pass])
+      options[:pass] = ManageIQ::Password.try_decrypt(options[:pass])
       validate_connection do
         MiqFaultTolerantVim.new(options)
       end

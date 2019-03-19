@@ -51,7 +51,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
     end
 
     it "decrypts the vcloud password" do
-      encrypted = MiqPassword.encrypt("encrypted")
+      encrypted = ManageIQ::Password.encrypt("encrypted")
       expect(::Fog::VcloudDirector::Compute).to receive(:new).with(params)
 
       described_class.raw_connect("server", "port", "username", encrypted, "api_version")

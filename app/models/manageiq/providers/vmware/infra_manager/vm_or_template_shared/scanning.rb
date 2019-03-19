@@ -57,7 +57,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
         host_address = miqVimHost[:hostname] || miqVimHost[:ipaddress]
         ems_display_text = "#{ems_connect_type}(#{use_broker ? 'via broker' : 'directly'}):#{miqVimHost[:address]}"
         $log.info "Connecting to [#{ems_display_text}] for VM:[#{@vmCfgFile}]"
-        password_decrypt = MiqPassword.decrypt(miqVimHost[:password])
+        password_decrypt = ManageIQ::Password.decrypt(miqVimHost[:password])
         if !$miqHostCfg || !$miqHostCfg.emsLocal
           ($miqHostCfg ||= OpenStruct.new).vimHost = ost.scanData["ems"]['host']
           $miqHostCfg.vimHost[:use_vim_broker] = use_broker
