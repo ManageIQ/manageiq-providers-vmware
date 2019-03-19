@@ -233,7 +233,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
 
   def set_spec_password_option(obj, property, key, pwd_type)
     value = get_option(key).to_s.strip
-    value = MiqPassword.try_decrypt(value)
+    value = ManageIQ::Password.try_decrypt(value)
     unless value.blank?
       pwd_hash = VimHash.new("CustomizationPassword") do |cust_pass|
         cust_pass.plainText = "true"

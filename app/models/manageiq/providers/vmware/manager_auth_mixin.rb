@@ -41,7 +41,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
     def raw_connect(server, port, username, password, api_version = '5.5', validate = false)
       params = {
         :vcloud_director_username      => username,
-        :vcloud_director_password      => MiqPassword.try_decrypt(password),
+        :vcloud_director_password      => ManageIQ::Password.try_decrypt(password),
         :vcloud_director_host          => server,
         :vcloud_director_show_progress => false,
         :vcloud_director_api_version   => api_version,
