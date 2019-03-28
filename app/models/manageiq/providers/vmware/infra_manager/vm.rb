@@ -11,7 +11,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
 
   supports :reconfigure_disks
   supports :reconfigure_network_adapters
-  supports :reconfigure_disksize
+  supports :reconfigure_disksize do
+    unsupported_reason_add(:reconfigure_disksize, 'Cannot resize disks of a VM with snapshots') unless snapshots.empty?
+  end
   supports :reconfigure_cdroms
 
   supports :rename
