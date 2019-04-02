@@ -594,7 +594,8 @@
       :fields:
         :disk_format:
           :values:
-            thick: Thick
+            thick: Thick - Lazy Zero
+            thick_eager: Thick - Eager Zero
             thin: Thin
             unchanged: Default
           :description: Disk Format
