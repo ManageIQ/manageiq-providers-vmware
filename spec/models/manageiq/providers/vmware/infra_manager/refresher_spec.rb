@@ -244,6 +244,26 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(parent_folder.children.collect(&:ems_ref)).not_to include(folder_mor)
   end
 
+  it 'reconnects a vm created in the same refresh as old one is deleted' do
+    # Create a vm with the same uid_ems as a real one but with a different ems_ref
+    # simulating a VM which is about to be disconnected in the same refresh as a new
+    # one with the same uid_ems is created
+    old_vm = FactoryBot.create(
+      :vm_vmware,
+      :ext_management_system => @ems,
+      :name                  => "DEV-GreggT",
+      :uid_ems               => "422fc05f-20f8-d800-2613-9464ac989735",
+      :ems_ref               => "vm-99999999"
+    )
+
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+
+    old_vm.reload
+    expect(old_vm.ems_id).not_to be_nil
+    expect(old_vm.ems_ref).to eq("vm-1137")
+  end
+
   def assert_table_counts
     expect(ExtManagementSystem.count).to eq(1)
     expect(Datacenter.count).to eq(3)
