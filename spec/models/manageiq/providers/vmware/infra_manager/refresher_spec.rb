@@ -251,7 +251,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     old_vm = FactoryBot.create(
       :vm_vmware,
       :ext_management_system => @ems,
-      :name                  => "DEV-GreggT",
       :uid_ems               => "422fc05f-20f8-d800-2613-9464ac989735",
       :ems_ref               => "vm-99999999"
     )
@@ -262,6 +261,22 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     old_vm.reload
     expect(old_vm.ems_id).not_to be_nil
     expect(old_vm.ems_ref).to eq("vm-1137")
+  end
+
+  it 'reconnects a vm with the same ems_ref but different uid_ems' do
+    old_vm = FactoryBot.create(
+      :vm_vmware,
+      :ext_management_system => @ems,
+      :uid_ems               => "f614daa4-eca9-448b-8ea0-07fecbc5d70b",
+      :ems_ref               => "vm-1137"
+    )
+
+    EmsRefresh.refresh(@ems)
+    @ems.reload
+
+    old_vm.reload
+    expect(old_vm.ems_id).not_to be_nil
+    expect(old_vm.uid_ems).to eq("422fc05f-20f8-d800-2613-9464ac989735")
   end
 
   def assert_table_counts
