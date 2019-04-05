@@ -30,9 +30,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     instance_uuid = about.instanceUuid
 
     persister.ext_management_system.build(
-      :guid        => object.guid,
-      :api_version => api_version,
-      :uid_ems     => instance_uuid,
+      :guid                => object.guid,
+      :api_version         => api_version,
+      :uid_ems             => instance_uuid,
+      :last_inventory_date => Time.now.utc,
     )
   end
 

@@ -280,6 +280,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :api_version => "4.1",
       :uid_ems     => "EF53782F-6F1A-4471-B338-72B27774AFDD"
     )
+    expect(@ems.last_inventory_date).not_to be_nil
 
     expect(@ems.ems_folders.size).to eq(32)
     expect(@ems.ems_clusters.size).to eq(1)

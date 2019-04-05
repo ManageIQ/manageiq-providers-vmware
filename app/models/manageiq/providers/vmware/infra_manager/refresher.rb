@@ -35,6 +35,9 @@ module ManageIQ::Providers
 
         Benchmark.realtime_block(:get_vc_data_host_scsi) { get_vc_data_host_scsi(ems, filtered_host_mors) }
 
+        # After collecting all inventory mark the date of the data
+        @ems_data[:last_inventory_date] = Time.now.utc
+
         return targets_with_data
       ensure
         disconnect_from_ems(ems)
