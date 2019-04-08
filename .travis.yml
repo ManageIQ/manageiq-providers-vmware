@@ -1,3 +1,4 @@
+dist: xenial
 language: ruby
 rvm:
 - 2.4.5
@@ -10,6 +11,6 @@ env:
   - RUBY_GC_HEAP_INIT_SLOTS=600000
   - RUBY_GC_HEAP_GROWTH_FACTOR=1.25
 addons:
-  postgresql: '9.5'
+  postgresql: '10'
 install: bin/setup
 after_script: bundle exec codeclimate-test-reporter
