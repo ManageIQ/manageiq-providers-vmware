@@ -61,7 +61,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
         global_skip_attrs = ["created_on", "updated_on"]
         table_skip_attrs = {
-          "ExtManagementSystem" => ["last_refresh_date"],
+          "ExtManagementSystem" => ["last_refresh_date", "last_inventory_date"],
         }
 
         models.each_with_object({}) do |model, inventory|
@@ -562,6 +562,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.api_version).to eq("5.5")
       expect(ems.last_refresh_error).to be_nil
       expect(ems.last_refresh_date).not_to be_nil
+      expect(ems.last_inventory_date).not_to be_nil
       expect(ems.uid_ems).to eq("D6EB1D64-05B2-4937-BFF6-6F77C6E647B7")
       expect(ems.ems_clusters.count).to eq(4)
       expect(ems.ems_folders.count).to eq(11)

@@ -35,6 +35,9 @@ module ManageIQ::Providers
 
         Benchmark.realtime_block(:get_vc_data_host_scsi) { get_vc_data_host_scsi(ems, filtered_host_mors) }
 
+        # After collecting all inventory mark the date of the data
+        @last_inventory_date = Time.now.utc
+
         return targets_with_data
       ensure
         disconnect_from_ems(ems)
@@ -60,6 +63,11 @@ module ManageIQ::Providers
       end
 
       def post_refresh(ems, start_time)
+        # Update the last_inventory_date in post_refresh because save_ems_inventory is
+        # run on each target even though the inventory came from the same time.  This
+        # would allow for the ems's last_inventory_date to be updated before each target.
+        set_last_inventory_date(ems)
+
         log_header = format_ems_for_logging(ems)
         [VmOrTemplate, Host].each do |klass|
           next unless klass.respond_to?(:post_refresh_ems)
@@ -67,6 +75,10 @@ module ManageIQ::Providers
           klass.post_refresh_ems(ems.id, start_time)
           _log.info "#{log_header} Performing post-refresh operations for #{klass} instances...Complete"
         end
+      end
+
+      def set_last_inventory_date(ems)
+        ems.update_attributes!(:last_inventory_date => @last_inventory_date)
       end
 
       #
