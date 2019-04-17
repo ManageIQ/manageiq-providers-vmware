@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Unreleased as of Sprint 108 ending 2019-04-01
+## Hammer-5
 
 ### Fixed
 - Added unsupported reason for reconfiguring disksize [(#382)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/382)
