@@ -1,5 +1,3 @@
-require 'rbvmomi/vim'
-
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
   let!(:ems) do
     _, _, zone = EvmSpecHelper.create_guid_miq_server_zone

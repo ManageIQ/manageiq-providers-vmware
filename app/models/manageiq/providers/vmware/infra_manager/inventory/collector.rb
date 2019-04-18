@@ -98,7 +98,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :rev      => '6.5',
     }
 
-    require 'rbvmomi/vim'
+    require 'rbvmomi'
     conn = RbVmomi::VIM.new(vim_opts).tap do |vim|
       vim.rev = vim.serviceContent.about.apiVersion
       vim.serviceContent.sessionManager.Login(:userName => username, :password => password)

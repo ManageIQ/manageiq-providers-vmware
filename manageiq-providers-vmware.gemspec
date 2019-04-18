@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("fog-vcloud-director", ["~> 0.3.0"])
   s.add_dependency "vmware_web_service",      "~>0.4.0"
-  s.add_dependency "rbvmomi",                 "~>2.0.0"
+  s.add_dependency "rbvmomi",                 "~>2.1.2"
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   s.add_development_dependency "simplecov"
