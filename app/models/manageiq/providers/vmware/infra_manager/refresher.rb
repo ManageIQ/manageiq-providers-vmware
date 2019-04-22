@@ -151,7 +151,10 @@ module ManageIQ::Providers
         cleanup_callback = proc { @vc_data = nil }
 
         retrieve_from_vc(ems, cleanup_callback) do
-          collect_and_log_inventory(ems, :storage_profile) { @vi.pbmProfilesByUid }
+          collect_and_log_inventory(ems, :storage_profile) do
+            # Ignore storage profiles which cannot be added to virtual machines or virtual disks
+            @vi.pbmProfilesByUid.reject { |_uid, profile| profile.profileCategory == "DATA_SERVICE_POLICY" }
+          end
 
           unless @vc_data[:storage_profile].blank?
             storage_profile_ids = @vc_data[:storage_profile].keys
