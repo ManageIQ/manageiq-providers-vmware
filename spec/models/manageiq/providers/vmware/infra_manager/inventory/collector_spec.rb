@@ -1,6 +1,8 @@
 require 'rbvmomi/vim'
 
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
+  include Spec::Support::EmsRefreshHelper
+
   let!(:ems) do
     _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
     hostname = Rails.application.secrets.vmware.try(:[], "hostname") || "HOSTNAME"
@@ -53,35 +55,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         path << "::#{suffix}"
 
         VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { block.call }
-      end
-
-      def serialize_inventory
-        internal_models = [MiqRegionRemote, VmdbDatabaseConnection, VmdbDatabaseLock, VmdbDatabaseSetting]
-        models = ApplicationRecord.subclasses - internal_models
-
-        global_skip_attrs = ["created_on", "updated_on"]
-        table_skip_attrs = {
-          "ExtManagementSystem" => ["last_refresh_date", "last_inventory_date"],
-        }
-
-        models.each_with_object({}) do |model, inventory|
-          inventory[model.name] = model.all.map do |rec|
-            skip_attrs = global_skip_attrs + table_skip_attrs[model.name].to_a
-            rec.attributes.except(*skip_attrs)
-          end.sort_by { |rec| rec["id"] }
-        end
-      end
-
-      def assert_inventory_not_changed(before, after)
-        expect(before.keys).to match_array(after.keys)
-        before.keys.each do |model|
-          expect(before[model].count).to eq(after[model].count)
-
-          before[model].each do |item_before|
-            item_after = after[model].detect { |i| i["id"] == item_before["id"]}
-            expect(item_before).to eq(item_after)
-          end
-        end
       end
     end
 
