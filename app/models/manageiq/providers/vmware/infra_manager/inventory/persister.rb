@@ -31,7 +31,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :storages)
     add_collection(infra, :storage_profiles)
     add_collection(infra, :parent_blue_folders)
-    add_collection(infra, :vms_and_templates) { |b| b.vm_template_shared }
+    add_collection(infra, :vms_and_templates, &:vm_template_shared)
     add_collection(infra, :vm_parent_blue_folders)
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
