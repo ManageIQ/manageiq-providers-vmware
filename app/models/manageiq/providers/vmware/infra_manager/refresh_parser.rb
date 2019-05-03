@@ -500,6 +500,22 @@ module ManageIQ::Providers
           pnics.each { |pnic| result_uids[:pnic_id][pnic] = new_result unless pnic.blank? }
         end
 
+        inv['opaqueSwitch'].to_miq_a.each do |data|
+          uid = data['key']
+
+          new_result = {
+            :uid_ems => uid,
+            :name    => data['name'],
+            :type    => self.parent::HostVirtualSwitch.name,
+            :lans    => [],
+          }
+
+          result << new_result
+          result_uids[uid] = new_result
+
+          data['pnic'].to_miq_a.compact.each { |pnic| result_uids[:pnic_id][pnic] = new_result }
+        end
+
         return result, result_uids
       end
 
@@ -539,6 +555,18 @@ module ManageIQ::Providers
           result << new_result
           result_uids[uid] = new_result
           switch[:lans] << new_result
+        end
+
+        inv['opaqueNetwork'].to_miq_a.each do |data|
+          uid = data['opaqueNetworkId']
+
+          new_result = {
+            :uid_ems => uid,
+            :name    => data['opaqueNetworkName'],
+          }
+
+          result << new_result
+          result_uids[uid] = new_result
         end
 
         return result, result_uids
