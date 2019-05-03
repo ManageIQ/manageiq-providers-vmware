@@ -471,7 +471,7 @@ module ManageIQ::Providers
         inv = inv.fetch_path('config', 'network')
 
         result = []
-        result_uids = {:pnic_id => {}}
+        result_uids = {:pnic_id => {}, :pnic_zone => {}}
         return result, result_uids if inv.nil?
 
         inv['vswitch'].to_miq_a.each do |data|
@@ -514,6 +514,7 @@ module ManageIQ::Providers
           result_uids[uid] = new_result
 
           data['pnic'].to_miq_a.compact.each { |pnic| result_uids[:pnic_id][pnic] = new_result }
+          data['pnicZone'].to_miq_a.compact.each { |pnic_zone| result_uids[:pnic_zone][pnic_zone['key']] = new_result }
         end
 
         return result, result_uids
@@ -560,6 +561,9 @@ module ManageIQ::Providers
         inv['opaqueNetwork'].to_miq_a.each do |data|
           uid = data['opaqueNetworkId']
 
+          switch = switch_uids.dig(:pnic_zone, data['pnicZone'])
+          next if switch.nil?
+
           new_result = {
             :uid_ems => uid,
             :name    => data['opaqueNetworkName'],
@@ -567,6 +571,8 @@ module ManageIQ::Providers
 
           result << new_result
           result_uids[uid] = new_result
+
+          switch[:lans] << new_result
         end
 
         return result, result_uids
