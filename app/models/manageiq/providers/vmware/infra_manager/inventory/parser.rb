@@ -111,6 +111,26 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
+  def parse_extension_manager(object, kind, props)
+    props[:extensionList].each do |extension|
+      {
+        :key => extension.key,
+        :company => extension.company,
+        :label   => extension.description.label,
+        :summary => extension.description.summary,
+        :version => extension.version,
+        :servers => extension.server.map do |server|
+          {
+            :company     => server.company,
+            :description => server.description.label,
+            :url         => server.url,
+            :type        => server.type,
+          }
+        end
+      }
+    end
+  end
+
   def parse_folder(object, kind, props)
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
@@ -168,6 +188,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     switches = parse_host_system_switches(host, props)
     parse_host_system_host_switches(host, switches)
     parse_host_system_lans(switches, props)
+  end
+
+  def parse_license_manager(object, kind, props)
+    props[:licenses].each do |license|
+      {
+        :name => license.name,
+        :license_key => license.licenseKey,
+        :edition_key => license.editionKey,
+        :total       => license.total,
+        :used        => license.used
+      }
+    end
   end
 
   def parse_network(object, kind, props)

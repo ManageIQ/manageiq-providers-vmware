@@ -166,6 +166,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "summary.uuid",
       "summary.host",
       "summary.hostMember",
+    ],
+    :LicenseManager              => [
+      "licenses"
+    ],
+    :ExtensionManager            => [
+      "extensionList"
     ]
   }.freeze
 
@@ -173,7 +179,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     root_folder = vim.serviceContent.rootFolder
 
     spec = RbVmomi::VIM.PropertyFilterSpec(
-      :objectSet => [full_traversal_object_spec(root_folder)],
+      :objectSet => [
+        extension_manager_traversal_spec(vim.serviceContent.extensionManager),
+        folder_traversal_spec(root_folder),
+        license_manager_traversal_spec(vim.serviceContent.licenseManager),
+      ],
       :propSet   => prop_set
     )
 
@@ -186,7 +196,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     property_filter.DestroyPropertyFilter
   end
 
-  def full_traversal_object_spec(root)
+  def extension_manager_traversal_spec(extension_manager)
+    RbVmomi::VIM.ObjectSpec(:obj => extension_manager)
+  end
+
+  def folder_traversal_spec(root)
     traversal_spec = [
       folder_to_child_entity,
       datacenter_to_datastore_folder,
@@ -200,6 +214,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     ]
 
     RbVmomi::VIM.ObjectSpec(:obj => root, :selectSet => traversal_spec)
+  end
+
+  def license_manager_traversal_spec(license_manager)
+    RbVmomi::VIM.ObjectSpec(:obj => license_manager)
   end
 
   def prop_set
