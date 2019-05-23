@@ -110,7 +110,9 @@ module ManageIQ::Providers
         :cluster         => :clusterComputeResourcesByMor,
         :host_res        => :computeResourcesByMor,
         :rp              => :resourcePoolsByMor,
-        :vapp            => :virtualAppsByMor
+        :vapp            => :virtualAppsByMor,
+        :extensions      => :extensionManagersByMor,
+        :licenses        => :licenseManagersByMor,
       }.freeze
 
       def get_vc_data(ems, accessors = VC_ACCESSORS_HASH, mor_filters = {})

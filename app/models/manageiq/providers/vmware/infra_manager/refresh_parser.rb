@@ -35,6 +35,8 @@ module ManageIQ::Providers
         result[:resource_pools], uids[:resource_pools] = rp_inv_to_hashes(inv[:rp])
 
         result[:customization_specs] = customization_spec_inv_to_hashes(inv[:customization_specs]) if inv.key?(:customization_specs)
+        result[:licenses] = license_inv_to_hashes(inv[:licenses]) if inv.key?(:licenses)
+        result[:extensions] = extension_inv_to_hashes(inv[:extensions]) if inv.key?(:extensions)
 
         link_ems_metadata(result, inv)
         link_root_folder(result)
@@ -1404,6 +1406,52 @@ module ManageIQ::Providers
             :spec             => spec_inv["spec"]
           }
         end
+        result
+      end
+
+      def self.license_inv_to_hashes(inv)
+        result = []
+        return result if inv.nil?
+
+        inv.each do |mor, license_manager|
+          license_manager["licenses"].to_miq_a.each do |license|
+            result << {
+              :name        => license["name"],
+              :license_key => license["licenseKey"],
+              :edition_key => license["editionKey"],
+              :total       => license["total"],
+              :used        => license["used"]
+            }
+          end
+        end
+
+        result
+      end
+
+      def self.extension_inv_to_hashes(inv)
+        result = []
+        return result if inv.nil?
+
+        inv.each do |mor, extension_manager|
+          extension_manager["extensionList"].to_miq_a.each do |extension|
+            result << {
+              :key     => extension["key"],
+              :company => extension["company"],
+              :label   => extension.dig("description", "label"),
+              :summary => extension.dig("description", "summary"),
+              :version => extension["version"],
+              :servers => extension["server"].to_miq_a.map do |server|
+                {
+                  :company     => server["company"],
+                  :description => server.dig("description", "label"),
+                  :url         => server["url"],
+                  :type        => server["type"]
+                }
+              end
+            }
+          end
+        end
+
         result
       end
 

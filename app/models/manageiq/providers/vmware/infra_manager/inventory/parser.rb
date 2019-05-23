@@ -114,7 +114,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_extension_manager(object, kind, props)
     props[:extensionList].each do |extension|
       {
-        :key => extension.key,
+        :key     => extension.key,
         :company => extension.company,
         :label   => extension.description.label,
         :summary => extension.description.summary,
@@ -193,7 +193,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_license_manager(object, kind, props)
     props[:licenses].each do |license|
       {
-        :name => license.name,
+        :name        => license.name,
         :license_key => license.licenseKey,
         :edition_key => license.editionKey,
         :total       => license.total,

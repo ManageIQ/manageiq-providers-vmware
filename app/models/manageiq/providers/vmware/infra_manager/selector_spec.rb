@@ -290,6 +290,28 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.storageDevice.scsiTopology.adapter[*].target[*].transport.address",
       "config.storageDevice.scsiTopology.adapter[*].target[*].transport.iScsiAlias",
       "config.storageDevice.scsiTopology.adapter[*].target[*].transport.iScsiName",
+    ],
+
+    :ems_refresh_licenses => [
+      "MOR",
+      "licenses[*].name",
+      "licenses[*].licenseKey",
+      "licenses[*].editionKey",
+      "licenses[*].total",
+      "licenses[*].used"
+    ],
+
+    :ems_refresh_extensions => [
+      "MOR",
+      "extensionList[*].key",
+      "extensionList[*].company",
+      "extensionList[*].description.label",
+      "extensionList[*].description.summary",
+      "extensionList[*].version",
+      "extensionList[*].server[*].company",
+      "extensionList[*].server[*].description.label",
+      "extensionList[*].server[*].url",
+      "extensionList[*].server[*].type"
     ]
   }
   # Virtual Apps are treated like Resource Pools
