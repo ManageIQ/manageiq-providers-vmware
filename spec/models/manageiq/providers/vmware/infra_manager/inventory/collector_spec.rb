@@ -517,11 +517,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
-    def with_vcr(suffix = nil, &block)
+    def with_vcr(suffix = nil)
       path = described_class.name
       path << "::#{suffix}" if suffix
 
-      VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { block.call }
+      VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { yield }
     end
 
     def run_full_refresh
