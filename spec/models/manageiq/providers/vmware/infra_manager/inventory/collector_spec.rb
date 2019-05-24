@@ -22,7 +22,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     context "full refresh" do
       it "Performs a full refresh" do
         2.times do
-          run_full_refresh
+          with_vcr { run_full_refresh }
           ems.reload
 
           assert_ems
@@ -44,17 +44,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         with_vcr("classic") { EmsRefresh.init_console; EmsRefresh.refresh(ems) }
         inventory_after_classic_refresh = serialize_inventory
 
-        with_vcr("graph")   { collector.exit_requested = true; collector.run }
+        with_vcr("graph") { run_full_refresh }
         inventory_after_graph_refresh = serialize_inventory
 
         assert_inventory_not_changed(inventory_after_classic_refresh, inventory_after_graph_refresh)
-      end
-
-      def with_vcr(suffix, &block)
-        path = described_class.name
-        path << "::#{suffix}"
-
-        VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { block.call }
       end
     end
 
@@ -65,7 +58,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory
-        run_full_refresh
+        with_vcr { run_full_refresh }
       end
 
       it "doesn't impact unassociated inventory" do
@@ -524,12 +517,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
+    def with_vcr(suffix = nil, &block)
+      path = described_class.name
+      path << "::#{suffix}" if suffix
+
+      VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { block.call }
+    end
+
     def run_full_refresh
-      # All VIM API calls go to uri https://hostname/sdk so we have to match on the body
-      VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
-        collector.exit_requested = true
-        collector.run
-      end
+      collector.stop # Calling stop before run only runs this once
+      collector.run
     end
 
     def assert_ems
