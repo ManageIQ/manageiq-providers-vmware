@@ -5,12 +5,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   attr_reader   :ems, :inventory_cache, :saver
   attr_accessor :exit_requested
 
-  def initialize(ems, run_once: false, threaded: true)
+  def initialize(ems, threaded: true)
     @ems             = ems
+    @exit_requested  = false
     @inventory_cache = ems.class::Inventory::Cache.new
     @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
-
-    self.exit_requested = run_once
   end
 
   def run

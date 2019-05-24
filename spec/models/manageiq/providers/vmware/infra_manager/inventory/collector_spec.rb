@@ -16,7 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems, :run_once => true, :threaded => false) }
+  let(:collector) { described_class.new(ems, :threaded => false) }
 
   context "#monitor_updates" do
     context "full refresh" do
@@ -44,7 +44,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         with_vcr("classic") { EmsRefresh.init_console; EmsRefresh.refresh(ems) }
         inventory_after_classic_refresh = serialize_inventory
 
-        with_vcr("graph")   { collector.run }
+        with_vcr("graph")   { collector.exit_requested = true; collector.run }
         inventory_after_graph_refresh = serialize_inventory
 
         assert_inventory_not_changed(inventory_after_classic_refresh, inventory_after_graph_refresh)
@@ -527,6 +527,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     def run_full_refresh
       # All VIM API calls go to uri https://hostname/sdk so we have to match on the body
       VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
+        collector.exit_requested = true
         collector.run
       end
     end
