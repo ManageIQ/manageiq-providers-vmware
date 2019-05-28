@@ -292,7 +292,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.storageDevice.scsiTopology.adapter[*].target[*].transport.iScsiName",
     ],
 
-    :ems_refresh_licenses => [
+    :ems_refresh_licenses    => [
       "MOR",
       "licenses[*].name",
       "licenses[*].licenseKey",
@@ -301,7 +301,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "licenses[*].used"
     ],
 
-    :ems_refresh_extensions => [
+    :ems_refresh_extensions  => [
       "MOR",
       "extensionList[*].key",
       "extensionList[*].company",

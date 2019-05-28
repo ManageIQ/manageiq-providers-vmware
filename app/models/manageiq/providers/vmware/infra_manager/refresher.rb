@@ -99,20 +99,20 @@ module ManageIQ::Providers
       end
 
       VC_ACCESSORS_HASH = {
-        :storage         => :dataStoresByMor,
-        :storage_pod     => :storagePodsByMor,
-        :dvportgroup     => :dvPortgroupsByMor,
-        :dvswitch        => :dvSwitchesByMor,
-        :host            => :hostSystemsByMor,
-        :vm              => :virtualMachinesByMor,
-        :dc              => :datacentersByMor,
-        :folder          => :foldersByMor,
-        :cluster         => :clusterComputeResourcesByMor,
-        :host_res        => :computeResourcesByMor,
-        :rp              => :resourcePoolsByMor,
-        :vapp            => :virtualAppsByMor,
-        :extensions      => :extensionManagersByMor,
-        :licenses        => :licenseManagersByMor,
+        :storage     => :dataStoresByMor,
+        :storage_pod => :storagePodsByMor,
+        :dvportgroup => :dvPortgroupsByMor,
+        :dvswitch    => :dvSwitchesByMor,
+        :host        => :hostSystemsByMor,
+        :vm          => :virtualMachinesByMor,
+        :dc          => :datacentersByMor,
+        :folder      => :foldersByMor,
+        :cluster     => :clusterComputeResourcesByMor,
+        :host_res    => :computeResourcesByMor,
+        :rp          => :resourcePoolsByMor,
+        :vapp        => :virtualAppsByMor,
+        :extensions  => :extensionManagersByMor,
+        :licenses    => :licenseManagersByMor,
       }.freeze
 
       def get_vc_data(ems, accessors = VC_ACCESSORS_HASH, mor_filters = {})

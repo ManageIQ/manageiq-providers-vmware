@@ -111,7 +111,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
-  def parse_extension_manager(object, kind, props)
+  def parse_extension_manager(_object, kind, props)
+    return if kind == "leave"
+
     props[:extensionList].each do |extension|
       persister.ems_extensions.build(
         :ems_ref => extension.key,
@@ -119,7 +121,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :company => extension.company,
         :label   => extension.description.label,
         :summary => extension.description.summary,
-        :version => extension.version,
+        :version => extension.version
       )
     end
   end
@@ -183,7 +185,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_lans(switches, props)
   end
 
-  def parse_license_manager(object, kind, props)
+  def parse_license_manager(_object, kind, props)
+    return if kind == "leave"
+
     props[:licenses].each do |license|
       persister.ems_licenses.build(
         :ems_ref         => license.licenseKey,

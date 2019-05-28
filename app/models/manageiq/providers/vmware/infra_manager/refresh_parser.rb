@@ -1413,7 +1413,7 @@ module ManageIQ::Providers
         result = []
         return result if inv.nil?
 
-        inv.each do |mor, license_manager|
+        inv.each do |_mor, license_manager|
           license_manager["licenses"].to_miq_a.each do |license|
             result << {
               :ems_ref         => license["licenseKey"],
@@ -1433,7 +1433,7 @@ module ManageIQ::Providers
         result = []
         return result if inv.nil?
 
-        inv.each do |mor, extension_manager|
+        inv.each do |_mor, extension_manager|
           extension_manager["extensionList"].to_miq_a.each do |extension|
             result << {
               :ems_ref => extension["key"],
