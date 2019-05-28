@@ -35,8 +35,8 @@ module ManageIQ::Providers
         result[:resource_pools], uids[:resource_pools] = rp_inv_to_hashes(inv[:rp])
 
         result[:customization_specs] = customization_spec_inv_to_hashes(inv[:customization_specs]) if inv.key?(:customization_specs)
-        result[:licenses] = license_inv_to_hashes(inv[:licenses]) if inv.key?(:licenses)
-        result[:extensions] = extension_inv_to_hashes(inv[:extensions]) if inv.key?(:extensions)
+        result[:ems_licenses] = license_inv_to_hashes(inv[:licenses]) if inv.key?(:licenses)
+        result[:ems_extensions] = extension_inv_to_hashes(inv[:extensions]) if inv.key?(:extensions)
 
         link_ems_metadata(result, inv)
         link_root_folder(result)
@@ -1416,11 +1416,12 @@ module ManageIQ::Providers
         inv.each do |mor, license_manager|
           license_manager["licenses"].to_miq_a.each do |license|
             result << {
-              :name        => license["name"],
-              :license_key => license["licenseKey"],
-              :edition_key => license["editionKey"],
-              :total       => license["total"],
-              :used        => license["used"]
+              :ems_ref         => license["licenseKey"],
+              :name            => license["name"],
+              :license_key     => license["licenseKey"],
+              :license_edition => license["editionKey"],
+              :total_licenses  => license["total"],
+              :used_licenses   => license["used"]
             }
           end
         end
@@ -1435,19 +1436,12 @@ module ManageIQ::Providers
         inv.each do |mor, extension_manager|
           extension_manager["extensionList"].to_miq_a.each do |extension|
             result << {
+              :ems_ref => extension["key"],
               :key     => extension["key"],
               :company => extension["company"],
               :label   => extension.dig("description", "label"),
               :summary => extension.dig("description", "summary"),
-              :version => extension["version"],
-              :servers => extension["server"].to_miq_a.map do |server|
-                {
-                  :company     => server["company"],
-                  :description => server.dig("description", "label"),
-                  :url         => server["url"],
-                  :type        => server["type"]
-                }
-              end
+              :version => extension["version"]
             }
           end
         end
