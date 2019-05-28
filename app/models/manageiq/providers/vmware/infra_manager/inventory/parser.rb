@@ -113,21 +113,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_extension_manager(object, kind, props)
     props[:extensionList].each do |extension|
-      {
+      persister.ems_extensions.build(
+        :ems_ref => extension.key,
         :key     => extension.key,
         :company => extension.company,
         :label   => extension.description.label,
         :summary => extension.description.summary,
         :version => extension.version,
-        :servers => extension.server.map do |server|
-          {
-            :company     => server.company,
-            :description => server.description.label,
-            :url         => server.url,
-            :type        => server.type,
-          }
-        end
-      }
+      )
     end
   end
 
@@ -192,13 +185,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_license_manager(object, kind, props)
     props[:licenses].each do |license|
-      {
-        :name        => license.name,
-        :license_key => license.licenseKey,
-        :edition_key => license.editionKey,
-        :total       => license.total,
-        :used        => license.used
-      }
+      persister.ems_licenses.build(
+        :ems_ref         => license.licenseKey,
+        :name            => license.name,
+        :license_key     => license.licenseKey,
+        :license_edition => license.editionKey,
+        :total_licenses  => license.total,
+        :used_licenses   => license.used
+      )
     end
   end
 
