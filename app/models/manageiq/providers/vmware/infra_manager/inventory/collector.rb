@@ -2,17 +2,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  attr_reader   :ems, :inventory_cache, :run_once, :saver
-  attr_accessor :exit_requested, :initial
+  attr_reader   :ems, :inventory_cache, :saver
+  attr_accessor :exit_requested
 
-  def initialize(ems, run_once: false, threaded: true)
+  def initialize(ems, threaded: true)
     @ems             = ems
-    @initial         = true
+    @exit_requested  = false
     @inventory_cache = ems.class::Inventory::Cache.new
-    @run_once        = run_once
     @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
-
-    self.exit_requested = false
   end
 
   def run
@@ -26,10 +23,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.info("#{log_header} Refreshing initial inventory")
     version = initial_refresh(vim, property_filter)
     _log.info("#{log_header} Refreshing initial inventory...Complete")
-
-    self.initial = false
-
-    return if run_once
 
     until exit_requested
       persister = targeted_persister_klass.new(ems)
@@ -223,8 +216,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def log_object_update(object_update)
-    return if initial
-
     _log.debug do
       object_str = "#{object_update.obj.class.wsdl_name}:#{object_update.obj._ref}"
 
