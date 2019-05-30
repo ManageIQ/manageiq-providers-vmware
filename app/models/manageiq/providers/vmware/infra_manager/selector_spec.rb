@@ -308,10 +308,6 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "extensionList[*].description.label",
       "extensionList[*].description.summary",
       "extensionList[*].version",
-      "extensionList[*].server[*].company",
-      "extensionList[*].server[*].description.label",
-      "extensionList[*].server[*].url",
-      "extensionList[*].server[*].type"
     ]
   }
   # Virtual Apps are treated like Resource Pools

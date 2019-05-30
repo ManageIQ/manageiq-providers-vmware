@@ -62,7 +62,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       it "doesn't impact unassociated inventory" do
-        run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
+        run_targeted_refresh(targeted_update_set([vm_power_off_object_update]))
         assert_ems
       end
 
