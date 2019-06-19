@@ -30,9 +30,9 @@ module ManageIQ::Providers
       unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
     end
 
+    has_many :host_guest_devices, :through => :host_hardwares, :source => :guest_devices
     has_many :miq_scsi_targets, -> { distinct }, :through => :host_guest_devices
     has_many :miq_scsi_luns, -> { distinct }, :through => :miq_scsi_targets
-    has_many :host_guest_devices,             :through => :host_hardwares, :source => :guest_devices
     has_many :host_system_services, :through => :hosts, :source => :system_services
     has_many :distributed_virtual_switches, :dependent => :destroy, :foreign_key => :ems_id
 
