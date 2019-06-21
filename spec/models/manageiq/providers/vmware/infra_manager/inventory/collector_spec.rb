@@ -549,6 +549,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
       expect(ems.lans.count).to eq(36)
+      expect(ems.ems_extensions.count).to eq(12)
+      expect(ems.ems_licenses.count).to eq(3)
     end
 
     def assert_specific_datacenter
