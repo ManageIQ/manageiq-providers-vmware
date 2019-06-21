@@ -35,6 +35,8 @@ module ManageIQ::Providers
         result[:resource_pools], uids[:resource_pools] = rp_inv_to_hashes(inv[:rp])
 
         result[:customization_specs] = customization_spec_inv_to_hashes(inv[:customization_specs]) if inv.key?(:customization_specs)
+        result[:ems_licenses] = license_inv_to_hashes(inv[:licenses]) if inv.key?(:licenses)
+        result[:ems_extensions] = extension_inv_to_hashes(inv[:extensions]) if inv.key?(:extensions)
 
         link_ems_metadata(result, inv)
         link_root_folder(result)
@@ -1404,6 +1406,46 @@ module ManageIQ::Providers
             :spec             => spec_inv["spec"]
           }
         end
+        result
+      end
+
+      def self.license_inv_to_hashes(inv)
+        result = []
+        return result if inv.nil?
+
+        inv.each do |_mor, license_manager|
+          license_manager["licenses"].to_miq_a.each do |license|
+            result << {
+              :ems_ref         => license["licenseKey"],
+              :name            => license["name"],
+              :license_key     => license["licenseKey"],
+              :license_edition => license["editionKey"],
+              :total_licenses  => license["total"],
+              :used_licenses   => license["used"]
+            }
+          end
+        end
+
+        result
+      end
+
+      def self.extension_inv_to_hashes(inv)
+        result = []
+        return result if inv.nil?
+
+        inv.each do |_mor, extension_manager|
+          extension_manager["extensionList"].to_miq_a.each do |extension|
+            result << {
+              :ems_ref => extension["key"],
+              :key     => extension["key"],
+              :company => extension["company"],
+              :label   => extension.dig("description", "label"),
+              :summary => extension.dig("description", "summary"),
+              :version => extension["version"]
+            }
+          end
+        end
+
         result
       end
 

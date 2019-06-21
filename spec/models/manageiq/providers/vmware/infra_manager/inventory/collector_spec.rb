@@ -62,16 +62,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       it "doesn't impact unassociated inventory" do
-        run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
+        run_targeted_refresh(targeted_update_set([vm_power_off_object_update]))
         assert_ems
       end
 
       it "power on a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
-        expect(vm.power_state).to eq("off")
-        run_targeted_refresh(targeted_update_set([vm_power_on_object_update]))
-        expect(vm.reload.power_state).to eq("on")
+        expect(vm.power_state).to eq("on")
+        run_targeted_refresh(targeted_update_set([vm_power_off_object_update]))
+        expect(vm.reload.power_state).to eq("off")
       end
 
       it "migrate a virtual machine" do
@@ -178,7 +178,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         )
       end
 
-      def vm_power_on_object_update
+      def vm_power_off_object_update
         RbVmomi::VIM.ObjectUpdate(
           :dynamicProperty => [],
           :kind            => "modify",
@@ -186,7 +186,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           :changeSet       => [
             RbVmomi::VIM.PropertyChange(:name => "config.hotPlugMemoryIncrementSize", :op => "assign"),
             RbVmomi::VIM.PropertyChange(:name => "config.hotPlugMemoryLimit",         :op => "assign"),
-            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.powerState",        :op => "assign", :val => "poweredOn"),
+            RbVmomi::VIM.PropertyChange(:name => "summary.runtime.powerState",        :op => "assign", :val => "poweredOff"),
             RbVmomi::VIM.PropertyChange(:name => "summary.storage.committed",         :op => "assign", :val => 210_930),
             RbVmomi::VIM.PropertyChange(:name => "summary.storage.unshared",          :op => "assign", :val => 0),
           ],
@@ -549,6 +549,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
       expect(ems.lans.count).to eq(36)
+      expect(ems.ems_extensions.count).to eq(12)
+      expect(ems.ems_licenses.count).to eq(3)
     end
 
     def assert_specific_datacenter
@@ -782,7 +784,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :uid_ems           => "dvs-8",
         :name              => "DC0_DVS",
         :ports             => 288,
-        :switch_uuid       => "a9 af 24 50 51 3a 40 48-56 b4 3d fe 0c 8b a0 5f",
+        :switch_uuid       => "c0 76 0f 50 67 1d 64 26-6b fc bf 37 08 ea f0 56",
         :type              => "ManageIQ::Providers::Vmware::InfraManager::DistributedVirtualSwitch",
         :allow_promiscuous => false,
         :forged_transmits  => false,
@@ -830,19 +832,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :name                  => "DC0_C0_RP0_VM1",
         :raw_power_state       => "poweredOn",
         :type                  => "ManageIQ::Providers::Vmware::InfraManager::Vm",
-        :uid_ems               => "42243da9-7676-d9ec-7a9b-e61e5db3725c",
+        :uid_ems               => "420fe4bd-12b5-222d-554d-44ba94fb4401",
         :vendor                => "vmware",
       )
 
       expect(vm.hardware).to have_attributes(
-        :bios                 => "42243da9-7676-d9ec-7a9b-e61e5db3725c",
+        :bios                 => "420fe4bd-12b5-222d-554d-44ba94fb4401",
         :cpu_cores_per_socket => 1,
         :cpu_sockets          => 1,
         :cpu_total_cores      => 1,
         :virtual_hw_version   => "07",
       )
 
-      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:a4:01:01")
+      nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:8f:56:8d")
       expect(nic).to have_attributes(
         :device_name     => "Network adapter 1",
         :device_type     => "ethernet",
@@ -850,8 +852,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :present         => true,
         :start_connected => true,
         :model           => "VirtualE1000",
-        :address         => "00:50:56:a4:01:01",
-        :uid_ems         => "00:50:56:a4:01:01",
+        :address         => "00:50:56:8f:56:8d",
+        :uid_ems         => "00:50:56:8f:56:8d"
       )
 
       expect(nic.lan).not_to be_nil
