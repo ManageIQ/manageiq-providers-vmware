@@ -418,11 +418,6 @@ module ManageIQ::Providers
     end
     alias vm_remove_disk vm_remove_disk_by_file
 
-    def vm_acquire_mks_ticket(vm, options = {})
-      invoke_vim_ws(:acquireMksTicket, vm, options[:user_event])
-    end
-    alias_method :vm_remote_console_mks_acquire_ticket, :vm_acquire_mks_ticket
-
     def vm_acquire_ticket(vm, options = {})
       invoke_vim_ws(:acquireTicket, vm, options[:user_event], options[:ticket_type])
     end

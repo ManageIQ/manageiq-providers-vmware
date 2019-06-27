@@ -10,11 +10,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems) }
 
   context '#remote_console_acquire_ticket' do
-    it 'with :mks' do
-      expect(vm).to receive(:remote_console_mks_acquire_ticket).with(user.userid, 1)
-      vm.remote_console_acquire_ticket(user.userid, 1, :mks)
-    end
-
     it 'with :webmks' do
       expect(vm).to receive(:remote_console_webmks_acquire_ticket).with(user.userid, 1)
       vm.remote_console_acquire_ticket(user.userid, 1, :webmks)
@@ -39,15 +34,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
       allow(server).to receive_messages(:my_zone => nil)
       allow(server).to receive_messages(:id => 1)
       allow(MiqServer).to receive_messages(:my_server => server)
-    end
-
-    it 'with :mks' do
-      vm.remote_console_acquire_ticket_queue(:mks, user.userid)
-
-      q_all = MiqQueue.all
-      expect(q_all.length).to eq(1)
-      expect(q_all[0].method_name).to eq('remote_console_acquire_ticket')
-      expect(q_all[0].args).to eq([user.userid, 1, :mks])
     end
 
     it 'with :webmks' do

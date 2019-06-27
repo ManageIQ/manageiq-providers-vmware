@@ -2,7 +2,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   require_dependency 'securerandom'
 
   def console_supported?(type)
-    %w(VMRC VNC MKS WEBMKS).include?(type.upcase)
+    %w(VMRC VNC WEBMKS).include?(type.upcase)
   end
 
   def validate_remote_console_acquire_ticket(protocol, options = {})
@@ -35,15 +35,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     }
 
     MiqTask.generic_action_with_callback(task_opts, queue_opts)
-  end
-
-  #
-  # MKS
-  #
-
-  def remote_console_mks_acquire_ticket(_userid = nil, _originating_server = nil)
-    validate_remote_console_acquire_ticket("mks", :check_if_running => false)
-    ext_management_system.vm_remote_console_mks_acquire_ticket(self)
   end
 
   #
