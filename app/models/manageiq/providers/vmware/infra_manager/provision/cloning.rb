@@ -5,6 +5,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
         state, val = vim.pollTask(clone_task_mor, "VMClone")
         case state
         when TaskInfoState::Success
+          phase_context[:new_vm_ems_ref] = val
           return true
         when TaskInfoState::Running
           return false, val.nil? ? "beginning" : "#{val}% complete"
@@ -18,11 +19,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   end
 
   def find_destination_in_vmdb
-    # The new VM will have the guid we placed in the annotations field
-    validation_guid = phase_context[:new_vm_validation_guid]
-    VmOrTemplate.where(:name => dest_name).detect do |v|
-      v.hardware.annotation && v.hardware.annotation.include?(validation_guid)
-    end
+    new_vm_ems_ref = phase_context[:new_vm_ems_ref]
+    source.ext_management_system.vms.find_by(:ems_ref => new_vm_ems_ref)
   end
 
   def prepare_for_clone_task
