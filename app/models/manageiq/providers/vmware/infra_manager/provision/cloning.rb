@@ -2,15 +2,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   def do_clone_task_check(clone_task_mor)
     source.with_provider_connection do |vim|
       begin
-        state, val = vim.pollTask(clone_task_mor, "VMClone")
-        case state
+        task_props = ["info.state", "info.error", "info.result", "info.progress", "info.completeTime"]
+        task = vim.getMoProp(clone_task_mor, task_props)
+
+        case task&.info&.state
         when TaskInfoState::Success
-          phase_context[:new_vm_ems_ref] = val
+          phase_context[:new_vm_ems_ref] = task&.info&.result
+          phase_context[:clone_vm_task_completion_time] = task&.info&.completeTime
           return true
         when TaskInfoState::Running
-          return false, val.nil? ? "beginning" : "#{val}% complete"
+          progress = task&.info&.progress
+          return false, progress.nil? ? "beginning" : "#{progress}% complete"
         else
-          return false, state
+          return false, task&.info&.state
         end
       end
     end
@@ -19,8 +23,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   end
 
   def find_destination_in_vmdb
-    new_vm_ems_ref = phase_context[:new_vm_ems_ref]
-    source.ext_management_system.vms.find_by(:ems_ref => new_vm_ems_ref)
+    # Check that the EMS inventory is as up to date as the CloneVM_Task completeTime
+    # to prevent issues with post-provision depending on data that isn't in VMDB yet
+    return if source.ext_management_system.last_inventory_date < phase_context[:clone_vm_task_completion_time]
+
+    source.ext_management_system.vms.find_by(:ems_ref => phase_context[:new_vm_ems_ref])
   end
 
   def prepare_for_clone_task
