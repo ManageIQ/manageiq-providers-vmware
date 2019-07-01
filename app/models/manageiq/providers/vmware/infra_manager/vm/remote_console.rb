@@ -81,12 +81,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   end
 
   #
-  # VNC
+  # HTML5 selects the best available console type (VNC or WebMKS)
   #
-  def remote_console_html5_acquire_ticket(userid, originating_server)
-    remote_console_vnc_acquire_ticket(userid, originating_server)
+  def remote_console_html5_acquire_ticket(userid, originating_server = nil)
+    protocol = with_provider_object { |v| v.extraConfig["RemoteDisplay.vnc.enabled"] == "true" } ? 'vnc' : 'webmks'
+    send("remote_console_#{protocol}_acquire_ticket", userid, originating_server)
   end
 
+  #
+  # VNC
+  #
   def remote_console_vnc_acquire_ticket(userid, originating_server)
     validate_remote_console_acquire_ticket("vnc")
 
