@@ -34,6 +34,7 @@ engines:
   rubocop:
     enabled: true
     config: '.rubocop_cc.yml'
+    channel: 'rubocop-0-69'
 prepare:
   fetch:
   - url: "https://raw.githubusercontent.com/ManageIQ/guides/master/.rubocop_base.yml"
