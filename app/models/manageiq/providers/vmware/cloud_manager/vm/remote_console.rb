@@ -65,6 +65,11 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::RemoteConsole
     )
   end
 
+  #
+  # HTML5
+  #
+  alias_method :remote_console_html5_acquire_ticket, :remote_console_webmks_acquire_ticket
+
   def validate_remote_console_webmks_support
     validate_remote_console_acquire_ticket('webmks')
     if (api_version = ext_management_system.api_version.to_f) && api_version < 5.5

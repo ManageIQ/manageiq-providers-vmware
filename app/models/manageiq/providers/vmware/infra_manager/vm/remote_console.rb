@@ -2,7 +2,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   require_dependency 'securerandom'
 
   def console_supported?(type)
-    %w(VMRC VNC MKS WEBMKS).include?(type.upcase)
+    %w(VMRC VNC WEBMKS).include?(type.upcase)
   end
 
   def validate_remote_console_acquire_ticket(protocol, options = {})
@@ -35,15 +35,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     }
 
     MiqTask.generic_action_with_callback(task_opts, queue_opts)
-  end
-
-  #
-  # MKS
-  #
-
-  def remote_console_mks_acquire_ticket(_userid = nil, _originating_server = nil)
-    validate_remote_console_acquire_ticket("mks", :check_if_running => false)
-    ext_management_system.vm_remote_console_mks_acquire_ticket(self)
   end
 
   #
@@ -90,12 +81,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   end
 
   #
-  # VNC
+  # HTML5 selects the best available console type (VNC or WebMKS)
   #
-  def remote_console_html5_acquire_ticket(userid, originating_server)
-    remote_console_vnc_acquire_ticket(userid, originating_server)
+  def remote_console_html5_acquire_ticket(userid, originating_server = nil)
+    protocol = with_provider_object { |v| v.extraConfig["RemoteDisplay.vnc.enabled"] == "true" } ? 'vnc' : 'webmks'
+    send("remote_console_#{protocol}_acquire_ticket", userid, originating_server)
   end
 
+  #
+  # VNC
+  #
   def remote_console_vnc_acquire_ticket(userid, originating_server)
     validate_remote_console_acquire_ticket("vnc")
 
