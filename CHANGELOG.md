@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Hammer-5
+## Unreleased as of Sprint 115 ending 2019-07-08
+
+### Added
+- Create a HTML5 console type on top of VNC and WebMKS [(#409)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/409)
+
+## Hammer-5 - Released 2019-04-23
 
 ### Fixed
 - Added unsupported reason for reconfiguring disksize [(#382)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/382)
