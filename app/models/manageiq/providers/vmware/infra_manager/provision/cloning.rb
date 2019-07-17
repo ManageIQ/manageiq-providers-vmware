@@ -46,8 +46,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
       :pool            => dest_resource_pool,
       :storage_profile => dest_storage_profile,
       :config          => build_config_spec,
-      :customization   => build_customization_spec,
-      :transform       => build_transform_spec
+      :customization   => build_customization_spec
     }
 
     # Determine if we are doing a linked-clone provision
@@ -120,7 +119,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
       :template => self.create_template?
     }
 
-    [:transform, :config, :customization, :linked_clone].each { |key| vim_clone_options[key] = clone_options[key] }
+    [:config, :customization, :linked_clone].each { |key| vim_clone_options[key] = clone_options[key] }
 
     [:folder, :host, :pool, :snapshot].each do |key|
       ci = clone_options[key]
@@ -129,6 +128,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
     end
 
     vim_clone_options[:datastore]       = datastore_ems_ref(clone_options)
+    vim_clone_options[:disk]            = build_disk_relocate_spec(vim_clone_options[:datastore])
     vim_clone_options[:storage_profile] = build_storage_profile(clone_options[:storage_profile]) unless clone_options[:storage_profile].nil?
 
     task_mor = clone_vm(vim_clone_options)
@@ -190,13 +190,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
     end
 
     ss
-  end
-
-  def build_transform_spec
-    case get_option(:disk_format)
-    when 'thin'  then VimString.new('sparse', "VirtualMachineRelocateTransformation")
-    when 'thick' then VimString.new('flat', "VirtualMachineRelocateTransformation")
-    end
   end
 
   def build_storage_profile(storage_profile)
