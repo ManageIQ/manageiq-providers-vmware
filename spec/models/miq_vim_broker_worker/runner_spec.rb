@@ -114,29 +114,6 @@ describe MiqVimBrokerWorker::Runner do
       @vim_broker_worker.do_heartbeat_work
     end
 
-    context "#do_before_work_loop" do
-      it "should do nothing when active roles does not include 'ems_inventory'" do
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['foo', 'bar'])
-        expect(EmsRefresh).to receive(:queue_refresh).never
-        @vim_broker_worker.do_before_work_loop
-      end
-
-      it "should do nothing when active roles includes 'ems_inventory' and there are no EMSes to monitor" do
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['foo', 'bar', 'ems_inventory'])
-        @vim_broker_worker.instance_variable_set(:@initial_emses_to_monitor, [])
-        expect(EmsRefresh).to receive(:queue_refresh).never
-        @vim_broker_worker.do_before_work_loop
-      end
-
-      it "should call EmsRefresh.queue_refresh when active roles includes 'ems_inventory' and there are EMSes to monitor" do
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['foo', 'bar', 'ems_inventory'])
-        emses = @zone.ext_management_systems
-        @vim_broker_worker.instance_variable_set(:@initial_emses_to_monitor, emses)
-        expect(EmsRefresh).to receive(:queue_refresh).with(emses).once
-        @vim_broker_worker.do_before_work_loop
-      end
-    end
-
     context "#create_miq_vim_broker_server" do
       it "with ems_inventory role" do
         @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
