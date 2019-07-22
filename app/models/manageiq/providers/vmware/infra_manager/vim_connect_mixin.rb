@@ -38,7 +38,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
       options[:pass] = ManageIQ::Password.try_decrypt(options[:pass])
       validate_connection do
-        MiqFaultTolerantVim.new(options)
+        vim = MiqFaultTolerantVim.new(options)
+        raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
       end
     end
 
@@ -54,6 +55,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
         raise $!.reason
       end
       raise $!.message
+    rescue MiqException::Error
+      _log.warn($!.inspect)
+      raise
     rescue Exception
       _log.warn($!.inspect)
       raise "Unexpected response returned from Provider, see log for details"
