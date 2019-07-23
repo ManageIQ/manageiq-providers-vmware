@@ -49,7 +49,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::StateMachine
       phase_context.delete(:new_vm_validation_guid)
       signal :customize_destination
     else
-      _log.info("Unable to find #{destination_type} [#{dest_name}] with validation guid [#{phase_context[:new_vm_validation_guid]}], will retry")
+      _log.info("Unable to find #{destination_type} [#{dest_name}] with ems_ref [#{phase_context[:new_vm_ems_ref]}], will retry")
       requeue_phase
     end
   end

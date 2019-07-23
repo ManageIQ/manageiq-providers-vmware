@@ -2,14 +2,22 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   def do_clone_task_check(clone_task_mor)
     source.with_provider_connection do |vim|
       begin
-        state, val = vim.pollTask(clone_task_mor, "VMClone")
-        case state
+        task_props = ["info.state", "info.error", "info.result", "info.progress", "info.completeTime"]
+        task = vim.getMoProp(clone_task_mor, task_props)
+
+        task_info  = task&.info
+        task_state = task_info&.state
+
+        case task_state
         when TaskInfoState::Success
+          phase_context[:new_vm_ems_ref] = task_info&.result
+          phase_context[:clone_vm_task_completion_time] = task_info&.completeTime
           return true
         when TaskInfoState::Running
-          return false, val.nil? ? "beginning" : "#{val}% complete"
+          progress = task_info&.progress
+          return false, progress.nil? ? "beginning" : "#{progress}% complete"
         else
-          return false, state
+          return false, task_state
         end
       end
     end
@@ -18,11 +26,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   end
 
   def find_destination_in_vmdb
-    # The new VM will have the guid we placed in the annotations field
-    validation_guid = phase_context[:new_vm_validation_guid]
-    VmOrTemplate.where(:name => dest_name).detect do |v|
-      v.hardware.annotation && v.hardware.annotation.include?(validation_guid)
-    end
+    # Check that the EMS inventory is as up to date as the CloneVM_Task completeTime
+    # to prevent issues with post-provision depending on data that isn't in VMDB yet
+    return if source.ext_management_system.last_inventory_date < phase_context[:clone_vm_task_completion_time]
+
+    source.ext_management_system.vms.find_by(:ems_ref => phase_context[:new_vm_ems_ref])
   end
 
   def prepare_for_clone_task
