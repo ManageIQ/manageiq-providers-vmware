@@ -5,16 +5,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
         task_props = ["info.state", "info.error", "info.result", "info.progress", "info.completeTime"]
         task = vim.getMoProp(clone_task_mor, task_props)
 
-        case task&.info&.state
+        task_info  = task&.info
+        task_state = task_info&.state
+
+        case task_state
         when TaskInfoState::Success
-          phase_context[:new_vm_ems_ref] = task&.info&.result
-          phase_context[:clone_vm_task_completion_time] = task&.info&.completeTime
+          phase_context[:new_vm_ems_ref] = task_info&.result
+          phase_context[:clone_vm_task_completion_time] = task_info&.completeTime
           return true
         when TaskInfoState::Running
-          progress = task&.info&.progress
+          progress = task_info&.progress
           return false, progress.nil? ? "beginning" : "#{progress}% complete"
         else
-          return false, task&.info&.state
+          return false, task_state
         end
       end
     end
