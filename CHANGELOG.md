@@ -5,43 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Unreleased as of Sprint 115 ending 2019-07-08
+## Ivanchuk Beta1
 
 ### Added
 - Create a HTML5 console type on top of VNC and WebMKS [(#409)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/409)
-
-## Hammer-5 - Released 2019-04-23
-
-### Fixed
-- Added unsupported reason for reconfiguring disksize [(#382)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/382)
-
-## Unreleased as of Sprint 106 ending 2019-03-04
-
-### Added
 - Set EMS attributes with an inventory_collection [(#376)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/376)
-
-## Hammer-3 - Released 2019-03-06
-
-### Fixed
-- Parse if a datastore is accessible from a host [(#356)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/356)
-
-## Unreleased as of Sprint 105 ending 2019-02-18
-
-### Added
 - Graph refresh host networks [(#370)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/370)
 - Parse the networkFolder under a datacenter [(#368)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/368)
 - Parse VM networks for graph refresh [(#366)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/366)
 - Add relations for distributed_virtual_switches [(#364)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/364)
 
 ### Fixed
-- Fix storage.parent multiple parents found error [(#367)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/367) 
-
-## Unreleased as of Sprint 104 ending 2019-02-04
-
-### Fixed
+- Fix storage.parent multiple parents found error [(#367)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/367)
 - Fix host hardware and miq_scsi_lun inconsistencies [(#363)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/363)
 - Handle duplicate storages in the refresh parser [(#361)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/361)
 - Add a test comparing classic and graph refresh for vmware [(#360)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/360)
+
+## Hammer-5 - Released 2019-04-23
+
+### Fixed
+- Added unsupported reason for reconfiguring disksize [(#382)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/382)
+
+## Hammer-3 - Released 2019-03-06
+
+### Fixed
+- Parse if a datastore is accessible from a host [(#356)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/356)
 
 ## Hammer-1 - Released 2019-01-15
 
