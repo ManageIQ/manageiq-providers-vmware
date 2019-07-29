@@ -529,12 +529,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :kind            => "modify",
         :obj             => obj,
         :changeSet       => [
-          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554449\"]", :op => "assign"),
-          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554449\"]", :op => "assign"),
-          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554455\"]", :op => "assign"),
-          RbVmomi::VIM.PropertyChange(:name => "config.network.vswitch[\"key-vim.host.VirtualSwitch-vSwitch0\"].numPortsAvailable", :op => "assign"),
+          RbVmomi::VIM.PropertyChange(
+            :name => "config.network.vswitch[\"key-vim.host.VirtualSwitch-vSwitch0\"].numPortsAvailable",
+            :op   => "assign"
+          )
         ],
-        :missingSet      => [],
+        :missingSet      => []
       )
     end
 
