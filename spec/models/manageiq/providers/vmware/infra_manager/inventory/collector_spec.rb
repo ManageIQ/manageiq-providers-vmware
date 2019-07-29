@@ -64,6 +64,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "doesn't impact unassociated inventory" do
         run_targeted_refresh(targeted_update_set([vm_power_off_object_update]))
         assert_ems
+
+        host = RbVmomi::VIM.HostSystem(vim, "host-41")
+        allow(host).to receive(:collect!).and_return(nil)
+
+        run_targeted_refresh(targeted_update_set([host_object_update(host)]))
+        assert_ems
       end
 
       it "power on a virtual machine" do
@@ -517,6 +523,21 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
+    def host_object_update(obj)
+      RbVmomi::VIM.ObjectUpdate(
+        :dynamicProperty => [],
+        :kind            => "modify",
+        :obj             => obj,
+        :changeSet       => [
+          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554449\"]", :op => "assign"),
+          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554449\"]", :op => "assign"),
+          #RbVmomi::VIM.PropertyChange(:name => "config.network.portgroup[\"key-vim.host.PortGroup-VM Network\"].port[\"key-vim.host.PortGroup.Port-33554455\"]", :op => "assign"),
+          RbVmomi::VIM.PropertyChange(:name => "config.network.vswitch[\"key-vim.host.VirtualSwitch-vSwitch0\"].numPortsAvailable", :op => "assign"),
+        ],
+        :missingSet      => [],
+      )
+    end
+
     def with_vcr(suffix = nil)
       path = described_class.name
       path << "::#{suffix}" if suffix
@@ -542,6 +563,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.guest_devices.count).to eq(64)
       expect(ems.hardwares.count).to eq(64)
       expect(ems.hosts.count).to eq(16)
+      expect(ems.host_storages.count).to eq(16)
       expect(ems.host_operating_systems.count).to eq(16)
       expect(ems.operating_systems.count).to eq(64)
       expect(ems.resource_pools.count).to eq(12)
