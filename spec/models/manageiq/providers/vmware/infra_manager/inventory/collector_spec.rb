@@ -90,6 +90,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         distributed_virtual_portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(vim, "dvportgroup-11")
         run_targeted_refresh(targeted_update_set([targeted_object_update(distributed_virtual_portgroup)]))
         assert_ems
+
+        datastore = RbVmomi::VIM::Datastore(vim, "datastore-15")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(datastore)]))
+        assert_ems
       end
 
       it "power on a virtual machine" do
