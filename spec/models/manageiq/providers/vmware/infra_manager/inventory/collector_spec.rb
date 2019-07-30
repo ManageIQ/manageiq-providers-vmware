@@ -68,7 +68,27 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         host = RbVmomi::VIM.HostSystem(vim, "host-41")
         allow(host).to receive(:collect!).and_return(nil)
 
-        run_targeted_refresh(targeted_update_set([host_object_update(host)]))
+        run_targeted_refresh(targeted_update_set([targeted_object_update(host)]))
+        assert_ems
+
+        cluster = RbVmomi::VIM::ClusterComputeResource(vim, "domain-c37")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(cluster)]))
+        assert_ems
+
+        resource_pool = RbVmomi::VIM::ResourcePool(vim, "resgroup-38")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(resource_pool)]))
+        assert_ems
+
+        datacenter = RbVmomi::VIM::Datacenter(vim, "datacenter-2")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(datacenter)]))
+        assert_ems
+
+        distributed_virtual_switch = RbVmomi::VIM::VmwareDistributedVirtualSwitch(vim, "dvs-8")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(distributed_virtual_switch)]))
+        assert_ems
+
+        distributed_virtual_portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(vim, "dvportgroup-11")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(distributed_virtual_portgroup)]))
         assert_ems
       end
 
@@ -523,17 +543,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       )
     end
 
-    def host_object_update(obj)
+    def targeted_object_update(obj)
       RbVmomi::VIM.ObjectUpdate(
         :dynamicProperty => [],
         :kind            => "modify",
         :obj             => obj,
-        :changeSet       => [
-          RbVmomi::VIM.PropertyChange(
-            :name => "config.network.vswitch[\"key-vim.host.VirtualSwitch-vSwitch0\"].numPortsAvailable",
-            :op   => "assign"
-          )
-        ],
+        :changeSet       => [],
         :missingSet      => []
       )
     end
