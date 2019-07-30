@@ -30,7 +30,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
     # to prevent issues with post-provision depending on data that isn't in VMDB yet
     return if source.ext_management_system.last_inventory_date < phase_context[:clone_vm_task_completion_time]
 
-    source.ext_management_system.vms_and_templates.find_by(:ems_ref => phase_context[:new_vm_ems_ref])
+    source.ext_management_system&.vms_and_templates&.find_by(:ems_ref => phase_context[:new_vm_ems_ref])
   end
 
   def prepare_for_clone_task
