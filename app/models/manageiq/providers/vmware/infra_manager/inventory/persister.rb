@@ -18,7 +18,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :host_hardwares)
     add_collection(infra, :host_guest_devices)
     add_collection(infra, :host_networks)
-    add_collection(infra, :host_storages, :parent_inventory_collections => %i[storages])
+    add_collection(infra, :host_storages, :parent_inventory_collections => %i[storages]) do |builder|
+      builder.add_properties(:arel => manager.host_storages.joins(:storage))
+    end
     add_collection(infra, :host_switches)
     add_collection(infra, :host_system_services)
     add_collection(infra, :host_operating_systems)

@@ -28,14 +28,24 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_datastore_host_mount(storage, datastore_ref, props)
-      props[:host].to_a.each do |host_mount|
-        persister.host_storages.build(
-          :storage    => storage,
-          :host       => persister.hosts.lazy_find(host_mount.key._ref),
-          :ems_ref    => datastore_ref,
-          :read_only  => host_mount.mountInfo.accessMode == "readOnly",
-          :accessible => host_mount.mountInfo.accessible,
-        )
+      location = parse_datastore_location(props)
+
+      # Since a targeted refresh of a single datastore can actually impact
+      # multiple Storage records in the database we have to send the
+      # host_storages for every single datastore with the same location
+      # everytime we parse a single datastore
+      cache["Datastore"].each do |mor, ds|
+        next if location != parse_datastore_location(ds)
+
+        ds[:host].to_a.each do |host_mount|
+          persister.host_storages.build(
+            :storage    => storage,
+            :host       => persister.hosts.lazy_find(host_mount.key._ref),
+            :ems_ref    => mor,
+            :read_only  => host_mount.mountInfo.accessMode == "readOnly",
+            :accessible => host_mount.mountInfo.accessible
+          )
+        end
       end
     end
 
