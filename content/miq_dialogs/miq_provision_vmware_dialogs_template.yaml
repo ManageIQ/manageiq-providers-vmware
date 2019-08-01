@@ -688,6 +688,8 @@
             unchanged: Default
           :description: Disk Format
           :required: false
+          :notes: (The Eager Zero option will greatly increase the time required to complete provisioning.)
+          :notes_display: :show
           :display: :edit
           :default: unchanged
           :data_type: :string
