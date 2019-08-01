@@ -21,13 +21,37 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Disk
     end
   end
 
-  def get_scsi_controller_info
-    inventory_hash = source.with_provider_connection do |vim|
-      vim.virtualMachineByMor(source.ems_ref_obj)
+  def build_disk_relocate_spec(datastore)
+    VimArray.new('ArrayOfVirtualMachineRelocateSpecDiskLocator') do |relocate_spec_array|
+      disks.map do |disk|
+        relocate_spec_array << VimHash.new('VirtualMachineRelocateSpecDiskLocator') do |disk_locator|
+          disk_locator.diskId = disk.key
+          disk_locator.datastore = datastore
+          disk_locator.diskBackingInfo = VimHash.new("VirtualDiskFlatVer2BackingInfo") do |bck|
+            bck.fileName = datastore
+            bck.diskMode = "persistent"
+            case get_option(:disk_format)
+            when 'thin'
+              bck.thinProvisioned = "true"
+            when 'thick'
+              bck.thinProvisioned = "false"
+              bck.eagerlyScrub = "false"
+            when 'thick_eager'
+              bck.eagerlyScrub = "true"
+              bck.thinProvisioned = "false"
+            end
+          end
+        end
+      end
     end
+  end
 
-    devs = inventory_hash.fetch_path("config", "hardware", "device") || []
-    devs.each_with_object({}) do |dev, h|
+  def disks
+    devices.select { |d| d.xsiType == "VirtualDisk" }
+  end
+
+  def get_scsi_controller_info
+    devices.each_with_object({}) do |dev, h|
       next unless dev.fetch_path("deviceInfo", "label").to_s =~ /^SCSI\s[Cc]ontroller\s.*$/
       h[dev['busNumber'].to_i] = dev
     end
@@ -73,10 +97,21 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Disk
           bck.diskMode        = get_config_spec_value(disk, 'persistent', 'VirtualDiskMode', [:backing, :diskmode])
           bck.split           = get_config_spec_value(disk, 'false', nil, [:backing, :split])
           bck.thinProvisioned = get_config_spec_value(disk, 'false', nil, [:backing, :thinprovisioned])
+          bck.eagerlyScrub    = get_config_spec_value(disk, 'false', nil, [:backing, :eagerlyscrub])
           bck.writeThrough    = get_config_spec_value(disk, 'false', nil, [:backing, :writethrough])
           bck.fileName        = backing_filename
         end
       end
     end
+  end
+
+  private
+
+  def devices
+    inventory_hash = source.with_provider_connection do |vim|
+      vim.virtualMachineByMor(source.ems_ref_obj)
+    end
+
+    @devices ||= inventory_hash.fetch_path("config", "hardware", "device") || []
   end
 end
