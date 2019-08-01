@@ -44,13 +44,34 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         expect(spec["annotation"]).to include(@vm_prov.phase_context[:new_vm_validation_guid])
       end
 
-      it "should return a transform spec" do
-        spec = @vm_prov.build_transform_spec
-        expect(spec).to be_nil
-        @vm_prov.options[:disk_format] = 'thin'
-        spec = @vm_prov.build_transform_spec
-        expect(spec).to be_kind_of(VimString)
-        expect(spec.vimType).to eq('VirtualMachineRelocateTransformation')
+      describe "disk_relocate_spec" do
+        let(:device_list) { [VimHash.new("VirtualDisk") { |d| d.key = "2000" }, VimHash.new("NotAVirtualDisk") { |d| d.key = "2001" }] }
+
+        it "thin" do
+          expect(@vm_prov).to receive(:disks).and_return(device_list)
+          @vm_prov.options[:disk_format] = 'thin'
+          spec = @vm_prov.build_disk_relocate_spec('datastore-1729')
+          expect(spec).to be_kind_of(VimArray)
+          expect(spec.first.diskBackingInfo.thinProvisioned).to eq("true")
+        end
+
+        it "thick lazy zero" do
+          expect(@vm_prov).to receive(:disks).and_return(device_list)
+          @vm_prov.options[:disk_format] = 'thick'
+          spec = @vm_prov.build_disk_relocate_spec('datastore-1729')
+          expect(spec).to be_kind_of(VimArray)
+          expect(spec.first.diskBackingInfo.eagerlyScrub).to eq("false")
+          expect(spec.first.diskBackingInfo.thinProvisioned).to eq("false")
+        end
+
+        it "thick eager zero" do
+          expect(@vm_prov).to receive(:disks).and_return(device_list)
+          @vm_prov.options[:disk_format] = 'thick_eager'
+          spec = @vm_prov.build_disk_relocate_spec('datastore-1729')
+          expect(spec).to be_kind_of(VimArray)
+          expect(spec.first.diskBackingInfo.thinProvisioned).to eq("false")
+          expect(spec.first.diskBackingInfo.eagerlyScrub).to eq("true")
+        end
       end
 
       it "should detect when a reconfigure_hardware_on_destination call is required" do
@@ -310,14 +331,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
             :name          => @target_vm_name,
             :wait          => false,
             :template      => false,
-            :transform     => nil,
             :config        => nil,
             :customization => nil,
             :linked_clone  => nil,
             :host          => dest_host_mor,
-            :datastore     => dest_datastore_mor
+            :datastore     => dest_datastore_mor,
+            :disk          => []
           }
 
+          expect(@vm_prov).to receive(:disks).and_return([])
           allow(@vm_prov).to receive(:clone_vm).with(expected_vim_clone_opts).and_return(task_mor)
 
           result = @vm_prov.start_clone clone_opts
@@ -339,13 +361,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
             :name          => @target_vm_name,
             :wait          => false,
             :template      => false,
-            :transform     => nil,
             :config        => nil,
             :customization => nil,
             :linked_clone  => nil,
-            :datastore     => dest_datastore_mor
+            :datastore     => dest_datastore_mor,
+            :disk          => []
           }
 
+          expect(@vm_prov).to receive(:disks).and_return([])
           allow(@vm_prov).to receive(:clone_vm).with(expected_vim_clone_opts).and_return(task_mor)
 
           result = @vm_prov.start_clone clone_opts
