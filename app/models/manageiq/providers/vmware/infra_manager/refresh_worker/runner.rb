@@ -8,11 +8,6 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     self.ems = @emss.first
   end
 
-  def do_before_work_loop
-    # Override Standard EmsRefreshWorker's method of queueing up a Refresh
-    # This will be done by the VimBrokerWorker, when he is ready.
-  end
-
   def before_exit(_message, _exit_code)
     stop_inventory_collector if ems.supports_streaming_refresh?
   end
