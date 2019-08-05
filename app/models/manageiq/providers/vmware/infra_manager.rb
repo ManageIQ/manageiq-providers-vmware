@@ -75,7 +75,7 @@ module ManageIQ::Providers
         end
       end
 
-      {:ticket => ticket}
+      ticket
     end
 
     def remote_console_vmrc_support_known?
