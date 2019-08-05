@@ -43,7 +43,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
 
   def remote_console_vmrc_acquire_ticket(_userid = nil, _originating_server = nil)
     validate_remote_console_acquire_ticket("vmrc")
-    ext_management_system.remote_console_vmrc_acquire_ticket
+    ticket = ext_management_system.remote_console_vmrc_acquire_ticket
+    {:ticket => ticket, :remote_url => build_vmrc_url(ticket), :proto => 'remote'}
   end
 
   def validate_remote_console_vmrc_support
@@ -127,5 +128,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     host_address = host.hostname
 
     SystemConsole.launch_proxy_if_not_local(console_args, originating_server, host_address, host_port)
+  end
+
+  private
+
+  # Method to generate the remote URI for the VMRC console
+  def build_vmrc_url(ticket)
+    url = URI::Generic.build(:scheme   => "vmrc",
+                             :userinfo => "clone:#{ticket}",
+                             :host     => host.hostname || host.ipaddress,
+                             :port     => 443,
+                             :path     => "/",
+                             :query    => "moid=#{ems_ref}").to_s
+    # VMRC doesn't like brackets around IPv6 addresses
+    url.sub(/(.*)\[/, '\1').sub(/(.*)\]/, '\1')
   end
 end
