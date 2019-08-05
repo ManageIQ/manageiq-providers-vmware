@@ -2,10 +2,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   let(:user) { FactoryBot.create(:user) }
   let(:ems) do
     FactoryBot.create(:ems_vmware,
-                       :hostname    => '192.168.252.16',
-                       :ipaddress   => '192.168.252.16',
-                       :api_version => '5.0',
-                       :uid_ems     => '2E1C1E82-BD83-4E54-9271-630C6DFAD4D1')
+                      :hostname    => '192.168.252.16',
+                      :ipaddress   => '192.168.252.16',
+                      :api_version => '5.0',
+                      :uid_ems     => '2E1C1E82-BD83-4E54-9271-630C6DFAD4D1')
+  end
+  let(:host) do
+    FactoryBot.create(:host_vmware,
+                      :ext_management_system   => ems,
+                      :hostname                => '192.168.252.4',
+                      :ipaddress               => '192.168.252.4',
+                      :next_available_vnc_port => 5901)
   end
   let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems) }
 
@@ -147,6 +154,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
   end
 
   context '#remote_console_vmrc_acquire_ticket' do
+    let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems, :host => host) }
+
     it 'normal case' do
       EvmSpecHelper.create_guid_miq_server_zone
       ems.update_attributes(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
@@ -202,13 +211,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
   context '#remote_console_vnc_acquire_ticket' do
     let(:ems) { FactoryBot.create(:ems_vmware) }
-    let(:host) do
-      FactoryBot.create(:host_vmware,
-                         :ext_management_system   => ems,
-                         :hostname                => '192.168.252.4',
-                         :ipaddress               => '192.168.252.4',
-                         :next_available_vnc_port => 5901)
-    end
     let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems, :host => host) }
 
     let(:server) { double('MiqServer') }
