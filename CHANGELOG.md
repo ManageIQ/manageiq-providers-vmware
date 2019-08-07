@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
+## Ivanchuk-Beta2
+
+### Added
+- Add thick_eager disk_format option [(#385)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/385)
+- Add disk relocate spec for eagerlyScrub backing option [(#413)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/413)
+
+### Fixed
+- Fix clone vm to template check_provision [(#424)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/424)
+- Fix HostStorages being deleted by host targeted refresh [(#421)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/421)
+- Don't start_inventory_collector in do_before_work [(#428)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/428)
+- Let the RefreshWorker queue the first full refresh [(#414)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/414)
+
 ## Unreleased as of Sprint 117 - 2019-08-05
 
 ### Added
@@ -15,7 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Fixed
 - Use the new VM's ems_ref instead of an annotation [(#408)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/408)
 
-## Ivanchuk Beta1 - Released 2019-07-29
+## Ivanchuk-Beta1 - Released 2019-07-29
 
 ### Added
 - Create a HTML5 console type on top of VNC and WebMKS [(#409)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/409)
