@@ -3,7 +3,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include Vmdb::Logging
 
   attr_reader   :ems, :inventory_cache, :saver
-  attr_accessor :exit_requested
+  attr_accessor :exit_requested, :last_full_refresh
 
   def initialize(ems, threaded: true)
     @ems             = ems
@@ -21,14 +21,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     property_filter = create_property_filter(vim)
 
     _log.info("#{log_header} Refreshing initial inventory")
-    version = initial_refresh(vim, property_filter)
+    version = full_refresh(vim, property_filter)
     _log.info("#{log_header} Refreshing initial inventory...Complete")
 
     until exit_requested
-      persister = targeted_persister_klass.new(ems)
-      parser    = parser_klass.new(inventory_cache, persister)
-
-      version = monitor_updates(vim, property_filter, version, persister, parser)
+      version = full_refresh_needed? ? full_refresh(vim, property_filter) : targeted_refresh(vim, property_filter, version)
     end
 
     _log.info("#{log_header} Monitor updates thread exited")
@@ -48,11 +45,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     self.exit_requested = true
   end
 
-  def initial_refresh(vim, property_filter)
+  def full_refresh(vim, property_filter)
     persister = full_persister_klass.new(ems)
     parser    = parser_klass.new(inventory_cache, persister)
 
-    monitor_updates(vim, property_filter, "", persister, parser)
+    version = monitor_updates(vim, property_filter, "", persister, parser)
+
+    self.last_full_refresh = Time.now.utc
+
+    version
+  end
+
+  def targeted_refresh(vim, property_filter, version)
+    persister = targeted_persister_klass.new(ems)
+    parser    = parser_klass.new(inventory_cache, persister)
+
+    monitor_updates(vim, property_filter, version, persister, parser)
   end
 
   def monitor_updates(vim, property_filter, version, persister, parser)
@@ -225,6 +233,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       s =  "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
       s << " Props: [#{prop_changes}]" if object_update.kind == "modify"
     end
+  end
+
+  def full_refresh_needed?
+    (Time.now.utc - last_full_refresh) > full_refresh_interval
+  end
+
+  def full_refresh_interval
+    (Settings.ems_refresh["vmwarews"].try(:refresh_interval) || Settings.ems_refresh.refresh_interval).to_i_with_method
   end
 
   def full_persister_klass
