@@ -2,20 +2,40 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  attr_reader   :ems, :inventory_cache, :saver
-  attr_accessor :exit_requested, :last_full_refresh
-
   def initialize(ems, threaded: true)
     @ems             = ems
     @exit_requested  = false
     @inventory_cache = ems.class::Inventory::Cache.new
     @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
+    @vim_thread      = nil
   end
 
-  def run
-    _log.info("#{log_header} Monitor updates thread started")
-
+  def start
     saver.start_thread
+    self.vim_thread = Thread.new { vim_collector }
+  end
+
+  def running?
+    vim_thread&.alive?
+  end
+
+  def stop(join_timeout = nil)
+    _log.info("#{log_header} Monitor updates thread exiting...")
+    self.exit_requested = true
+    return if join_timeout.nil?
+
+    # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
+    vim_thread&.join(join_timeout)
+    saver.stop_thread
+  end
+
+  private
+
+  attr_reader   :ems, :inventory_cache, :saver
+  attr_accessor :exit_requested, :vim_thread, :last_full_refresh
+
+  def vim_collector
+    _log.info("#{log_header} Monitor updates thread started")
 
     vim = connect
     property_filter = create_property_filter(vim)
@@ -35,14 +55,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     ems.update_attributes(:last_refresh_error => err.to_s, :last_refresh_date => Time.now.utc)
   ensure
-    saver.stop_thread
     destroy_property_filter(property_filter)
     disconnect(vim)
-  end
-
-  def stop
-    _log.info("#{log_header} Monitor updates thread exiting...")
-    self.exit_requested = true
   end
 
   def full_refresh(vim, property_filter)
@@ -80,8 +94,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version
   end
-
-  private
 
   def connect
     host = ems.hostname

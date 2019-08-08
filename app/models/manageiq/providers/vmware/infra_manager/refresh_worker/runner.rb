@@ -29,41 +29,23 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   private
 
-  attr_accessor :ems, :collector, :collector_thread
+  attr_accessor :ems, :collector
 
   def start_inventory_collector
     self.collector = ems.class::Inventory::Collector.new(ems)
-    self.collector_thread = Thread.new do
-      begin
-        collector.run
-      rescue => err
-        _log.error("Inventory collector aborted because [#{err.message}]")
-        _log.log_backtrace(err)
-        Thread.exit
-      end
-    end
-
+    collector.start
     _log.info("Started inventory collector")
   end
 
   def ensure_inventory_collector
-    return if inventory_collector_running?
+    return if collector&.running?
 
-    _log.warn("Inventory collector thread not running, restarting...")
+    _log.warn("Inventory collector thread not running, restarting...") unless collector.nil?
     start_inventory_collector
   end
 
   def stop_inventory_collector
-    collector.stop
-
-    # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
-    collector_thread.join(60.seconds) # TODO: make this configurable
-
-    self.collector_thread = nil
+    collector&.stop(60.seconds)
     self.collector = nil
-  end
-
-  def inventory_collector_running?
-    collector_thread&.alive?
   end
 end
