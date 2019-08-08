@@ -129,8 +129,8 @@ describe MiqVimBrokerWorker::Runner do
         expect(MiqVimBroker.cacheScope).to eq(:cache_scope_core)
       end
 
-      it "with ems_inventory role using update_driven_refresh" do
-        stub_settings(:prototype => {:ems_vmware => {:update_driven_refresh => true}})
+      it "with ems_inventory role using streaming_refresh" do
+        stub_settings(:ems_refresh => {:vmwarews => {:streaming_refresh => true}})
         @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
         expect(MiqVimBroker).to receive(:new).with(:server).once
         @vim_broker_worker.create_miq_vim_broker_server

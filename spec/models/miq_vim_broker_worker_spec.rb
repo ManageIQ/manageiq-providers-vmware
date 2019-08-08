@@ -8,12 +8,12 @@ describe MiqVimBrokerWorker do
     expect(described_class.emses_to_monitor).to match_array @zone.ext_management_systems
   end
 
-  context "update_driven_refresh" do
+  context "streaming_refresh" do
     before do
       stub_settings_merge(
-        :prototype => {
-          :ems_vmware => {
-            :update_driven_refresh => true
+        :ems_refresh => {
+          :vmwarews => {
+            :streaming_refresh => true
           }
         }
       )
@@ -27,9 +27,9 @@ describe MiqVimBrokerWorker do
   context "standard refresh" do
     before do
       stub_settings_merge(
-        :prototype => {
-          :ems_vmware => {
-            :update_driven_refresh => false
+        :ems_refresh => {
+          :vmwarews => {
+            :streaming_refresh => false
           }
         }
       )

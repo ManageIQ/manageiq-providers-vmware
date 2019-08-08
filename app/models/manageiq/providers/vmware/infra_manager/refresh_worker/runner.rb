@@ -1,7 +1,7 @@
 class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageIQ::Providers::BaseManager::RefreshWorker::Runner
-  # When using update_driven_refresh we don't need to use the VimBrokerWorker
-  self.require_vim_broker           = !Settings.prototype.ems_vmware.update_driven_refresh
-  self.delay_startup_for_vim_broker = !Settings.prototype.ems_vmware.update_driven_refresh
+  # When using streaming_refresh we don't need to use the VimBrokerWorker
+  self.require_vim_broker           = !Settings.ems_refresh.vmwarews.streaming_refresh
+  self.delay_startup_for_vim_broker = !Settings.ems_refresh.vmwarews.streaming_refresh
 
   def after_initialize
     super

@@ -11,6 +11,8 @@
         :power:
           :critical:
 :ems_refresh:
+  :vmwarews:
+    :streaming_refresh: true
   :vmware_cloud:
     :inventory_object_refresh: false
     :get_public_images: false
@@ -27,9 +29,6 @@
     :user:
 #:log:
 #  :level_vim: warn
-:prototype:
-  :ems_vmware:
-    :update_driven_refresh: false
 :workers:
   :worker_base:
     :event_catcher:
