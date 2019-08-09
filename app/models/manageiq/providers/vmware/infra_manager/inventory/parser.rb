@@ -270,6 +270,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_virtual_app parse_resource_pool
 
+  def parse_pbm_profile(object, _kind, props)
+    persister.storage_profiles.build(
+      :ems_ref      => object.profileId.uniqueId,
+      :name         => props[:name],
+      :profile_type => props[:profileCategory]
+    )
+  end
+  alias parse_pbm_capability_profile parse_pbm_profile
+
   def parse_storage_pod(object, kind, props)
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"

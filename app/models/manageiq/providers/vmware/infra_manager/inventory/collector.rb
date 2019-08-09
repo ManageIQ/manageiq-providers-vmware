@@ -65,8 +65,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version, updated_objects = monitor_updates(vim, property_filter, "")
 
-    collect_storage_profiles(vim)
     parse_updates(vim, parser, updated_objects)
+    parse_storage_profiles(vim, parser)
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
@@ -232,13 +232,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     @uncached_prop_set[obj.class.wsdl_name]
   end
 
-  def collect_storage_profiles(vim)
+  def parse_storage_profiles(vim, parser)
     pbm = RbVmomi::PBM.connect(vim, :insecure => true)
 
-    storage_profile_type = RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
-    storage_profiles = pbm.serviceContent.profileManager.PbmQueryProfile(:resourceType => storage_profile_type)
+    storage_profiles = pbm.serviceContent.profileManager.PbmRetrieveContent(
+      :profileIds => pbm.serviceContent.profileManager.PbmQueryProfile(
+        :resourceType => RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
+      )
+    )
     storage_profiles.each do |profile|
-      matching_hubs = pbm.serviceContent.placementSolver.PbmQueryMatchingHub(:profile => profile)
+      inventory_cache[profile.class.wsdl_name][profile.profileId.uniqueId] = profile.props
+      parser.parse(profile, "enter", profile.props)
     end
   end
 
