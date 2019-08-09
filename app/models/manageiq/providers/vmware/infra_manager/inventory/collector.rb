@@ -63,7 +63,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     persister = full_persister_klass.new(ems)
     parser    = parser_klass.new(inventory_cache, persister)
 
-    version = monitor_updates(vim, property_filter, "", persister, parser)
+    version, updated_objects = monitor_updates(vim, property_filter, "")
+
+    collect_storage_profiles(vim)
+    parse_updates(vim, parser, updated_objects)
+    save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
 
@@ -74,10 +78,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     persister = targeted_persister_klass.new(ems)
     parser    = parser_klass.new(inventory_cache, persister)
 
-    monitor_updates(vim, property_filter, version, persister, parser)
+    version, updated_objects = monitor_updates(vim, property_filter, version)
+
+    parse_updates(vim, parser, updated_objects)
+    save_inventory(persister)
+
+    version
   end
 
-  def monitor_updates(vim, property_filter, version, persister, parser)
+  def monitor_updates(vim, property_filter, version)
     updated_objects = []
 
     begin
@@ -88,11 +97,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       updated_objects.concat(process_update_set(property_filter, update_set))
     end while update_set.truncated
 
-    parser.parse_ext_management_system(ems, vim.serviceContent.about)
-    parse_updates(updated_objects, parser)
-    save_inventory(persister)
-
-    version
+    return version, updated_objects
   end
 
   def connect
@@ -151,7 +156,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     updates
   end
 
-  def parse_updates(updated_objects, parser)
+  def parse_updates(vim, parser, updated_objects)
     updated_objects.each do |managed_object, update_kind, cached_props|
       uncached_props = retrieve_uncached_props(managed_object)
       props          = uncached_props.present? ? cached_props.deep_merge(uncached_props) : cached_props
@@ -225,6 +230,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if obj.nil?
 
     @uncached_prop_set[obj.class.wsdl_name]
+  end
+
+  def collect_storage_profiles(vim)
+    pbm = RbVmomi::PBM.connect(vim, :insecure => true)
+
+    storage_profile_type = RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
+    storage_profiles = pbm.serviceContent.profileManager.PbmQueryProfile(:resourceType => storage_profile_type)
+    storage_profiles.each do |profile|
+      matching_hubs = pbm.serviceContent.placementSolver.PbmQueryMatchingHub(:profile => profile)
+    end
   end
 
   def save_inventory(persister)
