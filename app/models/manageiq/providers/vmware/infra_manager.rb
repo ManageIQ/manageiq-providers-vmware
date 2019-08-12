@@ -145,10 +145,7 @@ module ManageIQ::Providers
     end
 
     def verify_credentials(auth_type = nil, _options = {})
-      self.class.validate_connection do
-        with_provider_connection(:use_broker => false, :auth_type => auth_type) {}
-      end
-      true
+      self.class.raw_connect(:use_broker => false, :ems => self)
     end
 
     def reset_vim_cache
