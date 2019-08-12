@@ -924,7 +924,6 @@ module ManageIQ::Providers
             :connection_state      => runtime['connectionState'],
             :cpu_affinity          => cpu_affinity,
             :template              => template,
-            :linked_clone          => vm_inv_to_linked_clone(vm_inv),
             :fault_tolerance       => vm_inv_to_fault_tolerance(vm_inv),
 
             :memory_reserve        => memory && memory["reservation"],
@@ -968,10 +967,6 @@ module ManageIQ::Providers
         unshared  = inv.fetch_path("summary", "storage", "unshared")
         committed = inv.fetch_path("summary", "storage", "committed")
         unshared.nil? || committed.nil? ? nil : unshared.to_i != committed.to_i
-      end
-
-      def self.vm_inv_to_linked_clone(inv)
-        vm_inv_to_shared(inv) && inv.fetch_path("summary", "config", "ftInfo", "instanceUuids").to_miq_a.length <= 1
       end
 
       def self.vm_inv_to_fault_tolerance(inv)
