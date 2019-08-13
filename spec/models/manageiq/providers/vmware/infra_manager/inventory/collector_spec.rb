@@ -566,7 +566,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
     def run_full_refresh
       collector.stop # Calling stop before run only runs this once
-      collector.run
+      collector.send(:vim_collector)
     end
 
     def assert_ems
