@@ -191,7 +191,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         parser          = ems.class::Inventory::Parser.new(cache, persister)
         updated_objects = collector.send(:process_update_set, property_filter, update_set)
 
-        collector.send(:parse_updates, updated_objects, parser)
+        collector.send(:parse_updates, vim, updated_objects, parser)
         collector.send(:save_inventory, persister)
       end
 

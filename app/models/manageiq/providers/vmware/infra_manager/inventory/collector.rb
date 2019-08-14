@@ -162,6 +162,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def parse_updates(vim, parser, updated_objects)
+    parser.parse_ext_management_system(ems, vim.serviceContent.about)
+
     updated_objects.each do |managed_object, update_kind, cached_props|
       uncached_props = retrieve_uncached_props(managed_object)
       props          = uncached_props.present? ? cached_props.deep_merge(uncached_props) : cached_props
