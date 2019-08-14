@@ -126,6 +126,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     conn
   end
 
+  def pbm_connect(vim)
+    require "rbvmomi/pbm"
+    RbVmomi::PBM.connect(vim, :insecure => true)
+  end
+
   def disconnect(vim)
     return if vim.nil?
 
@@ -233,7 +238,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def parse_storage_profiles(vim, parser)
-    pbm = RbVmomi::PBM.connect(vim, :insecure => true)
+    pbm = pbm_connect(vim)
 
     storage_profiles = pbm.serviceContent.profileManager.PbmRetrieveContent(
       :profileIds => pbm.serviceContent.profileManager.PbmQueryProfile(
