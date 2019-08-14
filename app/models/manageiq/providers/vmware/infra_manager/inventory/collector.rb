@@ -248,7 +248,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     )
 
     storage_profiles = profile_manager.PbmRetrieveContent(:profileIds => profile_ids) unless profile_ids.empty?
-    storage_profiles.each do |profile|
+    storage_profiles.to_a.each do |profile|
       parser.parse(profile, "enter", profile.props)
     end
   end
