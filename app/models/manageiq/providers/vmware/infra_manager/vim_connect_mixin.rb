@@ -40,6 +40,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       validate_connection do
         vim = MiqFaultTolerantVim.new(options)
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
+        true
       end
     end
 
