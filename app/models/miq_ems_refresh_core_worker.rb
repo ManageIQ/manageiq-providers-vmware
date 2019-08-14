@@ -7,6 +7,7 @@ class MiqEmsRefreshCoreWorker < MiqWorker
 
   def self.has_required_role?
     return false if Settings.ems_refresh.vmwarews.streaming_refresh
+
     super
   end
 

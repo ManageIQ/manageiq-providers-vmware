@@ -3,6 +3,7 @@ require 'VMwareWebService/MiqVimBroker'
 
 describe MiqVimBrokerWorker::Runner do
   before do
+    stub_settings_merge(:ems_refresh => {:vmwarews => {:streaming_refresh => false}})
     _guid_2, _server_2, @zone_2 = EvmSpecHelper.create_guid_miq_server_zone
     _guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
     @ems = FactoryBot.create(:ems_vmware_with_authentication, :zone => @zone)
