@@ -240,13 +240,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def parse_storage_profiles(vim, parser)
     pbm = pbm_connect(vim)
 
-    storage_profiles = pbm.serviceContent.profileManager.PbmRetrieveContent(
-      :profileIds => pbm.serviceContent.profileManager.PbmQueryProfile(
-        :resourceType => RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
-      )
+    profile_manager = pbm.serviceContent.profileManager
+    profile_ids = profile_manager.PbmQueryProfile(
+      :resourceType => RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
     )
+
+    storage_profiles = profile_manager.PbmRetrieveContent(:profileIds => profile_ids) unless profile_ids.empty?
     storage_profiles.each do |profile|
-      inventory_cache[profile.class.wsdl_name][profile.profileId.uniqueId] = profile.props
       parser.parse(profile, "enter", profile.props)
     end
   end
