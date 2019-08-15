@@ -5,7 +5,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
   let!(:ems) do
     _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
-    hostname = Rails.application.secrets.vmware.try(:[], "hostname") || "HOSTNAME"
+    hostname = Rails.application.secrets.vmware.try(:[], :hostname) || "HOSTNAME"
     FactoryBot.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
       # NOTE: VCR filter_sensitive_data was replacing rootFolder with VMWARE_USERNAME and
       # vmware_soap_string_abcdef with VMWARE_PASSWORD_string_abcdef, given these are the
@@ -52,7 +52,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     context "targeted refresh" do
-      let(:vim)             { RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5") }
+      let(:vim) do
+        RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5").tap do |vim|
+          service_content = RbVmomi::VIM::ServiceContent(
+            :about => RbVmomi::VIM::AboutInfo(
+              :apiVersion   => "5.5",
+              :instanceUuid => "D6EB1D64-05B2-4937-BFF6-6F77C6E647B7"
+            )
+          )
+          vim.instance_variable_set(:@serviceContent, service_content)
+        end
+      end
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
       let(:cache)           { collector.send(:inventory_cache) }
 
@@ -191,7 +201,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         parser          = ems.class::Inventory::Parser.new(cache, persister)
         updated_objects = collector.send(:process_update_set, property_filter, update_set)
 
-        collector.send(:parse_updates, updated_objects, parser)
+        collector.send(:parse_updates, vim, parser, updated_objects)
         collector.send(:save_inventory, persister)
       end
 
