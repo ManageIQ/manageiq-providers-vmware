@@ -9,5 +9,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Template < ManageIQ::Providers:
     end
   end
 
+  supports :terminate
   supports :rename
 end
