@@ -1,6 +1,7 @@
 module ManageIQ::Providers
   class Vmware::InfraManager < InfraManager
     require_nested :DistributedVirtualSwitch
+    require_nested :OrchestrationTemplate
     require_nested :EventCatcher
     require_nested :EventParser
     require_nested :RefreshWorker
