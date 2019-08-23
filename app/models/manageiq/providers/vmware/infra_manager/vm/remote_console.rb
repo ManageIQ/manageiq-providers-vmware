@@ -136,7 +136,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   def build_vmrc_url(ticket)
     url = URI::Generic.build(:scheme   => "vmrc",
                              :userinfo => "clone:#{ticket}",
-                             :host     => host.hostname || host.ipaddress,
+                             :host     => ext_management_system.hostname || ext_management_system.ipaddress,
                              :port     => 443,
                              :path     => "/",
                              :query    => "moid=#{ems_ref}").to_s
