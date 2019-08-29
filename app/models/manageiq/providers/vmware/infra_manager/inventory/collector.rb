@@ -91,7 +91,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     begin
       update_set = wait_for_updates(vim, version)
-      return version if update_set.nil?
+      break if update_set.nil?
 
       version = update_set.version
       updated_objects.concat(process_update_set(property_filter, update_set))
@@ -243,13 +243,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     pbm = pbm_connect(vim)
 
     profile_manager = pbm.serviceContent.profileManager
-    profile_ids = profile_manager.PbmQueryProfile(
+    profile_ids = pbm.serviceContent.profileManager.PbmQueryProfile(
       :resourceType => RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
     )
 
-    storage_profiles = profile_manager.PbmRetrieveContent(:profileIds => profile_ids) unless profile_ids.empty?
+    return if profile_ids.empty?
+
+    storage_profiles = pbm.serviceContent.profileManager.PbmRetrieveContent(:profileIds => profile_ids)
     storage_profiles.to_a.each do |profile|
-      parser.parse(profile, "enter", profile.props)
+      persister_storage_profile = parser.parse(profile, "enter", profile.props)
+
+      matching_hubs = pbm.serviceContent.placementSolver.PbmQueryMatchingHub(:profile => profile.profileId)
+      matching_hubs.to_a.each do |placement_hub|
+        next unless placement_hub.hubType == "Datastore"
+
+        parser.parse_pbm_placement_hub(persister_storage_profile, placement_hub, "enter", placement_hub.props)
+      end
     end
   end
 
