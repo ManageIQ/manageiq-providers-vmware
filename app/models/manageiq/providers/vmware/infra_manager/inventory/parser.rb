@@ -279,6 +279,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_pbm_capability_profile parse_pbm_profile
 
+  def parse_pbm_placement_hub(persister_storage_profile, _object, _kind, props)
+    datastore = cache["Datastore"][props[:hubId]]
+    return if datastore.nil?
+
+    persister_storage = persister.storages.lazy_find(parse_datastore_location(datastore))
+    persister.storage_profile_storages.build(
+      :storage_profile => persister_storage_profile,
+      :storage         => persister_storage
+    )
+  end
+
   def parse_storage_pod(object, kind, props)
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
