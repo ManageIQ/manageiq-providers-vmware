@@ -212,6 +212,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       pnics.to_a.each do |pnic|
         name = uid = pnic.device
 
+        link_speed  = pnic.linkSpeed&.speedMb
+        link_speed *= 1000 if link_speed
+
         persister.host_guest_devices.build(
           :hardware        => hardware,
           :uid_ems         => uid,
@@ -221,6 +224,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :present         => true,
           :controller_type => 'ethernet',
           :address         => pnic.mac,
+          :speed           => link_speed
         )
       end
     end
