@@ -565,6 +565,9 @@ module ManageIQ::Providers
 
             name = uid = data['device']
 
+            link_speed  = data.dig("linkSpeed", "speedMb")&.to_i
+            link_speed *= 1000 if link_speed
+
             new_result = {
               :uid_ems         => uid,
               :device_name     => name,
@@ -572,7 +575,8 @@ module ManageIQ::Providers
               :location        => data['pci'],
               :present         => true,
               :controller_type => 'ethernet',
-              :address         => data['mac']
+              :address         => data['mac'],
+              :speed           => link_speed
             }
             new_result[:switch] = switch unless switch.nil?
 

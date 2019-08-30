@@ -18,6 +18,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.network.pnic[*].key",
       "config.network.pnic[*].pci",
       "config.network.pnic[*].mac",
+      "config.network.pnic[*].linkSpeed",
       "config.network.portgroup[*].computedPolicy.security.allowPromiscuous",
       "config.network.portgroup[*].computedPolicy.security.forgedTransmits",
       "config.network.portgroup[*].computedPolicy.security.macChanges",
