@@ -99,6 +99,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
           add_disks(vim_obj, vmcs, hardware, options[:disk_add])       if options[:disk_add]
 
           remove_network_adapters(vim_obj, vmcs, hardware, options[:network_adapter_remove]) if options[:network_adapter_remove]
+          edit_network_adapters(vim_obj, vmcs, hardware, options[:network_adapter_edit])     if options[:network_adapter_edit]
           add_network_adapters(vim_obj, vmcs, hardware, options[:network_adapter_add])       if options[:network_adapter_add]
 
           connect_cdroms(vim_obj, vmcs, hardware, options[:cdrom_connect])       if options[:cdrom_connect]
@@ -164,6 +165,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   def add_network_adapters(vim_obj, vmcs, hardware, network_adapters)
     network_adapters.each do |n|
       add_network_adapter_config_spec(vim_obj, vmcs, hardware, n)
+    end
+  end
+
+  def edit_network_adapters(vim_obj, vmcs, hardware, network_adapters)
+    network_adapters.each do |n|
+      edit_network_adapter_config_spec(vim_obj, vmcs, hardware, n)
     end
   end
 
@@ -357,6 +364,33 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     end
   end
 
+  def edit_network_adapter_config_spec(vim_obj, vmcs, hardware, options)
+    device_name = options[:name]
+    network_vlan = options[:network]
+
+    _log.info("Change NIC #{device_name} to portGroup #{network_vlan}")
+    device = vim_obj.getDeviceByLabel(device_name, hardware)
+    raise "edit_network_adapter_config_spec: NIC with name #{device_name} was not found." if device.nil?
+
+    lan = Lan.find_by(:name => network_vlan, :switch => host.switches)
+    raise "edit_network_adapter_config_spec: network name '#{network_vlan}' not found" unless lan
+
+    if lan.switch.shared
+      device.backing.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |dev|
+        dev.portgroupKey = lan.uid_ems
+        dev.switchUuid = lan.switch.switch_uuid
+      end
+    else
+      device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |dev|
+        dev.deviceName = network_vlan
+      end
+    end
+
+    add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
+      vdcs.device = device
+    end
+  end
+
   def connect_cdrom_config_spec(vim_obj, vmcs, hardware, cdrom)
     device = vim_obj.getDeviceByLabel(cdrom[:device_name], hardware)
     raise "connect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
@@ -423,6 +457,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   end
 
   def options_requiring_connection
-    %i(disk_remove disk_add disk_resize network_adapter_add network_adapter_remove cdrom_connect cdrom_disconnect)
+    %i[disk_remove disk_add disk_resize network_adapter_add network_adapter_remove network_adapter_edit cdrom_connect cdrom_disconnect]
   end
 end
