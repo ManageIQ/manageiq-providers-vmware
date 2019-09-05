@@ -244,8 +244,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     require 'vsphere-automation-content'
     require 'vsphere-automation-cis'
 
-    username, password = ems.auth_user_pwd
-
     configuration = VSphereAutomation::Configuration.new.tap do |c|
       c.host = ems.hostname
       c.username = ems.auth_user_pwd.first
@@ -254,21 +252,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       c.verify_ssl = false
       c.verify_ssl_host = false
     end
-    
+
     api_client = VSphereAutomation::ApiClient.new(configuration)
     VSphereAutomation::CIS::SessionApi.new(api_client).create('')
     api_libs = VSphereAutomation::Content::LibraryApi.new(api_client)
-    lib_ids = api_libs.list.value
-
     api_items = VSphereAutomation::Content::LibraryItemApi.new(api_client)
-    items = lib_ids.each_with_object({}) do |id, h|
-      content_lib = api_libs.get(id).value
-      parser.parse_content_library(content_lib)
-      h[content_lib] = api_items.list(id).value.each_with_object([]) do |item_id, l|
-        l.push(api_items.get(item_id).value)
+
+    api_libs.list.value.each do |lib_id|
+      api_items.list(lib_id).value.each do |item_id|
+        parser.parse_content_library_item(api_items.get(item_id).value)
       end
     end
-
   end
 
   def parse_storage_profiles(vim, parser)
