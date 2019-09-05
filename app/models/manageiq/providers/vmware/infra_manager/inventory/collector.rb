@@ -67,7 +67,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     parse_updates(vim, parser, updated_objects)
     parse_storage_profiles(vim, parser)
-    parse_content_libraries(parser)
+    if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
+      parse_content_libraries(parser)
+    end
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
