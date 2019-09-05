@@ -20,7 +20,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   def do_work
     if ems.supports_streaming_refresh?
       ensure_inventory_collector
-    elsif inventory_collector_running?
+    elsif collector&.running?
       stop_inventory_collector
     end
 
