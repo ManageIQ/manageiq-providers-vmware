@@ -5,14 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Ivanchuk RC1
+## Ivanchuk-1
 
 ### Added
 - Build the remote console URL for VMRC consoles when making a ticket [(#429)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/429)
-
-## Ivanchuk Beta2 - Released 2019-08-15
-
-### Added
 - Add thick_eager disk_format option [(#385)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/385)
 - Add disk relocate spec for eagerlyScrub backing option [(#413)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/413)
 
