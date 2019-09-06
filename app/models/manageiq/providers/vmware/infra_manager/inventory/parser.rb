@@ -332,6 +332,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_virtual_machine_snapshots(vm, props)
   end
 
+  def parse_content_library_item(library_item)
+    props = {
+      :ems_ref     => library_item.id,
+      :name        => library_item.name,
+      :description => library_item.description,
+      :content     => library_item.type # TODO: currently 'ovf|iso|file'
+    }
+    persister.orchestration_templates.build(props)
+  end
+
   def lazy_find_managed_object(managed_object)
     return if managed_object.nil?
 

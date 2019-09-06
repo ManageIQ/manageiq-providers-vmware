@@ -67,6 +67,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     parse_updates(vim, parser, updated_objects)
     parse_storage_profiles(vim, parser)
+    if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
+      parse_content_libraries(parser)
+    end
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
@@ -237,6 +240,31 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if obj.nil?
 
     @uncached_prop_set[obj.class.wsdl_name]
+  end
+
+  def parse_content_libraries(parser)
+    require 'vsphere-automation-content'
+    require 'vsphere-automation-cis'
+
+    configuration = VSphereAutomation::Configuration.new.tap do |c|
+      c.host = ems.hostname
+      c.username = ems.auth_user_pwd.first
+      c.password = ems.auth_user_pwd.last
+      c.scheme = 'https'
+      c.verify_ssl = false
+      c.verify_ssl_host = false
+    end
+
+    api_client = VSphereAutomation::ApiClient.new(configuration)
+    VSphereAutomation::CIS::SessionApi.new(api_client).create('')
+    api_libs = VSphereAutomation::Content::LibraryApi.new(api_client)
+    api_items = VSphereAutomation::Content::LibraryItemApi.new(api_client)
+
+    api_libs.list.value.each do |lib_id|
+      api_items.list(lib_id).value.each do |item_id|
+        parser.parse_content_library_item(api_items.get(item_id).value)
+      end
+    end
   end
 
   def parse_storage_profiles(vim, parser)
