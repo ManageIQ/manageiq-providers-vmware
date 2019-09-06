@@ -40,9 +40,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vm_parent_blue_folders)
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
-    add_collection(infra, :orchestration_templates) do |builder|
-      builder.add_default_values(:ems_id => manager.id)
-    end
+    add_collection(infra, :orchestration_templates, &:add_common_default_values)
   end
 
   def vim_class_to_collection(managed_object)
