@@ -368,7 +368,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     device_name = options[:name]
     network_vlan = options[:network]
 
-    _log.info("Change NIC #{device_name} to portGroup #{network_vlan}")
     device = vim_obj.getDeviceByLabel(device_name, hardware)
     raise "edit_network_adapter_config_spec: NIC with name #{device_name} was not found." if device.nil?
 
@@ -376,11 +375,15 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     raise "edit_network_adapter_config_spec: network name '#{network_vlan}' not found" unless lan
 
     if lan.switch.shared
-      device.backing.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |dev|
-        dev.portgroupKey = lan.uid_ems
-        dev.switchUuid = lan.switch.switch_uuid
+      _log.info("Change NIC #{device_name} to VirtualEthernetCardDistributedVirtualPortBackingInfo #{network_vlan}")
+      device.backing = VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |dev_backing|
+        dev_backing.port = VimHash.new("DistributedVirtualSwitchPortConnection") do |dev_dvs|
+          dev_dvs.portgroupKey = lan.uid_ems
+          dev_dvs.switchUuid = lan.switch.switch_uuid
+        end
       end
     else
+      _log.info("Change NIC #{device_name} to VirtualEthernetCardNetworkBackingInfo #{network_vlan}")
       device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |dev|
         dev.deviceName = network_vlan
       end
