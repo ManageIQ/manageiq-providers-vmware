@@ -262,13 +262,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(Disk.count).to eq(421)
     expect(GuestDevice.count).to eq(135)
     expect(Hardware.count).to eq(105)
-    expect(Lan.count).to eq(16)
+    expect(Lan.count).to eq(18)
     expect(MiqScsiLun.count).to eq(73)
     expect(MiqScsiTarget.count).to eq(73)
     expect(Network.count).to eq(75)
     expect(OperatingSystem.count).to eq(105)
     expect(Snapshot.count).to eq(29)
-    expect(Switch.count).to eq(9)
+    expect(Switch.count).to eq(11)
     expect(SystemService.count).to eq(29)
 
     expect(Relationship.count).to eq(247)
@@ -495,7 +495,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :running      => true
     )
 
-    expect(@host.switches.size).to eq(3)
+    expect(@host.switches.size).to eq(4)
 
     dvswitch = @host.switches.find_by(:name => "DC1_DVS")
     expect(dvswitch).to have_attributes(
@@ -559,6 +559,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :computed_allow_promiscuous => true,
       :computed_forged_transmits  => true,
       :computed_mac_changes       => true
+    )
+
+    opaque_switch = @host.switches.find_by(:uid_ems => "82 6f 15 38 57 ff 40 03-aa b1 0e 96 0e 11 ce a6")
+    expect(opaque_switch).to have_attributes(
+      :name        => "NSX_Switch1",
+      :uid_ems     => "82 6f 15 38 57 ff 40 03-aa b1 0e 96 0e 11 ce a6",
+      :shared      => nil,
+      :switch_uuid => nil
+    )
+
+    opaque_network = opaque_switch.lans.find_by(:uid_ems => "2aa2e41b-8b23-4043-ae1d-1e191cab15f4")
+    expect(opaque_network).to have_attributes(
+      :name    => "NSX_Network2",
+      :uid_ems => "2aa2e41b-8b23-4043-ae1d-1e191cab15f4"
     )
 
     expect(@host.hardware).to have_attributes(
