@@ -3,7 +3,7 @@ describe MiqEmsRefreshCoreWorker do
   before do
     FactoryBot.create(:server_role, :name => 'ems_inventory')
     my_server = EvmSpecHelper.local_miq_server
-    my_server.update_attributes(:role => "ems_inventory")
+    my_server.update(:role => "ems_inventory")
     my_server.activate_roles("ems_inventory")
   end
 

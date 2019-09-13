@@ -134,7 +134,7 @@ class MiqEmsRefreshCoreWorker::Runner < MiqWorker::Runner
 
     unless new_attrs.blank?
       _log.info("#{log_prefix} Updating Vm id: [#{vm.id}], name: [#{vm.name}] with the following attributes: #{new_attrs.inspect}")
-      vm.update_attributes(new_attrs)
+      vm.update(new_attrs)
     end
   end
 
@@ -169,7 +169,7 @@ class MiqEmsRefreshCoreWorker::Runner < MiqWorker::Runner
 
     unless new_attrs_by_nic_uid.empty?
       _log.info("#{log_prefix} Updating Vm id: [#{vm.id}], name: [#{vm.name}] with the following network attributes: #{new_attrs_by_nic_uid.inspect}")
-      new_attrs_by_nic_uid.each { |uid, new_attrs| nics_by_uid[uid].network.update_attributes(new_attrs) }
+      new_attrs_by_nic_uid.each { |uid, new_attrs| nics_by_uid[uid].network.update(new_attrs) }
     end
   end
 end

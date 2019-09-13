@@ -53,7 +53,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.error("#{log_header} Refresh failed")
     _log.log_backtrace(err)
 
-    ems.update_attributes(:last_refresh_error => err.to_s, :last_refresh_date => Time.now.utc)
+    ems.update(:last_refresh_error => err.to_s, :last_refresh_date => Time.now.utc)
   ensure
     destroy_property_filter(property_filter)
     disconnect(vim)

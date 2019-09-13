@@ -33,28 +33,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
       end
 
       it "08" do
-        vm.hardware.update_attributes(:virtual_hw_version => "08")
+        vm.hardware.update(:virtual_hw_version => "08")
         expect(subject).to eq(32)
       end
 
       it "09" do
-        vm.hardware.update_attributes(:virtual_hw_version => "09")
+        vm.hardware.update(:virtual_hw_version => "09")
         expect(subject).to eq(64)
       end
 
       it "10" do
-        vm.hardware.update_attributes(:virtual_hw_version => "10")
+        vm.hardware.update(:virtual_hw_version => "10")
         expect(subject).to eq(64)
       end
 
       it "11" do
-        vm.hardware.update_attributes(:virtual_hw_version => "11")
+        vm.hardware.update(:virtual_hw_version => "11")
         expect(subject).to eq(128)
       end
     end
 
     it "small host logical cpus" do
-      @host.hardware.update_attributes(:cpu_total_cores => 4)
+      @host.hardware.update(:cpu_total_cores => 4)
       expect(subject).to eq(4)
     end
 
@@ -63,7 +63,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
     end
 
     it 'when no host' do
-      vm.update_attributes(:host_id => nil)
+      vm.update(:host_id => nil)
       expect(subject).to eq(vm.max_total_vcpus_by_version)
     end
   end
@@ -86,14 +86,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
       end
 
       it "vm_vmware virtual_hw_version != 07" do
-        vm.hardware.update_attributes(:virtual_hw_version => "08")
+        vm.hardware.update(:virtual_hw_version => "08")
         expect(subject["numCoresPerSocket"]).to eq(2)
       end
     end
 
     context "Running VM" do
       before do
-        vm.update_attributes(:raw_power_state => 'poweredOn')
+        vm.update(:raw_power_state => 'poweredOn')
       end
 
       context "with CPU Hot-Add disabled" do
@@ -105,7 +105,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
 
       context "with CPU Hot-Add enabled" do
         before do
-          vm.update_attributes(:cpu_hot_add_enabled    => true,
+          vm.update(:cpu_hot_add_enabled    => true,
                                :cpu_hot_remove_enabled => false)
         end
 
@@ -138,7 +138,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
 
       context "with Memory Hot-Add enabled" do
         before do
-          vm.update_attributes(:memory_hot_add_enabled => true,
+          vm.update(:memory_hot_add_enabled => true,
                                :memory_hot_add_limit   => 2048)
         end
 

@@ -51,14 +51,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
 
       it 'is not available if tools is not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
 
       it 'is not available even if tools is installed' do
         vm_status[:tools_status] = nil
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
@@ -69,7 +69,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
 
       it 'is not available if tools not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("tools")
       end
@@ -89,14 +89,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
 
       it 'is not available if tools is not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
 
       it 'is not available even if tools is installed' do
         vm_status[:tools_status] = nil
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
@@ -107,7 +107,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
 
       it 'is not available if tools not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
-        vm.update_attributes(vm_status)
+        vm.update(vm_status)
         expect(vm.public_send("supports_#{op}?")).to be false
         expect(vm.unsupported_reason(op)).to include("tools")
       end
@@ -124,7 +124,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       let(:power_state) {{:raw_power_state => power_state_on}}
 
       it "is allowed" do
-        vm.update_attributes(power_state)
+        vm.update(power_state)
         expect(vm.snapshotting_memory_allowed?).to be_truthy
       end
     end
@@ -132,7 +132,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     context "when powered off" do
       let(:power_state) {{:raw_power_state => power_state_suspended}}
       it "is not allowed" do
-        vm.update_attributes(power_state)
+        vm.update(power_state)
         expect(vm.snapshotting_memory_allowed?).to be_falsy
       end
     end

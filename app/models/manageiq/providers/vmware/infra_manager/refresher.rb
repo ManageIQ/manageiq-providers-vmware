@@ -57,7 +57,7 @@ module ManageIQ::Providers
       def save_inventory(ems, target, hashes)
         Benchmark.realtime_block(:db_save_inventory) do
           # TODO: really wanna kill this @ems_data instance var
-          ems.update_attributes(@ems_data) unless @ems_data.nil?
+          ems.update(@ems_data) unless @ems_data.nil?
           EmsRefresh.save_ems_inventory(ems, hashes, target)
         end
       end
@@ -78,7 +78,7 @@ module ManageIQ::Providers
       end
 
       def set_last_inventory_date(ems)
-        ems.update_attributes!(:last_inventory_date => @last_inventory_date)
+        ems.update!(:last_inventory_date => @last_inventory_date)
       end
 
       #

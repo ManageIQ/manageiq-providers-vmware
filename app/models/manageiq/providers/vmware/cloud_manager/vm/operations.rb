@@ -15,6 +15,6 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations
       response = service.delete_vapp(ems_ref)
       service.process_task(response.body)
     end
-    update_attributes!(:raw_power_state => "off")
+    update!(:raw_power_state => "off")
   end
 end

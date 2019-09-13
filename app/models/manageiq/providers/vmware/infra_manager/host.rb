@@ -38,7 +38,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
       port = port_start unless port.in?(port_start..port_end)
 
       next_port = (port == port_end ? port_start : port + 1)
-      update_attributes(:next_available_vnc_port => next_port)
+      update(:next_available_vnc_port => next_port)
 
       port
     end
