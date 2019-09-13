@@ -12,14 +12,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def start
     saver.start_thread
-    self.vim_thread = Thread.new { vim_collector }
+    self.vim_thread = vim_collector_thread
   end
 
   def running?
     vim_thread&.alive?
   end
 
-  def stop(join_timeout = nil)
+  def stop(join_timeout = 2.minutes)
     _log.info("#{log_header} Monitor updates thread exiting...")
     self.exit_requested = true
     return if join_timeout.nil?
@@ -29,10 +29,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     saver.stop_thread
   end
 
+  def restart(join_timeout = 2.minutes)
+    self.exit_requested = true
+    vim_thread&.join(join_timeout)
+
+    self.exit_requested = false
+    self.vim_thread     = vim_collector_thread
+  end
+
   private
 
   attr_reader   :ems, :inventory_cache, :saver
   attr_accessor :exit_requested, :vim_thread, :last_full_refresh
+
+  def vim_collector_thread
+    Thread.new { vim_collector }
+  end
 
   def vim_collector
     _log.info("#{log_header} Monitor updates thread started")
