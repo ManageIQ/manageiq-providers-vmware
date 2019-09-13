@@ -378,7 +378,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
       describe '#get_next_vm_name' do
         before do
-          @vm_prov.update_attributes(:options => @options.merge(:miq_force_unique_name => true))
+          @vm_prov.update(:options => @options.merge(:miq_force_unique_name => true))
           allow(MiqRegion).to receive_message_chain('my_region.next_naming_sequence').and_return(123)
         end
 

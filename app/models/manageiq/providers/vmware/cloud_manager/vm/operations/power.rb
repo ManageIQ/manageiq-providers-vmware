@@ -5,7 +5,7 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations::Power
 
   def raw_start
     with_provider_object(&:power_on)
-    update_attributes!(:raw_power_state => "on")
+    update!(:raw_power_state => "on")
   end
 
   def raw_stop
@@ -13,7 +13,7 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations::Power
       response = service.post_undeploy_vapp(ems_ref, :UndeployPowerAction => 'powerOff')
       service.process_task(response.body)
     end
-    update_attributes!(:raw_power_state => "off")
+    update!(:raw_power_state => "off")
   end
 
   def raw_suspend
@@ -21,11 +21,11 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations::Power
       response = service.post_undeploy_vapp(ems_ref, :UndeployPowerAction => 'suspend')
       service.process_task(response.body)
     end
-    update_attributes!(:raw_power_state => "suspended")
+    update!(:raw_power_state => "suspended")
   end
 
   def raw_restart
     with_provider_object(&:reset)
-    update_attributes!(:raw_power_state => "on")
+    update!(:raw_power_state => "on")
   end
 end

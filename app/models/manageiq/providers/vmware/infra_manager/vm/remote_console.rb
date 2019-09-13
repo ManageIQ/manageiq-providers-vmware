@@ -113,7 +113,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     with_provider_object do |vim_vm|
       vim_vm.setRemoteDisplayVncAttributes(:enabled => true, :port => host_port, :password => password)
     end
-    update_attributes(:vnc_port => host_port)
+    update(:vnc_port => host_port)
 
     SystemConsole.force_vm_invalid_token(id)
 

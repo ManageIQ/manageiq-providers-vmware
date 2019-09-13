@@ -158,7 +158,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
     it 'normal case' do
       EvmSpecHelper.create_guid_miq_server_zone
-      ems.update_attributes(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
+      ems.update(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
       auth = FactoryBot.create(:authentication,
                                 :userid   => 'dev1',
                                 :password => 'dev1pass',

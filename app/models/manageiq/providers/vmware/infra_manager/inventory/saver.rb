@@ -95,7 +95,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   end
 
   def update_ems_refresh_stats(ems, error: nil)
-    ems.update_attributes(:last_refresh_error => error, :last_refresh_date => Time.now.utc)
+    ems.update(:last_refresh_error => error, :last_refresh_date => Time.now.utc)
   end
 
   def log_header_for_ems(ems)

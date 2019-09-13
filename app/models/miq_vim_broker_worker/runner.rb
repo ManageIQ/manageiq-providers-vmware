@@ -7,7 +7,7 @@ class MiqVimBrokerWorker::Runner < MiqWorker::Runner
 
     @initial_emses_to_monitor, invalid_emses = MiqVimBrokerWorker.emses_to_monitor.partition { |e| e.authentication_check.first }
     start_broker_server(@initial_emses_to_monitor)
-    @worker.update_attributes(:uri => DRb.uri)
+    @worker.update(:uri => DRb.uri)
     _log.info("#{log_prefix} DRb URI: #{DRb.uri}")
 
     invalid_emses.each do |e|
