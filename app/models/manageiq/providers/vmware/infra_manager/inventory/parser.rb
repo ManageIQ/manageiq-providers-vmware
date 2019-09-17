@@ -182,7 +182,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     switches = parse_host_system_switches(host, props)
     parse_host_system_host_switches(host, switches)
-    parse_host_system_lans(switches, props)
+    parse_host_system_lans(host, switches, props)
   end
 
   def parse_license_manager(_object, kind, props)
