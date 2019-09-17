@@ -502,6 +502,22 @@ module ManageIQ::Providers
           pnics.each { |pnic| result_uids[:pnic_id][pnic] = new_result unless pnic.blank? }
         end
 
+        inv["opaqueSwitch"].to_miq_a.each do |data|
+          uid = data["key"]
+
+          new_result = {
+            :uid_ems => uid,
+            :name    => data["name"],
+            :type    => "ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch",
+            :lans    => []
+          }
+
+          result << new_result
+          result_uids[uid] = new_result
+
+          data["pnic"].to_miq_a.compact.each { |pnic| result_uids[:pnic_id][pnic] = new_result }
+        end
+
         return result, result_uids
       end
 
@@ -538,6 +554,27 @@ module ManageIQ::Providers
             :computed_forged_transmits  => computed_security_policy['forgedTransmits'].nil? ? nil : computed_security_policy['forgedTransmits'].to_s.downcase == 'true',
             :computed_mac_changes       => computed_security_policy['macChanges'].nil? ? nil : computed_security_policy['macChanges'].to_s.downcase == 'true',
           }
+          result << new_result
+          result_uids[uid] = new_result
+          switch[:lans] << new_result
+        end
+
+        inv["opaqueNetwork"].to_miq_a.each do |data|
+          # There doesn't seem to be a good way of linking an opaqueNetwork to a specific opaqueSwitch
+          #
+          # For the purposes of provisioning we just need to know what hosts an opaqueNetwork is connected to so
+          # picking the first switch is sufficient.
+          opaque_switch_keys = inv["opaqueSwitch"].to_miq_a.pluck("key").sort
+          switch = switch_uids[opaque_switch_keys.first]
+          next if switch.nil?
+
+          uid = data["opaqueNetworkId"]
+
+          new_result = {
+            :uid_ems => uid,
+            :name    => data["opaqueNetworkName"]
+          }
+
           result << new_result
           result_uids[uid] = new_result
           switch[:lans] << new_result
