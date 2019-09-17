@@ -1,16 +1,16 @@
 ---
 ? !ruby/string:VimString
   str: host-891
-  vimType: :HostSystem
   xsiType: :ManagedObjectReference
+  vimType: :HostSystem
 : !ruby/hash-with-ivars:VimHash
   elements:
     config: !ruby/hash-with-ivars:VimHash
       elements:
         adminDisabled: !ruby/string:VimString
           str: 'false'
-          vimType: 
           xsiType: :xsd:boolean
+          vimType: 
         service: !ruby/hash-with-ivars:VimHash
           elements:
             service: !ruby/array:VimArray
@@ -18,158 +18,158 @@
               elements:
                 label: !ruby/string:VimString
                   str: Direct Console UI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: DCUI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Tech Support
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Remote Tech Support (SSH)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM-SSH
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Security Authentication Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lsassd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: I/O Redirector (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lwiod
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Network Login Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: netlogond
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: NTP Daemon
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: ntpd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: VMware vCenter Agent
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: vmware-vpxa
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostServiceInfo
+            :@vimType: 
         network: !ruby/hash-with-ivars:VimHash
           elements:
             consoleVnic: !ruby/array:VimArray
@@ -181,31 +181,31 @@
               elements:
                 domainName: !ruby/string:VimString
                   str: manageiq.com
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 hostName: !ruby/string:VimString
                   str: vi4esxm2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostDnsConfig
+                :@vimType: 
             vswitch: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -214,51 +214,51 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -267,159 +267,159 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             pnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.1'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             ipRouteConfig: !ruby/hash-with-ivars:VimHash
               elements:
                 defaultGateway: !ruby/string:VimString
                   str: 192.168.252.1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostIpRouteConfig
+                :@vimType: 
             vnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-16777219
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.254.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 192.168.252.9
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: Management Network
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-33554435
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.255.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 10.1.1.32
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: VMkernel
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             portgroup: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
@@ -429,26 +429,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -457,32 +457,32 @@
                           elements:
                             allowPromiscuous: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: NetApp PG
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -491,26 +491,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -518,29 +518,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VM Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -549,36 +549,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-16777219
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -586,29 +586,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: Management Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -617,36 +617,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-33554435
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -654,242 +654,341 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VMkernel
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch1
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
+            opaqueSwitch: !ruby/hash-with-ivars:VimHash
+              elements:
+                key: !ruby/string:VimString
+                  str: 82 6f 15 38 57 ff 40 03-aa b1 0e 96 0e 11 ce a6
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                name: !ruby/string:VimString
+                  str: NSX_Switch1
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnic: !ruby/string:VimString
+                  str: key-vim.host.PhysicalNic-vmnic6
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnicZone: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: 4d31a2ea-c849-4723-91d2-0a4144567e31
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+                status: !ruby/string:VimString
+                  str: up
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                extraConfig: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: com.vmware.opaqueswitch.nioc.infraAllocations
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                    value: !ruby/array:VimArray
+                      internal:
+                      - !ruby/string:VimString
+                        str: '0'
+                        xsiType: :xsd:int
+                        vimType: 
+                      - !ruby/string:VimString
+                        str: "-1"
+                        xsiType: :xsd:int
+                        vimType: 
+                      - !ruby/string:VimString
+                        str: '100'
+                        xsiType: :xsd:int
+                        vimType: 
+                      ivars:
+                        :@xsiType: :ArrayOfInt
+                        :@vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+              ivars:
+                :@xsiType: !ruby/symbol 
+                :@vimType: 
+            opaqueNetwork: !ruby/hash-with-ivars:VimHash
+              elements:
+                opaqueNetworkId: !ruby/string:VimString
+                  str: 0aa38038-c123-4030-a7b1-f5ae49d17e16
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                opaqueNetworkName: !ruby/string:VimString
+                  str: NSX_Network1
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                opaqueNetworkType: !ruby/string:VimString
+                  str: nsx.LogicalSwitch
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnicZone: !ruby/string:VimString
+                  str: f4e85ee8-0979-44c8-9dda-113e0abeaa80
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                capability: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    networkReservationSupported: !ruby/string:VimString
+                      str: 'true'
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+                extraConfig: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: com.vmware.opaquenetwork.version
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                    value: !ruby/string:VimString
+                      str: '0'
+                      xsiType: :xsd:int
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+              ivars:
+                :@xsiType: !ruby/symbol 
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostNetworkInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
     MOR: !ruby/string:VimString
       str: host-891
-      vimType: :HostSystem
       xsiType: :ManagedObjectReference
+      vimType: :HostSystem
     datastore: !ruby/array:VimArray
     - !ruby/string:VimString
       str: datastore-857
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-798
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12616
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12350
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-80
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-28
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-741
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-805
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-892
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-953
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-958
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-954
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-959
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-960
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-961
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-955
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-956
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-957
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-962
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-967
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-11915
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12281
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12282
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12571
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     summary: !ruby/hash-with-ivars:VimHash
       elements:
         config: !ruby/hash-with-ivars:VimHash
           elements:
             name: !ruby/string:VimString
               str: vi4esxm2.manageiq.com
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             vmotionEnabled: !ruby/string:VimString
               str: 'true'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             product: !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: VMware ESXi
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 build: !ruby/string:VimString
                   str: '260247'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 version: !ruby/string:VimString
                   str: 4.1.0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 vendor: !ruby/string:VimString
                   str: VMware, Inc.
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 osType: !ruby/string:VimString
                   str: vmnix-x86
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :AboutInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostConfigSummary
+            :@vimType: 
         runtime: !ruby/hash-with-ivars:VimHash
           elements:
             inMaintenanceMode: !ruby/string:VimString
               str: 'false'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             connectionState: !ruby/string:VimString
               str: connected
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostRuntimeInfo
+            :@vimType: 
         quickStats: !ruby/hash-with-ivars:VimHash
           elements:
             overallCpuUsage: !ruby/string:VimString
               str: '2654'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             overallMemoryUsage: !ruby/string:VimString
               str: '40477'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostListSummaryQuickStats
+            :@vimType: 
         hardware: !ruby/hash-with-ivars:VimHash
           elements:
             numCpuPkgs: !ruby/string:VimString
               str: '2'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
             model: !ruby/string:VimString
               str: PowerEdge R410
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuModel: !ruby/string:VimString
               str: Intel(R) Xeon(R) CPU           E5506  @ 2.13GHz
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuMhz: !ruby/string:VimString
               str: '2127'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             memorySize: !ruby/string:VimString
               str: '60118675456'
-              vimType: 
               xsiType: :SOAP::SOAPLong
+              vimType: 
             vendor: !ruby/string:VimString
               str: Dell Inc.
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             numNics: !ruby/string:VimString
               str: '2'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             numCpuCores: !ruby/string:VimString
               str: '8'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostHardwareSummary
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: :HostListSummary
+        :@vimType: 
     hardware: !ruby/hash-with-ivars:VimHash
       elements:
         systemInfo: !ruby/hash-with-ivars:VimHash
@@ -901,57 +1000,57 @@
                   elements:
                     key: !ruby/string:VimString
                       str: AssetTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: " unknown"
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 identifierType: !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: ServiceTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: FC64KN1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostSystemInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
   ivars:
-    :@vimType: 
     :@xsiType: :ObjectContent
+    :@vimType: 
 ? !ruby/string:VimString
   str: host-9
-  vimType: :HostSystem
   xsiType: :ManagedObjectReference
+  vimType: :HostSystem
 : !ruby/hash-with-ivars:VimHash
   elements:
     config: !ruby/hash-with-ivars:VimHash
       elements:
         adminDisabled: !ruby/string:VimString
           str: 'false'
-          vimType: 
           xsiType: :xsd:boolean
+          vimType: 
         service: !ruby/hash-with-ivars:VimHash
           elements:
             service: !ruby/array:VimArray
@@ -959,158 +1058,158 @@
               elements:
                 label: !ruby/string:VimString
                   str: Direct Console UI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: DCUI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Tech Support
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Remote Tech Support (SSH)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM-SSH
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Security Authentication Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lsassd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: I/O Redirector (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lwiod
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Network Login Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: netlogond
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: NTP Daemon
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: ntpd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: VMware vCenter Agent
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: vmware-vpxa
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostServiceInfo
+            :@vimType: 
         network: !ruby/hash-with-ivars:VimHash
           elements:
             consoleVnic: !ruby/array:VimArray
@@ -1122,31 +1221,31 @@
               elements:
                 domainName: !ruby/string:VimString
                   str: manageiq.com
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 hostName: !ruby/string:VimString
                   str: VI4ESXM1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostDnsConfig
+                :@vimType: 
             vswitch: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1155,51 +1254,51 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1208,193 +1307,193 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             pnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.1'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '03:00.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '03:00.1'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic3
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic3
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             ipRouteConfig: !ruby/hash-with-ivars:VimHash
               elements:
                 defaultGateway: !ruby/string:VimString
                   str: 192.168.252.1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostIpRouteConfig
+                :@vimType: 
             vnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-16777219
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.254.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 192.168.252.13
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: Management Network
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-33554435
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.255.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 10.1.1.121
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: VMkernel
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             portgroup: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
@@ -1404,26 +1503,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1432,32 +1531,32 @@
                           elements:
                             allowPromiscuous: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: NetApp PG
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -1466,26 +1565,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1493,29 +1592,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VM Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -1524,36 +1623,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-16777219
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1561,29 +1660,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: Management Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -1592,36 +1691,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-33554435
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -1629,246 +1728,345 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VMkernel
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch1
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
+            opaqueSwitch: !ruby/hash-with-ivars:VimHash
+              elements:
+                key: !ruby/string:VimString
+                  str: 82 6f 15 38 57 ff 40 03-aa b1 0e 96 0e 11 ce a6
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                name: !ruby/string:VimString
+                  str: NSX_Switch1
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnic: !ruby/string:VimString
+                  str: key-vim.host.PhysicalNic-vmnic6
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnicZone: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: 4d31a2ea-c849-4723-91d2-0a4144567e31
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+                status: !ruby/string:VimString
+                  str: up
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                extraConfig: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: com.vmware.opaqueswitch.nioc.infraAllocations
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                    value: !ruby/array:VimArray
+                      internal:
+                      - !ruby/string:VimString
+                        str: '0'
+                        xsiType: :xsd:int
+                        vimType: 
+                      - !ruby/string:VimString
+                        str: "-1"
+                        xsiType: :xsd:int
+                        vimType: 
+                      - !ruby/string:VimString
+                        str: '100'
+                        xsiType: :xsd:int
+                        vimType: 
+                      ivars:
+                        :@xsiType: :ArrayOfInt
+                        :@vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+              ivars:
+                :@xsiType: !ruby/symbol 
+                :@vimType: 
+            opaqueNetwork: !ruby/hash-with-ivars:VimHash
+              elements:
+                opaqueNetworkId: !ruby/string:VimString
+                  str: 2aa2e41b-8b23-4043-ae1d-1e191cab15f4
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                opaqueNetworkName: !ruby/string:VimString
+                  str: NSX_Network2
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                opaqueNetworkType: !ruby/string:VimString
+                  str: nsx.LogicalSwitch
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                pnicZone: !ruby/string:VimString
+                  str: f4e85ee8-0979-44c8-9dda-113e0abeaa80
+                  xsiType: !ruby/symbol 
+                  vimType: 
+                capability: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    networkReservationSupported: !ruby/string:VimString
+                      str: 'true'
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+                extraConfig: !ruby/hash-with-ivars:VimHash
+                  elements:
+                    key: !ruby/string:VimString
+                      str: com.vmware.opaquenetwork.version
+                      xsiType: !ruby/symbol 
+                      vimType: 
+                    value: !ruby/string:VimString
+                      str: '0'
+                      xsiType: :xsd:int
+                      vimType: 
+                  ivars:
+                    :@xsiType: !ruby/symbol 
+                    :@vimType: 
+              ivars:
+                :@xsiType: !ruby/symbol 
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostNetworkInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
     MOR: !ruby/string:VimString
       str: host-9
-      vimType: :HostSystem
       xsiType: :ManagedObjectReference
+      vimType: :HostSystem
     datastore: !ruby/array:VimArray
     - !ruby/string:VimString
       str: datastore-857
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-798
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12616
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12609
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12350
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-80
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-14
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-28
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-741
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-805
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-953
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-958
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-954
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-959
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-960
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-961
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-955
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-956
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-957
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-962
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-967
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-11915
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12281
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12282
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12571
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     summary: !ruby/hash-with-ivars:VimHash
       elements:
         config: !ruby/hash-with-ivars:VimHash
           elements:
             name: !ruby/string:VimString
               str: vi4esxm1.manageiq.com
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             vmotionEnabled: !ruby/string:VimString
               str: 'true'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             product: !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: VMware ESXi
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 build: !ruby/string:VimString
                   str: '260247'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 version: !ruby/string:VimString
                   str: 4.1.0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 vendor: !ruby/string:VimString
                   str: VMware, Inc.
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 osType: !ruby/string:VimString
                   str: vmnix-x86
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :AboutInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostConfigSummary
+            :@vimType: 
         runtime: !ruby/hash-with-ivars:VimHash
           elements:
             inMaintenanceMode: !ruby/string:VimString
               str: 'false'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             connectionState: !ruby/string:VimString
               str: connected
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostRuntimeInfo
+            :@vimType: 
         quickStats: !ruby/hash-with-ivars:VimHash
           elements:
             overallCpuUsage: !ruby/string:VimString
               str: '6789'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             overallMemoryUsage: !ruby/string:VimString
               str: '36508'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostListSummaryQuickStats
+            :@vimType: 
         hardware: !ruby/hash-with-ivars:VimHash
           elements:
             numCpuPkgs: !ruby/string:VimString
               str: '2'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
             model: !ruby/string:VimString
               str: PowerEdge R410
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuModel: !ruby/string:VimString
               str: Intel(R) Xeon(R) CPU           E5506  @ 2.13GHz
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuMhz: !ruby/string:VimString
               str: '2127'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             memorySize: !ruby/string:VimString
               str: '60118675456'
-              vimType: 
               xsiType: :SOAP::SOAPLong
+              vimType: 
             vendor: !ruby/string:VimString
               str: Dell Inc.
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             numNics: !ruby/string:VimString
               str: '4'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             numCpuCores: !ruby/string:VimString
               str: '8'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostHardwareSummary
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: :HostListSummary
+        :@vimType: 
     hardware: !ruby/hash-with-ivars:VimHash
       elements:
         systemInfo: !ruby/hash-with-ivars:VimHash
@@ -1880,57 +2078,57 @@
                   elements:
                     key: !ruby/string:VimString
                       str: AssetTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: " unknown"
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 identifierType: !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: ServiceTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: FC65KN1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostSystemInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
   ivars:
-    :@vimType: 
     :@xsiType: :ObjectContent
+    :@vimType: 
 ? !ruby/string:VimString
   str: host-12629
-  vimType: :HostSystem
   xsiType: :ManagedObjectReference
+  vimType: :HostSystem
 : !ruby/hash-with-ivars:VimHash
   elements:
     config: !ruby/hash-with-ivars:VimHash
       elements:
         adminDisabled: !ruby/string:VimString
           str: 'false'
-          vimType: 
           xsiType: :xsd:boolean
+          vimType: 
         service: !ruby/hash-with-ivars:VimHash
           elements:
             service: !ruby/array:VimArray
@@ -1938,158 +2136,158 @@
               elements:
                 label: !ruby/string:VimString
                   str: Direct Console UI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: DCUI
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Tech Support
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Remote Tech Support (SSH)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: TSM-SSH
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lbtd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Local Security Authentication Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lsassd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: I/O Redirector (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: lwiod
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: Network Login Server (Active Directory Service)
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'false'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: netlogond
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: NTP Daemon
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: ntpd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: VMware vCenter Agent
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: vmware-vpxa
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostServiceInfo
+            :@vimType: 
         network: !ruby/hash-with-ivars:VimHash
           elements:
             consoleVnic: !ruby/array:VimArray
@@ -2101,31 +2299,31 @@
               elements:
                 domainName: !ruby/string:VimString
                   str: ''
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 hostName: !ruby/string:VimString
                   str: localhost
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostDnsConfig
+                :@vimType: 
             vswitch: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2134,103 +2332,103 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             pnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '00:11.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             ipRouteConfig: !ruby/hash-with-ivars:VimHash
               elements:
                 defaultGateway: !ruby/string:VimString
                   str: 192.168.252.1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostIpRouteConfig
+                :@vimType: 
             vnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-16777219
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.254.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 192.168.252.115
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: Management Network
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             portgroup: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
@@ -2240,26 +2438,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2267,29 +2465,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VM Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -2298,36 +2496,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-16777219
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2335,150 +2533,150 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: Management Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostNetworkInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
     MOR: !ruby/string:VimString
       str: host-12629
-      vimType: :HostSystem
       xsiType: :ManagedObjectReference
+      vimType: :HostSystem
     datastore: !ruby/array:VimArray
     - !ruby/string:VimString
       str: datastore-12630
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     summary: !ruby/hash-with-ivars:VimHash
       elements:
         config: !ruby/hash-with-ivars:VimHash
           elements:
             name: !ruby/string:VimString
               str: 192.168.252.115
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             vmotionEnabled: !ruby/string:VimString
               str: 'false'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             product: !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: VMware ESXi
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 build: !ruby/string:VimString
                   str: '260247'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 version: !ruby/string:VimString
                   str: 4.1.0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 vendor: !ruby/string:VimString
                   str: VMware, Inc.
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 osType: !ruby/string:VimString
                   str: vmnix-x86
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :AboutInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostConfigSummary
+            :@vimType: 
         runtime: !ruby/hash-with-ivars:VimHash
           elements:
             inMaintenanceMode: !ruby/string:VimString
               str: 'false'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             connectionState: !ruby/string:VimString
               str: connected
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostRuntimeInfo
+            :@vimType: 
         quickStats: !ruby/hash-with-ivars:VimHash
           elements:
             overallCpuUsage: !ruby/string:VimString
               str: '23'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             overallMemoryUsage: !ruby/string:VimString
               str: '830'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostListSummaryQuickStats
+            :@vimType: 
         hardware: !ruby/hash-with-ivars:VimHash
           elements:
             numCpuPkgs: !ruby/string:VimString
               str: '1'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
             model: !ruby/string:VimString
               str: VMware Virtual Platform
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuModel: !ruby/string:VimString
               str: Intel(R) Xeon(R) CPU           E5506  @ 2.13GHz
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuMhz: !ruby/string:VimString
               str: '2119'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             memorySize: !ruby/string:VimString
               str: '2146775040'
-              vimType: 
               xsiType: :SOAP::SOAPLong
+              vimType: 
             vendor: !ruby/string:VimString
               str: VMware, Inc.
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             numNics: !ruby/string:VimString
               str: '1'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             numCpuCores: !ruby/string:VimString
               str: '1'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostHardwareSummary
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: :HostListSummary
+        :@vimType: 
     hardware: !ruby/hash-with-ivars:VimHash
       elements:
         systemInfo: !ruby/hash-with-ivars:VimHash
@@ -2490,39 +2688,39 @@
                   elements:
                     key: !ruby/string:VimString
                       str: AssetTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: " No Asset Tag"
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostSystemInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
   ivars:
-    :@vimType: 
     :@xsiType: :ObjectContent
+    :@vimType: 
 ? !ruby/string:VimString
   str: host-648
-  vimType: :HostSystem
   xsiType: :ManagedObjectReference
+  vimType: :HostSystem
 : !ruby/hash-with-ivars:VimHash
   elements:
     config: !ruby/hash-with-ivars:VimHash
       elements:
         adminDisabled: !ruby/string:VimString
           str: 'false'
-          vimType: 
           xsiType: :xsd:boolean
+          vimType: 
         service: !ruby/hash-with-ivars:VimHash
           elements:
             service: !ruby/array:VimArray
@@ -2530,70 +2728,70 @@
               elements:
                 label: !ruby/string:VimString
                   str: NTP Daemon
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: ntpd
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 label: !ruby/string:VimString
                   str: VMware vCenter Agent
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 running: !ruby/string:VimString
                   str: 'true'
-                  vimType: 
                   xsiType: :SOAP::SOAPBoolean
+                  vimType: 
                 key: !ruby/string:VimString
                   str: vmware-vpxa
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostService
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostServiceInfo
+            :@vimType: 
         network: !ruby/hash-with-ivars:VimHash
           elements:
             dnsConfig: !ruby/hash-with-ivars:VimHash
               elements:
                 domainName: !ruby/string:VimString
                   str: manageiq.com
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 hostName: !ruby/string:VimString
                   str: vi4esxm3
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostDnsConfig
+                :@vimType: 
             vswitch: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '64'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2602,51 +2800,51 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '64'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 pnic: !ruby/array:VimArray
                 - !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2655,46 +2853,46 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: vSwitch2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 numPorts: !ruby/string:VimString
                   str: '128'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2703,193 +2901,193 @@
                           elements:
                             macChanges: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             forgedTransmits: !ruby/string:VimString
                               str: 'true'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                             allowPromiscuous: !ruby/string:VimString
                               str: 'false'
-                              vimType: 
                               xsiType: :SOAP::SOAPBoolean
+                              vimType: 
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualSwitchSpec
+                    :@vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 mtu: !ruby/string:VimString
                   str: '1500'
-                  vimType: 
                   xsiType: :SOAP::SOAPInt
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualSwitch
+                :@vimType: 
             pnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '01:00.1'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '03:00.0'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 pci: !ruby/string:VimString
                   str: '03:00.1'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 device: !ruby/string:VimString
                   str: vmnic3
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 key: !ruby/string:VimString
                   str: key-vim.host.PhysicalNic-vmnic3
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :PhysicalNic
+                :@vimType: 
             ipRouteConfig: !ruby/hash-with-ivars:VimHash
               elements:
                 defaultGateway: !ruby/string:VimString
                   str: 192.168.252.1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostIpRouteConfig
+                :@vimType: 
             vnic: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-16777219
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.254.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 192.168.252.10
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: Management Network
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 device: !ruby/string:VimString
                   str: vmk1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/string:VimString
                   str: key-vim.host.PortGroup.Port-33554435
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     ip: !ruby/hash-with-ivars:VimHash
                       elements:
                         subnetMask: !ruby/string:VimString
                           str: 255.255.255.0
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         ipAddress: !ruby/string:VimString
                           str: 10.1.1.33
-                          vimType: 
                           xsiType: :SOAP::SOAPString
+                          vimType: 
                         dhcp: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostIpConfig
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostVirtualNicSpec
+                    :@vimType: 
                 portgroup: !ruby/string:VimString
                   str: VMkernel
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostVirtualNic
+                :@vimType: 
             portgroup: !ruby/array:VimArray
             - !ruby/hash-with-ivars:VimHash
               elements:
@@ -2899,26 +3097,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2926,29 +3124,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VM Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -2957,36 +3155,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-16777219
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -2994,29 +3192,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: Management Network
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch0
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -3025,36 +3223,36 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 port: !ruby/array:VimArray
                 - !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: key-vim.host.PortGroup.Port-33554435
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupPort
+                    :@vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -3062,29 +3260,29 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VMkernel
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch1
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 computedPolicy: !ruby/hash-with-ivars:VimHash
@@ -3093,26 +3291,26 @@
                       elements:
                         macChanges: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         forgedTransmits: !ruby/string:VimString
                           str: 'true'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                         allowPromiscuous: !ruby/string:VimString
                           str: 'false'
-                          vimType: 
                           xsiType: :SOAP::SOAPBoolean
+                          vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkSecurityPolicy
+                        :@vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostNetworkPolicy
+                    :@vimType: 
                 vswitch: !ruby/string:VimString
                   str: key-vim.host.VirtualSwitch-vSwitch2
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 spec: !ruby/hash-with-ivars:VimHash
                   elements:
                     policy: !ruby/hash-with-ivars:VimHash
@@ -3120,226 +3318,226 @@
                         security: !ruby/hash-with-ivars:VimHash
                           elements: {}
                           ivars:
-                            :@vimType: 
                             :@xsiType: :HostNetworkSecurityPolicy
+                            :@vimType: 
                       ivars:
-                        :@vimType: 
                         :@xsiType: :HostNetworkPolicy
+                        :@vimType: 
                     name: !ruby/string:VimString
                       str: VmNoNics
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vswitchName: !ruby/string:VimString
                       str: vSwitch2
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                     vlanId: !ruby/string:VimString
                       str: '0'
-                      vimType: 
                       xsiType: :SOAP::SOAPInt
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :HostPortGroupSpec
+                    :@vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostPortGroup
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostNetworkInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
     MOR: !ruby/string:VimString
       str: host-648
-      vimType: :HostSystem
       xsiType: :ManagedObjectReference
+      vimType: :HostSystem
     datastore: !ruby/array:VimArray
     - !ruby/string:VimString
       str: datastore-997
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-1084
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-651
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-653
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-941
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-942
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-943
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-944
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-945
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-946
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-947
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-948
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-949
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-950
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-951
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-952
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-1006
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-1126
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12348
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     - !ruby/string:VimString
       str: datastore-12349
-      vimType: :Datastore
       xsiType: :ManagedObjectReference
+      vimType: :Datastore
     summary: !ruby/hash-with-ivars:VimHash
       elements:
         config: !ruby/hash-with-ivars:VimHash
           elements:
             name: !ruby/string:VimString
               str: vi4esxm3.manageiq.com
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             vmotionEnabled: !ruby/string:VimString
               str: 'true'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             product: !ruby/hash-with-ivars:VimHash
               elements:
                 name: !ruby/string:VimString
                   str: VMware ESXi
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 build: !ruby/string:VimString
                   str: '261974'
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 version: !ruby/string:VimString
                   str: 4.0.0
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 vendor: !ruby/string:VimString
                   str: VMware, Inc.
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
                 osType: !ruby/string:VimString
                   str: vmnix-x86
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :AboutInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostConfigSummary
+            :@vimType: 
         runtime: !ruby/hash-with-ivars:VimHash
           elements:
             inMaintenanceMode: !ruby/string:VimString
               str: 'false'
-              vimType: 
               xsiType: :SOAP::SOAPBoolean
+              vimType: 
             connectionState: !ruby/string:VimString
               str: connected
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostRuntimeInfo
+            :@vimType: 
         quickStats: !ruby/hash-with-ivars:VimHash
           elements:
             overallCpuUsage: !ruby/string:VimString
               str: '2992'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             overallMemoryUsage: !ruby/string:VimString
               str: '43430'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostListSummaryQuickStats
+            :@vimType: 
         hardware: !ruby/hash-with-ivars:VimHash
           elements:
             numCpuPkgs: !ruby/string:VimString
               str: '2'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
             model: !ruby/string:VimString
               str: PowerEdge R410
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuModel: !ruby/string:VimString
               str: Intel(R) Xeon(R) CPU           E5506  @ 2.13GHz
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             cpuMhz: !ruby/string:VimString
               str: '2127'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             memorySize: !ruby/string:VimString
               str: '60116496384'
-              vimType: 
               xsiType: :SOAP::SOAPLong
+              vimType: 
             vendor: !ruby/string:VimString
               str: Dell Inc.
-              vimType: 
               xsiType: :SOAP::SOAPString
+              vimType: 
             numNics: !ruby/string:VimString
               str: '4'
-              vimType: 
               xsiType: :SOAP::SOAPInt
+              vimType: 
             numCpuCores: !ruby/string:VimString
               str: '8'
-              vimType: 
               xsiType: :SOAP::SOAPShort
+              vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostHardwareSummary
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: :HostListSummary
+        :@vimType: 
     hardware: !ruby/hash-with-ivars:VimHash
       elements:
         systemInfo: !ruby/hash-with-ivars:VimHash
@@ -3351,42 +3549,42 @@
                   elements:
                     key: !ruby/string:VimString
                       str: AssetTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: " unknown"
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
             - !ruby/hash-with-ivars:VimHash
               elements:
                 identifierType: !ruby/hash-with-ivars:VimHash
                   elements:
                     key: !ruby/string:VimString
                       str: ServiceTag
-                      vimType: 
                       xsiType: :SOAP::SOAPString
+                      vimType: 
                   ivars:
-                    :@vimType: 
                     :@xsiType: :ElementDescription
+                    :@vimType: 
                 identifierValue: !ruby/string:VimString
                   str: FC73KN1
-                  vimType: 
                   xsiType: :SOAP::SOAPString
+                  vimType: 
               ivars:
-                :@vimType: 
                 :@xsiType: :HostSystemIdentificationInfo
+                :@vimType: 
           ivars:
-            :@vimType: 
             :@xsiType: :HostSystemInfo
+            :@vimType: 
       ivars:
-        :@vimType: 
         :@xsiType: 
+        :@vimType: 
   ivars:
-    :@vimType: 
     :@xsiType: :ObjectContent
+    :@vimType: 
