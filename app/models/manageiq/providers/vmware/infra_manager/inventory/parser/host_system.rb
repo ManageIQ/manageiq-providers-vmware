@@ -351,7 +351,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       type = ManageIQ::Providers::Vmware::InfraManager::HostVirtualSwitch.name
 
       switches = network[:vswitch]
-      switches.to_a.map do |switch|
+      persister_switches = switches.to_a.map do |switch|
         security_policy = switch.spec&.policy&.security
         if security_policy
           allow_promiscuous = security_policy[:allowPromiscuous]
@@ -384,6 +384,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
         persister_switch
       end
+
+      opaque_persister_switches = network[:opaqueSwitch].to_a.map do |switch|
+        uid = switch.key
+        persister.host_virtual_switches.build(
+          :host    => host,
+          :uid_ems => uid,
+          :name    => switch.name,
+          :type    => type
+        )
+      end
+
+      persister_switches.concat(opaque_persister_switches)
     end
 
     def parse_host_system_host_switches(host, switches)
@@ -392,7 +404,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_system_lans(switches, props)
+    def parse_host_system_lans(host, switches, props)
       network = props.fetch_path(:config, :network)
       return if network.blank?
 
@@ -425,6 +437,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         end
 
         persister.lans.build(lan_hash)
+      end
+
+      network[:opaqueNetwork].to_a.each do |opaque_network|
+        switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort
+        next if switch_key.nil?
+
+        persister.lans.build(
+          :switch => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
+          :name   => opaque_network.opaqueNetworkName
+        )
       end
     end
   end
