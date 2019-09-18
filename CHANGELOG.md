@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 
-## Ivanchuk-1
+## Sprint 120 - Unreleased as of 2019-09-16
+
+### Added
+- Refresh NSX networks and allow for use during provisioning [(#449)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/449)
+- Refresh vSphere Content Libraries [(#444)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/444)
+
+## Ivanchuk-1 - Released 2019-09-18
 
 ### Added
 - Build the remote console URL for VMRC consoles when making a ticket [(#429)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/429)
