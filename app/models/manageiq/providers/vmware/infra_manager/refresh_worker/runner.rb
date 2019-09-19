@@ -28,14 +28,17 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   end
 
   def deliver_queue_message(msg)
-    return super unless ems.supports_streaming_refresh?
-
-    msg.delivered_on
-
-    # If a full refresh was queued then restart the inventory collector thread
-    restart_inventory_collector if full_refresh_queued?(msg)
-
-    msg.delivered(MiqQueue::STATUS_OK, "Message delivered successfully", true)
+    if ems.supports_streaming_refresh? && refresh_queued?(msg)
+      super do
+        if full_refresh_queued?(msg)
+          restart_inventory_collector
+        else
+          _log.info("Dropping refresh targets [#{msg.data}] because streaming refresh is enabled")
+        end
+      end
+    else
+      super
+    end
   end
 
   private
@@ -66,7 +69,11 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     _log.info("Restarting inventory collector...Complete")
   end
 
+  def refresh_queued?(msg)
+    msg.class_name == "EmsRefresh" && msg.method_name == "refresh"
+  end
+
   def full_refresh_queued?(msg)
-    msg.class_name == "EmsRefresh" && msg.method_name == "refresh" && msg.data.any? { |klass, _id| klass == ems.class.name }
+    refresh_queued?(msg) && msg.data.any? { |klass, _id| klass == ems.class.name }
   end
 end
