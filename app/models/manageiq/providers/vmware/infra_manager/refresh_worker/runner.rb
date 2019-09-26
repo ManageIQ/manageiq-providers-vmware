@@ -12,9 +12,9 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     stop_inventory_collector if ems.supports_streaming_refresh?
   end
 
-  def message_delivery_suspended?
-    # If we are using streaming refresh don't dequeue EmsRefresh queue items
-    ems.supports_streaming_refresh? || super
+  def do_before_work_loop
+    # No need to queue an initial full refresh if we are streaming
+    super unless ems.supports_streaming_refresh?
   end
 
   def do_work
@@ -25,6 +25,20 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     end
 
     super
+  end
+
+  def deliver_queue_message(msg)
+    if ems.supports_streaming_refresh? && refresh_queued?(msg)
+      super do
+        if full_refresh_queued?(msg)
+          restart_inventory_collector
+        else
+          _log.info("Dropping refresh targets [#{msg.data}] because streaming refresh is enabled")
+        end
+      end
+    else
+      super
+    end
   end
 
   private
@@ -45,7 +59,21 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   end
 
   def stop_inventory_collector
-    collector&.stop(60.seconds)
+    collector&.stop
     self.collector = nil
+  end
+
+  def restart_inventory_collector
+    _log.info("Restarting inventory collector...")
+    collector&.restart
+    _log.info("Restarting inventory collector...Complete")
+  end
+
+  def refresh_queued?(msg)
+    msg.class_name == "EmsRefresh" && msg.method_name == "refresh"
+  end
+
+  def full_refresh_queued?(msg)
+    refresh_queued?(msg) && msg.data.any? { |klass, _id| klass == ems.class.name }
   end
 end
