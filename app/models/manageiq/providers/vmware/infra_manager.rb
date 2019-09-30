@@ -45,6 +45,68 @@ module ManageIQ::Providers
       @description ||= "VMware vCenter".freeze
     end
 
+    def self.params_for_create
+      @params_for_create ||= {
+        :title  => "Configure #{description}",
+        :fields => [
+          {
+            :component  => "text-field",
+            :name       => "endpoints.default.server",
+            :label      => "Server Hostname/IP Address",
+            :isRequired => true,
+            :validate   => [{:type => "required-validator"}]
+          },
+          {
+            :component  => "text-field",
+            :name       => "endpoints.default.username",
+            :label      => "Username",
+            :isRequired => true,
+            :validate   => [{:type => "required-validator"}]
+          },
+          {
+            :component  => "text-field",
+            :name       => "endpoints.default.password",
+            :label      => "Password",
+            :type       => "password",
+            :isRequired => true,
+            :validate   => [{:type => "required-validator"}]
+          },
+          {
+            :component => "text-field",
+            :name      => "endpoints.console.username",
+            :label     => "Console Username"
+          },
+          {
+            :component => "text-field",
+            :name      => "endpoints.console.password",
+            :label     => "Password",
+            :type      => "password"
+          }
+        ]
+      }.freeze
+    end
+
+    # Verify Credentials
+    # args: {
+    #   "endpoints" => {
+    #     "default" => {
+    #       "server"   => nil,
+    #       "username" => nil,
+    #       "password" => nil
+    #     },
+    #     "console" => {
+    #       "username" => nil,
+    #       "password" => nil
+    #     }
+    #   }
+    # }
+    def self.verify_credentials(args)
+      default_endpoint = args.dig("endpoints", "default")
+      username, password, server = default_endpoint&.values_at("username", "password", "server")
+
+      !!raw_connect(:ip => server, :user => username, :pass => password, :use_broker => false)
+    end
+
     def supported_auth_types
       %w(default console)
     end
