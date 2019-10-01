@@ -132,19 +132,6 @@ module ManageIQ::Providers
       )
     end
 
-    def control_monitor
-      MiqControlMonitor.find_by_ems(self)
-    end
-
-    def start_control_monitor
-      MiqControlMonitor.start_worker_for_ems(self)
-    end
-
-    def stop_control_monitor
-      _log.info "EMS [#{name}] id [#{id}]: Stopping control monitor."
-      MiqControlMonitor.stop_worker_for_ems(self)
-    end
-
     def verify_credentials(auth_type = nil, _options = {})
       self.class.raw_connect(:use_broker => false, :ems => self)
     end
