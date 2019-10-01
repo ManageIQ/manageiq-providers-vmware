@@ -31,6 +31,99 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     @description ||= "VMware vCloud".freeze
   end
 
+  def self.params_for_create
+    @params_for_create ||= {
+      :title  => "Configure #{description}",
+      :fields => [
+        {
+          :component  => "text-field",
+          :name       => "endpoints.default.server",
+          :label      => "Server Hostname/IP Address",
+          :isRequired => true,
+          :validate   => [{:type => "required-validator"}]
+        },
+        {
+          :component => "text-field",
+          :name      => "endpoints.default.port",
+          :label     => "Port",
+          :type      => "number",
+        },
+        {
+          :component  => "text-field",
+          :name       => "endpoints.default.username",
+          :label      => "Username",
+          :isRequired => true,
+          :validate   => [{:type => "required-validator"}]
+        },
+        {
+          :component  => "text-field",
+          :name       => "endpoints.default.password",
+          :label      => "Password",
+          :type       => "password",
+          :isRequired => true,
+          :validate   => [{:type => "required-validator"}]
+        },
+        {
+          :component    => "text-field",
+          :name         => "endpoints.default.api_version",
+          :label        => "API Version",
+          :initialValue => "5.5",
+          :isRequired   => true,
+          :validate     => [{:type => "required-validator"}]
+        },
+        {
+          :component => "text-field",
+          :name      => "endpoints.events.server",
+          :label     => "AMQP Hostname",
+        },
+        {
+          :component => "text-field",
+          :name      => "endpoints.events.port",
+          :label     => "AMQP Port",
+          :type      => "number"
+        },
+        {
+          :component => "text-field",
+          :name      => "endpoints.events.username",
+          :label     => "AMQP Username"
+        },
+        {
+          :component => "text-field",
+          :name      => "endpoints.events.password",
+          :label     => "Password",
+          :type      => "AMQP password"
+        }
+      ]
+    }.freeze
+  end
+
+  # Verify Credentials
+  # args:
+  # {
+  #   "endpoints" => {
+  #     "default" => {
+  #       "server"      => nil,
+  #       "port"        => nil,
+  #       "username"    => nil,
+  #       "password"    => nil,
+  #       "api_version" => nil
+  #     },
+  #     "events"  => {
+  #       "server"   => nil,
+  #       "port"     => nil,
+  #       "username" => nil,
+  #       "password" => nil,
+  #     }
+  #   }
+  # }
+  def self.verify_credentials(args)
+    default_endpoint = args.dig("endpoints", "default")
+    server, port, username, password, api_version = default_endpoint&.values_at(
+      "server", "port", "username", "password", "api_version")
+
+    !!raw_connect(server, port, username, password, api_version, true)
+  end
+
   def self.default_blacklisted_event_names
     []
   end
