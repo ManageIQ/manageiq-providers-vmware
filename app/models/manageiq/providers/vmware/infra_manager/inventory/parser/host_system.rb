@@ -385,6 +385,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         persister_switch
       end
 
+      type = ManageIQ::Providers::Vmware::InfraManager::OpaqueSwitch.name
       opaque_persister_switches = network[:opaqueSwitch].to_a.map do |switch|
         uid = switch.key
         persister.host_virtual_switches.build(

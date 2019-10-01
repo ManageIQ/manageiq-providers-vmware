@@ -11,8 +11,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
       requested_networks.each_with_index do |net, idx|
         vim_net_adapter = template_networks[idx]
 
-        if net[:is_dvs] == true
-          build_config_spec_dvs(net, vim_net_adapter, vmcs)
+        if net[:is_dvs] || net[:is_opaque]
+          build_config_spec_advanced_lan(net, vim_net_adapter, vmcs)
         else
           build_config_spec_vlan(net, vim_net_adapter, vmcs)
         end
@@ -60,7 +60,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
     end
   end
 
-  def build_config_spec_dvs(network, vnicDev, vmcs)
+  def build_config_spec_advanced_lan(network, vnicDev, vmcs)
     # A DistributedVirtualPortgroup name is unique in a datacenter so look for a Lan with this name
     # on all switches in the cluster
     hosts = dest_cluster.try(:hosts) || dest_host
@@ -78,12 +78,20 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
       # Change the port group of the target VM.
       #
 
-      vdcs.device.backing = VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
-        vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
-          dvspc.switchUuid   = lan.switch.switch_uuid
-          dvspc.portgroupKey = lan.uid_ems
+      vdcs.device.backing =
+        if network[:is_dvs]
+          VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
+            vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
+              dvspc.switchUuid   = lan.switch.switch_uuid
+              dvspc.portgroupKey = lan.uid_ems
+            end
+          end
+        else
+          VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |vecdvpbi|
+            vecdvpbi.opaqueNetworkId = lan.uid_ems
+            vecdvpbi.opaqueNetworkType = 'nsx.LogicalSwitch'
+          end
         end
-      end
 
       #
       # Manually assign MAC address to target VM.
@@ -176,6 +184,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
         # Remove the "dvs_" prefix on the name
         net[:network] = vlan[4..-1]
         net[:is_dvs]  = true
+      else
+        hosts = dest_cluster.try(:hosts) || dest_host
+        lan = Lan.find_by(:name => vlan, :switch_id => HostSwitch.where(:host_id => hosts).pluck(:switch_id))
+        net[:is_opaque] = lan.switch.type == ManageIQ::Providers::Vmware::InfraManager::OpaqueSwitch.name unless lan.nil?
       end
     end
   end
