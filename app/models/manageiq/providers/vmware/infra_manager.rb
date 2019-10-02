@@ -12,6 +12,7 @@ module ManageIQ::Providers
     require_nested :Host
     require_nested :HostEsx
     require_nested :HostVirtualSwitch
+    require_nested :OpaqueSwitch
     require_nested :Inventory
     require_nested :Provision
     require_nested :ProvisionViaPxe
