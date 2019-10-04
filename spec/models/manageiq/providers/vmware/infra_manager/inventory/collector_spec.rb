@@ -893,6 +893,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :cpu_sockets          => 1,
         :cpu_total_cores      => 1,
         :virtual_hw_version   => "07",
+        :firmware_type        => "BIOS"
       )
 
       nic = vm.hardware.guest_devices.find_by(:uid_ems => "00:50:56:8f:56:8d")
