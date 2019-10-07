@@ -147,13 +147,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:memory_mb] = memory_size_mb unless memory_size_mb.blank?
       end
 
-      # cast numCoresPerSocket to an integer so that we can check for nil and 0
-      cpu_cores_per_socket                 = props.fetch_path(:config, :hardware, :numCoresPerSocket).to_i
-      hardware_hash[:cpu_cores_per_socket] = cpu_cores_per_socket.zero? ? 1 : cpu_cores_per_socket
-      hardware_hash[:cpu_sockets]          = hardware_hash[:cpu_total_cores] / hardware_hash[:cpu_cores_per_socket]
-
-      config_version = props.fetch_path(:config, :version)
-      hardware_hash[:virtual_hw_version] = config_version.to_s.split('-').last if config_version.present?
+      config = props[:config]
+      if config
+        # cast numCoresPerSocket to an integer so that we can check for nil and 0
+        cpu_cores_per_socket                 = config.dig(:hardware, :numCoresPerSocket).to_i
+        hardware_hash[:cpu_cores_per_socket] = cpu_cores_per_socket.zero? ? 1 : cpu_cores_per_socket
+        hardware_hash[:cpu_sockets]          = hardware_hash[:cpu_total_cores] / hardware_hash[:cpu_cores_per_socket]
+        hardware_hash[:virtual_hw_version]   = config[:version].to_s.split('-').last if config[:version].present?
+        hardware_hash[:firmware_type]        = config[:firmware].to_s.downcase == "efi" ? "EFI" : "BIOS"
+      end
 
       hardware = persister.hardwares.build(hardware_hash)
 

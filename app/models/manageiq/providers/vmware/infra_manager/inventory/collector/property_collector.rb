@@ -10,6 +10,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       "config.cpuHotAddEnabled",
       "config.cpuHotRemoveEnabled",
       "config.defaultPowerOps.standbyAction",
+      "config.firmware",
       "config.hardware.device",
       "config.hardware.numCoresPerSocket",
       "config.hotPlugMemoryIncrementSize",

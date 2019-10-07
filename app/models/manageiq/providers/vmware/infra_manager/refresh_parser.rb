@@ -1042,6 +1042,8 @@ module ManageIQ::Providers
         bios = MiqUUID.clean_guid(uuid) || uuid
         result[:bios] = bios unless bios.blank?
 
+        result[:firmware_type] = config["firmware"].to_s.downcase == "efi" ? "EFI" : "BIOS"
+
         if inv["numCpu"].present?
           result[:cpu_total_cores]      = inv["numCpu"].to_i
 
