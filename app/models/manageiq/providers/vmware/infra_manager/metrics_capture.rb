@@ -405,7 +405,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     if targets.size == 1
       "[#{target.class.name}], [#{target.id}], [#{target.name}]"
     else
-      "[#{targets.map { |obj| obj.class.name }.uniq.join(", ")}], [#{targets.count} targets]"
+      "[#{targets.map { |obj| obj.class.name }.uniq.join(", ")}], [#{targets.size} targets]"
     end
   end
 
