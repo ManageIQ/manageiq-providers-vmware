@@ -237,19 +237,19 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     ret
   end
 
-  attr_reader :objects, :ems
+  attr_reader :ems, :targets
   def initialize(target)
     super
 
-    objects = target.to_miq_a
-    ems_ids = objects.collect(&:ems_id)
+    targets = target.to_miq_a
+    ems_ids = targets.collect(&:ems_id)
 
-    raise ArgumentError, "At least one target must be passed"      if objects.empty?
+    raise ArgumentError, "At least one target must be passed"      if targets.empty?
     raise ArgumentError, "All targets must be connected to an EMS" if ems_ids.any?(&:nil?)
     raise ArgumentError, "All targets must be on the same EMS"     if ems_ids.uniq.compact.count > 1
 
-    @objects = objects
-    @ems     = objects.first.ext_management_system
+    @targets = targets
+    @ems     = targets.first.ext_management_system
   end
 
   #
@@ -287,9 +287,9 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
       @perf_intervals = {}
 
-      objects_by_mor   = objects.each_with_object({}) { |o, h| h[o.ems_ref_obj] = o }
+      targets_by_mor   = targets.each_with_object({}) { |t, h| h[t.ems_ref_obj] = t }
       counter_info,    = Benchmark.realtime_block(:counter_info)       { self.class.counter_info_by_counter_id(ems, @perf_vim_hist) }
-      interval_by_mor, = Benchmark.realtime_block(:capture_intervals)  { perf_capture_intervals(objects_by_mor.keys, interval_name) }
+      interval_by_mor, = Benchmark.realtime_block(:capture_intervals)  { perf_capture_intervals(targets_by_mor.keys, interval_name) }
       query_params,    = Benchmark.realtime_block(:build_query_params) { perf_build_query_params(interval_by_mor, counter_info, start_time, end_time) }
       counters_by_mor, counter_values_by_mor_and_ts = perf_query(query_params, counter_info, interval_name)
 
@@ -402,10 +402,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
   private
 
   def log_targets
-    if objects.size == 1
+    if targets.size == 1
       "[#{target.class.name}], [#{target.id}], [#{target.name}]"
     else
-      "[#{objects.map { |obj| obj.class.name }.uniq.join(", ")}], [#{objects.count} targets]"
+      "[#{targets.map { |obj| obj.class.name }.uniq.join(", ")}], [#{targets.count} targets]"
     end
   end
 
