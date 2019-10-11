@@ -237,23 +237,31 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     ret
   end
 
+  attr_reader :objects, :ems
+  def initialize(target)
+    super
+
+    objects = target.to_miq_a
+    ems_ids = objects.collect(&:ems_id)
+
+    raise ArgumentError, "At least one target must be passed"      if objects.empty?
+    raise ArgumentError, "All targets must be connected to an EMS" if ems_ids.any?(&:nil?)
+    raise ArgumentError, "All targets must be on the same EMS"     if ems_ids.uniq.compact.count > 1
+
+    @objects = objects
+    @ems     = objects.first.ext_management_system
+  end
+
   #
   # Connect / Disconnect / Intialize methods
   #
 
   def perf_init_vim
-    @perf_resource = "Resource: [#{target.class.name}], id: [#{target.id}]"
-    ems = target.ext_management_system
-    raise "#{@perf_resource} is not connected to an EMS" if ems.nil?
-
-    @perf_intervals = {}
-    @perf_ems       = "EMS: [#{ems.hostname}]"
-
     begin
-      @perf_vim = target.ext_management_system.connect
+      @perf_vim      = ems.connect
       @perf_vim_hist = @perf_vim.getVimPerfHistory
     rescue => err
-      _log.error("#{@perf_resource} Failed to initialize performance history from #{@perf_ems}: [#{err}]")
+      _log.error("Failed to initialize performance history from EMS: [#{ems.hostname}]: [#{err}]")
       perf_release_vim
       raise
     end
@@ -270,16 +278,17 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
   #
 
   def perf_collect_metrics(interval_name, start_time = nil, end_time = nil)
-    objects = target.to_miq_a
-    log_header = "[#{interval_name}] for: [#{target.class.name}], [#{target.id}], [#{target.name}]"
+    log_header = "[#{interval_name}] for: #{log_targets}"
 
     require 'httpclient'
 
     begin
       Benchmark.realtime_block(:vim_connect) { perf_init_vim }
 
+      @perf_intervals = {}
+
       objects_by_mor   = objects.each_with_object({}) { |o, h| h[o.ems_ref_obj] = o }
-      counter_info,    = Benchmark.realtime_block(:counter_info)       { self.class.counter_info_by_counter_id(target.ext_management_system, @perf_vim_hist) }
+      counter_info,    = Benchmark.realtime_block(:counter_info)       { self.class.counter_info_by_counter_id(ems, @perf_vim_hist) }
       interval_by_mor, = Benchmark.realtime_block(:capture_intervals)  { perf_capture_intervals(objects_by_mor.keys, interval_name) }
       query_params,    = Benchmark.realtime_block(:build_query_params) { perf_build_query_params(interval_by_mor, counter_info, start_time, end_time) }
       counters_by_mor, counter_values_by_mor_and_ts = perf_query(query_params, counter_info, interval_name)
@@ -321,8 +330,8 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     interval_by_mor = {}
     mors.each do |mor|
       interval = case interval_name
-                 when 'realtime' then self.class.realtime_interval(target.ext_management_system, @perf_vim_hist, mor)
-                 when 'hourly'   then self.class.hourly_interval(target.ext_management_system, @perf_vim_hist)
+                 when 'realtime' then self.class.realtime_interval(ems, @perf_vim_hist, mor)
+                 when 'hourly'   then self.class.hourly_interval(ems, @perf_vim_hist)
                  end
 
       @perf_intervals[interval] = interval_name
@@ -388,6 +397,16 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     return counters_by_mor, counter_values_by_mor_and_ts
+  end
+
+  private
+
+  def log_targets
+    if objects.size == 1
+      "[#{target.class.name}], [#{target.id}], [#{target.name}]"
+    else
+      "[#{objects.map { |obj| obj.class.name }.uniq.join(", ")}], [#{objects.count} targets]"
+    end
   end
 
   class << self
