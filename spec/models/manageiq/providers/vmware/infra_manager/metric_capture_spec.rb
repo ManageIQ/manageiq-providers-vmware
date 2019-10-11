@@ -12,7 +12,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
       @ems_vmware = FactoryBot.create(:ems_vmware, :zone => @zone)
     end
 
-    context "with a vm" do
+    context "with an active vm" do
       before(:each) do
         @vm = FactoryBot.create(:vm_perf, :ext_management_system => @ems_vmware)
       end
@@ -130,6 +130,29 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
             end
           end
         end
+      end
+    end
+
+    context "with a disconnected vm" do
+      let(:vm) { FactoryBot.create(:vm_perf, :ext_management_system => nil) }
+
+      it "raises an exception" do
+        expect { described_class.new(vm) }.to raise_exception(ArgumentError, "All targets must be connected to an EMS")
+      end
+    end
+
+    context "with a vms on different EMSs" do
+      let(:vm1) { FactoryBot.create(:vm_perf, :ext_management_system => @ems_vmware) }
+      let(:vm2) { FactoryBot.create(:vm_perf, :ext_management_system => FactoryBot.create(:ems_vmware)) }
+
+      it "raises an exception" do
+        expect { described_class.new([vm1, vm2]) }.to raise_exception(ArgumentError, "All targets must be on the same EMS")
+      end
+    end
+
+    context "with no targets" do
+      it "raises an exception" do
+        expect { described_class.new([]) }.to raise_exception(ArgumentError, "At least one target must be passed")
       end
     end
   end
