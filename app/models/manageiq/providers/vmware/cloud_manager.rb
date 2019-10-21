@@ -90,8 +90,8 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
         {
           :component => "text-field",
           :name      => "endpoints.events.password",
-          :label     => "Password",
-          :type      => "AMQP password"
+          :label     => "AMQP Password",
+          :type      => "password"
         }
       ]
     }.freeze
