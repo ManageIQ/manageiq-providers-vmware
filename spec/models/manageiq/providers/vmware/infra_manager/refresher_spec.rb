@@ -939,7 +939,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         },
         [Datacenter, "Prod"]           => {
           [EmsFolder, "host", {:hidden => true}] => {
-            [EmsCluster, "Testing/Production Cluster"] => {
+            [ManageIQ::Providers::Vmware::InfraManager::Cluster, "Testing/Production Cluster"] => {
               [ResourcePool, "Default for Cluster / Deployment Role Testing/Production Cluster",
                {:is_default => true}] => {
                  [ResourcePool, "Citrix", {:is_default => false}]                      => {

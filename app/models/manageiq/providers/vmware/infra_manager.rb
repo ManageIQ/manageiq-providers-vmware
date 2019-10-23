@@ -9,6 +9,7 @@ module ManageIQ::Providers
     require_nested :MetricsCapture
     require_nested :MetricsCollectorWorker
     require_nested :Refresher
+    require_nested :Cluster
     require_nested :Host
     require_nested :HostEsx
     require_nested :HostVirtualSwitch
