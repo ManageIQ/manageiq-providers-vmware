@@ -142,7 +142,7 @@ module ManageIQ::Providers
 
           new_result = {
             :ems_ref            => mor,
-            :ems_ref_obj        => mor,
+            :ems_ref_type       => mor.vimType,
             :name               => summary["name"],
             :store_type         => summary["type"].to_s.upcase,
             :total_space        => summary["capacity"],
@@ -247,9 +247,9 @@ module ManageIQ::Providers
             _log.warn "#{err} Skipping."
 
             new_result = {
-              :invalid     => true,
-              :ems_ref     => mor,
-              :ems_ref_obj => mor
+              :invalid      => true,
+              :ems_ref      => mor,
+              :ems_ref_type => mor.vimType
             }
             result << new_result
             result_uids[mor] = new_result
@@ -322,7 +322,7 @@ module ManageIQ::Providers
           new_result = {
             :type             => %w(esx esxi).include?(product_name.to_s.downcase) ? "ManageIQ::Providers::Vmware::InfraManager::HostEsx" : "ManageIQ::Providers::Vmware::InfraManager::Host",
             :ems_ref          => mor,
-            :ems_ref_obj      => mor,
+            :ems_ref_type     => mor.vimType,
             :name             => hostname,
             :hostname         => hostname,
             :ipaddress        => ipaddress,
@@ -884,9 +884,9 @@ module ManageIQ::Providers
             _log.warn "#{err} Skipping."
 
             new_result = {
-              :invalid     => true,
-              :ems_ref     => mor,
-              :ems_ref_obj => mor
+              :invalid      => true,
+              :ems_ref      => mor,
+              :ems_ref_type => mor.vimType
             }
             result << new_result
             result_uids[mor] = new_result
@@ -953,7 +953,7 @@ module ManageIQ::Providers
           new_result = {
             :type                  => template ? ManageIQ::Providers::Vmware::InfraManager::Template.name : ManageIQ::Providers::Vmware::InfraManager::Vm.name,
             :ems_ref               => mor,
-            :ems_ref_obj           => mor,
+            :ems_ref_type          => mor.vimType,
             :uid_ems               => uid,
             :name                  => URI.decode(summary_config["name"]),
             :vendor                => "vmware",
@@ -1242,15 +1242,15 @@ module ManageIQ::Providers
         description = nil if description.kind_of?(Hash)
 
         nh = {
-          :ems_ref     => inv['snapshot'],
-          :ems_ref_obj => inv['snapshot'],
-          :uid_ems     => create_time_ems,
-          :uid         => create_time.iso8601(6),
-          :parent_uid  => parent_uid,
-          :name        => URI.decode(inv['name']),
-          :description => description,
-          :create_time => create_time,
-          :current     => inv['snapshot'] == current,
+          :ems_ref      => inv['snapshot'],
+          :ems_ref_type => inv['snapshot'].vimType,
+          :uid_ems      => create_time_ems,
+          :uid          => create_time.iso8601(6),
+          :parent_uid   => parent_uid,
+          :name         => URI.decode(inv['name']),
+          :description  => description,
+          :create_time  => create_time,
+          :current      => inv['snapshot'] == current,
         }
 
         result << nh
@@ -1285,13 +1285,13 @@ module ManageIQ::Providers
           child_mors = get_mors(data, 'childEntity').reject { |child| child.vimType == "Datastore" }
 
           new_result = {
-            :type        => EmsFolder.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
-            :child_uids  => child_mors,
-            :hidden      => false
+            :type         => EmsFolder.name,
+            :ems_ref      => mor,
+            :ems_ref_type => mor.vimType,
+            :uid_ems      => mor,
+            :name         => URI.decode(data["name"]),
+            :child_uids   => child_mors,
+            :hidden       => false
           }
           result << new_result
           result_uids[mor] = new_result
@@ -1308,13 +1308,13 @@ module ManageIQ::Providers
           child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder') + get_mors(data, 'networkFolder')
 
           new_result = {
-            :type        => Datacenter.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => URI.decode(data["name"]),
-            :child_uids  => child_mors,
-            :hidden      => false
+            :type         => Datacenter.name,
+            :ems_ref      => mor,
+            :ems_ref_type => mor.vimType,
+            :uid_ems      => mor,
+            :name         => URI.decode(data["name"]),
+            :child_uids   => child_mors,
+            :hidden       => false
           }
           result << new_result
           result_uids[mor] = new_result
@@ -1332,13 +1332,13 @@ module ManageIQ::Providers
           name       = data.fetch_path('summary', 'name')
 
           new_result = {
-            :type        => StorageCluster.name,
-            :ems_ref     => mor,
-            :ems_ref_obj => mor,
-            :uid_ems     => mor,
-            :name        => name,
-            :child_uids  => child_mors,
-            :hidden      => false
+            :type         => StorageCluster.name,
+            :ems_ref      => mor,
+            :ems_ref_type => mor.vimType,
+            :uid_ems      => mor,
+            :name         => name,
+            :child_uids   => child_mors,
+            :hidden       => false
           }
 
           result << new_result
@@ -1368,7 +1368,7 @@ module ManageIQ::Providers
 
           new_result = {
             :ems_ref                 => mor,
-            :ems_ref_obj             => mor,
+            :ems_ref_type            => mor.vimType,
             :uid_ems                 => mor,
             :name                    => URI.decode(data["name"]),
             :effective_cpu           => effective_cpu,
@@ -1407,7 +1407,7 @@ module ManageIQ::Providers
 
           new_result = {
             :ems_ref               => mor,
-            :ems_ref_obj           => mor,
+            :ems_ref_type          => mor.vimType,
             :uid_ems               => mor,
             :name                  => URI.decode(data["name"].to_s),
             :type                  => "ManageIQ::Providers::Vmware::InfraManager::ResourcePool",

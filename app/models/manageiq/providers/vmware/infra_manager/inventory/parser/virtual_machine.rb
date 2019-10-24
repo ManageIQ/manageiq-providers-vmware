@@ -331,7 +331,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       snapshot_hash = {
         :vm_or_template => vm,
         :ems_ref        => snap._ref,
-        :ems_ref_obj    => managed_object_to_vim_string(snap),
+        :ems_ref_type   => snap.class.wsdl_name,
         :uid_ems        => create_time.to_s,
         :uid            => create_time.iso8601(6),
         :parent_uid     => parent_uid,
