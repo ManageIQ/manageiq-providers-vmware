@@ -1,4 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm do
+  before { EvmSpecHelper.local_miq_server } # required for creating snapshots needed for warm migrate tests
+
   let(:ems)  { FactoryBot.create(:ems_vmware) }
   let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems) }
   let(:vm)   { FactoryBot.create(:vm_vmware, :ext_management_system => ems, :host => host) }
@@ -40,6 +42,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
   context "supports_clone?" do
     it "returns true" do
       expect(vm.supports?(:clone)).to eq(true)
+    end
+  end
+
+  context "supports_warm_migrate?" do
+    it "returns true" do
+      expect(vm.supports?(:warm_migrate)).to eq(true)
+    end
+
+    it "returns false" do
+      FactoryBot.create_list(:snapshot, 2, :create_time => 1.minute.ago, :vm_or_template => vm)
+      expect(vm.supports?(:warm_migrate)).to eq(false)
     end
   end
 

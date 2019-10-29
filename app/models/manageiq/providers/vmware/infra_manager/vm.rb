@@ -9,6 +9,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
     unsupported_reason_add(:clone, _('Clone operation is not supported')) if blank? || orphaned? || archived?
   end
 
+  supports :warm_migrate do
+    unsupported_reason_add(:warm_migrate, _('Warm migratiobn can not migrate a VM with snapshots')) if snapshots.present?
+  end
+
   supports :reconfigure_disks
   supports :reconfigure_network_adapters
   supports :reconfigure_disksize do
