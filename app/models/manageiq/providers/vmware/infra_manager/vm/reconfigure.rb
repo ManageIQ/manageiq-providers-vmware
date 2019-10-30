@@ -1,7 +1,7 @@
 module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
   # Show Reconfigure VM task
   def reconfigurable?
-    true
+    active?
   end
 
   def max_total_vcpus

@@ -1,7 +1,7 @@
 module ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure
   # Show Reconfigure VM task
   def reconfigurable?
-    true
+    active?
   end
 
   def max_cpu_cores_per_socket(_total_vcpus = nil)
