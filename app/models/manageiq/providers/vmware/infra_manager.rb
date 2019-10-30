@@ -13,6 +13,7 @@ module ManageIQ::Providers
     require_nested :MetricsCapture
     require_nested :MetricsCollectorWorker
     require_nested :OpaqueSwitch
+    require_nested :OperationsWorker
     require_nested :OrchestrationTemplate
     require_nested :Provision
     require_nested :ProvisionViaPxe
