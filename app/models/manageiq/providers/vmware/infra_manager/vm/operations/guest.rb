@@ -33,4 +33,20 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Guest
   def validate_standby_guest
     validate_vm_control_powered_on
   end
+
+  def raw_shutdown_guest
+    run_command_via_parent(:vm_shutdown_guest)
+  end
+
+  def raw_standby_guest
+    run_command_via_parent(:vm_standby_guest)
+  end
+
+  def raw_reboot_guest
+    run_command_via_parent(:vm_reboot_guest)
+  end
+
+  def raw_reset
+    run_command_via_parent(:vm_reset)
+  end
 end
