@@ -2,18 +2,20 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   extend ActiveSupport::Concern
 
   def connect(options = {})
-    options[:auth_type] ||= :ws
-    raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
-    raise _("no credentials defined") if missing_credentials?(options[:auth_type])
+    Thread.current[:miq_vim] ||= {}
+    Thread.current[:miq_vim][connection_key(options)] ||= begin
+      options[:auth_type] ||= :ws
+      raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
+      raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
-    options[:use_broker] = (self.class.respond_to?(:use_vim_broker?) ? self.class.use_vim_broker? : ManageIQ::Providers::Vmware::InfraManager.use_vim_broker?) unless options.key?(:use_broker)
-    options[:vim_broker_drb_uri] ||= MiqVimBrokerWorker.method(:drb_uri) if options[:use_broker]
+      options[:use_broker] = false
 
-    # The following require pulls in both MiqFaultTolerantVim and MiqVim
-    require 'VMwareWebService/miq_fault_tolerant_vim'
+      # The following require pulls in both MiqFaultTolerantVim and MiqVim
+      require 'VMwareWebService/miq_fault_tolerant_vim'
 
-    options[:ems] = self
-    MiqFaultTolerantVim.new(options)
+      options[:ems] = self
+      MiqFaultTolerantVim.new(options)
+    end
   end
 
   def with_provider_connection(options = {})
@@ -29,6 +31,15 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     ensure
       vim.try(:disconnect) rescue nil
     end
+  end
+
+  private
+
+  def connection_key(options)
+    server   = options[:hostname] || hostname
+    username = options[:user] || authentication_userid
+
+    "#{server}__#{username}"
   end
 
   module ClassMethods
