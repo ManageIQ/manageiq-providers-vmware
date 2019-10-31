@@ -38,7 +38,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_compute_resource(object, kind, props)
-    persister.ems_clusters.targeted_scope << object._ref
+    persister.clusters.targeted_scope << object._ref
     return if kind == "leave"
 
     cluster_hash = {
@@ -53,7 +53,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_compute_resource_das_config(cluster_hash, props)
     parse_compute_resource_drs_config(cluster_hash, props)
 
-    persister.ems_clusters.build(cluster_hash)
+    persister.clusters.build(cluster_hash)
   end
   alias parse_cluster_compute_resource parse_compute_resource
 

@@ -1373,6 +1373,7 @@ module ManageIQ::Providers
             :name                    => URI.decode(data["name"]),
             :effective_cpu           => effective_cpu,
             :effective_memory        => effective_memory,
+            :type                    => "ManageIQ::Providers::Vmware::InfraManager::Cluster",
 
             :ha_enabled              => das_config["enabled"].to_s.downcase == "true",
             :ha_admit_control        => das_config["admissionControlEnabled"].to_s.downcase == "true",

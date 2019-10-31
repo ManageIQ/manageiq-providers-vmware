@@ -6,7 +6,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :customization_specs)
     add_collection(infra, :disks, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :distributed_virtual_switches)
-    add_collection(infra, :ems_clusters)
+    add_collection(infra, :clusters)
     add_collection(infra, :ems_custom_attributes, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :ems_extensions)
     add_collection(infra, :ems_folders)
@@ -46,7 +46,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   def vim_class_to_collection(managed_object)
     case managed_object
     when RbVmomi::VIM::ComputeResource
-      ems_clusters
+      clusters
     when RbVmomi::VIM::Datacenter
       ems_folders
     when RbVmomi::VIM::HostSystem
