@@ -277,6 +277,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         parser.parse_content_library_item(api_items.get(item_id).value)
       end
     end
+  rescue VSphereAutomation::ApiError
+    nil
   end
 
   def parse_storage_profiles(vim, parser)
