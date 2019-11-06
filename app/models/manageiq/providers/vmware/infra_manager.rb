@@ -131,6 +131,10 @@ module ManageIQ::Providers
       Settings.ems_refresh.vmwarews.streaming_refresh
     end
 
+    def queue_name_for_ems_operations
+      queue_name
+    end
+
     def remote_console_vmrc_acquire_ticket
       vim = connect(:auth_type => :console)
       ticket = vim.acquireCloneTicket
