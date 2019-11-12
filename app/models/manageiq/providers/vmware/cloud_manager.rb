@@ -148,43 +148,13 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     %w(vmware)
   end
 
-  #
-  # Operations
-  #
-
-  def vm_start(vm, _options = {})
-    vm.start
-  rescue => err
-    $vcloud_log.error("vm=[#{vm.name}, error: #{err}")
-  end
-
-  def vm_stop(vm, _options = {})
-    vm.stop
-  rescue => err
-    $vcloud_log.error("vm=[#{vm.name}, error: #{err}")
-  end
-
-  def vm_suspend(vm, _options = {})
-    vm.suspend
-  rescue => err
-    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
-  end
-
-  def vm_restart(vm, _options = {})
-    vm.restart
-  rescue => err
-    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
-  end
-
-  def vm_destroy(vm, _options = {})
-    vm.vm_destroy
-  rescue => err
-    $vcloud_log.error("vm=[#{vm.name}], error: #{err}")
-  end
-
   def self.display_name(number = 1)
     n_('Cloud Provider (VMware vCloud)', 'Cloud Providers (VMware vCloud)', number)
   end
+
+  #
+  # Operations
+  #
 
   def vm_create_snapshot(vm, options = {})
     defaults = {

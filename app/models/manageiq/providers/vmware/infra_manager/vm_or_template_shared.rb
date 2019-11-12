@@ -1,8 +1,10 @@
 module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
   extend ActiveSupport::Concern
+
+  include_concern 'Disconnect'
+  include_concern 'Operations'
   include_concern 'RefreshOnScan'
   include_concern 'Scanning'
-  include_concern 'Disconnect'
 
   POWER_STATES = {
     "poweredOn"  => "on",
