@@ -407,7 +407,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @storage_cluster = StorageCluster.find_by(:name => "TestDatastoreCluster")
     expect(@storage_cluster).to have_attributes(
       :ems_ref      => "group-p81",
-      :ems_ref_type => "StorageCluster",
+      :ems_ref_type => "StoragePod",
       :uid_ems      => "group-p81",
       :name         => "TestDatastoreCluster",
       :type         => "StorageCluster",
