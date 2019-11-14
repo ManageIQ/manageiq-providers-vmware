@@ -92,12 +92,12 @@ describe EmsEvent do
     end
 
     def mock_raw_event_host(raw_event)
-      raw_event["host"]["host"] = @host.ems_ref_obj
+      raw_event["host"]["host"] = @host.ems_ref
       raw_event["host"]["name"] = @host.hostname
     end
 
     def mock_raw_event_vm(raw_event)
-      raw_event["vm"]["vm"]     = @vm1.ems_ref_obj
+      raw_event["vm"]["vm"]     = @vm1.ems_ref
       raw_event["vm"]["name"]   = @vm1.name
       raw_event["vm"]["path"]   = @vm1.location
     end
