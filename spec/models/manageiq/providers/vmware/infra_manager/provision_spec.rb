@@ -293,7 +293,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       context "#start_clone" do
         before(:each) do
           ds_mor = "datastore-0"
-          storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_obj => ds_mor)
+          storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_type => "Datastore")
 
           Array.new(2) do |i|
             cluster_mor = "cluster-#{i}"
@@ -304,7 +304,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
               :ext_management_system => @ems,
               :ems_cluster           => cluster,
               :ems_ref               => host_mor,
-              :ems_ref_obj           => host_mor
+              :ems_ref_type          => "HostSystem"
             }
 
             FactoryBot.create(:host_vmware, host_props).tap do |host|
