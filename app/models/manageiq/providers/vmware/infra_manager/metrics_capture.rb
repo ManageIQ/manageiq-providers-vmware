@@ -237,19 +237,13 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     ret
   end
 
-  attr_reader :ems, :targets
-  def initialize(target)
-    super
+  alias targets target
+  def initialize(target, ems = nil)
+    super(Array(target), ems || Array(target).first&.ext_management_system)
 
-    targets = target.to_miq_a
-    ems_ids = targets.collect(&:ems_id)
-
-    raise ArgumentError, "At least one target must be passed"      if targets.empty?
-    raise ArgumentError, "All targets must be connected to an EMS" if ems_ids.any?(&:nil?)
-    raise ArgumentError, "All targets must be on the same EMS"     if ems_ids.uniq.compact.count > 1
-
-    @targets = targets
-    @ems     = targets.first.ext_management_system
+    raise ArgumentError, "At least one target must be passed"      if self.ems.nil? && targets.empty?
+    raise ArgumentError, "All targets must be connected to an EMS" if self.ems.nil?
+    raise ArgumentError, "All targets must be on the same EMS"     if targets.map(&:ems_id).any? { |ems_id| ems_id != self.ems.id }
   end
 
   #
@@ -403,7 +397,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
   def log_targets
     if targets.size == 1
-      "[#{target.class.name}], [#{target.id}], [#{target.name}]"
+      "[#{targets.first.class.name}], [#{targets.first.id}], [#{targets.first.name}]"
     else
       "[#{targets.map { |obj| obj.class.name }.uniq.join(", ")}], [#{targets.size} targets]"
     end

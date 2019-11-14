@@ -155,5 +155,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
         expect { described_class.new([]) }.to raise_exception(ArgumentError, "At least one target must be passed")
       end
     end
+
+    context "with an ems" do
+      it "passes" do
+        expect { described_class.new(nil, @ems_vmware) }.not_to raise_exception
+      end
+    end
   end
 end
