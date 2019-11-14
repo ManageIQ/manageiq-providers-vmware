@@ -1,6 +1,8 @@
 module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
   extend ActiveSupport::Concern
 
+  include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
+
   include_concern 'Disconnect'
   include_concern 'Operations'
   include_concern 'RefreshOnScan'
