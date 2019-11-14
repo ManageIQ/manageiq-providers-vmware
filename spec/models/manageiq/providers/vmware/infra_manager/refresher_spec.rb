@@ -307,18 +307,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   def assert_specific_datacenter
     @datacenter = Datacenter.find_by(:ems_id => @ems.id, :ems_ref => "datacenter-672")
     expect(@datacenter).to have_attributes(
-      :ems_ref     => "datacenter-672",
-      :ems_ref_obj => VimString.new("datacenter-672", :Datacenter, :ManagedObjectReference),
-      :name        => "New / Datacenter"
+      :ems_ref      => "datacenter-672",
+      :ems_ref_type => "Datacenter",
+      :name         => "New / Datacenter"
     )
   end
 
   def assert_specific_folder
     @folder = EmsFolder.find_by(:ems_id => @ems.id, :ems_ref => "group-v674")
     expect(@folder).to have_attributes(
-      :ems_ref     => "group-v674",
-      :ems_ref_obj => VimString.new("group-v674", :Folder, :ManagedObjectReference),
-      :name        => "Test / Folder"
+      :ems_ref      => "group-v674",
+      :ems_ref_type => "Folder",
+      :name         => "Test / Folder"
     )
   end
 
@@ -326,7 +326,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @cluster = EmsCluster.find_by(:ems_id => @ems.id, :ems_ref => "domain-c871")
     expect(@cluster).to have_attributes(
       :ems_ref                 => "domain-c871",
-      :ems_ref_obj             => VimString.new("domain-c871", :ClusterComputeResource, :ManagedObjectReference),
+      :ems_ref_type            => "ClusterComputeResource",
       :uid_ems                 => "domain-c871",
       :name                    => "Testing/Production Cluster",
       :ha_enabled              => false,
@@ -340,7 +340,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @default_rp = @cluster.default_resource_pool
     expect(@default_rp).to have_attributes(
       :ems_ref               => "resgroup-872",
-      :ems_ref_obj           => VimString.new("resgroup-872", :ResourcePool, :ManagedObjectReference),
+      :ems_ref_type          => "ResourcePool",
       :uid_ems               => "resgroup-872",
       :name                  => "Default for Cluster / Deployment Role Testing/Production Cluster",
       :type                  => "ManageIQ::Providers::Vmware::InfraManager::ResourcePool",
@@ -361,7 +361,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @rp = ResourcePool.find_by_ems_ref("resgroup-11340")
     expect(@rp).to have_attributes(
       :ems_ref               => "resgroup-11340",
-      :ems_ref_obj           => VimString.new("resgroup-11340", :ResourcePool, :ManagedObjectReference),
+      :ems_ref_type          => "ResourcePool",
       :uid_ems               => "resgroup-11340",
       :name                  => "Joe",
       :memory_reserve        => 0,
@@ -389,7 +389,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @storage = Storage.find_by(:name => "StarM1-Prod1 (1)")
     expect(@storage).to have_attributes(
       :ems_ref                       => "datastore-953",
-      :ems_ref_obj                   => VimString.new("datastore-953", :Datastore, :ManagedObjectReference),
+      :ems_ref_type                  => "Datastore",
       :name                          => "StarM1-Prod1 (1)",
       :store_type                    => "VMFS",
       :total_space                   => 524254445568,
@@ -406,11 +406,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   def assert_specific_storage_cluster
     @storage_cluster = StorageCluster.find_by(:name => "TestDatastoreCluster")
     expect(@storage_cluster).to have_attributes(
-      :ems_ref     => "group-p81",
-      :ems_ref_obj => VimString.new("group-p81", :StorageCluster, :ManagedObjectReference),
-      :uid_ems     => "group-p81",
-      :name        => "TestDatastoreCluster",
-      :type        => "StorageCluster",
+      :ems_ref      => "group-p81",
+      :ems_ref_type => "StorageCluster",
+      :uid_ems      => "group-p81",
+      :name         => "TestDatastoreCluster",
+      :type         => "StorageCluster",
     )
 
     @child_storage = Storage.find_by_ems_ref("datastore-12281")
@@ -441,7 +441,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     @host = ManageIQ::Providers::Vmware::InfraManager::Host.find_by(:name => "VI4ESXM1.manageiq.com")
     expect(@host).to have_attributes(
       :ems_ref          => "host-9",
-      :ems_ref_obj      => VimString.new("host-9", :HostSystem, :ManagedObjectReference),
+      :ems_ref_type     => "HostSystem",
       :name             => "VI4ESXM1.manageiq.com",
       :hostname         => "VI4ESXM1.manageiq.com",
       :ipaddress        => "192.168.252.13",
@@ -675,7 +675,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(v).to have_attributes(
       :template              => false,
       :ems_ref               => "vm-11342",
-      :ems_ref_obj           => VimString.new("vm-11342", :VirtualMachine, :ManagedObjectReference),
+      :ems_ref_type          => "VirtualMachine",
       :uid_ems               => "422f5d16-c048-19e6-3212-e588fbebf7e0",
       :vendor                => "vmware",
       :power_state           => "off",
@@ -775,33 +775,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(nic.network).to eq(network)
 
     expect(v.parent_datacenter).to have_attributes(
-      :ems_ref     => "datacenter-2",
-      :ems_ref_obj => VimString.new("datacenter-2", :Datacenter, :ManagedObjectReference),
-      :uid_ems     => "datacenter-2",
-      :name        => "Prod",
-      :type        => "Datacenter",
-
-      :folder_path => "Datacenters/Prod"
+      :ems_ref      => "datacenter-2",
+      :ems_ref_type => "Datacenter",
+      :uid_ems      => "datacenter-2",
+      :name         => "Prod",
+      :type         => "Datacenter",
+      :folder_path  => "Datacenters/Prod"
     )
 
     expect(v.parent_folder).to have_attributes(
-      :ems_ref     => "group-d1",
-      :ems_ref_obj => VimString.new("group-d1", :Folder, :ManagedObjectReference),
-      :uid_ems     => "group-d1",
-      :name        => "Datacenters",
-      :type        => nil,
-
-      :folder_path => "Datacenters"
+      :ems_ref      => "group-d1",
+      :ems_ref_type => "Folder",
+      :uid_ems      => "group-d1",
+      :name         => "Datacenters",
+      :type         => nil,
+      :folder_path  => "Datacenters"
     )
 
     expect(v.parent_blue_folder).to have_attributes(
-      :ems_ref     => "group-v11341",
-      :ems_ref_obj => VimString.new("group-v11341", :Folder, :ManagedObjectReference),
-      :uid_ems     => "group-v11341",
-      :name        => "JFitzgerald",
-      :type        => nil,
-
-      :folder_path => "Datacenters/Prod/vm/JFitzgerald"
+      :ems_ref      => "group-v11341",
+      :ems_ref_type => "Folder",
+      :uid_ems      => "group-v11341",
+      :name         => "JFitzgerald",
+      :type         => nil,
+      :folder_path  => "Datacenters/Prod/vm/JFitzgerald"
     )
   end
 
