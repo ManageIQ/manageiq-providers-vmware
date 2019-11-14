@@ -7,6 +7,12 @@ describe MiqEmsRefreshCoreWorker do
     my_server.activate_roles("ems_inventory")
   end
 
+  context ".ems_class" do
+    it "is the infra manager" do
+      expect(described_class.ems_class).to eq(ManageIQ::Providers::Vmware::InfraManager)
+    end
+  end
+
   context ".has_required_role?" do
     context "with update_driven_refresh" do
       before do
