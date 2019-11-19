@@ -1410,6 +1410,7 @@ module ManageIQ::Providers
             :ems_ref_obj           => mor,
             :uid_ems               => mor,
             :name                  => URI.decode(data["name"].to_s),
+            :type                  => "ManageIQ::Providers::Vmware::InfraManager::ResourcePool",
             :vapp                  => mor.vimType == "VirtualApp",
 
             :memory_reserve        => memory["reservation"],
