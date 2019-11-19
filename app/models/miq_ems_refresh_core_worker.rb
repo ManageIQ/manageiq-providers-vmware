@@ -14,6 +14,10 @@ class MiqEmsRefreshCoreWorker < MiqWorker
     ManageIQ::Providers::Vmware::InfraManager
   end
 
+  def self.kill_priority
+    MiqWorkerType::KILL_PRIORITY_REFRESH_CORE_WORKERS
+  end
+
   def friendly_name
     @friendly_name ||= begin
       ems = ext_management_system
