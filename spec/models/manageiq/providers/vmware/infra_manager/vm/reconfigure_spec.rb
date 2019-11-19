@@ -16,8 +16,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
     )
   end
 
-  it "#reconfigurable?" do
-    expect(vm.reconfigurable?).to be_truthy
+  describe "#reconfigurable?" do
+    let(:ems)         { FactoryBot.create(:ext_management_system) }
+    let(:vm_active)   { FactoryBot.create(:vm_vmware, :storage => storage, :ext_management_system => ems) }
+    let(:vm_retired)  { FactoryBot.create(:vm_vmware, :retired => true, :storage => storage, :ext_management_system => ems) }
+    let(:vm_orphaned) { FactoryBot.create(:vm_vmware, :storage => storage) }
+    let(:vm_archived) { FactoryBot.create(:vm_vmware) }
+
+    it 'returns true for active vm' do
+      expect(vm_active.reconfigurable?).to be_truthy
+    end
+
+    it 'returns false for orphaned vm' do
+      expect(vm_orphaned.reconfigurable?).to be_falsey
+    end
+
+    it 'returns false for retired vm' do
+      expect(vm_retired.reconfigurable?).to be_falsey
+    end
+
+    it 'returns false for archived vm' do
+      expect(vm_archived.reconfigurable?).to be_falsey
+    end
   end
 
   context "#max_total_vcpus" do
