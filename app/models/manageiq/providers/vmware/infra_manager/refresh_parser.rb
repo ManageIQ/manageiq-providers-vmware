@@ -1281,7 +1281,7 @@ module ManageIQ::Providers
           child_mors = get_mors(data, 'childEntity').reject { |child| child.vimType == "Datastore" }
 
           new_result = {
-            :type         => EmsFolder.name,
+            :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
             :ems_ref      => mor,
             :ems_ref_type => mor.vimType,
             :uid_ems      => mor,
@@ -1304,7 +1304,7 @@ module ManageIQ::Providers
           child_mors = get_mors(data, 'hostFolder') + get_mors(data, 'vmFolder') + get_mors(data, 'datastoreFolder') + get_mors(data, 'networkFolder')
 
           new_result = {
-            :type         => Datacenter.name,
+            :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
             :ems_ref      => mor,
             :ems_ref_type => mor.vimType,
             :uid_ems      => mor,
@@ -1328,7 +1328,7 @@ module ManageIQ::Providers
           name       = data.fetch_path('summary', 'name')
 
           new_result = {
-            :type         => StorageCluster.name,
+            :type         => "ManageIQ::Providers::Vmware::InfraManager::StorageCluster",
             :ems_ref      => mor,
             :ems_ref_type => mor.vimType,
             :uid_ems      => mor,
@@ -1554,7 +1554,7 @@ module ManageIQ::Providers
 
         # Mark all child folders of each Datacenter as hidden
         # e.g.: "vm", "host", "datastore"
-        data[:folders].select { |f| f[:type] == "Datacenter" }.each do |dc|
+        data[:folders].select { |f| f[:type] == "ManageIQ::Providers::Vmware::InfraManager::Datacenter" }.each do |dc|
           dc_children = dc.fetch_path(:ems_children, :folders)
           dc_children.to_miq_a.each do |f|
             f[:hidden] = true

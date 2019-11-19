@@ -309,6 +309,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@datacenter).to have_attributes(
       :ems_ref      => "datacenter-672",
       :ems_ref_type => "Datacenter",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :name         => "New / Datacenter"
     )
   end
@@ -318,6 +319,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@folder).to have_attributes(
       :ems_ref      => "group-v674",
       :ems_ref_type => "Folder",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :name         => "Test / Folder"
     )
   end
@@ -412,7 +414,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "StoragePod",
       :uid_ems      => "group-p81",
       :name         => "TestDatastoreCluster",
-      :type         => "StorageCluster",
+      :type        => "ManageIQ::Providers::Vmware::InfraManager::StorageCluster",
     )
 
     @child_storage = Storage.find_by_ems_ref("datastore-12281")

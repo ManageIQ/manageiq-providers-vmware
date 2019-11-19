@@ -587,7 +587,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.uid_ems).to eq("D6EB1D64-05B2-4937-BFF6-6F77C6E647B7")
       expect(ems.ems_clusters.count).to eq(4)
       expect(ems.ems_folders.count).to eq(11)
-      expect(ems.ems_folders.where(:type => "Datacenter").count).to eq(2)
+      expect(ems.datacenters.count).to eq(2)
       expect(ems.disks.count).to eq(64)
       expect(ems.guest_devices.count).to eq(64)
       expect(ems.hardwares.count).to eq(64)
@@ -611,7 +611,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(datacenter).to have_attributes(
         :ems_ref => "datacenter-2",
         :name    => "DC0",
-        :type    => "Datacenter",
+        :type    => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
         :uid_ems => "datacenter-2",
       )
 
@@ -650,6 +650,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(folder).to have_attributes(
         :ems_ref => "group-d1",
         :name    => "Datacenters",
+        :type    => "ManageIQ::Providers::Vmware::InfraManager::Folder",
         :uid_ems => "group-d1",
         :hidden  => true,
       )
