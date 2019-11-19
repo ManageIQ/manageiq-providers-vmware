@@ -1,2 +1,2 @@
-class ManageIQ::Providers::Vmware::InfraManager::StoragerCluster < ManageIQ::Providers::InfraManager::StoragerCluster
+class ManageIQ::Providers::Vmware::InfraManager::StorageCluster < ManageIQ::Providers::InfraManager::StorageCluster
 end
