@@ -115,8 +115,8 @@ describe VmScan do
             @job.reload
           end
 
-          it "should go to state of 'wait_for_policy'" do
-            expect(@job.state).to eq('wait_for_policy')
+          it "should go to state of 'checking_policy'" do
+            expect(@job.state).to eq('checking_policy')
             expect(MiqQueue.where(:class_name => "MiqAeEngine", :method_name => "deliver").count).to eq(1)
           end
 
