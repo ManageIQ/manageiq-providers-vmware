@@ -136,44 +136,15 @@ describe VmScan do
       end
     end
 
-    context "#start_user_event_message" do
-      it "without send" do
-        expect(@vm.ext_management_system).to receive(:vm_log_user_event)
-        @job.start_user_event_message(@vm)
-      end
-
-      it "with send = true" do
-        expect(@vm.ext_management_system).to receive(:vm_log_user_event)
-        @job.start_user_event_message(@vm, true)
-      end
-
-      it "with send = false" do
-        expect(@vm.ext_management_system).not_to receive(:vm_log_user_event)
-        @job.start_user_event_message(@vm, false)
-      end
+    it "#log_start_user_event_message" do
+      expect(@vm).to receive(:log_user_event).with(@job.start_user_event_message(@vm))
+      @job.log_start_user_event_message(@vm)
     end
 
-    context "#end_user_event_message" do
-      it "without send" do
-        expect(@vm.ext_management_system).to receive(:vm_log_user_event)
-        @job.end_user_event_message(@vm)
-      end
-
-      it "with send = true" do
-        expect(@vm.ext_management_system).to receive(:vm_log_user_event)
-        @job.end_user_event_message(@vm, true)
-      end
-
-      it "with send = false" do
-        expect(@vm.ext_management_system).not_to receive(:vm_log_user_event)
-        @job.end_user_event_message(@vm, false)
-      end
-
-      it "should not send the end message twice" do
-        expect(@vm.ext_management_system).to receive(:vm_log_user_event).once
-        @job.end_user_event_message(@vm)
-        @job.end_user_event_message(@vm)
-      end
+    it "#log_end_user_event_message" do
+      expect(@vm).to receive(:log_user_event).with(@job.end_user_event_message(@vm)).once
+      @job.log_end_user_event_message(@vm)
+      @job.log_end_user_event_message(@vm)
     end
 
     context "#create_scan_args" do
@@ -232,45 +203,43 @@ describe VmScan do
     end
 
     describe "#call_snapshot_create" do
-      context "for providers other than OpenStack and Microsoft" do
-        before { @job.miq_server_id = @server.id }
+      before { @job.miq_server_id = @server.id }
 
-        it "does not call #create_snapshot but sends signal :snapshot_complete" do
-          expect(@job).to receive(:signal).with(:snapshot_complete)
-          expect(@job).not_to receive(:create_snapshot)
+      it "does not call #create_snapshot but sends signal :snapshot_complete" do
+        expect(@job).to receive(:signal).with(:snapshot_complete)
+        expect(@job).not_to receive(:create_snapshot)
+        @job.call_snapshot_create
+      end
+
+      context "if snapshot for scan required" do
+        before do
+          allow(@vm).to receive(:require_snapshot_for_scan?).and_return(true)
+          allow(MiqServer).to receive(:use_broker_for_embedded_proxy?).and_return(true)
+        end
+
+        it "sends signal :broker_unavailable and :snapshot_complete if there is no MiqVimBrokerWorker available" do
+          allow(MiqVimBrokerWorker).to receive(:available?).and_return(false)
+          expect(@job).to receive(:signal).with(:broker_unavailable)
+          expect(@job).not_to receive(:signal).with(:snapshot_complete)
           @job.call_snapshot_create
         end
 
-        context "if snapshot for scan required" do
-          before do
-            allow(@vm).to receive(:require_snapshot_for_scan?).and_return(true)
-            allow(MiqServer).to receive(:use_broker_for_embedded_proxy?).and_return(true)
-          end
-
-          it "sends signal :broker_unavailable and :snapshot_complete if there is no MiqVimBrokerWorker available" do
-            allow(MiqVimBrokerWorker).to receive(:available?).and_return(false)
-            expect(@job).to receive(:signal).with(:broker_unavailable)
-            expect(@job).not_to receive(:signal).with(:snapshot_complete)
-            @job.call_snapshot_create
-          end
-
-          it "logs user event and sends signal :snapshot_complete" do
-            allow(MiqVimBrokerWorker).to receive(:available?).and_return(true)
-            expect(@job).not_to receive(:signal).with(:broker_unavailable)
-            expect(@job).to receive(:signal).with(:snapshot_complete)
-            expect(@job).to receive(:log_user_event)
-            @job.call_snapshot_create
-          end
+        it "logs user event and sends signal :snapshot_complete" do
+          allow(MiqVimBrokerWorker).to receive(:available?).and_return(true)
+          expect(@job).not_to receive(:signal).with(:broker_unavailable)
+          expect(@job).to receive(:signal).with(:snapshot_complete)
+          expect(@job).to receive(:log_user_event)
+          @job.call_snapshot_create
         end
+      end
 
-        context "if snapshot for scan not requiered" do
-          it "logs user events: Initializing and sends signal :snapshot_complete" do
-            allow(@vm).to receive(:require_snapshot_for_scan?).and_return(false)
-            event_message = "EVM SmartState Analysis Initiated for VM [#{@vm.name}]"
-            expect(@job).to receive(:signal).with(:snapshot_complete)
-            expect(@job).to receive(:log_user_event).with(event_message, any_args)
-            @job.call_snapshot_create
-          end
+      context "if snapshot for scan not required" do
+        it "logs user events: Initializing and sends signal :snapshot_complete" do
+          allow(@vm).to receive(:require_snapshot_for_scan?).and_return(false)
+          event_message = @job.start_user_event_message(@vm)
+          expect(@job).to receive(:signal).with(:snapshot_complete)
+          expect(@job).to receive(:log_user_event).with(event_message, any_args)
+          @job.call_snapshot_create
         end
       end
     end
