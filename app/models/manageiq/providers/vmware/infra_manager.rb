@@ -531,13 +531,6 @@ module ManageIQ::Providers
       result
     end
 
-    def vm_log_user_event(vm, event_message)
-      vm.with_provider_object do |vim_vm|
-        vim_vm.logUserEvent(event_message)
-      end
-      nil
-    end
-
     # Find the VmCreated events for a list of VMs and return the time
     def find_vm_create_events(vms_list)
       # Create a hash of VM uuids for lookup

@@ -38,4 +38,11 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
   def raw_rename(new_name)
     run_command_via_parent(:vm_rename, :new_name => new_name)
   end
+
+  def log_user_event(event_message)
+    with_provider_object do |vim_vm|
+      vim_vm.logUserEvent(event_message)
+    end
+    nil
+  end
 end
