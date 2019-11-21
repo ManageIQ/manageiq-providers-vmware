@@ -25,6 +25,10 @@ class MiqVimBrokerWorker < MiqWorker
     true
   end
 
+  def self.kill_priority
+    MiqWorkerType::KILL_PRIORITY_VIM_BROKER_WORKERS
+  end
+
   def self.has_required_role?
     return false if emses_to_monitor.empty?
     super
