@@ -1,4 +1,5 @@
 class ManageIQ::Providers::Vmware::InfraManager::Folder < ManageIQ::Providers::InfraManager::Folder
+  include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
   #
   # Provider Object methods
   #

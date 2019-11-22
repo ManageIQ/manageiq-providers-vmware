@@ -783,7 +783,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "Datacenter",
       :uid_ems      => "datacenter-2",
       :name         => "Prod",
-      :type         => "Datacenter",
       :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :folder_path  => "Datacenters/Prod"
     )
