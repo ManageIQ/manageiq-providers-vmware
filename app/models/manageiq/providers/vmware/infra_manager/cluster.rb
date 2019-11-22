@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Cluster < ManageIQ::Providers::InfraManager::Cluster
+  include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
+
   def provider_object(connection)
     connection.getVimClusterByMor(ems_ref_obj)
   end

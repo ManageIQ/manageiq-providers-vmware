@@ -218,7 +218,7 @@ describe MiqVimBrokerWorker::Runner do
             :username     => @ems.authentication_userid,
             :objType      => "HostSystem",
             :op           => "update",
-            :mor          => host.ems_ref_obj,
+            :mor          => host.ems_ref,
             :key          => "testkey",
             :changedProps => ["summary.runtime.connectionState"],
             :changeSet    => [{"name" => "summary.runtime.connectionState", "op" => "assign", "val" => "connected"}]
@@ -249,10 +249,10 @@ describe MiqVimBrokerWorker::Runner do
           expected_folder_hash = {
             :folders => [
               {
-                :type        => klass,
-                :ems_ref     => mor,
-                :ems_ref_obj => mor,
-                :uid_ems     => mor
+                :type         => klass,
+                :ems_ref      => mor,
+                :ems_ref_type => "Folder",
+                :uid_ems      => mor
               }
             ]
           }

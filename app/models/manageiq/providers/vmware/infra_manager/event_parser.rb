@@ -140,10 +140,10 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
     hash = {
       :folders => [
         {
-          :type        => klass,
-          :ems_ref     => mor,
-          :ems_ref_obj => mor,
-          :uid_ems     => mor
+          :type         => klass,
+          :ems_ref      => mor,
+          :ems_ref_type => "Folder",
+          :uid_ems      => mor
         }
       ]
     }

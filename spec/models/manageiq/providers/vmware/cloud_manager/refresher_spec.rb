@@ -167,7 +167,6 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(@template).to have_attributes(
       :template              => true,
       :ems_ref               => 'vm-ac90bd58-3bc4-47a5-bc8c-f1c8f5c468b6',
-      :ems_ref_obj           => nil,
       :uid_ems               => 'vm-ac90bd58-3bc4-47a5-bc8c-f1c8f5c468b6',
       :vendor                => 'vmware',
       :power_state           => 'never',
@@ -201,7 +200,6 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(v).to have_attributes(
       :template               => false,
       :ems_ref                => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
-      :ems_ref_obj            => nil,
       :uid_ems                => 'vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2',
       :vendor                 => 'vmware',
       :power_state            => 'on',
@@ -291,7 +289,6 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(v).to have_attributes(
       :template              => false,
       :ems_ref               => 'vm-aaf94123-cbf9-4de9-841c-41dd41ac310e',
-      :ems_ref_obj           => nil,
       :uid_ems               => 'vm-aaf94123-cbf9-4de9-841c-41dd41ac310e',
       :vendor                => 'vmware',
       :power_state           => 'off',

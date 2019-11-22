@@ -15,7 +15,7 @@
       xsiType: :ManagedObjectReference
     MOR: !ruby/string:VimString
       str: group-p81
-      vimType: :Datacenter
+      vimType: :StoragePod
       xsiType: :ManagedObjectReference
     summary: !ruby/hash:VimHash
       name: !ruby/string:VimString

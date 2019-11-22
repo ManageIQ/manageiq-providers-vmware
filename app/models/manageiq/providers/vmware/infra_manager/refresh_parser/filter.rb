@@ -88,8 +88,9 @@ class ManageIQ::Providers::Vmware::InfraManager
     # Since a Folder and a Datacenter are both an EmsFolder
     # we need to handle @vc_data[:folder] and @vc_data[:dc]
     def folder_inv_by_folder(folder)
-      mor = folder.ems_ref_obj
-      return nil if mor.nil?
+      return nil if folder&.ems_ref.nil?
+
+      mor = VimString.new(folder.ems_ref, folder.ems_ref_type, :ManagedObjectReference)
 
       _type, target = RefreshParser.inv_target_by_mor(mor, @vc_data)
       target.nil? ? nil : {mor => target}
