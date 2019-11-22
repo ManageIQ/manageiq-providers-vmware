@@ -16,6 +16,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
     raise MiqException::MiqVmError, unsupported_reason(:remove_snapshot) unless supports_remove_snapshot?
     snapshot = snapshots.find_by(:id => snapshot_id)
     raise _("Requested VM snapshot not found, unable to remove snapshot") unless snapshot
+    raise _("Refusing to delete a VCB Snapshot") if snapshot.name == MiqVimVm::VCB_SNAPSHOT_NAME
+    raise _("Refusing to delete snapshot when there is a Consolidate Helper snapshot") if snapshots.any? { |s| MiqVimVm::CH_SNAPSHOT_NAME =~ s.name }
+
     begin
       _log.info("removing snapshot ID: [#{snapshot.id}] uid_ems: [#{snapshot.uid_ems}] ems_ref: [#{snapshot.ems_ref}] name: [#{snapshot.name}] description [#{snapshot.description}]")
 
