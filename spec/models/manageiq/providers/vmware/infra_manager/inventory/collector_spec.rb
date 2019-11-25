@@ -39,16 +39,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_specific_vm
         end
       end
-
-      it "Same as classic refresh" do
-        with_vcr("classic") { EmsRefresh.init_console; EmsRefresh.refresh(ems) }
-        inventory_after_classic_refresh = serialize_inventory
-
-        with_vcr("graph") { run_full_refresh }
-        inventory_after_graph_refresh = serialize_inventory
-
-        assert_inventory_not_changed(inventory_after_classic_refresh, inventory_after_graph_refresh)
-      end
     end
 
     context "targeted refresh" do

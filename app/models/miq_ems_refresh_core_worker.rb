@@ -6,9 +6,7 @@ class MiqEmsRefreshCoreWorker < MiqWorker
   self.required_roles = ["ems_inventory"]
 
   def self.has_required_role?
-    return false if Settings.ems_refresh.vmwarews.streaming_refresh
-
-    super
+    false
   end
 
   def self.ems_class
