@@ -13,6 +13,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
   end
 
   def raw_remove_snapshot(snapshot_id)
+    require "VMwareWebService/MiqVimVm"
+
     raise MiqException::MiqVmError, unsupported_reason(:remove_snapshot) unless supports_remove_snapshot?
     snapshot = snapshots.find_by(:id => snapshot_id)
     raise _("Requested VM snapshot not found, unable to remove snapshot") unless snapshot
