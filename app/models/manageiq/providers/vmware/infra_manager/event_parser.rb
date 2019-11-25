@@ -136,7 +136,7 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
 
   def self.folder_update_to_hash(event)
     mor = event[:mor]
-    klass = 'EmsFolder'
+    klass = 'ManageIQ::Providers::Vmware::InfraManager::Folder'
     hash = {
       :folders => [
         {

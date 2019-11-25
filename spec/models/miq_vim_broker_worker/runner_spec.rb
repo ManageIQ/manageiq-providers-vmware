@@ -236,7 +236,7 @@ describe MiqVimBrokerWorker::Runner do
 
         it "will handle create events properly" do
           mor       = "group-v123"
-          klass     = "EmsFolder"
+          klass     = "ManageIQ::Providers::Vmware::InfraManager::Folder"
           find_opts = {:uid_ems => mor}
 
           event = {
