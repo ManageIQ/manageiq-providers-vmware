@@ -1,7 +1,7 @@
 describe VmScan do
   context "A single VM Scan Job," do
     before do
-      @server = EvmSpecHelper.local_miq_server(:capabilities => {:vixDisk => true})
+      @server = EvmSpecHelper.local_miq_server(:has_vix_disk_lib => true)
       assign_smartproxy_role_to_server(@server)
 
       # TODO: stub only settings needed for test instead of all from settings.yml
