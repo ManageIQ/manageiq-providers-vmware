@@ -43,10 +43,6 @@ describe VmScan do
       expect(@vm.proxies4job[:message]).to eq("Perform SmartState Analysis on this VM")
     end
 
-    it "should respond properly to storage2hosts" do
-      expect(@vm.storage2hosts).to eq([@host])
-    end
-
     context "without MiqVimBrokerWorker record," do
       it "should not be dispatched" do
         JobProxyDispatcher.dispatch
