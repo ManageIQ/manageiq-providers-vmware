@@ -178,18 +178,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     ]
   }.freeze
 
-  def create_property_filter(vim)
-    root_folder = vim.serviceContent.rootFolder
-
-    spec = RbVmomi::VIM.PropertyFilterSpec(
-      :objectSet => [
-        extension_manager_traversal_spec(vim.serviceContent.extensionManager),
-        folder_traversal_spec(root_folder),
-        license_manager_traversal_spec(vim.serviceContent.licenseManager),
-      ],
-      :propSet   => prop_set
-    )
-
+  def create_property_filter(vim, spec)
     vim.propertyCollector.CreateFilter(:spec => spec, :partialUpdates => true)
   end
 
@@ -199,11 +188,40 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     property_filter.DestroyPropertyFilter
   end
 
+  def ems_inventory_filter_spec(vim)
+    RbVmomi::VIM.PropertyFilterSpec(
+      :objectSet => [
+        extension_manager_traversal_spec(vim.serviceContent.extensionManager),
+        root_folder_traversal_spec(vim.serviceContent.rootFolder),
+        license_manager_traversal_spec(vim.serviceContent.licenseManager),
+      ],
+      :propSet   => ems_inventory_prop_set
+    )
+  end
+
   def extension_manager_traversal_spec(extension_manager)
     RbVmomi::VIM.ObjectSpec(:obj => extension_manager)
   end
 
-  def folder_traversal_spec(root)
+  def ems_inventory_prop_set
+    property_set_from_hash(EmsRefreshPropMap)
+  end
+
+  def property_set_from_hash(hash)
+    hash.collect do |type, props|
+      RbVmomi::VIM.PropertySpec(
+        :type    => type,
+        :all     => props.nil?,
+        :pathSet => props
+      )
+    end
+  end
+
+  def root_folder_traversal_spec(root)
+    RbVmomi::VIM.ObjectSpec(:obj => root, :selectSet => root_folder_select_set)
+  end
+
+  def root_folder_select_set
     traversal_spec = [
       folder_to_child_entity,
       datacenter_to_datastore_folder,
@@ -215,22 +233,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       resource_pool_to_resource_pool,
       resource_pool_to_vm,
     ]
-
-    RbVmomi::VIM.ObjectSpec(:obj => root, :selectSet => traversal_spec)
   end
 
   def license_manager_traversal_spec(license_manager)
     RbVmomi::VIM.ObjectSpec(:obj => license_manager)
-  end
-
-  def prop_set
-    EmsRefreshPropMap.collect do |type, props|
-      RbVmomi::VIM.PropertySpec(
-        :type    => type,
-        :all     => props.nil?,
-        :pathSet => props
-      )
-    end
   end
 
   def folder_to_child_entity
