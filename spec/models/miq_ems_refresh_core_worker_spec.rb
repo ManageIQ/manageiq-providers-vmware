@@ -14,12 +14,12 @@ describe MiqEmsRefreshCoreWorker do
   end
 
   context ".has_required_role?" do
-    context "with update_driven_refresh" do
+    context "with streaming_refresh" do
       before do
         stub_settings_merge(
-          :prototype => {
-            :ems_vmware => {
-              :update_driven_refresh => true
+          :ems_refresh => {
+            :vmwarews => {
+              :streaming_refresh => true
             }
           }
         )
@@ -29,12 +29,12 @@ describe MiqEmsRefreshCoreWorker do
         expect(described_class.has_required_role?).to be_falsy
       end
     end
-    context "without update_driven_refresh" do
+    context "without streaming_refresh" do
       before do
         stub_settings_merge(
-          :prototype => {
-            :ems_vmware => {
-              :update_driven_refresh => false
+          :ems_refresh => {
+            :vmwarews => {
+              :streaming_refresh => false
             }
           }
         )

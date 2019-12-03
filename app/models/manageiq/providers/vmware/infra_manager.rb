@@ -123,7 +123,7 @@ module ManageIQ::Providers
     end
 
     def streaming_refresh_enabled?
-      Settings.prototype.ems_vmware.update_driven_refresh
+      Settings.ems_refresh.vmwarews.streaming_refresh
     end
 
     def remote_console_vmrc_acquire_ticket

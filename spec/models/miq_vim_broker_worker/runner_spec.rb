@@ -3,6 +3,7 @@ require 'VMwareWebService/MiqVimBroker'
 
 describe MiqVimBrokerWorker::Runner do
   before do
+    stub_settings_merge(:ems_refresh => {:vmwarews => {:streaming_refresh => false}})
     _guid_2, _server_2, @zone_2 = EvmSpecHelper.create_guid_miq_server_zone
     _guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
     @ems = FactoryBot.create(:ems_vmware_with_authentication, :zone => @zone)
@@ -129,8 +130,8 @@ describe MiqVimBrokerWorker::Runner do
         expect(MiqVimBroker.cacheScope).to eq(:cache_scope_core)
       end
 
-      it "with ems_inventory role using update_driven_refresh" do
-        stub_settings(:prototype => {:ems_vmware => {:update_driven_refresh => true}})
+      it "with ems_inventory role using streaming_refresh" do
+        stub_settings(:ems_refresh => {:vmwarews => {:streaming_refresh => true}})
         @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
         expect(MiqVimBroker).to receive(:new).with(:server).once
         @vim_broker_worker.create_miq_vim_broker_server
