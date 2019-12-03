@@ -1,0 +1,50 @@
+---
+- name: tsFolder
+  type: Folder
+  path: childEntity
+  selectSet:
+  - tsFolder
+  - tsDcToDsFolder
+  - tsDcToHostFolder
+  - tsDcToNetworkFolder
+  - tsDcToVmFolder
+  - tsCrToHost
+  - tsCrToRp
+  - tsRpToRp
+  - tsRpToVm
+- name: tsDcToDsFolder
+  type: Datacenter
+  path: datastoreFolder
+  selectSet:
+  - tsFolder
+- name: tsDcToHostFolder
+  type: Datacenter
+  path: hostFolder
+  selectSet:
+  - tsFolder
+- name: tsDcToNetworkFolder
+  type: Datacenter
+  path: networkFolder
+  selectSet:
+  - tsFolder
+- name: tsDcToVmFolder
+  type: Datacenter
+  path: vmFolder
+  selectSet:
+  - tsFolder
+- name: tsCrToHost
+  type: ComputeResource
+  path: host
+- name: tsCrToRp
+  type: ComputeResource
+  path: resourcePool
+  selectSet:
+  - tsRpToRp
+- name: tsRpToRp
+  type: ResourcePool
+  path: resourcePool
+  selectSet:
+  - tsRpToRp
+- name: tsRpToVm
+  type: ResourcePool
+  path: vm

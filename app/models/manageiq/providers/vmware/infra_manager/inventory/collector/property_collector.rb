@@ -50,17 +50,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
 
   def root_folder_select_set
     traversal_spec_from_hash(
-      [
-        folder_to_child_entity,
-        datacenter_to_datastore_folder,
-        datacenter_to_host_folder,
-        datacenter_to_network_folder,
-        datacenter_to_vm_folder,
-        compute_resource_to_host,
-        compute_resource_to_resource_pool,
-        resource_pool_to_resource_pool,
-        resource_pool_to_vm,
-      ]
+      YAML.load_file(
+        ManageIQ::Providers::Vmware::Engine.root.join(
+          "db/fixtures/traversal_specs/root_folder.yml"
+        )
+      )
     )
   end
 
@@ -71,103 +65,14 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
   def traversal_spec_from_hash(hash)
     hash.map do |traversal_spec|
       RbVmomi::VIM.TraversalSpec(
-        :name => traversal_spec["name"],
-        :type => traversal_spec["type"],
-        :path => traversal_spec["path"],
+        :name      => traversal_spec["name"],
+        :type      => traversal_spec["type"],
+        :path      => traversal_spec["path"],
         :selectSet => traversal_spec["selectSet"]&.map do |name|
           RbVmomi::VIM.SelectionSpec(:name => name)
         end
       )
     end
-  end
-
-  def folder_to_child_entity
-    traversal_spec = {
-      "name" => "tsFolder",
-      "type" => "Folder",
-      "path" => "childEntity",
-      "selectSet" => [
-        'tsFolder',
-        'tsDcToDsFolder',
-        'tsDcToHostFolder',
-        'tsDcToNetworkFolder',
-        'tsDcToVmFolder',
-        'tsCrToHost',
-        'tsCrToRp',
-        'tsRpToRp',
-        'tsRpToVm'
-      ]
-    }
-  end
-
-  def datacenter_to_datastore_folder
-    traversal_spec = {
-      "name" => 'tsDcToDsFolder',
-      "type" => 'Datacenter',
-      "path" => 'datastoreFolder',
-      "selectSet" => ['tsFolder']
-    }
-  end
-
-  def datacenter_to_host_folder
-    traversal_spec = {
-      "name"      => "tsDcToHostFolder",
-      "type"      => "Datacenter",
-      "path"      => "hostFolder",
-      "selectSet" => ["tsFolder"]
-    }
-  end
-
-  def datacenter_to_network_folder
-    traversal_spec = {
-      "name"      => "tsDcToNetworkFolder",
-      "type"      => "Datacenter",
-      "path"      => "networkFolder",
-      "selectSet" => ["tsFolder"]
-    }
-  end
-
-  def datacenter_to_vm_folder
-    traversal_spec = {
-      "name"      => "tsDcToVmFolder",
-      "type"      => "Datacenter",
-      "path"      => "vmFolder",
-      "selectSet" => ["tsFolder"]
-    }
-  end
-
-  def compute_resource_to_host
-    traversal_spec = {
-      "name" => "tsCrToHost",
-      "type" => "ComputeResource",
-      "path" => "host"
-    }
-  end
-
-  def compute_resource_to_resource_pool
-    traversal_spec = {
-      "name"      => "tsCrToRp",
-      "type"      => "ComputeResource",
-      "path"      => "resourcePool",
-      "selectSet" => ["tsRpToRp"]
-    }
-  end
-
-  def resource_pool_to_resource_pool
-    traversal_spec = {
-      "name"      => "tsRpToRp",
-      "type"      => "ResourcePool",
-      "path"      => "resourcePool",
-      "selectSet" => ["tsRpToRp"]
-    }
-  end
-
-  def resource_pool_to_vm
-    traversal_spec = {
-      "name"      => "tsRpToVm",
-      "type"      => "ResourcePool",
-      "path"      => "vm"
-    }
   end
 
   def process_change_set(change_set, props = {})
