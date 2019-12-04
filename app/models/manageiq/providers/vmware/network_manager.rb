@@ -22,6 +22,7 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
            :default_endpoint,
            :endpoints,
            :provider_region,
+           :snapshots,
            :to        => :parent_manager,
            :allow_nil => true
 
