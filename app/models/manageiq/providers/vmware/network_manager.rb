@@ -2,7 +2,6 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
   require_nested :CloudNetwork
   require_nested :CloudSubnet
   require_nested :NetworkPort
-  require_nested :RefreshWorker
   require_nested :Refresher
 
   include ManageIQ::Providers::Vmware::ManagerAuthMixin
