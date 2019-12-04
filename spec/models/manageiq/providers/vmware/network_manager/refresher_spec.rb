@@ -237,7 +237,7 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
     2.times do # Run twice to verify that a second run with existing data does not change anything
       @ems.reload
       @ems_network.reload
-      VCR.use_cassette(cassete) do
+      VCR.use_cassette(cassete, :allow_unused_http_interactions => true) do
         EmsRefresh.refresh(@ems)
         EmsRefresh.refresh(@ems_network)
       end

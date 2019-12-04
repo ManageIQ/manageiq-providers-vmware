@@ -4,6 +4,10 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::NetworkCo
   def initialize_network_inventory_collections
     %i(cloud_networks
        cloud_subnets
+       cloud_subnet_network_ports
+       floating_ips
+       network_routers
+       network_ports
        security_groups
        load_balancers
        load_balancer_pools
