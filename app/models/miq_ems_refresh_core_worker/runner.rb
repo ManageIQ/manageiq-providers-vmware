@@ -1,10 +1,6 @@
 require 'thread'
 
 class MiqEmsRefreshCoreWorker::Runner < MiqWorker::Runner
-  OPTIONS_PARSER_SETTINGS = MiqWorker::Runner::OPTIONS_PARSER_SETTINGS + [
-    [:ems_id, 'EMS Instance ID', String],
-  ]
-
   def after_initialize
     @ems = ExtManagementSystem.find(@cfg[:ems_id])
     do_exit("Unable to find instance for EMS id [#{@cfg[:ems_id]}].", 1) if @ems.nil?
