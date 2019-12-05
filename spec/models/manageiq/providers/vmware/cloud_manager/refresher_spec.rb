@@ -1,28 +1,21 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   ALL_REFRESH_SETTINGS = [
     {
-      :inventory_object_refresh => false
-    },
-    {
-      :inventory_object_refresh => true,
       :inventory_collections    => {
         :saver_strategy => :default,
       },
     }, {
-      :inventory_object_refresh => true,
       :inventory_collections    => {
         :saver_strategy => :batch,
         :use_ar_object  => true,
       },
     }, {
-      :inventory_object_refresh => true,
       :inventory_collections    => {
         :saver_strategy => :batch,
         :use_ar_object  => false,
       },
     }, {
       :inventory_object_saving_strategy => :recursive,
-      :inventory_object_refresh         => true
     }
   ].freeze
 

@@ -5,7 +5,6 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   require_nested :OrchestrationTemplate
   require_nested :EventCatcher
   require_nested :EventParser
-  require_nested :RefreshParser
   require_nested :RefreshWorker
   require_nested :Refresher
   require_nested :Template
@@ -146,6 +145,10 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
 
   def supported_catalog_types
     %w(vmware)
+  end
+
+  def inventory_object_refresh?
+    true
   end
 
   def self.display_name(number = 1)

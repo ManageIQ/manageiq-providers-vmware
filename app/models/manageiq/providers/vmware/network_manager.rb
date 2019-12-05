@@ -2,8 +2,6 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
   require_nested :CloudNetwork
   require_nested :CloudSubnet
   require_nested :NetworkPort
-  require_nested :RefreshParser
-  require_nested :RefreshWorker
   require_nested :Refresher
 
   include ManageIQ::Providers::Vmware::ManagerAuthMixin
@@ -24,6 +22,7 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
            :default_endpoint,
            :endpoints,
            :provider_region,
+           :snapshots,
            :to        => :parent_manager,
            :allow_nil => true
 
@@ -41,5 +40,9 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
 
   def description
     @description ||= "VMware Cloud Network".freeze
+  end
+
+  def inventory_object_refresh?
+    true
   end
 end

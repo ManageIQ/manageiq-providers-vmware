@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inventory::Parser
   require_nested :CloudManager
+  require_nested :NetworkManager
 
   # See https://pubs.vmware.com/vcd-80/index.jsp#com.vmware.vcloud.api.sp.doc_90/GUID-E1BA999D-87FA-4E2C-B638-24A211AB8160.html
   def controller_description(bus_subtype)
