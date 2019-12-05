@@ -2,9 +2,9 @@ class ManageIQ::Providers::Vmware::CloudManager::RefreshWorker < ManageIQ::Provi
   require_nested :Runner
 
   # overriding queue_name_for_ems so PerEmsWorkerMixin picks up *all* of the
-  # Amazon-manager types from here.
-  # This way, the refresher for Amazon's CloudManager will refresh *all*
-  # of the Amazon inventory across all managers.
+  # manager types from here.
+  # This way, the refresher for Vmware's CloudManager will refresh *all*
+  # of the vCloud inventory across all managers.
   class << self
     def settings_name
       :ems_refresh_worker_vmware_cloud
