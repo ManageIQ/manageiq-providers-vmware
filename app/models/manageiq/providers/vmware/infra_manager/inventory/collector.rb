@@ -2,11 +2,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems, threaded: true)
+  def initialize(ems, threaded: true, run_once: false)
     @ems             = ems
-    @exit_requested  = false
+    @exit_requested  = run_once
     @inventory_cache = ems.class::Inventory::Cache.new
     @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
+    @threaded        = threaded
     @vim_thread      = nil
   end
 
@@ -39,11 +40,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   private
 
-  attr_reader   :ems, :inventory_cache, :saver
+  attr_reader   :ems, :inventory_cache, :saver, :threaded
   attr_accessor :exit_requested, :vim_thread, :last_full_refresh
 
   def vim_collector_thread
-    Thread.new { vim_collector }
+    threaded ? Thread.new { vim_collector } : vim_collector
   end
 
   def vim_collector

@@ -16,7 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems, :threaded => false) }
+  let(:collector) { described_class.new(ems, :threaded => false, :run_once => true) }
 
   context "#monitor_updates" do
     context "full refresh" do
@@ -520,8 +520,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def run_full_refresh
-      collector.stop # Calling stop before run only runs this once
-      collector.send(:vim_collector)
+      collector.start
     end
 
     def assert_ems
