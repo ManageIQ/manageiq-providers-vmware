@@ -398,7 +398,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
     device = vim_obj.getDeviceByLabel(cdrom[:device_name], hardware)
     raise "connect_cdrom_config_spec: no virtual device associated with: #{cdrom[:device_name]}" unless device
 
-    datastore_ref = HostStorage.find_by(:storage_id => cdrom[:storage_id], :host_id => host.id).try(:ems_ref)
+    datastore_ref = Storage.find_by(:id => cdrom[:storage_id]).try(:ems_ref)
     raise "connect_cdrom_config_spec: could not find datastore reference for storage ID [#{cdrom[:storage_id]}] and host ID [#{host.id}]" unless datastore_ref
 
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|

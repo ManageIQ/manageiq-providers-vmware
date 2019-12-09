@@ -2,7 +2,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
   let(:storage) { FactoryBot.create(:storage_vmware) }
   let(:host) do
     FactoryBot.create(:host_vmware_esx).tap do |host|
-      host.host_storages.create(:storage_id => storage.id, :host_id => host.id, :ems_ref => "datastore-1")
+      host.host_storages.create(:storage_id => storage.id, :host_id => host.id)
     end
   end
   let(:vm) do
