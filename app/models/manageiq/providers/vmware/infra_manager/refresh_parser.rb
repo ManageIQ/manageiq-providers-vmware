@@ -123,7 +123,6 @@ module ManageIQ::Providers
       def self.storage_inv_to_hashes(inv)
         result = []
         result_uids = {}
-        result_locs = {}
         return result, result_uids if inv.nil?
 
         inv.each do |mor, storage_inv|
@@ -135,10 +134,6 @@ module ManageIQ::Providers
           capability = storage_inv["capability"]
 
           loc = uid = normalize_storage_uid(storage_inv)
-          unless result_locs[loc].nil?
-            result_uids[mor] = result_locs[loc]
-            next
-          end
 
           new_result = {
             :ems_ref            => mor,
@@ -162,7 +157,6 @@ module ManageIQ::Providers
 
           result << new_result
           result_uids[mor] = new_result
-          result_locs[loc] = new_result
         end
         return result, result_uids
       end
@@ -820,8 +814,7 @@ module ManageIQ::Providers
           result << {
             :storage    => storage_uids[s_mor],
             :read_only  => read_only,
-            :accessible => accessible,
-            :ems_ref    => s_mor
+            :accessible => accessible
           }
         end
 
