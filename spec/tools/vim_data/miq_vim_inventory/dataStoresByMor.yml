@@ -105,6 +105,7 @@
           str: '1048508891136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -213,6 +214,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -303,6 +305,7 @@
           str: '536602476544'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -389,6 +392,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -479,6 +483,7 @@
           str: '15837691904'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -587,6 +592,7 @@
           str: '2830920318976'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -673,6 +679,7 @@
           str: '42949672960'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -759,6 +766,7 @@
           str: '107105746944'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -871,6 +879,7 @@
           str: '524254445568'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -961,6 +970,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1047,6 +1057,7 @@
           str: '524254445568'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1155,6 +1166,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1241,6 +1253,7 @@
           str: '209648091136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1349,6 +1362,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1439,6 +1453,7 @@
           str: '1048508891136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1525,6 +1540,7 @@
           str: '1048508891136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1633,6 +1649,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1719,6 +1736,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1827,6 +1845,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -1939,6 +1958,7 @@
           str: '524254445568'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2025,6 +2045,7 @@
           str: '524254445568'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2111,6 +2132,7 @@
           str: '2830920318976'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2223,6 +2245,7 @@
           str: '107374182400'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2309,6 +2332,7 @@
           str: '244544700416'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2395,6 +2419,7 @@
           str: '314337918976'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2503,6 +2528,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2589,6 +2615,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2701,6 +2728,7 @@
           str: '3832184569856'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2791,6 +2819,7 @@
           str: '2095675604992'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2877,6 +2906,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -2989,6 +3019,7 @@
           str: '209648091136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3075,6 +3106,7 @@
           str: '244544700416'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3187,6 +3219,7 @@
           str: '2095675604992'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3299,6 +3332,7 @@
           str: '354334801920'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3385,6 +3419,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3497,6 +3532,7 @@
           str: '314337918976'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3605,6 +3641,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3713,6 +3750,7 @@
           str: '8589934592'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3781,6 +3819,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3867,6 +3906,7 @@
           str: '244544700416'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -3975,6 +4015,7 @@
           str: '107105746944'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4061,6 +4102,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4147,6 +4189,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4255,6 +4298,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4367,6 +4411,7 @@
           str: '1048508891136'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4431,6 +4476,7 @@
           str: '0'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4517,6 +4563,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4625,6 +4672,7 @@
           str: '104689827840'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4711,6 +4759,7 @@
           str: '5368709120'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary
@@ -4823,6 +4872,7 @@
           str: '536602476544'
           vimType: 
           xsiType: :SOAP::SOAPLong
+        maintenanceMode: normal
       ivars:
         :@vimType: 
         :@xsiType: :DatastoreSummary

@@ -166,6 +166,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "summary.capacity",
       "summary.datastore",
       "summary.freeSpace",
+      "summary.maintenanceMode",
       "summary.multipleHostAccess",
       "summary.name",
       "summary.type",
