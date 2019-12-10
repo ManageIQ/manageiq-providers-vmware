@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## Sprint 126 - Unreleased as of 2019-12-11
+
+### Added
+- Default to use streaming_refresh for vSphere [(#434)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/434)
+- Remove the option for legacy refresh from vCloud [(#417)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/417)
 
 ## Sprint 120 - Unreleased as of 2019-09-16
 
