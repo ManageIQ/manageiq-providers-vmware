@@ -166,16 +166,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
   end
 
   def datastore_ems_ref(clone_opts)
-    host_ids = if clone_opts[:host]
-                 clone_opts[:host].id
-               else
-                 clone_opts[:cluster].hosts.pluck(:id)
-               end
-
-    # Find a host in the cluster that has this storage mounted to get the right ems_ref for this
-    # datastore in the datacenter
-    datastore = HostStorage.find_by(:storage_id => clone_opts[:datastore].id, :host_id => host_ids)
-
+    datastore = Storage.find_by(:id => clone_opts[:datastore].id)
     datastore.try(:ems_ref)
   end
 

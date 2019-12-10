@@ -254,7 +254,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(VmOrTemplate.count).to eq(101)
     expect(Vm.count).to eq(92)
     expect(MiqTemplate.count).to eq(9)
-    expect(Storage.count).to eq(33)
+    expect(Storage.count).to eq(50)
     expect(StorageProfile.count).to eq(6)
 
     expect(CustomAttribute.count).to eq(3)
@@ -285,7 +285,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@ems.ems_folders.size).to eq(32)
     expect(@ems.ems_clusters.size).to eq(1)
     expect(@ems.resource_pools.size).to eq(17)
-    expect(@ems.storages.size).to eq(30)
+    expect(@ems.storages.size).to eq(50)
     expect(@ems.hosts.size).to eq(4)
     expect(@ems.vms_and_templates.size).to eq(101)
     expect(@ems.vms.size).to eq(92)

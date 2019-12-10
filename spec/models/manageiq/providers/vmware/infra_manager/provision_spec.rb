@@ -292,10 +292,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
       context "#start_clone" do
         before(:each) do
-          ds_mor = "datastore-0"
-          storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_type => "Datastore")
-
           Array.new(2) do |i|
+            ds_mor = "datastore-#{i}"
+            storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_type => "Datastore")
+
             cluster_mor = "cluster-#{i}"
             cluster     = FactoryBot.create(:ems_cluster, :ems_ref => cluster_mor)
 
@@ -310,7 +310,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
             FactoryBot.create(:host_vmware, host_props).tap do |host|
               host.storages = [storage]
               hs = host.host_storages.first
-              hs.ems_ref = "datastore-#{i}"
               hs.save
             end
           end
@@ -321,10 +320,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           dest_datastore_mor = "datastore-1"
           task_mor           = "task-1"
 
+          host = Host.find_by(:ems_ref => dest_host_mor)
           clone_opts = {
             :name      => @target_vm_name,
-            :host      => Host.find_by(:ems_ref => dest_host_mor),
-            :datastore => Storage.first
+            :host      => host,
+            :datastore => host.storages.first
           }
 
           expected_vim_clone_opts = {
@@ -351,10 +351,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           dest_datastore_mor = "datastore-1"
           task_mor           = "task-1"
 
+          cluster = EmsCluster.find_by(:ems_ref => dest_cluster_mor)
           clone_opts = {
             :name      => @target_vm_name,
-            :cluster   => EmsCluster.find_by(:ems_ref => dest_cluster_mor),
-            :datastore => Storage.first
+            :cluster   => cluster,
+            :datastore => cluster.storages.first
           }
 
           expected_vim_clone_opts = {

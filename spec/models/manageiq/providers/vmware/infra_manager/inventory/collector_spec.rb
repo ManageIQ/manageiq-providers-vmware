@@ -596,7 +596,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.host_operating_systems.count).to eq(16)
       expect(ems.operating_systems.count).to eq(64)
       expect(ems.resource_pools.count).to eq(12)
-      expect(ems.storages.count).to eq(1)
+      expect(ems.storages.count).to eq(2)
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
       expect(ems.lans.count).to eq(36)
@@ -636,9 +636,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :raw_disk_mappings_supported   => true,
       )
 
-      expect(storage.hosts.count).to eq(16)
-      expect(storage.disks.count).to eq(64)
-      expect(storage.vms.count).to   eq(64)
+      expect(storage.hosts.count).to eq(8)
+      expect(storage.disks.count).to eq(32)
+      expect(storage.vms.count).to   eq(32)
     end
 
     def assert_specific_folder
