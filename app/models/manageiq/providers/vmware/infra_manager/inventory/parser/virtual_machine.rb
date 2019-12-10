@@ -71,7 +71,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         cache.find(ds)&.dig(:summary, :name) == datastore_name
       end
 
-      vm_hash[:storage] = persister.storages.lazy_find(datastore._ref)
+      vm_hash[:storage] = persister.storages.lazy_find(datastore._ref) if datastore
     end
 
     def parse_virtual_machine_summary_runtime(vm_hash, props)

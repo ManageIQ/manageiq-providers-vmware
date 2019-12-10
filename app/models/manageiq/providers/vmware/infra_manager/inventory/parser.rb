@@ -74,7 +74,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_datastore(object, kind, props)
-    persister.storages.targeted_scope << parse_datastore_location(props)
+    persister.storages.targeted_scope << object._ref
     return if kind == "leave"
 
     storage_hash = {
@@ -280,10 +280,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   alias parse_pbm_capability_profile parse_pbm_profile
 
   def parse_pbm_placement_hub(persister_storage_profile, _object, _kind, props)
-    datastore = cache["Datastore"][props[:hubId]]
-    return if datastore.nil?
-
-    persister_storage = persister.storages.lazy_find(parse_datastore_location(datastore))
+    persister_storage = persister.storages.lazy_find(props[:hubId])
     persister.storage_profile_storages.build(
       :storage_profile => persister_storage_profile,
       :storage         => persister_storage
