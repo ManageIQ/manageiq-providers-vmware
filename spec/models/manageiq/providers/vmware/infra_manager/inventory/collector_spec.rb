@@ -630,6 +630,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :store_type                    => "VMFS",
         :total_space                   => 1_099_511_627_776,
         :free_space                    => 824_633_720_832,
+        :maintenance                   => false,
         :multiplehostaccess            => 1,
         :directory_hierarchy_supported => true,
         :thin_provisioning_supported   => true,

@@ -134,6 +134,7 @@ module ManageIQ::Providers
           capability = storage_inv["capability"]
 
           loc = uid = normalize_storage_uid(storage_inv)
+          maintenance = summary["maintenanceMode"] != "normal" if summary["maintenanceMode"]
 
           new_result = {
             :ems_ref            => mor,
@@ -145,6 +146,7 @@ module ManageIQ::Providers
             :uncommitted        => summary["uncommitted"],
             :multiplehostaccess => summary["multipleHostAccess"].to_s.downcase == "true",
             :location           => loc,
+            :maintenance        => maintenance,
           }
 
           unless capability.nil?

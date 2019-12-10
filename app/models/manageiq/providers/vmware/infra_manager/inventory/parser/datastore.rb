@@ -11,6 +11,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       storage_hash[:free_space] = summary[:freeSpace]
       storage_hash[:uncommitted] = summary[:uncommitted]
       storage_hash[:multiplehostaccess] = summary[:multipleHostAccess].to_s.downcase == "true"
+      storage_hash[:maintenance] = summary[:maintenanceMode] != "normal" if summary[:maintenanceMode]
     end
 
     def parse_datastore_location(props)

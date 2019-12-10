@@ -395,6 +395,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :total_space                   => 524254445568,
       :free_space                    => 85162196992,
       :uncommitted                   => 338640414720,
+      :maintenance                   => false,
       :multiplehostaccess            => 1, # TODO: Should this be a boolean column?
       :location                      => "4d3f9f09-38b9b7dc-365d-0010187f00da",
       :directory_hierarchy_supported => true,
