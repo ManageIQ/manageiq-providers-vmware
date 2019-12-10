@@ -13,7 +13,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     folder_mor    = folder.ems_ref_obj    if folder.respond_to?(:ems_ref_obj)
     pool_mor      = pool.ems_ref_obj      if pool.respond_to?(:ems_ref_obj)
     host_mor      = host.ems_ref_obj      if host.respond_to?(:ems_ref_obj)
-    datastore_mor = VimString.new(datastore.ems_ref, datastore.ems_ref_type, :ManagedObjectReference) if datastore
+    datastore_mor = datastore.ems_ref_obj if datastore.respond_to?(:ems_ref_obj)
     run_command_via_parent(:vm_clone, :name => name, :folder => folder_mor, :pool => pool_mor, :host => host_mor, :datastore => datastore_mor, :powerOn => powerOn, :template => template_flag, :transform => transform, :config => config, :customization => customization, :disk => disk)
   end
 

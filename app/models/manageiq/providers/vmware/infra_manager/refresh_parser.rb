@@ -138,6 +138,7 @@ module ManageIQ::Providers
           new_result = {
             :ems_ref            => mor,
             :ems_ref_type       => mor.vimType,
+            :type               => "ManageIQ::Providers::Vmware::InfraManager::Storage",
             :name               => summary["name"],
             :store_type         => summary["type"].to_s.upcase,
             :total_space        => summary["capacity"],

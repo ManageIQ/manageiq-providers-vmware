@@ -390,6 +390,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@storage).to have_attributes(
       :ems_ref                       => "datastore-953",
       :ems_ref_type                  => "Datastore",
+      :type                          => "ManageIQ::Providers::Vmware::InfraManager::Storage",
       :name                          => "StarM1-Prod1 (1)",
       :store_type                    => "VMFS",
       :total_space                   => 524254445568,
