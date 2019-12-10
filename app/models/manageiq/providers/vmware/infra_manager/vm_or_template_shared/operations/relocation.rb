@@ -48,9 +48,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
       end
     end
 
-    host_mor      = host.ems_ref_obj if host
-    pool_mor      = pool.ems_ref_obj if pool
-    datastore_mor = VimString.new(datastore.ems_ref, datastore.ems_ref_type, :ManagedObjectReference) if datastore
+    host_mor      = host.ems_ref_obj      if host
+    pool_mor      = pool.ems_ref_obj      if pool
+    datastore_mor = datastore.ems_ref_obj if datastore
 
     run_command_via_parent(:vm_relocate, :host => host_mor, :pool => pool_mor, :datastore => datastore_mor, :disk_move_type => disk_move_type, :transform => transform, :priority => priority, :disk => disk)
   end
