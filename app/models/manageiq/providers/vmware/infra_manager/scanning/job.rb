@@ -86,9 +86,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
 
     begin
       host = MiqServer.find(miq_server_id)
-      vm = VmOrTemplate.find(target_id)
       # Send down metadata to allow the host to make decisions.
-      scan_args = create_scan_args(vm)
+      scan_args = create_scan_args
       options[:ems_list] = scan_args["ems"]
       options[:categories] = vm.scan_profile_categories(scan_args["vmScanProfiles"])
 
@@ -126,7 +125,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
     snapshot
   end
 
-  def create_scan_args(vm)
+  def create_scan_args
     super.tap do |scan_args|
       scan_args['snapshot'] = config_snapshot
       scan_args['snapshot']['forceFleeceDefault'] = false if vm.scan_via_ems? && vm.template?
@@ -137,7 +136,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
     _log.info("Enter")
 
     # TODO: remove snapshot here if Vm was running
-    vm = VmOrTemplate.find(target_id)
     if context[:snapshot_mor]
       mor = context[:snapshot_mor]
       context[:snapshot_mor] = nil
@@ -170,22 +168,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
       end
     else
       set_status("Snapshot was not taken, delete not required") if options[:snapshot] == :skipped
-      log_end_user_event_message(vm)
+      log_end_user_event_message
     end
 
     signal(:snapshot_complete)
   end
 
-  def delete_snapshot(mor, vm = nil)
-    vm ||= VmOrTemplate.find(target_id)
+  def delete_snapshot(mor)
     if mor
       begin
         if vm.ext_management_system
           if options[:snapshot] == :smartProxy
-            log_end_user_event_message(vm)
-            delete_snapshot_by_description(mor, vm)
+            log_end_user_event_message
+            delete_snapshot_by_description(mor)
           else
-            user_event = end_user_event_message(vm)
+            user_event = end_user_event_message
             vm.ext_management_system.vm_remove_snapshot(vm, :snMor => mor, :user_event => user_event)
           end
         else
@@ -196,11 +193,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         _log.log_backtrace(err, :debug)
       end
     else
-      log_end_user_event_message(vm)
+      log_end_user_event_message
     end
   end
 
-  def delete_snapshot_by_description(mor, vm)
+  def delete_snapshot_by_description(mor)
     if mor
       ems_type = 'host'
       options[:ems_list] = vm.ems_host_list
@@ -269,12 +266,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
 
   private
 
-  def create_snapshot(vm = nil)
-    vm ||= VmOrTemplate.find(target_id)
+  def create_snapshot
     if vm.ext_management_system
       sn_description = snapshotDescription
       _log.info("Creating snapshot, description: [#{sn_description}]")
-      user_event = start_user_event_message(vm)
+      user_event = start_user_event_message
       options[:snapshot] = :server
       begin
         # TODO: should this be a vm method?

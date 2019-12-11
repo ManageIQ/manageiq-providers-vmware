@@ -133,26 +133,28 @@ describe VmScan do
     end
 
     it "#log_start_user_event_message" do
-      expect(@vm).to receive(:log_user_event).with(@job.start_user_event_message(@vm))
-      @job.log_start_user_event_message(@vm)
+      allow(VmOrTemplate).to receive(:find).with(@vm.id).and_return(@vm)
+      expect(@vm).to receive(:log_user_event).with(@job.start_user_event_message)
+      @job.log_start_user_event_message
     end
 
     it "#log_end_user_event_message" do
-      expect(@vm).to receive(:log_user_event).with(@job.end_user_event_message(@vm)).once
-      @job.log_end_user_event_message(@vm)
-      @job.log_end_user_event_message(@vm)
+      allow(VmOrTemplate).to receive(:find).with(@vm.id).and_return(@vm)
+      expect(@vm).to receive(:log_user_event).with(@job.end_user_event_message).once
+      @job.log_end_user_event_message
+      @job.log_end_user_event_message
     end
 
     context "#create_scan_args" do
       it "should have no vmScanProfiles by default" do
-        args = @job.create_scan_args(@vm)
+        args = @job.create_scan_args
         expect(args["vmScanProfiles"]).to eq []
       end
 
       it "should have vmScanProfiles from scan_profiles option" do
         profiles = [{:name => 'default'}]
         @job.options[:scan_profiles] = profiles
-        args = @job.create_scan_args(@vm)
+        args = @job.create_scan_args
         expect(args["vmScanProfiles"]).to eq profiles
       end
     end
@@ -232,7 +234,7 @@ describe VmScan do
       context "if snapshot for scan not required" do
         it "logs user events: Initializing and sends signal :snapshot_complete" do
           allow(@vm).to receive(:require_snapshot_for_scan?).and_return(false)
-          event_message = @job.start_user_event_message(@vm)
+          event_message = @job.start_user_event_message
           expect(@job).to receive(:signal).with(:snapshot_complete)
           expect(@job).to receive(:log_user_event).with(event_message, any_args)
           @job.call_snapshot_create
