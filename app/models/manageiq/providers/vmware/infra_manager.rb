@@ -1,26 +1,26 @@
 module ManageIQ::Providers
   class Vmware::InfraManager < InfraManager
+    require_nested :Cluster
     require_nested :DistributedVirtualSwitch
-    require_nested :OrchestrationTemplate
     require_nested :EventCatcher
     require_nested :EventParser
-    require_nested :RefreshWorker
-    require_nested :RefreshParser
-    require_nested :ResourcePool
-    require_nested :Storage
-    require_nested :MetricsCapture
-    require_nested :MetricsCollectorWorker
-    require_nested :Refresher
-    require_nested :Cluster
     require_nested :Host
     require_nested :HostEsx
     require_nested :HostVirtualSwitch
-    require_nested :OpaqueSwitch
     require_nested :Inventory
+    require_nested :MetricsCapture
+    require_nested :MetricsCollectorWorker
+    require_nested :OpaqueSwitch
+    require_nested :OrchestrationTemplate
     require_nested :Provision
     require_nested :ProvisionViaPxe
     require_nested :ProvisionWorkflow
+    require_nested :Refresher
+    require_nested :RefreshParser
+    require_nested :RefreshWorker
+    require_nested :ResourcePool
     require_nested :SelectorSpec
+    require_nested :Storage
     require_nested :Template
     require_nested :Vm
 
