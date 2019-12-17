@@ -1,7 +1,4 @@
 class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageIQ::Providers::BaseManager::RefreshWorker::Runner
-  self.require_vim_broker           = false
-  self.delay_startup_for_vim_broker = false
-
   def after_initialize
     super
     self.ems = @emss.first
