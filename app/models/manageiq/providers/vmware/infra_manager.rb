@@ -1,9 +1,11 @@
 module ManageIQ::Providers
   class Vmware::InfraManager < InfraManager
     require_nested :Cluster
+    require_nested :Datacenter
     require_nested :DistributedVirtualSwitch
     require_nested :EventCatcher
     require_nested :EventParser
+    require_nested :Folder
     require_nested :Host
     require_nested :HostEsx
     require_nested :HostVirtualSwitch
@@ -21,6 +23,7 @@ module ManageIQ::Providers
     require_nested :ResourcePool
     require_nested :SelectorSpec
     require_nested :Storage
+    require_nested :StorageCluster
     require_nested :Template
     require_nested :Vm
 

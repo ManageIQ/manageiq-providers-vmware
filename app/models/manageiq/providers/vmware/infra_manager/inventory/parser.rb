@@ -65,7 +65,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
       :uid_ems      => object._ref,
-      :type         => "Datacenter",
+      :type        => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :name         => CGI.unescape(props[:name]),
       :parent       => lazy_find_managed_object(props[:parent]),
     }
@@ -139,6 +139,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     folder_hash = {
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
+      :type        => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :uid_ems      => object._ref,
       :name         => CGI.unescape(props[:name]),
       :parent       => lazy_find_managed_object(props[:parent]),

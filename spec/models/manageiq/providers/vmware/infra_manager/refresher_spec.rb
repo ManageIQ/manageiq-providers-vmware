@@ -309,6 +309,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@datacenter).to have_attributes(
       :ems_ref      => "datacenter-672",
       :ems_ref_type => "Datacenter",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :name         => "New / Datacenter"
     )
   end
@@ -318,6 +319,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
     expect(@folder).to have_attributes(
       :ems_ref      => "group-v674",
       :ems_ref_type => "Folder",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :name         => "Test / Folder"
     )
   end
@@ -412,7 +414,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "StoragePod",
       :uid_ems      => "group-p81",
       :name         => "TestDatastoreCluster",
-      :type         => "StorageCluster",
+      :type        => "ManageIQ::Providers::Vmware::InfraManager::StorageCluster",
     )
 
     @child_storage = Storage.find_by_ems_ref("datastore-12281")
@@ -781,7 +783,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "Datacenter",
       :uid_ems      => "datacenter-2",
       :name         => "Prod",
-      :type         => "Datacenter",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :folder_path  => "Datacenters/Prod"
     )
 
@@ -790,7 +792,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "Folder",
       :uid_ems      => "group-d1",
       :name         => "Datacenters",
-      :type         => nil,
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :folder_path  => "Datacenters"
     )
 
@@ -799,7 +801,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       :ems_ref_type => "Folder",
       :uid_ems      => "group-v11341",
       :name         => "JFitzgerald",
-      :type         => nil,
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :folder_path  => "Datacenters/Prod/vm/JFitzgerald"
     )
   end
@@ -835,9 +837,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
   def assert_relationship_tree
     expect(@ems.descendants_arranged).to match_relationship_tree(
-      [EmsFolder, "Datacenters", {:hidden => true}] => {
-        [Datacenter, "Dev"]              => {
-          [EmsFolder, "host", {:hidden => true}] => {
+      [ManageIQ::Providers::Vmware::InfraManager::Folder, "Datacenters", {:hidden => true}] => {
+        [ManageIQ::Providers::Vmware::InfraManager::Datacenter, "Dev"]              => {
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "host", {:hidden => true}] => {
             [ManageIQ::Providers::Vmware::InfraManager::HostEsx, "vi4esxm3.manageiq.com"] => {
               [ManageIQ::Providers::Vmware::InfraManager::ResourcePool, "Default for Host / Node vi4esxm3.manageiq.com", {:is_default => true}] => {
                 [ManageIQ::Providers::Vmware::InfraManager::Vm, "Dev Cucumber Nightly Appl 2011-05-19"]              => {},
@@ -878,24 +880,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
               }
             }
           },
-          [EmsFolder, "vm", {:hidden => true}]   => {
-            [EmsFolder, "Discovered virtual machine", {:hidden => false}]                           => {},
-            [EmsFolder, "GreggT", {:hidden => false}]                                               => {
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "vm", {:hidden => true}]   => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Discovered virtual machine", {:hidden => false}]                           => {},
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "GreggT", {:hidden => false}]                                               => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "DEV-GreggT"]                 => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "GT Nightly Appl 2011-02-19"] => {}
             },
-            [EmsFolder, "GregM", {:hidden => false}]                                                => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "GregM", {:hidden => false}]                                                => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "DEV-GregM"]                  => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "GM Nightly Appl 2011-05-19"] => {}
             },
-            [EmsFolder, "Harpreet", {:hidden => false}]                                             => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Harpreet", {:hidden => false}]                                             => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "DEV-HarpreetK"]                           => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "HK-Dev Cucumber Nightly Appl 2011-05-19"] => {}
             },
-            [EmsFolder, "Jason", {:hidden => false}]                                                => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Jason", {:hidden => false}]                                                => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Jason Nightly Appl 2011-02-19"] => {}
             },
-            [EmsFolder, "JoeR", {:hidden => false}]                                                 => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "JoeR", {:hidden => false}]                                                 => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "DEV-JoeR"]                                          => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "JR- Dev Cucumber Nightly Appl 2011-05-19 - backup"] => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "JR-cruisecontrol-sandback-testing-April14_backup"]  => {},
@@ -931,14 +933,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             [ManageIQ::Providers::Vmware::InfraManager::Vm, "test3"]                                => {}
           }
         },
-        [Datacenter, "New / Datacenter"] => {
-          [EmsFolder, "host", {:hidden => true}] => {},
-          [EmsFolder, "vm", {:hidden => true}]   => {
-            [EmsFolder, "Test / Folder", {:hidden => false}] => {},
+        [ManageIQ::Providers::Vmware::InfraManager::Datacenter, "New / Datacenter"] => {
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "host", {:hidden => true}] => {},
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "vm", {:hidden => true}]   => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Test / Folder", {:hidden => false}] => {},
           }
         },
-        [Datacenter, "Prod"]             => {
-          [EmsFolder, "host", {:hidden => true}] => {
+        [ManageIQ::Providers::Vmware::InfraManager::Datacenter, "Prod"]             => {
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "host", {:hidden => true}] => {
             [ManageIQ::Providers::Vmware::InfraManager::Cluster, "Testing/Production Cluster"] => {
               [ManageIQ::Providers::Vmware::InfraManager::ResourcePool, "Default for Cluster / Deployment Role Testing/Production Cluster",
                {:is_default => true}]                                                                                                                                             => {
@@ -1029,28 +1031,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
                  [ManageIQ::Providers::Vmware::InfraManager::Vm, "Xav COS 40114"]                                                 => {}
                }
             },
-            [EmsFolder, "Test", {:hidden => false}]                                            => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Test", {:hidden => false}]                                            => {
               [ManageIQ::Providers::Vmware::InfraManager::HostEsx, "localhost"] => {
                 [ManageIQ::Providers::Vmware::InfraManager::ResourcePool, "Default for Host / Node localhost", {:is_default => true}] => {}
               }
             }
           },
-          [EmsFolder, "vm", {:hidden => true}]   => {
-            [EmsFolder, "BHelgeson", {:hidden => false}]                                => {},
-            [EmsFolder, "Brandon", {:hidden => false}]                                  => {
+          [ManageIQ::Providers::Vmware::InfraManager::Folder, "vm", {:hidden => true}]   => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "BHelgeson", {:hidden => false}]                                => {},
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Brandon", {:hidden => false}]                                  => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "BD-EVM-Nightly 28939-svn"] => {}
             },
-            [EmsFolder, "Discovered virtual machine", {:hidden => false}]               => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Discovered virtual machine", {:hidden => false}]               => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "3.3.2.22"]                => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "tch-cos64-nightly-26322"] => {}
             },
-            [EmsFolder, "Infra", {:hidden => false}]                                    => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Infra", {:hidden => false}]                                    => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "M-TestDC1"] => {}
             },
-            [EmsFolder, "JFitzgerald", {:hidden => false}]                              => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "JFitzgerald", {:hidden => false}]                              => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "JoeF 4.0.1"] => {}
             },
-            [EmsFolder, "MFeifer", {:hidden => false}]                                  => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "MFeifer", {:hidden => false}]                                  => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "mgf_3_3_2_34"]               => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "mgf_40115_svn_formigrate"]   => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "MGF_Branch_332_svn"]         => {},
@@ -1062,7 +1064,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "mgf_nightly_trunk_svn"]      => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "mgf_trunk_nightly_v4"]       => {}
             },
-            [EmsFolder, "Rich", {:hidden => false}]                                     => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Rich", {:hidden => false}]                                     => {
               [ManageIQ::Providers::Vmware::InfraManager::Template, "netapp-sim-host-template"]   => {},
               [ManageIQ::Providers::Vmware::InfraManager::Template, "netapp-smis-agent-template"] => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "ESX-TESTVCINTEGRATION"]            => {},
@@ -1080,27 +1082,27 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "NetAppDsTest6"]                    => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "NetAppDsTest7"]                    => {}
             },
-            [EmsFolder, "RMoore", {:hidden => false}]                                   => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "RMoore", {:hidden => false}]                                   => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "RM-4.0.1.12C"] => {}
             },
-            [EmsFolder, "THennessy", {:hidden => false}]                                => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "THennessy", {:hidden => false}]                                => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "tch-cos64_19GB_restore_"] => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "tch-cos64-V4_import_tes"] => {}
             },
-            [EmsFolder, "Training", {:hidden => false}]                                 => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Training", {:hidden => false}]                                 => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Training Master DB"]        => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Training Region 10 UI"]     => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Training Region 10 Worker"] => {}
             },
-            [EmsFolder, "VCs", {:hidden => false}]                                      => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "VCs", {:hidden => false}]                                      => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "VC41Test"]      => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "VC41Test-Prod"] => {}
             },
-            [EmsFolder, "View Environment", {:hidden => false}]                         => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "View Environment", {:hidden => false}]                         => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "View Broker"]               => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "View Windows 7 Parent x64"] => {}
             },
-            [EmsFolder, "Xlecauchois", {:hidden => false}]                              => {
+            [ManageIQ::Providers::Vmware::InfraManager::Folder, "Xlecauchois", {:hidden => false}]                              => {
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Xav 4014"]      => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Xav 4018"]      => {},
               [ManageIQ::Providers::Vmware::InfraManager::Vm, "Xav COS 40114"] => {},
