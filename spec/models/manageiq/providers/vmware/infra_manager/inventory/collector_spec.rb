@@ -16,7 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems, :threaded => false, :run_once => true) }
+  let(:collector) { described_class.new(ems) }
 
   context "#monitor_updates" do
     context "full refresh" do
@@ -520,7 +520,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def run_full_refresh
-      collector.start
+      collector.refresh
     end
 
     def assert_ems

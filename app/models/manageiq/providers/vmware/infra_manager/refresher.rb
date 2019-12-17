@@ -13,8 +13,8 @@ module ManageIQ::Providers
         collector_klass = ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
         ems_by_ems_id.each do |_ems_id, ems|
-          collector = collector_klass.new(ems, :threaded => false, :run_once => true)
-          collector.start
+          collector = collector_klass.new(ems)
+          collector.refresh
         end
       end
     end
