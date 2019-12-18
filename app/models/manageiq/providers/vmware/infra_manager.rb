@@ -17,8 +17,8 @@ module ManageIQ::Providers
     require_nested :Provision
     require_nested :ProvisionViaPxe
     require_nested :ProvisionWorkflow
+    require_nested :RefreshParser # This has to be before Refresher because that includes RefreshParser::Filter
     require_nested :Refresher
-    require_nested :RefreshParser
     require_nested :RefreshWorker
     require_nested :ResourcePool
     require_nested :SelectorSpec
