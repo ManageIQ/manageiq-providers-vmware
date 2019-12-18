@@ -11,6 +11,10 @@ module ManageIQ
         def self.plugin_name
           _('VMware Provider')
         end
+
+        def self.seedable_classes
+          %w[ManageIQ::Providers::Vmware]
+        end
       end
     end
   end
