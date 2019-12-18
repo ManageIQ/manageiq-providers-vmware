@@ -408,6 +408,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure
       end
 
       device.connectable.startConnected = true
+      device.connectable.connected = true
 
       vdcs.device = device
     end
