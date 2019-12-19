@@ -1,4 +1,4 @@
-require 'rbvmomi/vim'
+require 'rbvmomi'
 
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
   include Spec::Support::EmsRefreshHelper
@@ -220,60 +220,54 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       def vm_power_off_object_update
         RbVmomi::VIM.ObjectUpdate(
-          :dynamicProperty => [],
-          :kind            => "modify",
-          :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-          :changeSet       => [
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+          :changeSet  => [
             RbVmomi::VIM.PropertyChange(:name => "config.hotPlugMemoryIncrementSize", :op => "assign"),
             RbVmomi::VIM.PropertyChange(:name => "config.hotPlugMemoryLimit",         :op => "assign"),
             RbVmomi::VIM.PropertyChange(:name => "summary.runtime.powerState",        :op => "assign", :val => "poweredOff"),
             RbVmomi::VIM.PropertyChange(:name => "summary.storage.committed",         :op => "assign", :val => 210_930),
             RbVmomi::VIM.PropertyChange(:name => "summary.storage.unshared",          :op => "assign", :val => 0),
           ],
-          :missingSet      => [],
+          :missingSet => []
         )
       end
 
       def vm_migrate_object_update
         RbVmomi::VIM.ObjectUpdate(
-          :dynamicProperty => [],
-          :kind            => "modify",
-          :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-          :changeSet       => [
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+          :changeSet  => [
             RbVmomi::VIM.PropertyChange(:name => "summary.runtime.host", :op => "assign", :val => RbVmomi::VIM.HostSystem(vim, "host-99")),
           ],
-          :missingSet      => [],
+          :missingSet => []
         )
       end
 
       def vm_delete_object_updates
         [
           RbVmomi::VIM.ObjectUpdate(
-            :dynamicProperty => [],
-            :kind            => "leave",
-            :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-            :changeSet       => [],
-            :missingSet      => [],
+            :kind       => "leave",
+            :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+            :changeSet  => [],
+            :missingSet => []
           ),
           RbVmomi::VIM.ObjectUpdate(
-            :dynamicProperty => [],
-            :kind            => "modify",
-            :obj             => RbVmomi::VIM.ClusterComputeResource(vim, "domain-c96"),
-            :changeSet       => [
+            :kind       => "modify",
+            :obj        => RbVmomi::VIM.ClusterComputeResource(vim, "domain-c96"),
+            :changeSet  => [
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "summary.effectiveCpu",
-                :op              => "assign",
-                :val             => 47_983,
+                :name => "summary.effectiveCpu",
+                :op   => "assign",
+                :val  => 47_983
               ),
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "summary.effectiveMemory",
-                :op              => "assign",
-                :val             => 59_871,
+                :name => "summary.effectiveMemory",
+                :op   => "assign",
+                :val  => 59_871
               ),
             ],
-            :missingSet      => [],
+            :missingSet => []
           ),
         ]
       end
@@ -281,44 +275,38 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       def vm_new_folder_object_updates
         [
           RbVmomi::VIM.ObjectUpdate(
-            :dynamicProperty => [],
-            :kind            => "enter",
-            :obj             => RbVmomi::VIM.Folder(vim, "group-v2000"),
-            :changeSet       => [
+            :kind       => "enter",
+            :obj        => RbVmomi::VIM.Folder(vim, "group-v2000"),
+            :changeSet  => [
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "name",
-                :op              => "assign",
-                :val             => "test-folder-1",
+                :name => "name",
+                :op   => "assign",
+                :val  => "test-folder-1"
               ),
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "parent",
-                :op              => "assign",
-                :val             => RbVmomi::VIM.Folder(vim, "group-v3"),
+                :name => "parent",
+                :op   => "assign",
+                :val  => RbVmomi::VIM.Folder(vim, "group-v3")
               ),
             ],
-            :missingSet      => [],
+            :missingSet => []
           ),
           RbVmomi::VIM.ObjectUpdate(
-            :dynamicProperty => [],
-            :kind            => "modify",
-            :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-            :changeSet       => [
+            :kind       => "modify",
+            :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+            :changeSet  => [
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "parent",
-                :op              => "assign",
-                :val             => RbVmomi::VIM.Folder(vim, "group-v2000"),
+                :name => "parent",
+                :op   => "assign",
+                :val  => RbVmomi::VIM.Folder(vim, "group-v2000")
               ),
               RbVmomi::VIM.PropertyChange(
-                :dynamicProperty => [],
-                :name            => "resourcePool",
-                :op              => "assign",
-                :val             => RbVmomi::VIM.ResourcePool(vim, "resgroup-111"),
+                :name => "resourcePool",
+                :op   => "assign",
+                :val  => RbVmomi::VIM.ResourcePool(vim, "resgroup-111")
               ),
             ],
-            :missingSet      => [],
+            :missingSet => []
           ),
         ]
       end
@@ -326,34 +314,28 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
     def vm_create_snapshot_object_update
       RbVmomi::VIM.ObjectUpdate(
-        :dynamicProperty => [],
-        :kind            => "modify",
-        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-        :changeSet       => [
+        :kind       => "modify",
+        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet  => [
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
-            :op              => "assign",
-            :val             => "redoLogFormat",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op   => "assign",
+            :val  => "redoLogFormat"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
-            :op              => "assign",
-            :val             => "vmfsSparseVariant",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op   => "assign",
+            :val  => "vmfsSparseVariant"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.fileName",
-            :op              => "assign",
-            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk",
+            :name => "config.hardware.device[2000].backing.fileName",
+            :op   => "assign",
+            :val  => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.parent",
-            :op              => "assign",
-            :val             => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
-              :dynamicProperty => [],
+            :name => "config.hardware.device[2000].backing.parent",
+            :op   => "assign",
+            :val  => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
               :fileName        => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
               :datastore       => RbVmomi::VIM.Datastore(vim, "datastore-15"),
               :backingObjectId => "",
@@ -365,15 +347,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ),
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "snapshot",
-            :op              => "assign",
-            :val             => RbVmomi::VIM.VirtualMachineSnapshotInfo(
-              :dynamicProperty  => [],
+            :name => "snapshot",
+            :op   => "assign",
+            :val  => RbVmomi::VIM.VirtualMachineSnapshotInfo(
               :currentSnapshot  => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
               :rootSnapshotList => [
                 RbVmomi::VIM.VirtualMachineSnapshotTree(
-                  :dynamicProperty   => [],
                   :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
                   :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
                   :name              => "VM Snapshot 5%252f19%252f2018, 6:47:56 AM",
@@ -389,107 +368,90 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ),
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.committed",
-            :op              => "assign",
-            :val             => 54_177,
+            :name => "summary.storage.committed",
+            :op   => "assign",
+            :val  => 54_177
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.unshared",
-            :op              => "assign",
-            :val             => 41_855,
+            :name => "summary.storage.unshared",
+            :op   => "assign",
+            :val  => 41_855
           ),
         ],
-        :missingSet      => [],
+        :missingSet => []
       )
     end
 
     def vm_delete_snapshot_object_update
       RbVmomi::VIM.ObjectUpdate(
-        :dynamicProperty => [],
-        :kind            => "modify",
-        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-        :changeSet       => [
+        :kind       => "modify",
+        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet  => [
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
-            :op              => "assign",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op   => "assign"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
-            :op              => "assign",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op   => "assign"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.fileName",
-            :op              => "assign",
-            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
+            :name => "config.hardware.device[2000].backing.fileName",
+            :op   => "assign",
+            :val  => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.parent",
-            :op              => "assign",
+            :name => "config.hardware.device[2000].backing.parent",
+            :op   => "assign"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "snapshot",
-            :op              => "assign",
+            :name => "snapshot",
+            :op   => "assign"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.committed",
-            :op              => "assign",
-            :val             => 2316,
+            :name => "summary.storage.committed",
+            :op   => "assign",
+            :val  => 2316
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.unshared",
-            :op              => "assign",
-            :val             => 538,
+            :name => "summary.storage.unshared",
+            :op   => "assign",
+            :val  => 538
           ),
         ],
-        :missingSet      => [],
+        :missingSet => []
       )
     end
 
     def vm_create_child_snapshot_object_update
       RbVmomi::VIM.ObjectUpdate(
-        :dynamicProperty => [],
-        :kind            => "modify",
-        :obj             => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-        :changeSet       => [
+        :kind       => "modify",
+        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet  => [
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormat",
-            :op              => "assign",
-            :val             => "redoLogFormat",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormat",
+            :op   => "assign",
+            :val  => "redoLogFormat"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
-            :op              => "assign",
-            :val             => "vmfsSparseVariant",
+            :name => "config.hardware.device[2000].backing.deltaDiskFormatVariant",
+            :op   => "assign",
+            :val  => "vmfsSparseVariant"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.fileName",
-            :op              => "assign",
-            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000002.vmdk",
+            :name => "config.hardware.device[2000].backing.fileName",
+            :op   => "assign",
+            :val  => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000002.vmdk"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.parent.fileName",
-            :op              => "assign",
-            :val             => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk",
+            :name => "config.hardware.device[2000].backing.parent.fileName",
+            :op   => "assign",
+            :val  => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0-000001.vmdk"
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2000].backing.parent.parent",
-            :op              => "assign",
-            :val             => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
-              :dynamicProperty => [],
+            :name => "config.hardware.device[2000].backing.parent.parent",
+            :op   => "assign",
+            :val  => RbVmomi::VIM.VirtualDiskFlatVer2BackingInfo(
               :fileName        => "[GlobalDS_0] DC0_C1_RP1_VM0/DC0_C1_RP1_VM0.vmdk",
               :datastore       => RbVmomi::VIM.Datastore(vim, "datastore-15"),
               :backingObjectId => "",
@@ -501,18 +463,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ),
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "snapshot.currentSnapshot",
-            :op              => "assign",
-            :val             => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1101"),
+            :name => "snapshot.currentSnapshot",
+            :op   => "assign",
+            :val  => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1101")
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "snapshot.rootSnapshotList",
-            :op              => "assign",
-            :val             => [
+            :name => "snapshot.rootSnapshotList",
+            :op   => "assign",
+            :val  => [
               RbVmomi::VIM.VirtualMachineSnapshotTree(
-                :dynamicProperty   => [],
                 :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1100"),
                 :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
                 :name              => "VM Snapshot 5%252f19%252f2018, 6:47:56 AM",
@@ -523,7 +482,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
                 :quiesced          => false,
                 :childSnapshotList => [
                   RbVmomi::VIM.VirtualMachineSnapshotTree(
-                    :dynamicProperty   => [],
                     :snapshot          => RbVmomi::VIM.VirtualMachineSnapshot(vim, "snapshot-1101"),
                     :vm                => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
                     :name              => "VM Snapshot 5%252f19%252f2018, 9:54:05 AM",
@@ -541,25 +499,22 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
             ],
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.committed",
-            :op              => "assign",
-            :val             => 54_177,
+            :name => "summary.storage.committed",
+            :op   => "assign",
+            :val  => 54_177
           ),
           RbVmomi::VIM.PropertyChange(
-            :dynamicProperty => [],
-            :name            => "summary.storage.unshared",
-            :op              => "assign",
-            :val             => 41_855,
+            :name => "summary.storage.unshared",
+            :op   => "assign",
+            :val  => 41_855
           ),
         ],
-        :missingSet      => [],
+        :missingSet => []
       )
     end
 
     def targeted_object_update(obj)
       RbVmomi::VIM.ObjectUpdate(
-        :dynamicProperty => [],
         :kind            => "modify",
         :obj             => obj,
         :changeSet       => [],
@@ -955,19 +910,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     let(:vm_folder) { RbVmomi::VIM.Folder(nil, "group-v3") }
     let(:folder_change_set) do
       [
-        RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "name",        :op => "assign", :val => "vm"),
-        RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity", :op => "assign", :val => [vm]),
+        RbVmomi::VIM::PropertyChange(:name => "name",        :op => "assign", :val => "vm"),
+        RbVmomi::VIM::PropertyChange(:name => "childEntity", :op => "assign", :val => [vm]),
       ]
     end
     let(:vm_change_set) do
       [
         RbVmomi::VIM::PropertyChange(
-          :dynamicProperty => [],
-          :name            => "config.hardware.device",
-          :op              => "assign",
-          :val             => [
+          :name => "config.hardware.device",
+          :op   => "assign",
+          :val  => [
             RbVmomi::VIM::VirtualLsiLogicController(
-              :dynamicProperty    => [],
               :key                => 1000,
               :deviceInfo         => RbVmomi::VIM::Description(:label => "SCSI controller 0", :summary => "LSI Logic"),
               :controllerKey      => 100,
@@ -979,39 +932,35 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
               :scsiCtlrUnitNumber => 7,
             ),
             RbVmomi::VIM::VirtualDisk(
-              :dynamicProperty => [],
-              :key             => 2000,
-              :deviceInfo      => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
-              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
+              :key           => 2000,
+              :deviceInfo    => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
+              :backing       => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
                 :fileName        => "[datastore] vm1/vm1.vmdk",
                 :datastore       => RbVmomi::VIM::Datastore(nil, "datastore-1"),
                 :diskMode        => "persistent",
                 :thinProvisioned => true,
                 :uuid            => "6000C294-264b-3f91-8e5c-8c2ebac1bfe8",
               ),
-              :controllerKey   => 1000,
-              :unitNumber      => 0,
-              :capacityInKB    => 41_943_040,
+              :controllerKey => 1000,
+              :unitNumber    => 0,
+              :capacityInKB  => 41_943_040
             ),
           ]
         ),
         RbVmomi::VIM::PropertyChange(
-          :dynamicProperty => [],
-          :name            => "config.version",
-          :op              => "assign",
-          :val             => "vmx-08"
+          :name => "config.version",
+          :op   => "assign",
+          :val  => "vmx-08"
         ),
         RbVmomi::VIM::PropertyChange(
-          :dynamicProperty => [],
-          :name            => "name",
-          :op              => "assign",
-          :val             => "vm1"
+          :name => "name",
+          :op   => "assign",
+          :val  => "vm1"
         ),
         RbVmomi::VIM::PropertyChange(
-          :dynamicProperty => [],
-          :name            => "parent",
-          :op              => "assign",
-          :val             => vm_folder
+          :name => "parent",
+          :op   => "assign",
+          :val  => vm_folder
         ),
       ]
     end
@@ -1029,23 +978,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       it "updates a value in an array" do
         update_change_set = [
           RbVmomi::VIM::PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[1000].device",
-            :op              => "assign",
-            :val             => [2000, 2001]
+            :name => "config.hardware.device[1000].device",
+            :op   => "assign",
+            :val  => [2000, 2001]
           ),
           RbVmomi::VIM::PropertyChange(
-            :dynamicProperty => [],
-            :name            => "config.hardware.device[2002]",
-            :op              => "add",
-            :val             => RbVmomi::VIM::VirtualDisk(
-              :dynamicProperty => [],
-              :key             => 2001,
-              :deviceInfo      => RbVmomi::VIM::Description(:dynamicProperty => [], :label => "Hard disk 2", :summary => "16,777,216 KB"),
-              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(),
-              :controllerKey   => 1000,
-              :unitNumber      => 2,
-              :capacityInKB    => 16_777_216,
+            :name => "config.hardware.device[2002]",
+            :op   => "add",
+            :val  => RbVmomi::VIM::VirtualDisk(
+              :key           => 2001,
+              :deviceInfo    => RbVmomi::VIM::Description(:label => "Hard disk 2", :summary => "16,777,216 KB"),
+              :backing       => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(),
+              :controllerKey => 1000,
+              :unitNumber    => 2,
+              :capacityInKB  => 16_777_216
             )
           ),
         ]
@@ -1058,7 +1004,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       it "removes a managed entity in an array by mor" do
         update_change_set = [
-          RbVmomi::VIM::PropertyChange(:dynamicProperty => [], :name => "childEntity[\"vm-123\"]", :op => "remove")
+          RbVmomi::VIM::PropertyChange(:name => "childEntity[\"vm-123\"]", :op => "remove")
         ]
 
         props = collector.process_change_set(update_change_set, folder_props)
@@ -1102,22 +1048,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         ]
 
         initial_change_set = [
-          RbVmomi::VIM.PropertyChange(:dynamicProperty => [], :name => "host", :op => "assign", :val => datastore_host),
+          RbVmomi::VIM.PropertyChange(:name => "host", :op => "assign", :val => datastore_host),
         ]
 
         ds_props = collector.process_change_set(initial_change_set)
 
         update_change_set = [
           RbVmomi::VIM::PropertyChange(
-            :dynamicProperty => [],
-            :name            => "host[\"host-244\"].mountInfo",
-            :op              => "assign",
-            :val             => RbVmomi::VIM::HostMountInfo(
-              :dynamicProperty => [],
-              :path            => "/vmfs/volumes/b4db3893-29a32816",
-              :accessMode      => "readWrite",
-              :mounted         => false,
-              :accessible      => false
+            :name => "host[\"host-244\"].mountInfo",
+            :op   => "assign",
+            :val  => RbVmomi::VIM::HostMountInfo(
+              :path       => "/vmfs/volumes/b4db3893-29a32816",
+              :accessMode => "readWrite",
+              :mounted    => false,
+              :accessible => false
             )
           )
         ]
