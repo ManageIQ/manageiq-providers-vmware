@@ -1,6 +1,4 @@
 ---
-:development:
-  :use_vim_broker_in_console: true
 :ems:
   :ems_vmware:
     :blacklisted_event_names: []

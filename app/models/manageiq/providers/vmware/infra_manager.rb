@@ -169,8 +169,7 @@ module ManageIQ::Providers
     end
 
     def self.use_vim_broker?
-      return false if defined?(Rails::Console) && !::Settings.development.use_vim_broker_in_console
-      MiqVimBrokerWorker.has_required_role?
+      false
     end
 
     delegate :use_vim_broker?, :to => :class

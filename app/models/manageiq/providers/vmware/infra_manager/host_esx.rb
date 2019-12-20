@@ -1,10 +1,4 @@
 class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::Vmware::InfraManager::Host
-  def self.use_vim_broker?
-    false
-  end
-
-  delegate :use_vim_broker?, :to => :class
-
   def vim_shutdown(force = false)
     with_provider_object do |vim_host|
       _log.info "Invoking with: force: [#{force}]"
@@ -147,9 +141,6 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
       end
     rescue => err
       _log.log_backtrace(err)
-    rescue MiqException::MiqVimBrokerUnavailable => err
-      MiqVimBrokerWorker.broker_unavailable(err.class.name,  err.to_s)
-      _log.warn("Reported the broker unavailable")
     rescue Timeout::Error
       _log.warn "Timeout encountered during log collection for Host [#{name}]"
     ensure

@@ -43,95 +43,6 @@ describe VmScan do
       expect(@vm.proxies4job[:message]).to eq("Perform SmartState Analysis on this VM")
     end
 
-    context "without MiqVimBrokerWorker record," do
-      it "should not be dispatched" do
-        JobProxyDispatcher.dispatch
-        @job.reload
-        expect(@job.state).to eq("waiting_to_start")
-        expect(@job.dispatch_status).to eq("pending")
-      end
-    end
-
-    context "without Broker Running and with valid MiqVimBrokerWorker record," do
-      before do
-        @vim_broker_worker = FactoryBot.create(:miq_vim_broker_worker, :miq_server_id => @server.id)
-      end
-
-      context "in status of 'starting'," do
-        before do
-          @vim_broker_worker.update(:status => 'starting')
-        end
-
-        it "should not be dispatched" do
-          JobProxyDispatcher.dispatch
-          @job.reload
-          expect(@job.state).to eq("waiting_to_start")
-          expect(@job.dispatch_status).to eq("pending")
-        end
-      end
-
-      context "in status of 'stopped'," do
-        before do
-          @vim_broker_worker.update(:status => 'stopped')
-        end
-
-        it "should not be dispatched" do
-          JobProxyDispatcher.dispatch
-          @job.reload
-          expect(@job.state).to eq("waiting_to_start")
-          expect(@job.dispatch_status).to eq("pending")
-        end
-      end
-
-      context "in status of 'killed'," do
-        before do
-          @vim_broker_worker.update(:status => 'killed')
-        end
-
-        it "should not be dispatched" do
-          JobProxyDispatcher.dispatch
-          @job.reload
-          expect(@job.state).to eq("waiting_to_start")
-          expect(@job.dispatch_status).to eq("pending")
-        end
-      end
-
-      context "in status of 'started'," do
-        before do
-          @vim_broker_worker.update(:status => 'started')
-          JobProxyDispatcher.dispatch
-          @job.reload
-        end
-
-        it "should get dispatched" do
-          expect(@job.state).to eq("waiting_to_start")
-          expect(@job.dispatch_status).to eq("active")
-        end
-
-        context "when signaled with 'start'" do
-          before do
-            q = MiqQueue.last
-            q.delivered(*q.deliver)
-            @job.reload
-          end
-
-          it "should go to state of 'checking_policy'" do
-            expect(@job.state).to eq('checking_policy')
-            expect(MiqQueue.where(:class_name => "MiqAeEngine", :method_name => "deliver").count).to eq(1)
-          end
-
-          it "should call callback when message is delivered" do
-            allow(@job).to receive(:signal).and_return(true)
-            vm_scan = double("VmScan")
-            allow(VmScan).to receive(:find).and_return(vm_scan)
-            expect(vm_scan).to receive(:check_policy_complete).with(@server.my_zone, "ok", any_args)
-            q = MiqQueue.where(:class_name => "MiqAeEngine", :method_name => "deliver").first
-            q.delivered(*q.deliver)
-          end
-        end
-      end
-    end
-
     it "#log_start_user_event_message" do
       allow(VmOrTemplate).to receive(:find).with(@vm.id).and_return(@vm)
       expect(@vm).to receive(:log_user_event).with(@job.start_user_event_message)
@@ -212,18 +123,9 @@ describe VmScan do
       context "if snapshot for scan required" do
         before do
           allow(@vm).to receive(:require_snapshot_for_scan?).and_return(true)
-          allow(MiqServer).to receive(:use_broker_for_embedded_proxy?).and_return(true)
-        end
-
-        it "sends signal :broker_unavailable and :snapshot_complete if there is no MiqVimBrokerWorker available" do
-          allow(MiqVimBrokerWorker).to receive(:available?).and_return(false)
-          expect(@job).to receive(:signal).with(:broker_unavailable)
-          expect(@job).not_to receive(:signal).with(:snapshot_complete)
-          @job.call_snapshot_create
         end
 
         it "logs user event and sends signal :snapshot_complete" do
-          allow(MiqVimBrokerWorker).to receive(:available?).and_return(true)
           expect(@job).not_to receive(:signal).with(:broker_unavailable)
           expect(@job).to receive(:signal).with(:snapshot_complete)
           expect(@job).to receive(:log_user_event)
@@ -239,15 +141,6 @@ describe VmScan do
           expect(@job).to receive(:log_user_event).with(event_message, any_args)
           @job.call_snapshot_create
         end
-      end
-    end
-
-    describe "#wait_for_vim_broker" do
-      it "waits 60 seconds inside loop and send signal :start_snapshot if MiqVimBrokerWorker is available" do
-        allow(@job).to receive(:loop).and_yield
-        expect(@job).to receive(:sleep).with(60)
-        expect(@job).to receive(:signal).with(:start_snapshot)
-        @job.wait_for_vim_broker
       end
     end
 

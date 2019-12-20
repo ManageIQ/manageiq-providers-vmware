@@ -21,8 +21,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
         end
       end
     end
-  rescue MiqException::MiqVimBrokerUnavailable => err
-    return false, "not available because <#{err.message}>"
   end
 
   def find_destination_in_vmdb

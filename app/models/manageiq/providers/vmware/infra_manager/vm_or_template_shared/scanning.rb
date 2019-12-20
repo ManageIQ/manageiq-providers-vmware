@@ -22,8 +22,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
     $log.debug "#{log_pref} VM = #{vm_name}"
 
     args1 = ost.args[1]
-    args1['ems'][:use_vim_broker]     = MiqServer.use_broker_for_embedded_proxy?(args1['ems']['connect_to'])
-    args1['ems'][:vim_broker_drb_uri] = MiqVimBrokerWorker.drb_uri if args1['ems'][:use_vim_broker]
 
     begin
       @vm_cfg_file = vm_name
@@ -57,7 +55,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
       $log.debug "connect_to_ems: miqVimHost = #{miqVimHost.class.name}"
       if miqVimHost
         st = Time.now
-        use_broker = ost.scanData["ems"][:use_vim_broker] == true
+        # TODO remove use_broker completely
+        use_broker = false
         host_address = miqVimHost[:hostname] || miqVimHost[:ipaddress]
         ems_display_text = "#{ems_connect_type}(#{use_broker ? 'via broker' : 'directly'}):#{miqVimHost[:address]}"
         $log.info "Connecting to [#{ems_display_text}] for VM:[#{@vmCfgFile}]"
