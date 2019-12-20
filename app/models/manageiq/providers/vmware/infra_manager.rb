@@ -13,6 +13,7 @@ module ManageIQ::Providers
     require_nested :MetricsCapture
     require_nested :MetricsCollectorWorker
     require_nested :OpaqueSwitch
+    require_nested :OperationsWorker
     require_nested :OrchestrationTemplate
     require_nested :Provision
     require_nested :ProvisionViaPxe
@@ -128,6 +129,10 @@ module ManageIQ::Providers
 
     def streaming_refresh_enabled?
       Settings.ems_refresh.vmwarews.streaming_refresh
+    end
+
+    def queue_name_for_ems_operations
+      queue_name
     end
 
     def remote_console_vmrc_acquire_ticket

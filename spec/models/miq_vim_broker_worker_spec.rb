@@ -20,7 +20,7 @@ describe MiqVimBrokerWorker do
     end
 
     it ".required_roles" do
-      expect(described_class.required_roles.call).not_to include('ems_inventory')
+      expect(described_class.required_roles).to be_empty
     end
   end
 
@@ -36,7 +36,7 @@ describe MiqVimBrokerWorker do
     end
 
     it ".required_roles" do
-      expect(described_class.required_roles.call).to include('ems_inventory')
+      expect(described_class.required_roles).to be_empty
     end
   end
 end

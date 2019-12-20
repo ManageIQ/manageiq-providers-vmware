@@ -46,6 +46,8 @@
     :queue_worker_base:
       :ems_metrics_collector_worker:
         :ems_metrics_collector_worker_vmware: {}
+      :ems_operations_worker:
+        :ems_operations_worker_vmware: {}
       :ems_refresh_worker:
         :ems_refresh_worker_vmware: {}
         :ems_refresh_worker_vmware_cloud: {}
