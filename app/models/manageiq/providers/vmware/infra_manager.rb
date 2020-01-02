@@ -128,7 +128,7 @@ module ManageIQ::Providers
     end
 
     def streaming_refresh_enabled?
-      Settings.ems_refresh.vmwarews.streaming_refresh
+      true
     end
 
     def queue_name_for_ems_operations

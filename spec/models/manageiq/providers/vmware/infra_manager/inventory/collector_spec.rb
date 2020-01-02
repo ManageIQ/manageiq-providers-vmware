@@ -16,7 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems, :threaded => false) }
+  let(:collector) { described_class.new(ems) }
 
   context "#monitor_updates" do
     context "full refresh" do
@@ -38,16 +38,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           assert_specific_dvportgroup
           assert_specific_vm
         end
-      end
-
-      it "Same as classic refresh" do
-        with_vcr("classic") { EmsRefresh.init_console; EmsRefresh.refresh(ems) }
-        inventory_after_classic_refresh = serialize_inventory
-
-        with_vcr("graph") { run_full_refresh }
-        inventory_after_graph_refresh = serialize_inventory
-
-        assert_inventory_not_changed(inventory_after_classic_refresh, inventory_after_graph_refresh)
       end
     end
 
@@ -530,8 +520,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
     end
 
     def run_full_refresh
-      collector.stop # Calling stop before run only runs this once
-      collector.send(:vim_collector)
+      collector.refresh
     end
 
     def assert_ems

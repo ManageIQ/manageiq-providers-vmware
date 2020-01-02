@@ -1,34 +1,25 @@
 class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageIQ::Providers::BaseManager::RefreshWorker::Runner
-  # When using streaming_refresh we don't need to use the VimBrokerWorker
-  self.require_vim_broker           = !Settings.ems_refresh.vmwarews.streaming_refresh
-  self.delay_startup_for_vim_broker = !Settings.ems_refresh.vmwarews.streaming_refresh
-
   def after_initialize
     super
     self.ems = @emss.first
   end
 
   def before_exit(_message, _exit_code)
-    stop_inventory_collector if ems.supports_streaming_refresh?
+    stop_inventory_collector
   end
 
   def do_before_work_loop
     # No need to queue an initial full refresh if we are streaming
-    super unless ems.supports_streaming_refresh?
   end
 
   def do_work
-    if ems.supports_streaming_refresh?
-      ensure_inventory_collector
-    elsif collector&.running?
-      stop_inventory_collector
-    end
+    ensure_inventory_collector
 
     super
   end
 
   def deliver_queue_message(msg)
-    if ems.supports_streaming_refresh? && refresh_queued?(msg)
+    if refresh_queued?(msg)
       super do
         if full_refresh_queued?(msg)
           restart_inventory_collector
@@ -36,8 +27,6 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
           _log.info("Dropping refresh targets [#{msg.data}] because streaming refresh is enabled")
         end
       end
-    else
-      super
     end
   end
 

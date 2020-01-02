@@ -92,14 +92,6 @@ describe MiqVimBrokerWorker::Runner do
         expect { @vim_broker_worker.after_sync_active_roles }.not_to raise_error
       end
 
-      it "adding 'ems_inventory' role" do
-        MiqVimBroker.cacheScope = :cache_scope_core
-        @vim_broker_worker.instance_variable_set(:@vim_broker_server, double('miq_vim_broker'))
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['foo', 'bar', 'ems_inventory'])
-
-        expect { @vim_broker_worker.after_sync_active_roles }.to raise_error(SystemExit)
-      end
-
       it "removing 'ems_inventory' role" do
         MiqVimBroker.cacheScope = :cache_scope_ems_refresh
         @vim_broker_worker.instance_variable_set(:@vim_broker_server, double('miq_vim_broker'))
@@ -116,23 +108,8 @@ describe MiqVimBrokerWorker::Runner do
     end
 
     context "#create_miq_vim_broker_server" do
-      it "with ems_inventory role" do
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
-        expect(MiqVimBroker).to receive(:new).with(:server).once
-        @vim_broker_worker.create_miq_vim_broker_server
-        expect(MiqVimBroker.cacheScope).to eq(:cache_scope_ems_refresh)
-      end
-
       it "without ems_inventory role" do
         @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_operations'])
-        expect(MiqVimBroker).to receive(:new).with(:server).once
-        @vim_broker_worker.create_miq_vim_broker_server
-        expect(MiqVimBroker.cacheScope).to eq(:cache_scope_core)
-      end
-
-      it "with ems_inventory role using streaming_refresh" do
-        stub_settings(:ems_refresh => {:vmwarews => {:streaming_refresh => true}})
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
         expect(MiqVimBroker).to receive(:new).with(:server).once
         @vim_broker_worker.create_miq_vim_broker_server
         expect(MiqVimBroker.cacheScope).to eq(:cache_scope_core)
@@ -166,13 +143,6 @@ describe MiqVimBrokerWorker::Runner do
     end
 
     context "#reset_broker_update_notification" do
-      it "calls enable_broker_update_notification when active roles includes 'ems_inventory'" do
-        @vim_broker_worker.instance_variable_set(:@active_roles, ['ems_inventory'])
-        expect(@vim_broker_worker).to receive(:enable_broker_update_notification).once
-        expect(@vim_broker_worker).to receive(:disable_broker_update_notification).never
-        @vim_broker_worker.reset_broker_update_notification
-      end
-
       it "calls disable_broker_update_notification when active roles does not include 'ems_inventory'" do
         @vim_broker_worker.instance_variable_set(:@active_roles, ['foo', 'bar'])
         expect(@vim_broker_worker).to receive(:enable_broker_update_notification).never

@@ -2,12 +2,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems, threaded: true)
+  def initialize(ems)
     @ems             = ems
     @exit_requested  = false
     @inventory_cache = ems.class::Inventory::Cache.new
-    @saver           = ems.class::Inventory::Saver.new(:threaded => threaded)
+    @saver           = ems.class::Inventory::Saver.new
     @vim_thread      = nil
+  end
+
+  def refresh
+    saver.start_thread
+    self.exit_requested = true
+    vim_collector
+    saver.stop_thread
   end
 
   def start

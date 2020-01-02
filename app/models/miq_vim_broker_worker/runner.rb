@@ -46,7 +46,7 @@ class MiqVimBrokerWorker::Runner < MiqWorker::Runner
   end
 
   def has_ems_inventory_role?
-    @active_roles.include?("ems_inventory") && !Settings.ems_refresh.vmwarews.streaming_refresh
+    false
   end
 
   def reset_broker_update_notification
