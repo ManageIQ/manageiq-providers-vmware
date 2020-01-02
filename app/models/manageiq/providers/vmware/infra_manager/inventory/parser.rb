@@ -174,6 +174,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
                          "ManageIQ::Providers::Vmware::InfraManager::HostEsx"
                        end
 
+    host_hash[:name] ||= props[:name]
+
     host = persister.hosts.build(host_hash)
 
     parse_host_system_operating_system(host, props)
