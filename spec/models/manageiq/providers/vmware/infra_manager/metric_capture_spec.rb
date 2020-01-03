@@ -7,6 +7,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
     guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
   end
 
+  context "#perf_capture_object" do
+    it "returns the correct class" do
+      ems = FactoryBot.create(:ems_vmware, :zone => @zone)
+      expect(ems.perf_capture_object.class).to eq(described_class)
+    end
+  end
+
   context "as vmware" do
     before :each do
       @ems_vmware = FactoryBot.create(:ems_vmware, :zone => @zone)
