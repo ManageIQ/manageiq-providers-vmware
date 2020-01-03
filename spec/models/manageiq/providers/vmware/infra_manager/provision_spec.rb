@@ -173,13 +173,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           expect(@vm_prov.destination).to receive(:start).once
           @vm_prov.signal :autostart_destination
         end
-
-        it "autostart_destination with MiqVimResourceNotFound" do
-          @vm_prov.options[:vm_auto_start] = true
-          allow(@vm_prov.destination).to receive(:start).and_raise(MiqException::MiqVimResourceNotFound)
-          expect(@vm_prov.destination).to receive(:start).twice
-          @vm_prov.signal :autostart_destination
-        end
       end
 
       context "#dest_folder" do
