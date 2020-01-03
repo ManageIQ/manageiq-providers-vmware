@@ -168,12 +168,6 @@ module ManageIQ::Providers
       raise(MiqException::RemoteConsoleNotSupportedError, "vCenter version #{api_version} does not support WebMKS remote console.") unless api_version >= "6.0"
     end
 
-    def self.use_vim_broker?
-      false
-    end
-
-    delegate :use_vim_broker?, :to => :class
-
     def self.event_monitor_class
       self::EventCatcher
     end
@@ -207,27 +201,6 @@ module ManageIQ::Providers
 
     def verify_credentials(auth_type = nil, _options = {})
       self.class.raw_connect(:use_broker => false, :ems => self)
-    end
-
-    def reset_vim_cache
-      return unless self.use_vim_broker?
-      with_provider_connection do |vim|
-        _log.info("Resetting broker cache for EMS id: [#{id}]")
-        vim.resetCache
-      end
-    end
-
-    def reset_vim_cache_queue
-      return unless self.use_vim_broker?
-      MiqQueue.put(
-        :class_name  => self.class.name,
-        :method_name => "reset_vim_cache",
-        :instance_id => id,
-        :priority    => MiqQueue::HIGH_PRIORITY,
-        :queue_name  => MiqEmsRefreshWorker.queue_name_for_ems(self),
-        :zone        => my_zone,
-        :role        => "ems_inventory"
-      )
     end
 
     def get_alarms
