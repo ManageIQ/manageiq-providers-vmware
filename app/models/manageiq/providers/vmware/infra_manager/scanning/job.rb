@@ -8,7 +8,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         :snapshot_complete  => {'snapshot_create'           => 'check_host_credentials',
                                 'snapshot_delete'           => 'synchronizing'},
         :start_scan         => {'check_host_credentials'    => 'scanning'},
-        :snapshot_delete    => {'scanning'                  => 'snapshot_delete'},
+        :snapshot_delete    => {'after_scan'                => 'snapshot_delete'},
         :broker_unavailable => {'snapshot_create'           => 'waiting_for_broker'},
         :data               => {'snapshot_create'           => 'scanning',
                                 'scanning'                  => 'scanning',
@@ -21,6 +21,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
 
   def before_scan
     signal(:start_snapshot)
+  end
+
+  def after_scan
+    signal(:snapshot_delete)
   end
 
   def call_snapshot_create
@@ -149,7 +153,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
       if vm.ext_management_system
         _log.info("Deleting snapshot: reference: [#{mor}]")
         begin
-          delete_snapshot(mor, vm)
+          delete_snapshot(mor)
         rescue => err
           _log.error(err.to_s)
           return
