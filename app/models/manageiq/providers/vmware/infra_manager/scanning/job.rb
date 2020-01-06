@@ -250,14 +250,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
   end
 
   def snapshot_complete
-    if state == 'scanning'
-      scanning
-      call_scan
+    if state == 'check_host_credentials'
+      check_host_credentials
     else
       call_synchronize
     end
   end
 
+  def start_scan
+    scanning
+    call_scan
+  end
 
   # All other signals
   alias_method :start_snapshot,     :call_snapshot_create
