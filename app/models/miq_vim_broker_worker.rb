@@ -3,9 +3,13 @@ class MiqVimBrokerWorker < MiqWorker
 
   require_nested :Runner
 
-  self.required_roles         = []
+  self.required_roles         = %w[ems_metrics_collector smartproxy smartstate]
   self.check_for_minimal_role = false
-  self.workers                = 0
+  self.workers                = lambda {
+    return 0 unless ManageIQ::Providers::Vmware::InfraManager.use_vim_broker?
+    return self.has_minimal_env_option? ? 1 : 0 if MiqServer.minimal_env?
+    return 1
+  }
 
   def self.supports_container?
     true
@@ -16,7 +20,8 @@ class MiqVimBrokerWorker < MiqWorker
   end
 
   def self.has_required_role?
-    false
+    return false if emses_to_monitor.empty?
+    super
   end
 
   def self.emses_to_monitor
