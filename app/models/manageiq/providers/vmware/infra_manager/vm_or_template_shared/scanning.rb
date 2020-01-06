@@ -10,6 +10,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
     end
   end
 
+  def scan_job_class
+    ManageIQ::Providers::Vmware::InfraManager::Scanning::Job
+  end
+
   def perform_metadata_scan(ost)
     require 'MiqVm/MiqVm'
 
