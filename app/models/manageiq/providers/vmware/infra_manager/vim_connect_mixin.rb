@@ -24,12 +24,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     begin
       vim = connect(options)
       yield vim
-    rescue MiqException::MiqVimBrokerUnavailable => err
-      MiqVimBrokerWorker.broker_unavailable(err.class.name, err.to_s)
-      _log.warn("Reported the broker unavailable")
-      raise
-    ensure
-      vim.try(:disconnect) rescue nil
     end
   end
 
