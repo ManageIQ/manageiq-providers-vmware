@@ -3,6 +3,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
   def connect(options = {})
     Thread.current[:miq_vim] ||= {}
+
+    # Reconnect if the connection is stale
+    Thread.current[:miq_vim][connection_key(options)] = nil unless Thread.current[:miq_vim][connection_key(options)]&.isAlive?
+
     Thread.current[:miq_vim][connection_key(options)] ||= begin
       options[:auth_type] ||= :ws
       raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
