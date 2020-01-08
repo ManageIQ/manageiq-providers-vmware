@@ -48,10 +48,14 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       require 'VMwareWebService/miq_fault_tolerant_vim'
 
       options[:pass] = ManageIQ::Password.try_decrypt(options[:pass])
+      options[:use_broker] = false
+
       validate_connection do
         vim = MiqFaultTolerantVim.new(options)
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
         true
+      ensure
+        vim&.disconnect rescue nil
       end
     end
 
