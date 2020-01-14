@@ -1,6 +1,4 @@
 module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
-  require_dependency 'securerandom'
-
   def console_supported?(type)
     %w(VMRC VNC WEBMKS).include?(type.upcase)
   end
@@ -93,6 +91,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   # VNC
   #
   def remote_console_vnc_acquire_ticket(userid, originating_server)
+    require 'securerandom'
+
     validate_remote_console_acquire_ticket("vnc")
 
     password     = SecureRandom.base64[0, 8] # Random password from the Base64 character set
