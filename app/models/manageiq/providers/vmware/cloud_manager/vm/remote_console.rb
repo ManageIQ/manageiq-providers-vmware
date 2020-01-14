@@ -1,6 +1,4 @@
 module ManageIQ::Providers::Vmware::CloudManager::Vm::RemoteConsole
-  require_dependency 'securerandom'
-
   def console_supported?(type)
     %w(WEBMKS).include?(type.upcase)
   end
@@ -39,11 +37,15 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::RemoteConsole
   #
 
   def remote_console_webmks_acquire_ticket(userid, originating_server = nil)
+    require 'securerandom'
+
     validate_remote_console_webmks_support
     ticket = nil
+
     ext_management_system.with_provider_connection do |service|
       ticket = service.post_acquire_mks_ticket(ems_ref).body
     end
+
     raise(MiqException::RemoteConsoleNotSupportedError, 'Could not obtain WebMKS ticket') unless ticket && ticket[:Ticket]
 
     SystemConsole.force_vm_invalid_token(id)
