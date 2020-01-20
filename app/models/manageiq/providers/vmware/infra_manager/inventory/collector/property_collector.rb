@@ -26,11 +26,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
 
   def ems_inventory_prop_set
     property_set_from_hash(
-      YAML.load_file(
-        ManageIQ::Providers::Vmware::Engine.root.join(
-          "db/fixtures/property_specs/ems_inventory.yml"
-        )
-      )
+      YAML.load_file(ManageIQ::Providers::Vmware::Engine.root.join("config/property_specs/ems_inventory.yml"))
     )
   end
 
@@ -50,11 +46,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
 
   def root_folder_select_set
     traversal_spec_from_hash(
-      YAML.load_file(
-        ManageIQ::Providers::Vmware::Engine.root.join(
-          "db/fixtures/traversal_specs/root_folder.yml"
-        )
-      )
+      YAML.load_file(ManageIQ::Providers::Vmware::Engine.root.join("config/traversal_specs/root_folder.yml"))
     )
   end
 
