@@ -28,9 +28,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     property_set_from_file("ems_inventory")
   end
 
-  def property_set_from_file(name)
+  def property_set_from_file(file_name)
     engine_root = ManageIQ::Providers::Vmware::Engine.root
-    hash = YAML.load_file(engine_root.join("config", "property_specs", "#{name}.yml"))
+    hash = YAML.load_file(engine_root.join("config", "property_specs", "#{file_name}.yml"))
 
     hash.collect do |type, props|
       RbVmomi::VIM.PropertySpec(
@@ -53,9 +53,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     RbVmomi::VIM.ObjectSpec(:obj => license_manager)
   end
 
-  def traversal_spec_from_file(name)
+  def traversal_spec_from_file(file_name)
     engine_root = ManageIQ::Providers::Vmware::Engine.root
-    hash = YAML.load_file(engine_root.join("config", "traversal_specs", "#{name}.yml"))
+    hash = YAML.load_file(engine_root.join("config", "traversal_specs", "#{file_name}.yml"))
 
     hash.map do |traversal_spec|
       RbVmomi::VIM.TraversalSpec(
