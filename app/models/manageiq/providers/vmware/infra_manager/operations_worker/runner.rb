@@ -4,7 +4,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner < Mana
     MiqVim.cacheScope = :cache_scope_core
 
     # Prime the cache before starting the do_work loop
-    ems.connect
+    ems.connect(:monitor_updates => true, :pre_load => true)
   end
 
   def before_exit(_message, _exit_code)

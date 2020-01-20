@@ -13,12 +13,14 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     options[:user] ||= authentication_userid(options[:auth_type])
     options[:pass] ||= authentication_password(options[:auth_type])
 
-    # Reconnect if the connection is stale
-    Thread.current[:miq_vim][connection_key(options)] = nil unless Thread.current[:miq_vim][connection_key(options)]&.isAlive?
+    conn_key = connection_key(options)
 
-    Thread.current[:miq_vim][connection_key(options)] ||= begin
+    # Reconnect if the connection is stale
+    Thread.current[:miq_vim][conn_key] = nil unless Thread.current[:miq_vim][conn_key]&.isAlive?
+
+    Thread.current[:miq_vim][conn_key] ||= begin
       require 'VMwareWebService/MiqVim'
-      MiqVim.new(options[:ip], options[:user], options[:pass], options[:cache_scope], options[:monitor_updates])
+      MiqVim.new(*options.values_at(*%i[ip user pass cache_scope monitor_updates pre_load]))
     end
   end
 
