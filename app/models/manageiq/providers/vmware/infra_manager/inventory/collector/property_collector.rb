@@ -12,15 +12,15 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
   def ems_inventory_filter_spec(vim)
     RbVmomi::VIM.PropertyFilterSpec(
       :objectSet => [
-        extension_manager_traversal_spec(vim.serviceContent.extensionManager),
-        root_folder_traversal_spec(vim.serviceContent.rootFolder),
-        license_manager_traversal_spec(vim.serviceContent.licenseManager),
+        extension_manager_object_spec(vim.serviceContent.extensionManager),
+        root_folder_object_spec(vim.serviceContent.rootFolder),
+        license_manager_object_spec(vim.serviceContent.licenseManager),
       ],
       :propSet   => ems_inventory_prop_set
     )
   end
 
-  def extension_manager_traversal_spec(extension_manager)
+  def extension_manager_object_spec(extension_manager)
     RbVmomi::VIM.ObjectSpec(:obj => extension_manager)
   end
 
@@ -41,7 +41,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     end
   end
 
-  def root_folder_traversal_spec(root)
+  def root_folder_object_spec(root)
     RbVmomi::VIM.ObjectSpec(:obj => root, :selectSet => root_folder_select_set)
   end
 
@@ -49,7 +49,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     traversal_spec_from_file("root_folder")
   end
 
-  def license_manager_traversal_spec(license_manager)
+  def license_manager_object_spec(license_manager)
     RbVmomi::VIM.ObjectSpec(:obj => license_manager)
   end
 
