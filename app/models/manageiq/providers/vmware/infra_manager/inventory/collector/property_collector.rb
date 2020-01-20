@@ -25,12 +25,13 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
   end
 
   def ems_inventory_prop_set
-    property_set_from_hash(
-      YAML.load_file(ManageIQ::Providers::Vmware::Engine.root.join("config/property_specs/ems_inventory.yml"))
-    )
+    property_set_from_file("ems_inventory")
   end
 
-  def property_set_from_hash(hash)
+  def property_set_from_file(name)
+    engine_root = ManageIQ::Providers::Vmware::Engine.root
+    hash = YAML.load_file(engine_root.join("config", "property_specs", "#{name}.yml"))
+
     hash.collect do |type, props|
       RbVmomi::VIM.PropertySpec(
         :type    => type,
@@ -45,16 +46,17 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
   end
 
   def root_folder_select_set
-    traversal_spec_from_hash(
-      YAML.load_file(ManageIQ::Providers::Vmware::Engine.root.join("config/traversal_specs/root_folder.yml"))
-    )
+    traversal_spec_from_file("root_folder")
   end
 
   def license_manager_traversal_spec(license_manager)
     RbVmomi::VIM.ObjectSpec(:obj => license_manager)
   end
 
-  def traversal_spec_from_hash(hash)
+  def traversal_spec_from_file(name)
+    engine_root = ManageIQ::Providers::Vmware::Engine.root
+    hash = YAML.load_file(engine_root.join("config", "traversal_specs", "#{name}.yml"))
+
     hash.map do |traversal_spec|
       RbVmomi::VIM.TraversalSpec(
         :name      => traversal_spec["name"],
