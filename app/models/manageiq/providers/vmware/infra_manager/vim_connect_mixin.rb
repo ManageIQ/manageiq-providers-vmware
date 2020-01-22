@@ -7,20 +7,20 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
     raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
-    Thread.current[:miq_vim] ||= {}
-
     options[:ip] ||= hostname
     options[:user] ||= authentication_userid(options[:auth_type])
     options[:pass] ||= authentication_password(options[:auth_type])
 
     conn_key = connection_key(options)
 
+    Thread.current[:miq_vim] ||= {}
+
     # Reconnect if the connection is stale
     Thread.current[:miq_vim][conn_key] = nil unless Thread.current[:miq_vim][conn_key]&.isAlive?
 
     Thread.current[:miq_vim][conn_key] ||= begin
       require 'VMwareWebService/MiqVim'
-      MiqVim.new(*options.values_at(*%i[ip user pass cache_scope monitor_updates pre_load]))
+      MiqVim.new(*options.values_at(:ip, :user, :pass, :cache_scope, :monitor_updates, :pre_load))
     end
   end
 
@@ -77,6 +77,15 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     rescue Exception
       _log.warn($!.inspect)
       raise "Unexpected response returned from Provider, see log for details"
+    end
+
+    def disconnect_all
+      Thread.current[:miq_vim]&.each_value do |vim|
+        begin
+          vim.disconnect
+        rescue
+        end
+      end
     end
   end
 end

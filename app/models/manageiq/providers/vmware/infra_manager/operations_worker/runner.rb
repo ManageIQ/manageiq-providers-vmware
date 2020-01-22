@@ -8,11 +8,6 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner < Mana
   end
 
   def before_exit(_message, _exit_code)
-    Thread.current[:miq_vim].each_value do |vim|
-      begin
-        vim.disconnect
-      rescue => err
-      end
-    end
+    ManageIQ::Providers::Vmware::InfraManager.disconnect_all
   end
 end
