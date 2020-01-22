@@ -9,15 +9,9 @@ module ManageIQ
       end
 
       def self.vix_disk_lib_installed?
-        return false unless RbConfig::CONFIG["host_os"].match?(/linux/i)
-
-        begin
-          require 'VMwareWebService/VixDiskLib/VixDiskLib'
-          return true
-        rescue Exception
-          # It is ok if we hit an error, it just means the library is not available to load.
-        end
-
+        require "ffi-vix_disk_lib"
+        true
+      rescue LoadError
         false
       end
     end
