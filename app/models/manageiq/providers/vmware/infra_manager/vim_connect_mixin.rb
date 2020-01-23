@@ -3,6 +3,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
   def connect(options = {})
     Thread.current[:miq_vim] ||= {}
+
+    # Reconnect if the connection is stale
+    Thread.current[:miq_vim][connection_key(options)] = nil unless Thread.current[:miq_vim][connection_key(options)]&.isAlive?
+
     Thread.current[:miq_vim][connection_key(options)] ||= begin
       options[:auth_type] ||= :ws
       raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
@@ -24,12 +28,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     begin
       vim = connect(options)
       yield vim
-    rescue MiqException::MiqVimBrokerUnavailable => err
-      MiqVimBrokerWorker.broker_unavailable(err.class.name, err.to_s)
-      _log.warn("Reported the broker unavailable")
-      raise
-    ensure
-      vim.try(:disconnect) rescue nil
     end
   end
 
@@ -48,10 +46,14 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       require 'VMwareWebService/miq_fault_tolerant_vim'
 
       options[:pass] = ManageIQ::Password.try_decrypt(options[:pass])
+      options[:use_broker] = false
+
       validate_connection do
         vim = MiqFaultTolerantVim.new(options)
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
         true
+      ensure
+        vim&.disconnect rescue nil
       end
     end
 
