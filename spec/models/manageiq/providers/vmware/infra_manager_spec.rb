@@ -93,7 +93,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
         vim = mock_vim_broker_connection
 
-        expect(MiqVim).to receive(:new).with(ems.hostname, "readonly", "1234").and_return(vim)
+        expect(MiqVim).to receive(:new).with(ems.hostname, "readonly", "1234", nil, nil, nil).and_return(vim)
         expect(vim).to receive(:acquireCloneTicket)
 
         ems.remote_console_vmrc_acquire_ticket
