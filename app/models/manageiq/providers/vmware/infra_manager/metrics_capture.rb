@@ -243,7 +243,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
     raise ArgumentError, "At least one target must be passed"      if self.ems.nil? && targets.empty?
     raise ArgumentError, "All targets must be connected to an EMS" if self.ems.nil?
-    raise ArgumentError, "All targets must be on the same EMS"     if targets.map(&:ems_id).any? { |ems_id| ems_id != self.ems.id }
+    raise ArgumentError, "All targets must be on the same EMS"     if targets.select { |t| !t.kind_of?(Storage) }.map(&:ems_id).any? { |ems_id| ems_id != self.ems.id }
   end
 
   #
