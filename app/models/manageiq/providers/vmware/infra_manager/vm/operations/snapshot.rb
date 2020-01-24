@@ -40,6 +40,25 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
     run_command_via_parent(:vm_remove_snapshot_by_description, :description => description, :refresh => refresh)
   end
 
+  def remove_snapshot_by_description(description, refresh = false, retry_time = nil)
+    if (ext_management_system.kind_of?(ManageIQ::Providers::Vmware::InfraManager) && ManageIQ::Providers::Vmware::InfraManager.use_vim_broker? && MiqVimBrokerWorker.available?) || host.nil? || host.state == "on"
+      raw_remove_snapshot_by_description(description, refresh)
+    else
+      if retry_time.nil?
+        raise _("The VM's Host system is unavailable to remove the snapshot. VM id:[%{id}] Snapshot description:[%{description}]") %
+                {:id => id, :descrption => description}
+      end
+      # If the host is off re-queue the action based on the retry_time
+      MiqQueue.put(:class_name  => self.class.name,
+                   :instance_id => id,
+                   :method_name => 'remove_snapshot_by_description',
+                   :args        => [description, refresh, retry_time],
+                   :deliver_on  => Time.now.utc + retry_time,
+                   :role        => "smartstate",
+                   :zone        => my_zone)
+    end
+  end
+
   def raw_remove_all_snapshots
     raise MiqException::MiqVmError, unsupported_reason(:remove_all_snapshots) unless supports_remove_all_snapshots?
     run_command_via_parent(:vm_remove_all_snapshots)
