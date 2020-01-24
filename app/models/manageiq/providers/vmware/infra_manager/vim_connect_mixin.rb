@@ -2,23 +2,25 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   extend ActiveSupport::Concern
 
   def connect(options = {})
+    options[:auth_type] ||= :ws
+
+    raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
+    raise _("no credentials defined") if missing_credentials?(options[:auth_type])
+
+    options[:ip] ||= hostname
+    options[:user] ||= authentication_userid(options[:auth_type])
+    options[:pass] ||= authentication_password(options[:auth_type])
+
+    conn_key = connection_key(options)
+
     Thread.current[:miq_vim] ||= {}
 
     # Reconnect if the connection is stale
-    Thread.current[:miq_vim][connection_key(options)] = nil unless Thread.current[:miq_vim][connection_key(options)]&.isAlive?
+    Thread.current[:miq_vim][conn_key] = nil unless Thread.current[:miq_vim][conn_key]&.isAlive?
 
-    Thread.current[:miq_vim][connection_key(options)] ||= begin
-      options[:auth_type] ||= :ws
-      raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
-      raise _("no credentials defined") if missing_credentials?(options[:auth_type])
-
-      options[:use_broker] = false
-
-      # The following require pulls in both MiqFaultTolerantVim and MiqVim
-      require 'VMwareWebService/miq_fault_tolerant_vim'
-
-      options[:ems] = self
-      MiqFaultTolerantVim.new(options)
+    Thread.current[:miq_vim][conn_key] ||= begin
+      require 'VMwareWebService/MiqVim'
+      MiqVim.new(*options.values_at(:ip, :user, :pass, :cache_scope, :monitor_updates, :pre_load))
     end
   end
 
@@ -34,8 +36,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   private
 
   def connection_key(options)
-    server   = options[:hostname] || hostname
-    username = options[:user] || authentication_userid
+    server   = options[:ip]
+    username = options[:user]
 
     "#{server}__#{username}"
   end
@@ -75,6 +77,15 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     rescue Exception
       _log.warn($!.inspect)
       raise "Unexpected response returned from Provider, see log for details"
+    end
+
+    def disconnect_all
+      Thread.current[:miq_vim]&.each_value do |vim|
+        begin
+          vim.disconnect
+        rescue
+        end
+      end
     end
   end
 end

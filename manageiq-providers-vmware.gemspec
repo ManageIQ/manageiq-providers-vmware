@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,lib}/**/*"]
 
   s.add_dependency("fog-vcloud-director", ["~> 0.3.0"])
-  s.add_dependency "vmware_web_service",      "~>0.4.3"
+  s.add_dependency "vmware_web_service",      "~>1.0.0"
   s.add_dependency "rbvmomi",                 "~>2.0.0"
   s.add_dependency "vsphere-automation-sdk",  "~>0.2.1"
 
