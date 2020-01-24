@@ -41,7 +41,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
   end
 
   def remove_snapshot_by_description(description, refresh = false, retry_time = nil)
-    if (ext_management_system.kind_of?(ManageIQ::Providers::Vmware::InfraManager) && ManageIQ::Providers::Vmware::InfraManager.use_vim_broker? && MiqVimBrokerWorker.available?) || host.nil? || host.state == "on"
+    if host.nil? || host.state == "on"
       raw_remove_snapshot_by_description(description, refresh)
     else
       if retry_time.nil?
