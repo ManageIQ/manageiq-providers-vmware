@@ -1,15 +1,13 @@
 class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
-  # Make updates to default state machine to take into account snapshots and VimBroker
+  # Make updates to default state machine to take into account snapshots
   def load_transitions
     super.tap do |transitions|
       transitions.merge!(
-        :start_snapshot     => {'before_scan'               => 'snapshot_create',
-                                'waiting_for_broker'        => 'snapshot_create'},
+        :start_snapshot     => {'before_scan'               => 'snapshot_create'},
         :snapshot_complete  => {'snapshot_create'           => 'check_host_credentials',
                                 'snapshot_delete'           => 'synchronizing'},
         :start_scan         => {'check_host_credentials'    => 'scanning'},
         :snapshot_delete    => {'after_scan'                => 'snapshot_delete'},
-        :broker_unavailable => {'snapshot_create'           => 'waiting_for_broker'},
         :data               => {'snapshot_create'           => 'scanning',
                                 'scanning'                  => 'scanning',
                                 'snapshot_delete'           => 'snapshot_delete',
@@ -39,13 +37,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
       begin
         proxy = MiqServer.find(miq_server_id)
 
-        # Check if the broker is available
-        if MiqServer.use_broker_for_embedded_proxy? && !MiqVimBrokerWorker.available?
-          _log.warn("VimBroker is not available")
-          signal(:broker_unavailable)
-          return
-        end
-
         if proxy && proxy.forceVmScan
           options[:snapshot] = :smartProxy
           _log.info("Skipping snapshot creation, it will be performed by the SmartProxy")
@@ -70,19 +61,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
       _log.error(msg)
       signal(:abort, msg, "error")
     end
-  end
-
-  def wait_for_vim_broker
-    _log.info("Enter")
-    i = 0
-    loop do
-      set_status("Waiting for VimBroker to become available (#{i += 1})")
-      sleep(60)
-      _log.info("Checking VimBroker connection status.  Count=[#{i}]")
-      break if MiqVimBrokerWorker.available?
-    end
-
-    signal(:start_snapshot)
   end
 
   def check_host_credentials
@@ -213,13 +191,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         server = miqVimHost[:hostname] || miqVimHost[:ipaddress]
         begin
           password_decrypt = ManageIQ::Password.decrypt(miqVimHost[:password])
-          if MiqServer.use_broker_for_embedded_proxy?(ems_type)
-            $vim_broker_client ||= MiqVimBroker.new(:client, MiqVimBrokerWorker.drb_port)
-            miqVim = $vim_broker_client.getMiqVim(server, miqVimHost[:username], password_decrypt)
-          else
-            require 'VMwareWebService/MiqVim'
-            miqVim = MiqVim.new(server, miqVimHost[:username], password_decrypt)
-          end
+          require 'VMwareWebService/MiqVim'
+          miqVim = MiqVim.new(server, miqVimHost[:username], password_decrypt)
 
           vimVm = miqVim.getVimVm(vm.path)
           vimVm.removeSnapshotByDescription(mor, true) unless vimVm.nil?
@@ -269,7 +242,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
   # All other signals
   alias_method :start_snapshot,     :call_snapshot_create
   alias_method :snapshot_delete,    :call_snapshot_delete
-  alias_method :broker_unavailable, :wait_for_vim_broker
 
   private
 
@@ -285,7 +257,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
       rescue Exception => err
         msg = "Failed to create evm snapshot with EMS. Error: [#{err.class.name}]: [#{err}]"
         _log.error(msg)
-        err.kind_of?(MiqException::MiqVimBrokerUnavailable) ? signal(:broker_unavailable) : signal(:abort, msg, "error")
         return false
       end
       context[:snapshot_mor] = sn
