@@ -20,11 +20,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
   end
 
   def before_scan
-    signal(:start_snapshot)
+    queue_signal(:start_snapshot, role: "ems_operations", queue_name: vm.queue_name_for_ems_operations)
   end
 
   def after_scan
-    signal(:snapshot_delete)
+    queue_signal(:snapshot_delete, role: "ems_operations", queue_name: vm.queue_name_for_ems_operations)
   end
 
   def call_snapshot_create
