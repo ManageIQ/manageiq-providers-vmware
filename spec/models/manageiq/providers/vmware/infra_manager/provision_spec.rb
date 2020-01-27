@@ -171,15 +171,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           @vm_prov.options[:vm_auto_start] = true
           allow(@vm_prov.destination).to receive(:start).and_raise
           expect(@vm_prov.destination).to receive(:start).once
-          expect(@ems).to receive(:reset_vim_cache).never
-          @vm_prov.signal :autostart_destination
-        end
-
-        it "autostart_destination with MiqVimResourceNotFound" do
-          @vm_prov.options[:vm_auto_start] = true
-          allow(@vm_prov.destination).to receive(:start).and_raise(MiqException::MiqVimResourceNotFound)
-          expect(@vm_prov.destination).to receive(:start).twice
-          expect(@ems).to receive(:reset_vim_cache).once
           @vm_prov.signal :autostart_destination
         end
       end

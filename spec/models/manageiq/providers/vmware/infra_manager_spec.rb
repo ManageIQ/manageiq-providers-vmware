@@ -91,7 +91,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
       it "uses the console credentials" do
         require 'VMwareWebService/MiqVim'
 
-        vim = mock_vim_broker_connection
+        vim = mock_miq_vim_connection
 
         expect(MiqVim).to receive(:new).with(ems.hostname, "readonly", "1234", nil, nil, nil).and_return(vim)
         expect(vim).to receive(:acquireCloneTicket)
@@ -163,7 +163,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     expect(q[0].role).to eq("event")
   end
 
-  def mock_vim_broker_connection
+  def mock_miq_vim_connection
     vim = double(vim)
     allow(vim).to receive(:server).and_return(ems.hostname)
     allow(vim).to receive(:isVirtualCenter?).and_return(true)

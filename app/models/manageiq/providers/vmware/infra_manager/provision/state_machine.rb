@@ -62,27 +62,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::StateMachine
     signal :autostart_destination
   end
 
-  def autostart_destination
-    if get_option(:vm_auto_start)
-      message = "Starting"
-      _log.info("#{message} #{for_destination}")
-      update_and_notify_parent(:message => message)
-      start_with_cache_reset
-    end
-
-    signal :post_create_destination
-  end
-
   private
-
-  # NOTE: Due to frequent problems with cache not containing the new VM we need to clear the cache and try again.
-  def start_with_cache_reset
-    destination.start
-  rescue MiqException::MiqVimResourceNotFound
-    _log.info("Unable to start #{for_destination}.  Retrying after VIM cache reset.")
-    destination.ext_management_system.reset_vim_cache
-    destination.start
-  end
 
   def powered_off_in_provider?
     destination.with_provider_object(&:poweredOff?)
