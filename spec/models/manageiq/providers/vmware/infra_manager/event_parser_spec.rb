@@ -1,3 +1,5 @@
+require 'VMwareWebService/VimTypes'
+
 describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
   EPV_DATA_DIR = File.expand_path(File.join(File.dirname(__FILE__), "event_data"))
 
@@ -24,7 +26,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
       )
 
       expect(data[:full_data]).to    eq(event)
-      expect(data[:full_data]).to    be_instance_of VimHash
+      expect(data[:full_data]).to    be_instance_of Hash
       expect(data[:vm_ems_ref]).to   be_instance_of String
       expect(data[:host_ems_ref]).to be_instance_of String
     end
@@ -64,7 +66,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::EventParser do
         )
 
         expect(data[:full_data]).to    eq(event)
-        expect(data[:full_data]).to    be_instance_of VimHash
+        expect(data[:full_data]).to    be_instance_of Hash
         expect(data[:host_ems_ref]).to be_instance_of String
       end
     end

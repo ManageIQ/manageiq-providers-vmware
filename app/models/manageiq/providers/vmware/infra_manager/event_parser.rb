@@ -2,6 +2,8 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
   def self.event_to_hash(event, ems_id = nil)
     log_header = "ems_id: [#{ems_id}] " unless ems_id.nil?
 
+    event = vim_types_to_basic_types(event)
+
     _log.debug { "#{log_header}event: [#{event.inspect}]" }
     event_type = event['eventType']
     if event_type.nil?
@@ -149,5 +151,19 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
     }
 
     return hash, klass, :uid_ems => mor
+  end
+
+  def self.vim_types_to_basic_types(obj)
+    case obj
+    when VimString
+      obj = obj.to_s
+    when VimHash
+      obj = obj.to_h
+      obj.each { |key, val| obj[key] = vim_types_to_basic_types(val) }
+    when VimArray
+      obj = obj.map { |v| vim_types_to_basic_types(v) }
+    end
+
+    obj
   end
 end
