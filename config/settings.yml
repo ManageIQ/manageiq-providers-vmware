@@ -43,7 +43,8 @@
       :ems_metrics_collector_worker:
         :ems_metrics_collector_worker_vmware: {}
       :ems_operations_worker:
-        :ems_operations_worker_vmware: {}
+        :ems_operations_worker_vmware:
+          :memory_threshold: 1.gigabytes
       :ems_refresh_worker:
         :ems_refresh_worker_vmware: {}
         :ems_refresh_worker_vmware_cloud: {}
