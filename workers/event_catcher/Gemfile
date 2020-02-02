@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+gem "optimist", "~> 3.0"
+gem "rbvmomi", "~> 2.0"
