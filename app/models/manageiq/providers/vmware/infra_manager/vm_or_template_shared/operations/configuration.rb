@@ -52,6 +52,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     run_command_via_parent(:vm_remove_disk, :diskName => disk_name, :delete_backing => options[:delete_backing])
   end
 
+  def raw_resize_disk(disk_name, disk_size_mb, _options = {})
+    run_command_via_parent(:vm_resize_disk, :diskName => disk_name, :newSizeInKb => disk_size_mb * 1024)
+  end
+
   def raw_reconfigure(spec)
     run_command_via_parent(:vm_reconfigure, :spec => spec)
   end

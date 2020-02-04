@@ -449,6 +449,10 @@ module ManageIQ::Providers
     end
     alias vm_remove_disk vm_remove_disk_by_file
 
+    def vm_resize_disk(vm, options = {})
+      invoke_vim_ws(:resizeDisk, vm, options[:user_event], options[:diskName], options[:newSizeInKb])
+    end
+
     def vm_acquire_ticket(vm, options = {})
       invoke_vim_ws(:acquireTicket, vm, options[:user_event], options[:ticket_type])
     end
