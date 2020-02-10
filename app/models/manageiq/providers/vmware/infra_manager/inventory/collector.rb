@@ -328,6 +328,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       s =  "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
       s << " Props: [#{prop_changes}]" if object_update.kind == "modify"
+      s
     end
   end
 
