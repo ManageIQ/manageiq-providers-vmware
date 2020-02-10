@@ -45,13 +45,13 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   module ClassMethods
     def raw_connect(options)
       require 'handsoap'
-      require 'VMwareWebService/miq_fault_tolerant_vim'
+      require 'VMwareWebService/MiqVim'
 
-      options[:pass] = ManageIQ::Password.try_decrypt(options[:pass])
-      options[:use_broker] = false
+      ip, user = options.values_at(:ip, :user)
+      pass = ManageIQ::Password.try_decrypt(options[:pass])
 
       validate_connection do
-        vim = MiqFaultTolerantVim.new(options)
+        vim = MiqVim.new(ip, user, pass)
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
         true
       ensure
