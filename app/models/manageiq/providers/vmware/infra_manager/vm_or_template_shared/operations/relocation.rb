@@ -25,7 +25,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     run_command_via_parent(:vm_migrate, :host => host_mor, :pool => pool_mor, :priority => priority, :state => state)
   end
 
-  def raw_relocate(host, pool = nil, datastore = nil, disk_move_type = nil, transform = nil, priority = "defaultPriority", disk = nil)
+  def raw_relocate(host, pool = nil, datastore = nil, disk_transform = nil, transform = nil, priority = "defaultPriority", disk = nil)
     raise _("Unable to relocate VM: Specified Host is not a valid object") if host && !host.kind_of?(Host)
     if pool && !pool.kind_of?(ResourcePool)
       raise _("Unable to relocate VM: Specified Resource Pool is not a valid object")
@@ -51,6 +51,12 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     host_mor      = host.ems_ref_obj      if host
     pool_mor      = pool.ems_ref_obj      if pool
     datastore_mor = datastore.ems_ref_obj if datastore
+
+    disk_move_type = case disk_transform
+      when 'thin'  then VimString.new('sparse', "VirtualMachineRelocateTransformation")
+      when 'thick' then VimString.new('flat', "VirtualMachineRelocateTransformation")
+      else disk_transform
+      end
 
     run_command_via_parent(:vm_relocate, :host => host_mor, :pool => pool_mor, :datastore => datastore_mor, :disk_move_type => disk_move_type, :transform => transform, :priority => priority, :disk => disk)
   end
