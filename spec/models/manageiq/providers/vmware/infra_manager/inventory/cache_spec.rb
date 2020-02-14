@@ -1,4 +1,4 @@
-require "rbvmomi/vim"
+require "rbvmomi"
 
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
   let(:cache) { described_class.new }
@@ -10,7 +10,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
         :hardware => {
           :device => [
             RbVmomi::VIM::VirtualLsiLogicController(
-              :dynamicProperty    => [],
               :key                => 1000,
               :deviceInfo         => RbVmomi::VIM::Description(:label => "SCSI controller 0", :summary => "LSI Logic"),
               :controllerKey      => 100,
@@ -22,7 +21,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
               :scsiCtlrUnitNumber => 7,
             ),
             RbVmomi::VIM::VirtualDisk(
-              :dynamicProperty => [],
               :key             => 2000,
               :deviceInfo      => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
               :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
