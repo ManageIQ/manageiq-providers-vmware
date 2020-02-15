@@ -577,11 +577,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.ems_clusters.count).to eq(4)
       expect(ems.ems_folders.count).to eq(11)
       expect(ems.datacenters.count).to eq(2)
+      expect(ems.distributed_virtual_switches.count).to eq(2)
+      expect(ems.distributed_virtual_lans.count).to eq(4)
+      expect(ems.host_virtual_switches.count).to eq(16)
       expect(ems.disks.count).to eq(64)
       expect(ems.guest_devices.count).to eq(64)
       expect(ems.hardwares.count).to eq(64)
       expect(ems.hosts.count).to eq(16)
+      expect(ems.host_hardwares.count).to eq(16)
       expect(ems.host_storages.count).to eq(16)
+      expect(ems.host_networks.count).to eq(16)
+      expect(ems.host_guest_devices.count).to eq(80)
       expect(ems.host_operating_systems.count).to eq(16)
       expect(ems.operating_systems.count).to eq(64)
       expect(ems.resource_pools.count).to eq(12)
@@ -591,6 +597,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(ems.lans.count).to eq(36)
       expect(ems.ems_extensions.count).to eq(12)
       expect(ems.ems_licenses.count).to eq(3)
+      expect(ems.networks.count).to eq(48)
     end
 
     def assert_specific_datacenter
