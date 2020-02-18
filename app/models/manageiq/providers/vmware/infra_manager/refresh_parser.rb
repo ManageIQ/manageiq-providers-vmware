@@ -1120,6 +1120,7 @@ module ManageIQ::Providers
               case controller.xsiType
               when /IDE/ then 'ide'
               when /SIO/ then 'sio'
+              when /AHCI/, /SATA/ then 'sata'
               else 'scsi'
               end
             else

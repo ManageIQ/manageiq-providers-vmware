@@ -190,6 +190,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         controller_type = case controller.class.wsdl_name
                           when /IDE/ then 'ide'
                           when /SIO/ then 'sio'
+                          when /AHCI/, /SATA/ then 'sata'
                           else 'scsi'
                           end
         disk_hash = {
