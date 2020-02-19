@@ -151,6 +151,7 @@ class ManageIQ::Providers::Vmware::Inventory::Collector::NetworkManager < Manage
   # Fetch vapp network configuration via vCD API. This call is implemented in Fog, but it's not
   # managed, therefore we must handle errors by ourselves.
   def fetch_network_configurations_for_vapp(vapp_id)
+    require 'fog/vcloud_director'
     begin
       # fog-vcloud-director now uses a more user-friendly parser that yields vApp instance. However, vapp networking
       # is not parsed there yet so we need to fallback to basic ToHashDocument parser that only converts XML to hash.
@@ -164,6 +165,7 @@ class ManageIQ::Providers::Vmware::Inventory::Collector::NetworkManager < Manage
   end
 
   def fetch_nic_configurations_for_vm(vm_id)
+    require 'fog/vcloud_director'
     begin
       data = @connection.get_network_connection_system_section_vapp(vm_id).body
     rescue Fog::VcloudDirector::Errors::ServiceError => e
