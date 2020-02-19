@@ -216,13 +216,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         if device_type == "disk"
           disk_hash[:mode] = backing.diskMode
           disk_hash[:size] = device.capacityInKB.to_i.kilobytes
-          disk_hash[:disk_type] = if backing.kind_of?(RbVmomi::VIM::VirtualDiskRawDiskMappingVer1BackingInfo)
-                                    "rdm-#{backing.compatibilityMode.to_s[0...-4]}" # physicalMode or virtualMode
-                                  elsif backing.kind_of?(RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo)
-                                    backing.thinProvisioned.to_s.downcase == 'true' ? "thin" : "thick"
-                                  else
-                                    "thick"
-                                  end
+          disk_hash[:disk_type], disk_hash[:thin], disk_hash[:format] = case backing
+            when RbVmomi::VIM::VirtualDiskRawDiskMappingVer1BackingInfo
+              format = "rdm-#{backing.compatibilityMode.to_s[0...-4]}" # physicalMode or virtualMode
+              [format, "thick", format]
+            when RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo
+              thin_or_thick = backing.thinProvisioned.to_s.downcase == 'true'
+              disk_type = thin_or_thick ? "thin" : "thick"
+              [disk_type, thin_or_thick, "vmdk"]
+            else
+              ["thick", false, "vmdk"]
+            end
         else
           disk_hash[:start_connected] = device.connectable.startConnected
         end
