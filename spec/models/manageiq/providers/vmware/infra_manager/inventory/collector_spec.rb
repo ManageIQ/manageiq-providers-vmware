@@ -917,6 +917,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :mode            => "persistent",
         :size            => 536_870_912,
         :start_connected => true,
+        :thin            => false,
+        :format          => "vmdk"
       )
 
       expect(vm.ems_cluster).not_to be_nil
