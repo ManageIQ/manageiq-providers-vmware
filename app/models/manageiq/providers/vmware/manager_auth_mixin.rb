@@ -1,5 +1,3 @@
-require 'fog/vcloud_director'
-
 module ManageIQ::Providers::Vmware::ManagerAuthMixin
   extend ActiveSupport::Concern
 
@@ -39,6 +37,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
 
   module ClassMethods
     def raw_connect(server, port, username, password, api_version = '5.5', validate = false)
+      require 'fog/vcloud_director'
       params = {
         :vcloud_director_username      => username,
         :vcloud_director_password      => ManageIQ::Password.try_decrypt(password),
@@ -69,6 +68,7 @@ module ManageIQ::Providers::Vmware::ManagerAuthMixin
     end
 
     def translate_exception(err)
+      require 'fog/vcloud_director'
       case err
       when Fog::VcloudDirector::Compute::Unauthorized
         MiqException::MiqInvalidCredentialsError.new "Login failed due to a bad username or password."

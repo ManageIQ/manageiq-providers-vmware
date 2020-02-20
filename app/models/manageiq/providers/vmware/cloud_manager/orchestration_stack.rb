@@ -44,6 +44,7 @@ class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::
   end
 
   def vapp_or_nil(service, ems_ref)
+    require 'fog/vcloud_director'
     service.vapps.get_single_vapp(ems_ref)
   rescue Fog::VcloudDirector::Compute::Forbidden
     # vCloud returns 403 Forbidden instead 404 Not Found when ems_ref is in
