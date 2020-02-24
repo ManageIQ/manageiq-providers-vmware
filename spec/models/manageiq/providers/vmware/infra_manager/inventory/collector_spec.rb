@@ -66,7 +66,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         assert_ems
 
         host = RbVmomi::VIM.HostSystem(vim, "host-41")
-        allow(host).to receive(:collect!).and_return(nil)
+        host_config_storage_device_stub(host)
 
         run_targeted_refresh(targeted_update_set([targeted_object_update(host)]))
         assert_ems
@@ -206,6 +206,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           :filterSet => [property_filter_update],
           :truncated => false,
         )
+      end
+
+      def host_config_storage_device_stub(host)
+        vcr_cassettes_dir  = ManageIQ::Providers::Vmware::Engine.root.join("spec", "vcr_cassettes")
+        storage_device_yml = vcr_cassettes_dir.join(*described_class.name.underscore.split("::"), "host_storageDevice.yml")
+        allow(host).to receive(:collect!)
+          .with("config.storageDevice.hostBusAdapter", "config.storageDevice.scsiLun", "config.storageDevice.scsiTopology.adapter")
+          .and_return(YAML.load_file(storage_device_yml))
       end
 
       def vm_power_off_object_update
