@@ -182,7 +182,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     switches = parse_host_system_switches(host, props)
     parse_host_system_host_switches(host, switches)
-    parse_host_system_lans(switches, props)
+    parse_host_system_lans(host, switches, props)
   end
 
   def parse_license_manager(_object, kind, props)
@@ -269,6 +269,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.resource_pools.build(rp_hash)
   end
   alias parse_virtual_app parse_resource_pool
+
+  def parse_pbm_profile(object, _kind, props)
+    persister.storage_profiles.build(
+      :ems_ref      => object.profileId.uniqueId,
+      :name         => props[:name],
+      :profile_type => props[:profileCategory]
+    )
+  end
+  alias parse_pbm_capability_profile parse_pbm_profile
 
   def parse_storage_pod(object, kind, props)
     persister.ems_folders.targeted_scope << object._ref

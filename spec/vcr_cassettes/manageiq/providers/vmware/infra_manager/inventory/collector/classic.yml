@@ -21,7 +21,7 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:39 GMT
+      - Fri, 04 Oct 2019 12:49:39 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
@@ -32,9 +32,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:38 GMT
+      - Fri, 4 Oct 2019 12:49:40 GMT
       Set-Cookie:
-      - vmware_soap_session="52f8c5fd-6608-d787-1569-3326d6405125"; Path=/; HttpOnly;
+      - vmware_soap_session="52317835-871e-7015-1c52-7a87ac2c9c48"; Path=/; HttpOnly;
         Secure;
       Cache-Control:
       - no-cache
@@ -59,7 +59,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:39 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:40 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -83,20 +83,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:39 GMT
+      - Fri, 04 Oct 2019 12:49:40 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - Login
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:39 GMT
+      - Fri, 4 Oct 2019 12:49:42 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -116,18 +116,18 @@ http_interactions:
          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <soapenv:Body>
-        <LoginResponse xmlns="urn:vim25"><returnval><key>5246b08e-3626-2746-4b9f-f0cd01aefb91</key><userName>root</userName><fullName>root </fullName><loginTime>2019-10-08T16:19:39.051735Z</loginTime><lastActiveTime>2019-10-08T16:19:39.051735Z</lastActiveTime><locale>en</locale><messageLocale>en</messageLocale><extensionSession>false</extensionSession><ipAddress>10.10.112.35</ipAddress><userAgent>HTTPClient/1.0 (2.8.3, ruby 2.5.5 (2019-03-15))</userAgent><callCount>0</callCount></returnval></LoginResponse>
+        <LoginResponse xmlns="urn:vim25"><returnval><key>521e8ce7-c395-de73-2006-c8c7f23632d8</key><userName>root</userName><fullName>root </fullName><loginTime>2019-10-04T12:49:42.058542Z</loginTime><lastActiveTime>2019-10-04T12:49:42.058542Z</lastActiveTime><locale>en</locale><messageLocale>en</messageLocale><extensionSession>false</extensionSession><ipAddress>10.10.112.24</ipAddress><userAgent>HTTPClient/1.0 (2.8.3, ruby 2.5.5 (2019-03-15))</userAgent><callCount>0</callCount></returnval></LoginResponse>
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:42 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/pbm/sdk
     body:
       encoding: UTF-8
       string: <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52f8c5fd-6608-d787-1569-3326d6405125</vcSessionCookie></env:Header><env:Body><PbmRetrieveServiceContent
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52317835-871e-7015-1c52-7a87ac2c9c48</vcSessionCookie></env:Header><env:Body><PbmRetrieveServiceContent
         xmlns="urn:pbm"><_this type="PbmServiceInstance">ServiceInstance</_this></PbmRetrieveServiceContent></env:Body></env:Envelope>
     headers:
       Content-Type:
@@ -146,13 +146,13 @@ http_interactions:
       message: OK
     headers:
       Set-Cookie:
-      - vmware_soap_session=cd07cd6b-4946-4075-9c1d-5258032fde01; HttpOnly
+      - vmware_soap_session=fb671060-686a-4213-9182-17019c0f9bd0; HttpOnly
       Content-Type:
       - text/xml;charset=utf-8
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 08 Oct 2019 16:19:39 GMT
+      - Fri, 04 Oct 2019 12:49:43 GMT
       Server:
       - Apache
     body:
@@ -167,7 +167,7 @@ http_interactions:
         type="PbmComplianceManager">complianceManager</complianceManager><placementSolver
         type="PbmPlacementSolver">placementSolver</placementSolver></returnval></PbmRetrieveServiceContentResponse></soapenv:Body></soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:43 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -299,20 +299,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:40 GMT
+      - Fri, 04 Oct 2019 12:49:43 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:39 GMT
+      - Fri, 4 Oct 2019 12:49:44 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -336,7 +336,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:44 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -359,20 +359,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:40 GMT
+      - Fri, 04 Oct 2019 12:49:44 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - ContinueRetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:39 GMT
+      - Fri, 4 Oct 2019 12:49:44 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -396,7 +396,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:44 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -447,20 +447,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:40 GMT
+      - Fri, 04 Oct 2019 12:49:44 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:39 GMT
+      - Fri, 4 Oct 2019 12:49:46 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -484,7 +484,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:46 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -538,20 +538,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:40 GMT
+      - Fri, 04 Oct 2019 12:49:46 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:39 GMT
+      - Fri, 4 Oct 2019 12:49:47 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -575,7 +575,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:40 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:47 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -618,20 +618,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:40 GMT
+      - Fri, 04 Oct 2019 12:49:47 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:40 GMT
+      - Fri, 4 Oct 2019 12:49:47 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -655,7 +655,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:41 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:47 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -770,20 +770,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:41 GMT
+      - Fri, 04 Oct 2019 12:49:47 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:40 GMT
+      - Fri, 4 Oct 2019 12:49:48 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -807,7 +807,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:41 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:48 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1075,20 +1075,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:41 GMT
+      - Fri, 04 Oct 2019 12:49:48 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:40 GMT
+      - Fri, 4 Oct 2019 12:49:50 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -1112,7 +1112,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:42 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:50 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1153,20 +1153,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:42 GMT
+      - Fri, 04 Oct 2019 12:49:51 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:42 GMT
+      - Fri, 4 Oct 2019 12:49:51 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -1190,7 +1190,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:51 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1249,20 +1249,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:51 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:42 GMT
+      - Fri, 4 Oct 2019 12:49:51 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -1286,7 +1286,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:51 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1340,20 +1340,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:51 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:42 GMT
+      - Fri, 4 Oct 2019 12:49:52 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -1377,7 +1377,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:52 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1456,20 +1456,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:52 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:42 GMT
+      - Fri, 4 Oct 2019 12:49:52 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -1493,7 +1493,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:52 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -1526,20 +1526,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:52 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:42 GMT
+      - Fri, 4 Oct 2019 12:49:52 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5186,7 +5186,7 @@ http_interactions:
         Hardware Status</label><summary>Displays the hardware status of hosts (CIM
         monitoring)</summary></description><company>VMware, Inc.</company><type>com.vmware.vim.viClientScripts</type><adminEmail>noreply@vmware.com</adminEmail></server><lastHeartbeatTime>2019-01-29T19:21:15.316759Z</lastHeartbeatTime><shownInSolutionManager>false</shownInSolutionManager></Extension></val></propSet></objects></returnval></RetrievePropertiesExResponse>\n</soapenv:Body>\n</soapenv:Envelope>"
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:52 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5219,20 +5219,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:53 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:43 GMT
+      - Fri, 4 Oct 2019 12:49:53 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5256,14 +5256,14 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:43 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:53 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/pbm/sdk
     body:
       encoding: UTF-8
       string: <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52f8c5fd-6608-d787-1569-3326d6405125</vcSessionCookie></env:Header><env:Body><PbmQueryProfile
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52317835-871e-7015-1c52-7a87ac2c9c48</vcSessionCookie></env:Header><env:Body><PbmQueryProfile
         xmlns="urn:pbm"><_this type="PbmProfileProfileManager">ProfileManager</_this><resourceType
         xsi:type="PbmProfileResourceType"><resourceType>STORAGE</resourceType></resourceType></PbmQueryProfile></env:Body></env:Envelope>
     headers:
@@ -5272,7 +5272,7 @@ http_interactions:
       Soapaction:
       - urn:pbm/1.0
       Cookie:
-      - vmware_soap_session=cd07cd6b-4946-4075-9c1d-5258032fde01; HttpOnly
+      - vmware_soap_session=fb671060-686a-4213-9182-17019c0f9bd0; HttpOnly
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -5285,13 +5285,13 @@ http_interactions:
       message: OK
     headers:
       Set-Cookie:
-      - vmware_soap_session=cd07cd6b-4946-4075-9c1d-5258032fde01; HttpOnly
+      - vmware_soap_session=fb671060-686a-4213-9182-17019c0f9bd0; HttpOnly
       Content-Type:
       - text/xml;charset=utf-8
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:53 GMT
       Server:
       - Apache
     body:
@@ -5301,14 +5301,14 @@ http_interactions:
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><PbmQueryProfileResponse
         xmlns="urn:pbm" xmlns:pbm="urn:pbm"/></soapenv:Body></soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:44 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:53 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/pbm/sdk
     body:
       encoding: UTF-8
       string: <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52f8c5fd-6608-d787-1569-3326d6405125</vcSessionCookie></env:Header><env:Body><PbmRetrieveContent
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><vcSessionCookie>52317835-871e-7015-1c52-7a87ac2c9c48</vcSessionCookie></env:Header><env:Body><PbmRetrieveContent
         xmlns="urn:pbm"><_this type="PbmProfileProfileManager">ProfileManager</_this></PbmRetrieveContent></env:Body></env:Envelope>
     headers:
       Content-Type:
@@ -5316,7 +5316,7 @@ http_interactions:
       Soapaction:
       - urn:pbm/1.0
       Cookie:
-      - vmware_soap_session=cd07cd6b-4946-4075-9c1d-5258032fde01; HttpOnly
+      - vmware_soap_session=fb671060-686a-4213-9182-17019c0f9bd0; HttpOnly
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -5329,13 +5329,13 @@ http_interactions:
       message: Internal Server Error
     headers:
       Set-Cookie:
-      - vmware_soap_session=cd07cd6b-4946-4075-9c1d-5258032fde01; HttpOnly
+      - vmware_soap_session=fb671060-686a-4213-9182-17019c0f9bd0; HttpOnly
       Content-Type:
       - text/xml;charset=utf-8
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 08 Oct 2019 16:19:43 GMT
+      - Fri, 04 Oct 2019 12:49:53 GMT
       Connection:
       - close
       Server:
@@ -5348,7 +5348,7 @@ http_interactions:
         missing value for required parameter 'profileIds' to method 'PbmRetrieveContent'</faultstring><detail><RuntimeFaultFault
         xsi:type="vim25:InvalidRequest" xmlns="urn:vim25" xmlns:vim25="urn:vim25"/></detail></soapenv:Fault></soapenv:Body></soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:45 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:54 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5381,20 +5381,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:45 GMT
+      - Fri, 04 Oct 2019 12:49:54 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:44 GMT
+      - Fri, 4 Oct 2019 12:49:54 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5418,7 +5418,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:45 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:54 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5453,20 +5453,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:45 GMT
+      - Fri, 04 Oct 2019 12:49:54 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:44 GMT
+      - Fri, 4 Oct 2019 12:49:54 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5490,7 +5490,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:45 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:54 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5525,20 +5525,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:45 GMT
+      - Fri, 04 Oct 2019 12:49:54 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:44 GMT
+      - Fri, 4 Oct 2019 12:49:54 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5562,7 +5562,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:45 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:54 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5597,20 +5597,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:45 GMT
+      - Fri, 04 Oct 2019 12:49:54 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:54 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5634,7 +5634,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:54 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5669,20 +5669,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:54 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5706,7 +5706,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5741,20 +5741,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5778,7 +5778,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5813,20 +5813,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5850,7 +5850,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5885,20 +5885,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5922,7 +5922,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -5957,20 +5957,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -5994,7 +5994,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6029,20 +6029,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6066,7 +6066,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6101,20 +6101,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6138,7 +6138,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6173,20 +6173,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:45 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6210,7 +6210,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:46 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6245,20 +6245,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:46 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6282,7 +6282,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6317,20 +6317,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:47 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6354,7 +6354,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:55 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6389,20 +6389,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:47 GMT
+      - Fri, 04 Oct 2019 12:49:55 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:55 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6426,7 +6426,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:56 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6461,20 +6461,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:47 GMT
+      - Fri, 04 Oct 2019 12:49:56 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:56 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6498,7 +6498,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:56 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6533,20 +6533,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:47 GMT
+      - Fri, 04 Oct 2019 12:49:56 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - RetrievePropertiesEx
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:56 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6570,7 +6570,7 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
+  recorded_at: Fri, 04 Oct 2019 12:49:56 GMT
 - request:
     method: post
     uri: https://VMWARE_HOSTNAME/sdk
@@ -6592,20 +6592,20 @@ http_interactions:
       Accept:
       - "*/*"
       Date:
-      - Tue, 08 Oct 2019 16:19:47 GMT
+      - Fri, 04 Oct 2019 12:49:56 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Soapaction:
       - Logout
       Cookie:
-      - vmware_soap_session=52f8c5fd-6608-d787-1569-3326d6405125
+      - vmware_soap_session=52317835-871e-7015-1c52-7a87ac2c9c48
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Tue, 8 Oct 2019 16:19:46 GMT
+      - Fri, 4 Oct 2019 12:49:56 GMT
       Cache-Control:
       - no-cache
       Connection:
@@ -6629,5 +6629,5 @@ http_interactions:
         </soapenv:Body>
         </soapenv:Envelope>
     http_version: 
-  recorded_at: Tue, 08 Oct 2019 16:19:47 GMT
-recorded_with: VCR 3.0.3
+  recorded_at: Fri, 04 Oct 2019 12:49:56 GMT
+recorded_with: VCR 5.0.0

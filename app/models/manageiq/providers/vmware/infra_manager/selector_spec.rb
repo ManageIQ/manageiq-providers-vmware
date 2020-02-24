@@ -88,6 +88,7 @@ module ManageIQ::Providers::Vmware::InfraManager::SelectorSpec
       "config.cpuHotAddEnabled",
       "config.cpuHotRemoveEnabled",
       "config.defaultPowerOps.standbyAction",
+      "config.firmware",
       "config.hardware.device[*].backing.compatibilityMode",
       "config.hardware.device[*].backing.datastore",
       "config.hardware.device[*].backing.deviceName",
