@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 
 class EventCatcher
   def initialize(ems_id, hostname, username, password, port, page_size = 20)
