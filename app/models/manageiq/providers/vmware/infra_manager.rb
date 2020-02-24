@@ -112,7 +112,7 @@ module ManageIQ::Providers
       default_endpoint = args.dig("endpoints", "default")
       username, password, server = default_endpoint&.values_at("username", "password", "server")
 
-      !!raw_connect(:ip => server, :user => username, :pass => password, :use_broker => false)
+      !!raw_connect(:ip => server, :user => username, :pass => password)
     end
 
     def supported_auth_types
@@ -200,7 +200,8 @@ module ManageIQ::Providers
     end
 
     def verify_credentials(auth_type = nil, _options = {})
-      self.class.raw_connect(:use_broker => false, :ems => self)
+      user, pwd = auth_user_pwd(auth_type)
+      self.class.raw_connect(:ip => hostname, :user => user, :pass => pwd)
     end
 
     def get_alarms

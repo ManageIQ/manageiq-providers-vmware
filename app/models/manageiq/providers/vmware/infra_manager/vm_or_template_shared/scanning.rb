@@ -68,9 +68,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
         end
 
         begin
-          require 'VMwareWebService/miq_fault_tolerant_vim'
+          require 'VMwareWebService/MiqVim'
           # TODO: Should this move to the EMS?
-          ost.miqVim = MiqFaultTolerantVim.new(:ip => host_address, :user => miqVimHost[:username], :pass => password_decrypt, :use_broker => use_broker, :vim_broker_drb_uri => ost.scanData['ems'][:vim_broker_drb_uri])
+          ost.miqVim = MiqVim.new(host_address, miqVimHost[:username], password_decrypt)
           # ost.snapId = opts.snapId if opts.snapId
           $log.info "Connection to [#{ems_display_text}] completed for VM:[#{@vmCfgFile}] in [#{Time.now - st}] seconds"
         rescue Timeout::Error => err
