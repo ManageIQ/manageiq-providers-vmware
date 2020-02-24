@@ -57,7 +57,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.info("#{log_header} Monitor updates thread started")
 
     vim = connect
-    property_filter = create_property_filter(vim)
+    property_filter = create_property_filter(vim, ems_inventory_filter_spec(vim))
 
     _log.info("#{log_header} Refreshing initial inventory")
     version = full_refresh(vim, property_filter)
