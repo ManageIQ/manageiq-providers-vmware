@@ -106,8 +106,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_dvs_summary(switch_hash, props[:summary])
 
     persister_switch = persister.distributed_virtual_switches.build(switch_hash)
-
-    parser_dvs_hosts(persister_switch, props)
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
@@ -183,8 +181,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     hardware = parse_host_system_hardware(host, props)
     parse_host_system_host_networks(host, hardware, props)
 
-    switches = parse_host_system_switches(host, props)
-    parse_host_system_host_switches(host, switches)
+    switches     = parse_host_system_switches(host, props)
+    dvs_switches = parse_host_system_distributed_switches(host)
+
+    parse_host_system_host_switches(host, switches + dvs_switches)
     parse_host_system_lans(host, switches, props)
   end
 

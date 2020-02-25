@@ -399,6 +399,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       persister_switches.concat(opaque_persister_switches)
     end
 
+    def parse_host_system_distributed_switches(host)
+      %w[VmwareDistributedVirtualSwitch DistributedVirtualSwitch].flat_map do |dvs_klass|
+        cache[dvs_klass].select do |mor, props|
+          props.fetch_path(:summary, :hostMember).any? { |h| h._ref == host.ems_ref }
+        end.collect { |mor, _| mor }
+      end.collect { |mor| persister.distributed_virtual_switches.lazy_find(mor) }
+    end
+
     def parse_host_system_host_switches(host, switches)
       switches.each do |switch|
         persister.host_switches.build(:host => host, :switch => switch)
