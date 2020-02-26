@@ -109,11 +109,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     # Since Lans aren't a top-level collection but belong_to a switch we have
     # to send all dvportgroups for a dvswitch when doing a targeted refresh of the switch
-    cache["DistributedVirtualPortgroup"].select do |mor, props|
-      props.fetch_path(:config, :distributedVirtualSwitch)&._ref == object._ref
-    end.each do |mor, props|
+    cache["DistributedVirtualPortgroup"].select do |_mor, dvpg_props|
+      dvpg_props.fetch_path(:config, :distributedVirtualSwitch)&._ref == object._ref
+    end.each do |mor, dvpg_props|
       portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(object._connection, mor)
-      parse_distributed_virtual_portgroup(portgroup, kind, props)
+      parse_distributed_virtual_portgroup(portgroup, kind, dvpg_props)
     end
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch

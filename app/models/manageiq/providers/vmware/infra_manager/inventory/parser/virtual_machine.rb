@@ -376,7 +376,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
       return if lan_uid.nil? || persister_switch.nil?
 
-      persister.send(collection).lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, :transform_nested_lazy_finds => true)
+      persister.send(collection).lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, {:transform_nested_lazy_finds => true})
     end
 
     def find_vm_host_ref(persister_vm)

@@ -400,11 +400,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_host_system_distributed_switches(host)
-      %w[VmwareDistributedVirtualSwitch DistributedVirtualSwitch].flat_map do |dvs_klass|
-        cache[dvs_klass].select do |mor, props|
+      dvs_mors = %w[VmwareDistributedVirtualSwitch DistributedVirtualSwitch].flat_map do |dvs_klass|
+        dvs = cache[dvs_klass].select do |_mor, props|
           props.fetch_path(:summary, :hostMember).any? { |h| h._ref == host.ems_ref }
-        end.collect { |mor, _| mor }
-      end.collect { |mor| persister.distributed_virtual_switches.lazy_find(mor) }
+        end
+
+        dvs.collect { |mor, _| mor }
+      end
+      dvs_mors.collect { |mor| persister.distributed_virtual_switches.lazy_find(mor) }
     end
 
     def parse_host_system_host_switches(host, switches)
