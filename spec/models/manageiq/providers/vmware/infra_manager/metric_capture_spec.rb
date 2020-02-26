@@ -5,7 +5,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
     MiqRegion.seed
 
     guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
+
+    Timecop.freeze(Time.parse("2011-08-12T23:33:00Z").utc)
   end
+
+  after { Timecop.return }
 
   context "#perf_capture_object" do
     it "returns the correct class" do
@@ -31,8 +35,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
         end
 
         context "collecting vm realtime data" do
+          let(:start_time) { Time.parse("2011-08-12T00:00:00Z").utc }
+
           before(:each) do
-            @counters_by_mor, @counter_values_by_mor_and_ts = @vm.perf_collect_metrics('realtime')
+            @counters_by_mor, @counter_values_by_mor_and_ts = @vm.perf_collect_metrics('realtime', start_time)
           end
 
           it "should have collected counters and values" do
