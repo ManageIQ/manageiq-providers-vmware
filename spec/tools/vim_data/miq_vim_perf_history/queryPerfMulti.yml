@@ -4,7 +4,7 @@
   vimType: :VirtualMachine
   xsiType: :ManagedObjectReference
 : '20':
-    ! '':
+    '2011-08-12T00:00:00Z':
       ! '': !ruby/array:VimArray
       - !ruby/hash-with-ivars:VimHash
         elements:
