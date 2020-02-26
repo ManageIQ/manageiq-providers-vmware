@@ -445,16 +445,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           lan_hash[:computed_mac_changes]       = computed_security.macChanges
         end
 
-        persister.lans.build(lan_hash)
+        persister.host_virtual_lans.build(lan_hash)
       end
 
       network[:opaqueNetwork].to_a.each do |opaque_network|
         switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort
         next if switch_key.nil?
 
-        persister.lans.build(
-          :switch => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
-          :name   => opaque_network.opaqueNetworkName
+        persister.host_virtual_lans.build(
+          :switch  => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
+          :uid_ems => opaque_network.opaqueNetworkName,
+          :name    => opaque_network.opaqueNetworkName
         )
       end
     end

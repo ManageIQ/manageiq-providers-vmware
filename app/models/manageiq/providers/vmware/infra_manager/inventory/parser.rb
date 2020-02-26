@@ -234,7 +234,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :mac_changes       => mac_changes,
     }
 
-    persister.lans.build(lan_hash)
+    persister.distributed_virtual_lans.build(lan_hash)
   end
 
   def parse_resource_pool(object, kind, props)
