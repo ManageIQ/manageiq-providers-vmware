@@ -399,6 +399,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       persister_switches.concat(opaque_persister_switches)
     end
 
+    def parse_host_system_distributed_switches(host)
+      dvs_mors = %w[VmwareDistributedVirtualSwitch DistributedVirtualSwitch].flat_map do |dvs_klass|
+        dvs = cache[dvs_klass].select do |_mor, props|
+          props.fetch_path(:summary, :hostMember).any? { |h| h._ref == host.ems_ref }
+        end
+
+        dvs.collect { |mor, _| mor }
+      end
+      dvs_mors.collect { |mor| persister.distributed_virtual_switches.lazy_find(mor) }
+    end
+
     def parse_host_system_host_switches(host, switches)
       switches.each do |switch|
         persister.host_switches.build(:host => host, :switch => switch)
@@ -437,16 +448,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           lan_hash[:computed_mac_changes]       = computed_security.macChanges
         end
 
-        persister.lans.build(lan_hash)
+        persister.host_virtual_lans.build(lan_hash)
       end
 
       network[:opaqueNetwork].to_a.each do |opaque_network|
         switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort
         next if switch_key.nil?
 
-        persister.lans.build(
-          :switch => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
-          :name   => opaque_network.opaqueNetworkName
+        persister.host_virtual_lans.build(
+          :switch  => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
+          :uid_ems => opaque_network.opaqueNetworkName,
+          :name    => opaque_network.opaqueNetworkName
         )
       end
     end

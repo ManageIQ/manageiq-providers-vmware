@@ -62,38 +62,41 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       end
 
       it "doesn't impact unassociated inventory" do
-        run_targeted_refresh(targeted_update_set([vm_power_off_object_update]))
-        assert_ems
+        inventory_after_full_refresh = serialize_inventory
+
+        vm = RbVmomi::VIM::VirtualMachine(vim, "vm-107")
+        run_targeted_refresh(targeted_update_set([targeted_object_update(vm)]))
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         host = RbVmomi::VIM.HostSystem(vim, "host-41")
         host_config_storage_device_stub(host)
 
         run_targeted_refresh(targeted_update_set([targeted_object_update(host)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         cluster = RbVmomi::VIM::ClusterComputeResource(vim, "domain-c37")
         run_targeted_refresh(targeted_update_set([targeted_object_update(cluster)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         resource_pool = RbVmomi::VIM::ResourcePool(vim, "resgroup-38")
         run_targeted_refresh(targeted_update_set([targeted_object_update(resource_pool)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         datacenter = RbVmomi::VIM::Datacenter(vim, "datacenter-2")
         run_targeted_refresh(targeted_update_set([targeted_object_update(datacenter)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         distributed_virtual_switch = RbVmomi::VIM::VmwareDistributedVirtualSwitch(vim, "dvs-8")
         run_targeted_refresh(targeted_update_set([targeted_object_update(distributed_virtual_switch)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         distributed_virtual_portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(vim, "dvportgroup-11")
         run_targeted_refresh(targeted_update_set([targeted_object_update(distributed_virtual_portgroup)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
 
         datastore = RbVmomi::VIM::Datastore(vim, "datastore-15")
         run_targeted_refresh(targeted_update_set([targeted_object_update(datastore)]))
-        assert_ems
+        assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
       end
 
       it "power on a virtual machine" do

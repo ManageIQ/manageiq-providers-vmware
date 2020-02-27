@@ -107,7 +107,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     persister_switch = persister.distributed_virtual_switches.build(switch_hash)
 
-    parser_dvs_hosts(persister_switch, props)
+    # Since Lans aren't a top-level collection but belong_to a switch we have
+    # to send all dvportgroups for a dvswitch when doing a targeted refresh of the switch
+    cache["DistributedVirtualPortgroup"].select do |_mor, dvpg_props|
+      dvpg_props.fetch_path(:config, :distributedVirtualSwitch)&._ref == object._ref
+    end.each do |mor, dvpg_props|
+      portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(object._connection, mor)
+      parse_distributed_virtual_portgroup(portgroup, kind, dvpg_props)
+    end
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
 
@@ -183,8 +190,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     hardware = parse_host_system_hardware(host, props)
     parse_host_system_host_networks(host, hardware, props)
 
-    switches = parse_host_system_switches(host, props)
-    parse_host_system_host_switches(host, switches)
+    switches     = parse_host_system_switches(host, props)
+    dvs_switches = parse_host_system_distributed_switches(host)
+
+    parse_host_system_host_switches(host, switches + dvs_switches)
     parse_host_system_lans(host, switches, props)
   end
 
@@ -234,7 +243,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :mac_changes       => mac_changes,
     }
 
-    persister.lans.build(lan_hash)
+    persister.distributed_virtual_lans.find_or_build_by(lan_hash)
   end
 
   def parse_resource_pool(object, kind, props)
