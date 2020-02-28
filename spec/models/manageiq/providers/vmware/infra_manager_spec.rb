@@ -1,4 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager do
+  let(:ems) { FactoryBot.create(:ems_vmware) }
+
   it ".ems_type" do
     expect(described_class.ems_type).to eq('vmwarews')
   end
@@ -11,6 +13,84 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     it "returns the correct queue name" do
       worker_queue = ManageIQ::Providers::Vmware::InfraManager::MetricsCollectorWorker.default_queue_name
       expect(described_class.metrics_collector_queue_name).to eq(worker_queue)
+    end
+  end
+
+  context "#supports_streaming_refresh?" do
+    it "returns true for streaming_refresh" do
+      expect(ems.supports_streaming_refresh?).to be_truthy
+    end
+  end
+
+  context ".verify_credentials" do
+    let(:verify_params) { {"endpoints" => {"default" => {"server" => "vcenter", "username" => "root", "password" => "vmware"}}} }
+    before do
+      miq_vim = double("VMwareWebService/MiqVim")
+      allow(miq_vim).to receive(:isVirtualCenter).and_return(is_virtual_center)
+      allow(miq_vim).to receive(:disconnect)
+
+      require "VMwareWebService/MiqVim"
+      expect(MiqVim).to receive(:new).and_return(miq_vim)
+    end
+
+    context "virtual-center" do
+      let(:is_virtual_center) { true }
+
+      it "is successful" do
+        expect(described_class.verify_credentials(verify_params)).to be_truthy
+      end
+    end
+
+    context "esxi host" do
+      let(:is_virtual_center) { false }
+
+      it "returns a failure" do
+        expect { described_class.verify_credentials(verify_params) }
+          .to raise_error(MiqException::Error, "Adding ESX/ESXi Hosts is not supported")
+      end
+    end
+  end
+
+  context "#verify_credentials" do
+    let(:ems) { FactoryBot.create(:ems_vmware_with_authentication) }
+    before do
+      miq_vim = double("VMwareWebService/MiqVim")
+      allow(miq_vim).to receive(:isVirtualCenter).and_return(true)
+      allow(miq_vim).to receive(:disconnect)
+
+      require "VMwareWebService/MiqVim"
+      expect(MiqVim).to receive(:new).and_return(miq_vim)
+    end
+
+    it "success with correct credentials" do
+      expect(ems.verify_credentials("default")).to be_truthy
+    end
+  end
+
+  context ".supports_authentication?" do
+    it "returns true for supported auth types" do
+      expect(ems.supports_authentication?("default")).to be_truthy
+      expect(ems.supports_authentication?("console")).to be_truthy
+    end
+
+    it "returns false for non-supported auth types" do
+      expect(ems.supports_authentication?("metrics")).to be_falsey
+    end
+  end
+
+  context "#queue_name_for_ems_operations" do
+    it "returns the per-ems queue_name" do
+      expect(ems.queue_name_for_ems_operations).to eq(ems.queue_name)
+    end
+  end
+
+  context ".provision_class" do
+    it "returns ViaPxe for pxe" do
+      expect(described_class.provision_class("pxe")).to eq(ems.class::ProvisionViaPxe)
+    end
+
+    it "returns Provision for everything else" do
+      expect(described_class.provision_class("vm")).to eq(ems.class::Provision)
     end
   end
 
