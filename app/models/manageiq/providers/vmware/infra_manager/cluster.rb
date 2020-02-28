@@ -31,8 +31,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Cluster < ManageIQ::Providers::
       end
 
       host.ems_ref                = host_mor
-      host.ems_ref_obj            = host_mor
       host.ext_management_system  = ext_management_system
+      host.name                   = "unknown"
       host.save!
       hosts << host
       host.refresh_ems
