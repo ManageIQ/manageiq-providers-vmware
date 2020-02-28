@@ -1,11 +1,11 @@
 # manageiq-providers-vmware
 
 [![Gem Version](https://badge.fury.io/rb/manageiq-providers-vmware.svg)](http://badge.fury.io/rb/manageiq-providers-vmware)
-[![Build Status](https://travis-ci.org/ManageIQ/manageiq-providers-vmware.svg?branch=master)](https://travis-ci.org/ManageIQ/manageiq-providers-vmware)
+[![Build Status](https://travis-ci.org/ManageIQ/manageiq-providers-vmware.svg?branch=jansa)](https://travis-ci.org/ManageIQ/manageiq-providers-vmware)
 [![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/coverage)
 [![Dependency Status](https://gemnasium.com/ManageIQ/manageiq-providers-vmware.svg)](https://gemnasium.com/ManageIQ/manageiq-providers-vmware)
-[![Security](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/master.svg)](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/master)
+[![Security](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/jansa.svg)](https://hakiri.io/github/ManageIQ/manageiq-providers-vmware/jansa)
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/manageiq-providers-vmware?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
