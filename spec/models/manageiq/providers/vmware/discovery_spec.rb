@@ -13,6 +13,13 @@ describe ManageIQ::Providers::Vmware::Discovery do
     context "connection failed" do
       let(:about_info) { nil }
 
+      it "handles unreachable server" do
+        allow(MiqVimClientBase).to receive(:new).and_raise(HTTPClient::ConnectTimeoutError, "execution expired")
+
+        expect(ost.hypervisor).to be_empty
+        expect(ost.os).to         be_empty
+      end
+
       it "handles nil aboutInfo" do
         described_class.probe(ost)
 
@@ -125,6 +132,25 @@ describe ManageIQ::Providers::Vmware::Discovery do
 
         expect(ost.hypervisor).to include(:vmwareserver)
         expect(ost.os).to         include(:linux)
+      end
+    end
+
+    context "Unknown Products" do
+      let(:about_info) do
+        VimHash.new("AboutInfo").tap do |about|
+          about.name          = "VMware vCloud Director"
+          about.vendor        = "VMware, Inc."
+          about.version       = "1.0"
+          about.osType        = "linux"
+          about.productLineId = "vcd"
+        end
+      end
+
+      it "handles unknown products" do
+        described_class.probe(ost)
+
+        expect(ost.hypervisor).to be_empty
+        expect(ost.os).to         be_empty
       end
     end
   end
