@@ -407,7 +407,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
           disks[1].merge(:controller_key => 1000, :unit_number => 15)
         ]
 
-        expect(vm).not_to receive(:add_scsi_controllers)
+        expect(vm).not_to receive(:add_scsi_controller)
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[0]).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[1]).once
 
@@ -423,7 +423,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
           disks[1].merge(:controller_key => 1000, :unit_number => 3)
         ]
 
-        expect(vm).not_to receive(:add_scsi_controllers)
+        expect(vm).not_to receive(:add_scsi_controller)
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[0]).once
         expect(vm).to receive(:add_disk_config_spec).with(vmcs, expected_disks[1]).once
 
