@@ -245,7 +245,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
         it "returns a resource_pool if one is passed in" do
           expect(ResourcePool).to receive(:find_by).and_return(:resource_pool)
-          expect(@vm_prov).to receive(:default_resource_pool).never
+          expect(cluster).to receive(:default_resource_pool).never
           @vm_prov.dest_resource_pool
         end
 
