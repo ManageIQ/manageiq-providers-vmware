@@ -4,7 +4,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     FactoryBot.create(:ems_vmware,
                       :hostname    => '192.168.252.16',
                       :ipaddress   => '192.168.252.16',
-                      :api_version => '5.0',
+                      :api_version => '6.0',
                       :uid_ems     => '2E1C1E82-BD83-4E54-9271-630C6DFAD4D1')
   end
   let(:host) do
