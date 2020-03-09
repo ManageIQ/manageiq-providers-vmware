@@ -85,7 +85,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   # HTML5 selects the best available console type (VNC or WebMKS)
   #
   def remote_console_html5_acquire_ticket(userid, originating_server = nil)
-    protocol = with_provider_object { |v| v.extraConfig["RemoteDisplay.vnc.enabled"] == "true" } ? 'vnc' : 'webmks'
+    protocol = 'vnc' if ext_management_system.api_version.to_f < 6.0 # Force VNC protocol for API version lower than 6.0
+    protocol ||= with_provider_object { |v| v.extraConfig["RemoteDisplay.vnc.enabled"] == "true" } ? 'vnc' : 'webmks'
     send("remote_console_#{protocol}_acquire_ticket", userid, originating_server)
   end
 
