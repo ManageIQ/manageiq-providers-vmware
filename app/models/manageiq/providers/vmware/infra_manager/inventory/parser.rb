@@ -261,7 +261,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
                    cached_parent = cache.find(parent) if parent
                    parent_model = persister.vim_class_to_collection(parent).base_class_name
 
-                   "Default for #{Dictionary.gettext(parent_model, :type => :model, :notfound => :titleize)} #{cached_parent[:name]}"
+                   "Default for #{parent_model.titleize} #{cached_parent[:name]}"
                  else
                    CGI.unescape(props[:name])
                  end
