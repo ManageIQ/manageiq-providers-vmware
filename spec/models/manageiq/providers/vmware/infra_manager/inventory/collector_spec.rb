@@ -786,7 +786,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         :memory_reserve_expand => true,
         :memory_shares         => 163_840,
         :memory_shares_level   => "normal",
-        :name                  => "Default for Cluster / Deployment Role DC0_C0",
+        :name                  => "Default for Cluster DC0_C0",
         :type                  => "ManageIQ::Providers::Vmware::InfraManager::ResourcePool",
         :vapp                  => false,
         :is_default            => true,
