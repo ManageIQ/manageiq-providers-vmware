@@ -455,10 +455,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort
         next if switch_key.nil?
 
+        extra_config     = Hash[opaque_network.extraConfig.to_a.map { |ec| [ec.key, ec.value] }]
+        nsx_network_uuid = extra_config["com.vmware.opaquenetwork.segment.path"]&.split("/")&.last
+
+        name    = opaque_network.opaqueNetworkName
+        uid_ems = nsx_network_uuid || name
+        ems_ref = opaque_network.opaqueNetworkId
+        switch  = persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key)
+
         persister.host_virtual_lans.build(
-          :switch  => persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key),
-          :uid_ems => opaque_network.opaqueNetworkName,
-          :name    => opaque_network.opaqueNetworkName
+          :switch  => switch,
+          :ems_ref => ems_ref,
+          :uid_ems => uid_ems,
+          :name    => name,
         )
       end
     end
