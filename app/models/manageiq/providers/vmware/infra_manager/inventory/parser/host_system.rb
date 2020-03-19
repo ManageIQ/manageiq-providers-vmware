@@ -459,8 +459,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         nsx_network_uuid = extra_config["com.vmware.opaquenetwork.segment.path"]&.split("/")&.last
 
         name    = opaque_network.opaqueNetworkName
-        uid_ems = nsx_network_uuid || name
-        ems_ref = opaque_network.opaqueNetworkId
+        ems_ref = nsx_network_uuid || name
+        uid_ems = opaque_network.opaqueNetworkId
         switch  = persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_key)
 
         persister.host_virtual_lans.build(

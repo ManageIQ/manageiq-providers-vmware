@@ -360,7 +360,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         persister_switch = persister.distributed_virtual_switches.lazy_find({:switch_uuid => backing.port.switchUuid}, :ref => :by_switch_uuid)
       else
         collection = :host_virtual_lans
-        lan_uid = backing.deviceName
+        lan_uid = if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardOpaqueNetworkBackingInfo)
+          backing.opaqueNetworkId
+        else
+          backing.deviceName
+        end
 
         host_ref = find_vm_host_ref(vm)
         return if host_ref.nil?
