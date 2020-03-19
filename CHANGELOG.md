@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## Ivanchuk-4
+
+### Added
+- Collect OpaqueNetworks and OpaqueSwitches [(#449)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/449)
+- Added support query for warm migration [(#463)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/463)
+- Collect and save storage profiles [(#436)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/436)
+- Graph refresh collection for NSX networks and switches [(#453)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/453)
+- Parse VM firmware_type (BIOS/EFI) [(#459)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/459)
+- Bump vmware_web_service for bios firmware_type [(#538)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/538)
+
+### Fixed
+- Force VNC console for API versions lower than 6.0 [(#554)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/554)
+
+## Ivanchuk-2
+
+### Fixed
+- Re-record vcrs for updated vmware_web_service gem [(#460)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/460)
+- Don't allow adding ESX hosts as VMware providers [(#415)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/415)
+- Linked Clone cannot be accurately collected [(#435)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/435)
+- Test ruby 2.5.5 [(#472)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/472)
+- Fix verify_credentials returning nil [(#437)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/437)
 
 ## Ivanchuk-1
 
