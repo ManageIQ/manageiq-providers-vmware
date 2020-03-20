@@ -452,7 +452,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
 
       network[:opaqueNetwork].to_a.each do |opaque_network|
-        switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort
+        switch_key = cache["HostSystem"][host.ems_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort&.first
         next if switch_key.nil?
 
         extra_config     = Hash[opaque_network.extraConfig.to_a.map { |ec| [ec.key, ec.value] }]
