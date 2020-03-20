@@ -351,36 +351,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_virtual_machine_guest_device_lan(vm, nic)
-      backing = nic.backing
-      return if backing.nil?
+      host_ref = find_vm_host_ref(vm)
+      return if host_ref.nil?
 
-      if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo)
-        collection = :distributed_virtual_lans
-        lan_uid = backing.port.portgroupKey
-        persister_switch = persister.distributed_virtual_switches.lazy_find({:switch_uuid => backing.port.switchUuid}, :ref => :by_switch_uuid)
-      else
-        collection = :host_virtual_lans
-        lan_uid = if backing.kind_of?(RbVmomi::VIM::VirtualEthernetCardOpaqueNetworkBackingInfo)
-          backing.opaqueNetworkId
-        else
-          backing.deviceName
-        end
+      persister_host = persister.hosts.lazy_find(host_ref)
 
-        host_ref = find_vm_host_ref(vm)
-        return if host_ref.nil?
-
-        portgroup = find_host_portgroup_by_lan_name(host_ref, lan_uid)
-        return if portgroup.nil?
-
-        host       = persister.hosts.lazy_find(host_ref)
-        switch_uid = portgroup.spec.vswitchName
-
-        persister_switch = persister.host_virtual_switches.lazy_find(:host => host, :uid_ems => switch_uid)
+      case nic.backing
+      when RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo
+        lan_uid = nic.backing.port.portgroupKey
+        persister_switch = persister.distributed_virtual_switches.lazy_find({:switch_uuid => nic.backing.port.switchUuid}, {:ref => :by_switch_uuid})
+        persister.distributed_virtual_lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, {:transform_nested_lazy_finds => true})
+      when RbVmomi::VIM::VirtualEthernetCardOpaqueNetworkBackingInfo
+        lan_uid = nic.backing.opaqueNetworkId
+        switch_uid = find_host_opaque_switch(host_ref)
+        persister_switch = persister.host_virtual_switches.lazy_find(:host => persister_host, :uid_ems => switch_uid)
+        persister.host_virtual_lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, {:transform_nested_lazy_finds => true})
+      when RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo
+        lan_uid = nic.backing.deviceName
+        switch_uid = find_host_vswitch(host_ref, lan_uid)
+        persister_switch = persister.host_virtual_switches.lazy_find(:host => persister_host, :uid_ems => switch_uid)
+        persister.host_virtual_lans.lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, {:transform_nested_lazy_finds => true})
       end
-
-      return if lan_uid.nil? || persister_switch.nil?
-
-      persister.send(collection).lazy_find({:switch => persister_switch, :uid_ems => lan_uid}, {:transform_nested_lazy_finds => true})
     end
 
     def find_vm_host_ref(persister_vm)
@@ -390,12 +381,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       host[:ems_ref]
     end
 
-    def find_host_portgroup_by_lan_name(host_ref, lan_name)
-      cached_host = cache["HostSystem"][host_ref]
-      return if cached_host.nil?
+    def find_host_vswitch(host_ref, lan_name)
+      portgroups = cache["HostSystem"][host_ref]&.dig(:config, :network, :portgroup) || []
+      portgroups.detect { |portgroup| portgroup.spec.name == lan_name }
+    end
 
-      host_portgroups = cached_host.dig(:config, :network, :portgroup) || []
-      host_portgroups.detect { |portgroup| portgroup.spec.name == lan_name }
+    def find_host_opaque_switch(host_ref)
+      cache["HostSystem"][host_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort&.first
     end
   end
 end

@@ -467,7 +467,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :switch  => switch,
           :ems_ref => ems_ref,
           :uid_ems => uid_ems,
-          :name    => name,
+          :name    => name
         )
       end
     end
