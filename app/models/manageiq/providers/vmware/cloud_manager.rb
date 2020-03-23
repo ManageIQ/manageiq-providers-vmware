@@ -147,10 +147,6 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     %w(vmware)
   end
 
-  def inventory_object_refresh?
-    true
-  end
-
   def self.display_name(number = 1)
     n_('Cloud Provider (VMware vCloud)', 'Cloud Providers (VMware vCloud)', number)
   end

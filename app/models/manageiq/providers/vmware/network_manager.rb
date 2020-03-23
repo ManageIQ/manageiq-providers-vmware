@@ -41,8 +41,4 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
   def description
     @description ||= "VMware Cloud Network".freeze
   end
-
-  def inventory_object_refresh?
-    true
-  end
 end
