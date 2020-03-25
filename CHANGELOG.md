@@ -4,17 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
-## Sprint 126 - Unreleased as of 2019-12-11
+## Jansa-1 Alpha-1
 
 ### Added
 - Default to use streaming_refresh for vSphere [(#434)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/434)
 - Remove the option for legacy refresh from vCloud [(#417)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/417)
-
-## Sprint 120 - Unreleased as of 2019-09-16
-
-### Added
 - Refresh NSX networks and allow for use during provisioning [(#449)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/449)
 - Refresh vSphere Content Libraries [(#444)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/444)
+- Build the remote console URL for VMRC consoles when making a ticket [(#429)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/429)
+- Add thick_eager disk_format option [(#385)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/385)
+- Add disk relocate spec for eagerlyScrub backing option [(#413)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/413)
+- Add disk relocate spec for eagerlyScrub backing option [(#413)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/413)
+- Add thick_eager disk_format option [(#385)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/385)
+
+### Fixed
+- Fix clone vm to template check_provision [(#424)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/424)
+- Fix HostStorages being deleted by host targeted refresh [(#421)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/421)
+- Don't start_inventory_collector in do_before_work [(#428)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/428)
+- Let the RefreshWorker queue the first full refresh [(#414)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/414)
+- Use the new VM's ems_ref instead of an annotation [(#408)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/408)
 
 ## Ivanchuk-1 - Released 2019-09-18
 
