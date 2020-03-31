@@ -383,7 +383,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     def find_host_vswitch(host_ref, lan_name)
       portgroups = cache["HostSystem"][host_ref]&.dig(:config, :network, :portgroup) || []
-      portgroups.detect { |portgroup| portgroup.spec.name == lan_name }
+      portgroups.detect { |portgroup| portgroup.spec.name == lan_name }&.spec&.vswitchName
     end
 
     def find_host_opaque_switch(host_ref)
