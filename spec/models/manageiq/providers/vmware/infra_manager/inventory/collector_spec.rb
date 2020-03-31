@@ -99,7 +99,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         assert_inventory_not_changed(inventory_after_full_refresh, serialize_inventory)
       end
 
-      it "power on a virtual machine" do
+      it "power off a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
 
         expect(vm.power_state).to eq("on")
