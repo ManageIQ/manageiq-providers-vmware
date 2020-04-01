@@ -157,7 +157,7 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
     _log.info("Filtering hosts with the following network: <#{vlan_name}>")
     shared = !vlan_name.match(/dvs_/).nil?
     vlan_search_name = shared ? vlan_name.sub(/^dvs_/, '') : vlan_name
-    MiqPreloader.preload(all_hosts, :lans => :switches)
+    MiqPreloader.preload(all_hosts, :lans => :switch)
     all_hosts.select { |h| h.lans.any? { |lan| lan.name == vlan_search_name && !lan.switch.shared.blank? == shared } }
   end
 
