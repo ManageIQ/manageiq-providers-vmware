@@ -122,8 +122,8 @@ module ManageIQ::Providers
       supported_auth_types.include?(authtype.to_s)
     end
 
-    def supported_catalog_types
-      %w(vmware)
+    def self.catalog_types
+      {"vmware" => N_("VMware")}
     end
 
     def streaming_refresh_enabled?
