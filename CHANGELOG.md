@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## Unreleased as of Sprint 133 - 2020-03-30
+
+### Added
+- Link VMware VMs to NSX-T networks [(#558)](https://github.com/ManageIQ/manageiq-providers-vmware/pull/558)
+
 ## Jansa-1 Alpha-1
 
 ### Added
