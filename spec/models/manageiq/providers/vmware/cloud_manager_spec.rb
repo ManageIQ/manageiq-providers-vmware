@@ -99,8 +99,8 @@ describe ManageIQ::Providers::Vmware::CloudManager do
     end
   end
 
-  it "#supported_catalog_types" do
-    expect(@ems.supported_catalog_types).to eq(%w(vmware))
+  it "#catalog_types" do
+    expect(@ems.catalog_types).to include("vmware")
   end
 
   describe 'snapshot operations' do

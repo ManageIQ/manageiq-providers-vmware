@@ -227,9 +227,9 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   end
 
   context "catalog types" do
-    it "#supported_catalog_types" do
+    it "#catalog_types" do
       ems = FactoryBot.create(:ems_vmware)
-      expect(ems.supported_catalog_types).to eq(%w(vmware))
+      expect(ems.catalog_types).to include("vmware")
     end
   end
 
