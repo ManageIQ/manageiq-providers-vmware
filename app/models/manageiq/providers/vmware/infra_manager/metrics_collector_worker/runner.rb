@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::MetricsCollectorWorker::Runner < ManageIQ::Providers::BaseManager::MetricsCollectorWorker::Runner
   def do_before_work_loop
+    require "VMwareWebService/MiqVim"
     MiqVim.cacheScope = :cache_scope_core
   end
 
