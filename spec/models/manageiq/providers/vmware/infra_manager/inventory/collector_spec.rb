@@ -189,6 +189,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(child_snapshot.parent).to eq(root_snapshot)
       end
 
+      it "renaming a distributed virtual portgroup" do
+        lan = ems.distributed_virtual_lans.first
+        expect(lan.name).to eq("DC0_DVPG1")
+
+        run_targeted_refresh(targeted_update_set([dvpg_rename_object_update]))
+
+        expect(lan.reload.name).to eq("DC0_DVPG1_RENAMED")
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(cache, persister)
@@ -511,6 +520,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           ),
         ],
         :missingSet => []
+      )
+    end
+
+    def dvpg_rename_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind      => "modify",
+        :obj       => RbVmomi::VIM.DistributedVirtualPortgroup(vim, "dvportgroup-11"),
+        :changeSet => [
+          RbVmomi::VIM.PropertyChange(:name => "config.name", :op => "assign", :val => "DC0_DVPG1_RENAMED"),
+          RbVmomi::VIM.PropertyChange(:name => "name", :op => "assign", :val => "DC0_DVPG1_RENAMED"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.name", :op => "assign", :val => "DC0_DVPG1_RENAMED")
+        ]
       )
     end
 
