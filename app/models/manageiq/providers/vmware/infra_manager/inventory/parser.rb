@@ -114,7 +114,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       dvpg_props.fetch_path(:config, :distributedVirtualSwitch)&._ref == object._ref
     end.each do |mor, dvpg_props|
       portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(object._connection, mor)
-      parse_distributed_virtual_portgroup(portgroup, kind, dvpg_props)
+      parse_portgroups_internal(portgroup, dvpg_props)
     end
   end
   alias parse_vmware_distributed_virtual_switch parse_distributed_virtual_switch
@@ -217,8 +217,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_opaque_networks parse_network
 
-  def parse_distributed_virtual_portgroup(object, kind, props)
+  def parse_distributed_virtual_portgroup(_object, kind, props)
     return if kind == "leave"
+
+    dvs = props.fetch_path(:config, :distributedVirtualSwitch)
+    parse_distributed_virtual_switch(dvs, kind, cache.find(dvs))
+  end
+
+  def parse_portgroups_internal(object, props)
     return if props[:tag].detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
