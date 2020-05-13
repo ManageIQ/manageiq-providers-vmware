@@ -32,66 +32,175 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
 
   def self.params_for_create
     @params_for_create ||= {
-      :title  => "Configure #{description}",
       :fields => [
         {
-          :component  => "text-field",
-          :name       => "endpoints.default.server",
-          :label      => "Server Hostname/IP Address",
-          :isRequired => true,
-          :validate   => [{:type => "required-validator"}]
-        },
-        {
-          :component => "text-field",
-          :name      => "endpoints.default.port",
-          :label     => "Port",
-          :type      => "number",
-        },
-        {
-          :component  => "text-field",
-          :name       => "endpoints.default.username",
-          :label      => "Username",
-          :isRequired => true,
-          :validate   => [{:type => "required-validator"}]
-        },
-        {
-          :component  => "text-field",
-          :name       => "endpoints.default.password",
-          :label      => "Password",
-          :type       => "password",
-          :isRequired => true,
-          :validate   => [{:type => "required-validator"}]
-        },
-        {
-          :component    => "text-field",
-          :name         => "endpoints.default.api_version",
-          :label        => "API Version",
-          :initialValue => "5.5",
+          :component    => "select-field",
+          :name         => "api_version",
+          :label        => _("API Version"),
+          :initialValue => "9.0",
           :isRequired   => true,
-          :validate     => [{:type => "required-validator"}]
+          :validate     => [{:type => "required-validator"}],
+          :options      => [
+            {
+              :label => 'vCloud API 5.1',
+              :value => '5.1',
+            },
+            {
+              :label => 'vCloud API 5.5',
+              :value => '5.5',
+            },
+            {
+              :label => 'vCloud API 5.6',
+              :value => '5.6',
+            },
+            {
+              :label => 'vCloud API 9.0',
+              :value => '9.0',
+            }
+          ]
         },
         {
-          :component => "text-field",
-          :name      => "endpoints.events.server",
-          :label     => "AMQP Hostname",
+          :component => 'sub-form',
+          :name      => 'endpoints',
+          :title     => _("Endpoints"),
+          :fields    => [
+            :component => 'tabs',
+            :name      => 'tabs',
+            :fields    => [
+              {
+                :component => 'tab-item',
+                :name      => 'default',
+                :title     => _('Default'),
+                :fields    => [
+                  {
+                    :component              => 'validate-provider-credentials',
+                    :name                   => 'endpoints.default.valid',
+                    :skipSubmit             => true,
+                    :validationDependencies => %w[type zone_id api_version],
+                    :fields                 => [
+                      {
+                        :component  => "text-field",
+                        :name       => "endpoints.default.hostname",
+                        :label      => _("Hostname (or IPv4 or IPv6 address)"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}]
+                      },
+                      {
+                        :component    => "text-field",
+                        :name         => "endpoints.default.port",
+                        :label        => _("API Port"),
+                        :type         => "number",
+                        :isRequired   => true,
+                        :validate     => [{:type => "required-validator"}],
+                        :initialValue => 443,
+                      },
+                      {
+                        :component => "text-field",
+                        :name      => "authentications.default.userid",
+                        :label     => _("Username")
+                      },
+                      {
+                        :component => "password-field",
+                        :name      => "authentications.default.password",
+                        :label     => _("Password"),
+                        :type      => "password"
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                :component => 'tab-item',
+                :name      => 'events',
+                :title     => _('Events'),
+                :fields    => [
+                  {
+                    :component    => 'protocol-selector',
+                    :name         => 'event_stream_selection',
+                    :skipSubmit   => true,
+                    :label        => _('Type'),
+                    :initialValue => 'none',
+                    :options      => [
+                      {
+                        :label => _("None"),
+                        :value => 'none',
+                      },
+                      {
+                        :label => _("AMQP"),
+                        :value => "amqp",
+                        :pivot => 'endpoints.amqp.hostname',
+                      },
+                    ],
+                  },
+                  {
+                    :component              => 'validate-provider-credentials',
+                    :name                   => 'endpoints.amqp.valid',
+                    :skipSubmit             => true,
+                    :validationDependencies => %w[type event_stream_selection],
+                    :condition              => {
+                      :when => 'event_stream_selection',
+                      :is   => 'amqp',
+                    },
+                    :fields                 => [
+                      {
+                        :component  => "select-field",
+                        :name       => "endpoints.amqp.security_protocol",
+                        :label      => _("Security Protocol"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
+                        :options    => [
+                          {
+                            :label => _("SSL without validation"),
+                            :value => "ssl-no-validation"
+                          },
+                          {
+                            :label => _("SSL"),
+                            :value => "ssl-with-validation"
+                          },
+                          {
+                            :label => _("Non-SSL"),
+                            :value => "non-ssl"
+                          }
+                        ]
+                      },
+                      {
+                        :component  => "text-field",
+                        :name       => "endpoints.amqp.hostname",
+                        :label      => _("Hostname (or IPv4 or IPv6 address)"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
+                      },
+                      {
+                        :component    => "text-field",
+                        :name         => "endpoints.amqp.port",
+                        :label        => _("API Port"),
+                        :type         => "number",
+                        :isRequired   => true,
+                        :initialValue => 5672,
+                        :validate     => [{:type => "required-validator"}],
+                      },
+                      {
+                        :component  => "text-field",
+                        :name       => "authentications.amqp.userid",
+                        :label      => "Username",
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
+                      },
+                      {
+                        :component  => "password-field",
+                        :name       => "authentications.amqp.password",
+                        :label      => "Password",
+                        :type       => "password",
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ]
+          ]
         },
-        {
-          :component => "text-field",
-          :name      => "endpoints.events.port",
-          :label     => "AMQP Port",
-          :type      => "number"
-        },
-        {
-          :component => "text-field",
-          :name      => "endpoints.events.username",
-          :label     => "AMQP Username"
-        },
-        {
-          :component => "text-field",
-          :name      => "endpoints.events.password",
-          :label     => "AMQP Password",
-          :type      => "password"
-        }
       ]
     }.freeze
   end
@@ -99,28 +208,53 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   # Verify Credentials
   # args:
   # {
+  #   "api_version" => nil,
   #   "endpoints" => {
   #     "default" => {
-  #       "server"      => nil,
-  #       "port"        => nil,
-  #       "username"    => nil,
-  #       "password"    => nil,
-  #       "api_version" => nil
+  #       "hostname"          => nil,
+  #       "port"              => nil,
+  #       "security_protocol" => nil,
   #     },
-  #     "events"  => {
-  #       "server"   => nil,
-  #       "port"     => nil,
+  #     "amqp"  => {
+  #       "hostname"          => nil,
+  #       "port"              => nil,
+  #       "security_protocol" => nil,
+  #     }
+  #   },
+  #   "authentications" => {
+  #     "default" => {
+  #       "username" => nil,
+  #       "password" => nil,
+  #     },
+  #     "amqp"    => {
   #       "username" => nil,
   #       "password" => nil,
   #     }
   #   }
   # }
   def self.verify_credentials(args)
-    default_endpoint = args.dig("endpoints", "default")
-    server, port, username, password, api_version = default_endpoint&.values_at(
-      "server", "port", "username", "password", "api_version")
+    endpoint_name = args.dig("endpoints").keys.first
+    endpoint = args.dig("endpoints", endpoint_name)
+    authentication = args.dig("authentications", endpoint_name)
 
-    !!raw_connect(server, port, username, password, api_version, true)
+    hostname, port, security_protocol = endpoint&.values_at('hostname', 'port', 'security_protocol')
+    api_version = args['api_version']
+
+    userid, password = authentication&.values_at('userid', 'password')
+    password = MiqPassword.try_decrypt(password)
+    password ||= find(args["id"]).authentication_password(endpoint_name)
+
+    if args['event_stream_selection'] == 'amqp'
+      ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream.test_amqp_connection(
+        :hostname          => hostname,
+        :port              => port,
+        :security_protocol => security_protocol,
+        :username          => userid,
+        :password          => password
+      )
+    else
+      !!raw_connect(hostname, port, userid, password, api_version, true)
+    end
   end
 
   def self.default_blacklisted_event_names
