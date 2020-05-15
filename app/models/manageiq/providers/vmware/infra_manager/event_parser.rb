@@ -69,6 +69,7 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
 
       :message    => event['fullFormattedMessage'],
       :timestamp  => event['createdTime'],
+      :ems_ref    => event['key'],
       :full_data  => event
     }
     result[:ems_id] = ems_id unless ems_id.nil?
