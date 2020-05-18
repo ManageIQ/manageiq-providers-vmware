@@ -215,7 +215,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_network(object, kind, props)
   end
-  alias parse_opaque_networks parse_network
+  alias parse_opaque_network parse_network
 
   def parse_distributed_virtual_portgroup(_object, kind, props)
     return if kind == "leave"
