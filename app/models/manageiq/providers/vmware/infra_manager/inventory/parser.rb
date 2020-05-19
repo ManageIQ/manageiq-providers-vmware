@@ -201,7 +201,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_license_manager(_object, kind, props)
     return if kind == "leave"
 
-    props[:licenses].each do |license|
+    props[:licenses].to_a.each do |license|
       persister.ems_licenses.build(
         :ems_ref         => license.licenseKey,
         :name            => license.name,
