@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency("fog-vcloud-director", ["~> 0.3.0"])
   s.add_dependency "ffi-vix_disk_lib",        "~>1.1"
   s.add_dependency "rbvmomi",                 "~>2.3"
-  s.add_dependency "vmware_web_service",      "~>1.0"
+  s.add_dependency "vmware_web_service",      "~>1.0.3"
   s.add_dependency "vsphere-automation-sdk",  "~>0.2.1"
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
