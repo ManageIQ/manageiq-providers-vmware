@@ -45,17 +45,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
-  context "supports?(:warm_migrate)" do
-    it "returns true" do
-      expect(vm.supports?(:warm_migrate)).to eq(true)
-    end
-
-    it "returns false" do
-      FactoryBot.create_list(:snapshot, 2, :create_time => 1.minute.ago, :vm_or_template => vm)
-      expect(vm.supports?(:warm_migrate)).to eq(false)
-    end
-  end
-
   context "supports?(:shutdown_guest)" do
     let(:op) { 'shutdown_guest' }
 
