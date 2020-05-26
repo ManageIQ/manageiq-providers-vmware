@@ -4,7 +4,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   def initialize
     @join_limit  = 30
     @queue       = Queue.new
-    @should_exit = false
+    @should_exit = Concurrent::AtomicBoolean.new
     @threaded    = ENV["RAILS_ENV"] != "test"
     @thread      = nil
   end
@@ -25,7 +25,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
 
     _log.info("Save inventory thread stopping...")
 
-    @should_exit = true
+    should_exit.make_true
+    queue.push(nil) # Force the blocking queue.pop call to return
     join_thread if wait
   end
 
@@ -48,14 +49,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   attr_reader :join_limit, :queue, :should_exit, :thread, :threaded
 
   def saver_thread
-    loop do
-      while (persister = dequeue)
-        save_inventory(persister)
-      end
+    until should_exit.true?
+      persister = queue.pop
+      next if persister.nil?
 
-      break if should_exit
-
-      sleep(5)
+      save_inventory(persister)
     end
   rescue => err
     _log.warn(err)
@@ -75,11 +73,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
 
     _log.warn("Save inventory thread exited, restarting")
     start_thread
-  end
-
-  def dequeue
-    queue.deq(:non_block => true)
-  rescue ThreadError
   end
 
   def save_inventory(persister)
