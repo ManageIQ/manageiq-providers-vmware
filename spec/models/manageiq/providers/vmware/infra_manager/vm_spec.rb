@@ -151,6 +151,23 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
+  describe "#supports_terminate?" do
+    context "when connected to a provider" do
+      it "returns true" do
+        expect(vm.supports_terminate?).to be_truthy
+      end
+    end
+
+    context "when not connected to a provider" do
+      let(:archived_vm) { FactoryBot.create(:vm_vmware, :host => host) }
+
+      it "returns false" do
+        expect(archived_vm.supports_terminate?).to be_falsey
+        expect(archived_vm.unsupported_reason(:terminate)).to eq("The VM is not connected to an active Provider")
+      end
+    end
+  end
+
   context "vim" do
     let(:ems) { FactoryBot.create(:ems_vmware) }
     let(:provider_object) do
