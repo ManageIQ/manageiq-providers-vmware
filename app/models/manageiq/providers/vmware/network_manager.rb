@@ -4,6 +4,7 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
   require_nested :NetworkPort
   require_nested :Refresher
 
+  include BelongsToParentManagerMixin
   include ManageIQ::Providers::Vmware::ManagerAuthMixin
 
   # Auth and endpoints delegations, editing of this type of manager must be disabled
