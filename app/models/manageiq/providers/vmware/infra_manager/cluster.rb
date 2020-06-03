@@ -14,7 +14,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Cluster < ManageIQ::Providers::
     raise _("Host cannot be nil") if host.nil?
 
     userid, password = host.auth_user_pwd(:default)
-    network_address  = host.address
+    network_address  = host.hostname
 
     with_provider_object do |vim_cluster|
       begin
