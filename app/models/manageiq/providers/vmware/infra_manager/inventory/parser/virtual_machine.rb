@@ -401,9 +401,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     # If the +guid+ argument is nil, blank or too malformed, then nil is returned. If the +guid+
     # is already clean, then no additional cleaning occurs, and it is returned as-is.
     #
-    # @param guid [String] A string that should more or less represent a UUID.
-    # @return [String] A lowercase v4 UUID string stripped of any extraneous characters.
-    #
     def clean_guid(guid)
       return nil if guid.nil?
       g = guid.to_s.downcase
