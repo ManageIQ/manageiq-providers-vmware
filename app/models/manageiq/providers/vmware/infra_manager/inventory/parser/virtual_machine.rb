@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  UUID_REGEX_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
+
   module VirtualMachine
     def parse_virtual_machine_config(vm_hash, props)
       config = props[:config]
@@ -28,7 +30,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       if summary_config
         uuid = summary_config[:uuid]
         unless uuid.blank?
-          vm_hash[:uid_ems] = MiqUUID.clean_guid(uuid) || uuid
+          vm_hash[:uid_ems] = clean_guid(uuid)
         end
 
         name = summary_config[:name]
@@ -134,7 +136,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:guest_os_full_name] = guest_full_name.blank? ? "Other" : guest_full_name
 
         uuid = summary_config[:uuid]
-        bios = MiqUUID.clean_guid(uuid) || uuid
+        bios = clean_guid(uuid)
         hardware_hash[:bios] = bios unless bios.blank?
 
         hardware_hash[:cpu_total_cores] = summary_config[:numCpu].to_i
@@ -388,6 +390,24 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     def find_host_opaque_switch(host_ref)
       cache["HostSystem"][host_ref]&.dig(:config, :network, :opaqueSwitch)&.pluck(:key)&.sort&.first
+    end
+
+    private
+
+    # Takes a UUID string of varying formats and cleans it. It will strip invalid characters,
+    # such as leading and trailing brackets as well as whitespace, and handle byte strings.
+    # The result is a lowercased, canonical UUID string.
+    #
+    # If the +guid+ argument is nil, blank or too malformed, then nil is returned. If the +guid+
+    # is already clean, then no additional cleaning occurs, and it is returned as-is.
+    #
+    def clean_guid(guid)
+      return nil if guid.nil?
+      g = guid.to_s.downcase
+      return nil if g.strip.empty?
+      return g if g.length == 36 && g =~ UUID_REGEX_FORMAT
+      g.delete!('^0-9a-f')
+      g.sub!(/^([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})$/, '\1-\2-\3-\4-\5')
     end
   end
 end
