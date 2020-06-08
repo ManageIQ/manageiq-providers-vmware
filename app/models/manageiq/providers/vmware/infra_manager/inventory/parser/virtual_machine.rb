@@ -30,7 +30,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       if summary_config
         uuid = summary_config[:uuid]
         unless uuid.blank?
-          vm_hash[:uid_ems] = clean_guid(uuid) || uuid
+          vm_hash[:uid_ems] = clean_guid(uuid)
         end
 
         name = summary_config[:name]
@@ -136,7 +136,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:guest_os_full_name] = guest_full_name.blank? ? "Other" : guest_full_name
 
         uuid = summary_config[:uuid]
-        bios = clean_guid(uuid) || uuid
+        bios = clean_guid(uuid)
         hardware_hash[:bios] = bios unless bios.blank?
 
         hardware_hash[:cpu_total_cores] = summary_config[:numCpu].to_i
