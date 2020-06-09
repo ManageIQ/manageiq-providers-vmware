@@ -94,8 +94,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       end
     when "assign"
       if key
-        # TODO
-        raise "Array properties aren't supported yet"
+        a, i = get_array_entry(h[tag], key)
+        a[i] = prop_change.val
       else
         h[tag] = prop_change.val
       end
