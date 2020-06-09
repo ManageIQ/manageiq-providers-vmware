@@ -198,6 +198,32 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(lan.reload.name).to eq("DC0_DVPG1_RENAMED")
       end
 
+      it "adding a customValue to a VM" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+        expect(vm.ems_custom_attributes).to be_empty
+
+        run_targeted_refresh(targeted_update_set([vm_add_new_custom_value_update]))
+
+        custom_attrs = vm.reload.ems_custom_attributes
+        expect(custom_attrs.count).to eq(1)
+        expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "bar", :source => "VC")
+      end
+
+      it "changing a customValue" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+        expect(vm.ems_custom_attributes).to be_empty
+
+        run_targeted_refresh(
+          targeted_update_set(
+            [vm_add_new_custom_value_update, vm_edit_custom_value_update]
+          )
+        )
+
+        custom_attrs = vm.reload.ems_custom_attributes
+        expect(custom_attrs.count).to eq(1)
+        expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "baz", :source => "VC")
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(cache, persister)
@@ -531,6 +557,27 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           RbVmomi::VIM.PropertyChange(:name => "config.name", :op => "assign", :val => "DC0_DVPG1_RENAMED"),
           RbVmomi::VIM.PropertyChange(:name => "name", :op => "assign", :val => "DC0_DVPG1_RENAMED"),
           RbVmomi::VIM.PropertyChange(:name => "summary.name", :op => "assign", :val => "DC0_DVPG1_RENAMED")
+        ]
+      )
+    end
+
+    def vm_add_new_custom_value_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind       => "modify",
+        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet  => [
+          RbVmomi::VIM.PropertyChange(:name => "availableField", :op => "assign", :val => [RbVmomi::VIM.CustomFieldDef(:key => 300, :managedObjectType => "VirtualMachine", :name => "foo", :type => "string")]),
+          RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "add", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "bar"))
+        ]
+      )
+    end
+
+    def vm_edit_custom_value_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind       => "modify",
+        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet  => [
+          RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "assign", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "baz"))
         ]
       )
     end

@@ -299,14 +299,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       custom_values = props.fetch_path(:summary, :customValue)
 
       key_to_name = {}
-      available_field.to_a.each { |af| key_to_name[af["key"]] = af["name"] }
+      available_field.to_a.each { |af| key_to_name[af.key] = af.name }
 
       custom_values.to_a.each do |cv|
         persister.ems_custom_attributes.build(
           :resource => vm,
           :section  => "custom_field",
-          :name     => key_to_name[cv["key"]],
-          :value    => cv["value"],
+          :name     => key_to_name[cv.key],
+          :value    => cv.value,
           :source   => "VC",
         )
       end
