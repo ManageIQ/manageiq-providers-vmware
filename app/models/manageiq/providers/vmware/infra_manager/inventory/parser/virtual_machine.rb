@@ -274,20 +274,48 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       hostname = summary_guest[:hostName]
       guest_ip = summary_guest[:ipAddress]
       if hostname || guest_ip
+        # Find the ipStack that has dnsConfig present
+        ip_stack = props.fetch_path(:guest, :ipStack).to_a.detect(&:dnsConfig)
+
         props.fetch_path(:guest, :net).to_a.each do |net|
+          ip_config_by_ip_addr = net.ipConfig&.ipAddress&.index_by(&:ipAddress) || {}
+
           ipv4, ipv6 = net[:ipAddress].to_a.compact.collect(&:to_s).sort.partition { |ip| ip =~ /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
           ipv4 << nil if ipv4.empty?
           ipaddresses = ipv4.zip_stretched(ipv6)
 
+          dns_config = net.dnsConfig || ip_stack&.dnsConfig
+          if dns_config
+            domain_name = dns_config.domainName
+            dns_servers = dns_config.ipAddress.join(",").presence
+          end
+
+          ip_route_config = ip_stack&.ipRouteConfig
+          routes = ip_route_config&.ipRoute
+          if routes
+            default_routes = routes.select { |route| route.prefixLength == 0 }
+            default_ipv4_route = default_routes.detect { |route| route.network == "0.0.0.0" }
+            default_ipv6_route = default_routes.detect { |route| route.network == "::" }
+
+            default_gateway = default_ipv4_route&.gateway&.ipAddress || default_ipv6_route&.gateway&.ipAddress
+          end
+
           guest_device = guest_devices.detect { |gd| gd.data[:address] == net[:macAddress] }
 
           ipaddresses.each do |ipaddress, ipv6address|
+            netmask   = subnet_v4(ip_config_by_ip_addr[ipaddress]&.prefixLength)
+            netmask ||= subnet_v6(ip_config_by_ip_addr[ipv6address]&.prefixLength)
+
             persister.networks.build(
-              :hardware     => hardware,
-              :guest_device => guest_device,
-              :hostname     => hostname,
-              :ipaddress    => ipaddress,
-              :ipv6address  => ipv6address,
+              :hardware        => hardware,
+              :guest_device    => guest_device,
+              :hostname        => hostname,
+              :ipaddress       => ipaddress,
+              :ipv6address     => ipv6address,
+              :subnet_mask     => netmask,
+              :domain          => domain_name,
+              :dns_server      => dns_servers,
+              :default_gateway => default_gateway
             )
           end
         end
@@ -408,6 +436,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       return g if g.length == 36 && g =~ UUID_REGEX_FORMAT
       g.delete!('^0-9a-f')
       g.sub!(/^([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})$/, '\1-\2-\3-\4-\5')
+    end
+
+    def subnet_v4(prefix_length)
+      return if prefix_length.nil?
+
+      IPAddr.new("255.255.255.255").mask(prefix_length).to_s
+    end
+
+    def subnet_v6(prefix_length)
+      return if prefix_length.nil?
+
+      IPAddr.new("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff").mask(prefix_length).to_s
     end
   end
 end
