@@ -1,6 +1,6 @@
 require 'rbvmomi'
 
-describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
+describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   include Spec::Support::EmsRefreshHelper
 
   let!(:ems) do
@@ -16,13 +16,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { described_class.new(ems) }
+  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems) }
 
   context "#monitor_updates" do
     context "full refresh" do
       it "Performs a full refresh" do
         2.times do
-          with_vcr { run_full_refresh }
+          with_vcr { EmsRefresh.refresh(ems) }
           ems.reload
 
           assert_ems
