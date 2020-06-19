@@ -16,6 +16,7 @@
 - config.memoryHotAddEnabled
 - config.version
 - datastore
+- guest.ipStack
 - guest.net
 - resourceConfig.cpuAllocation.expandableReservation
 - resourceConfig.cpuAllocation.limit
