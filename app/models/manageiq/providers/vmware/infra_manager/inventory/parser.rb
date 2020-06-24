@@ -227,6 +227,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_portgroups_internal(object, props)
     return if props[:tag].detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
+    ref  = object._ref
+    uid  = props.fetch_path(:config, :key)
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
     name = CGI.unescape(name) unless name.nil?
 
@@ -243,7 +245,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     switch = persister.distributed_virtual_switches.lazy_find(dvs._ref) unless dvs.nil?
 
     lan_hash = {
-      :uid_ems           => object._ref,
+      :ems_ref           => ref,
+      :uid_ems           => uid,
       :name              => name,
       :switch            => switch,
       :allow_promiscuous => allow_promiscuous,
