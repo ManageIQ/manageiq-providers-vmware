@@ -10,8 +10,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
         case task_state
         when TaskInfoState::Success
-          phase_context[:new_vm_ems_ref] = task_info&.result
-          phase_context[:clone_vm_task_completion_time] = task_info&.completeTime
+          phase_context[:new_vm_ems_ref] = task_info&.result&.to_s
+          phase_context[:clone_vm_task_completion_time] = task_info&.completeTime&.to_s
           return true
         when TaskInfoState::Running
           progress = task_info&.progress
