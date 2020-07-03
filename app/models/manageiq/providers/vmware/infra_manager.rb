@@ -54,64 +54,142 @@ module ManageIQ::Providers
 
     def self.params_for_create
       @params_for_create ||= {
-        :title  => "Configure #{description}",
         :fields => [
           {
-            :component  => "text-field",
-            :name       => "endpoints.default.server",
-            :label      => "Server Hostname/IP Address",
-            :isRequired => true,
-            :validate   => [{:type => "required-validator"}]
+            :component => 'text-field',
+            :name      => 'host_default_vnc_port_start',
+            :label     => _('Host Default VNC Start Port'),
+            :type      => 'number',
+            :validate  => [{
+              :type  => 'max-number-value',
+              :value => 65_535,
+            }]
           },
           {
-            :component  => "text-field",
-            :name       => "endpoints.default.username",
-            :label      => "Username",
-            :isRequired => true,
-            :validate   => [{:type => "required-validator"}]
+            :component => 'text-field',
+            :name      => 'host_default_vnc_port_end',
+            :label     => _('Host Default VNC End Port'),
+            :type      => 'number',
+            :validate  => [{
+              :type  => 'max-number-value',
+              :value => 65_535,
+            }]
           },
           {
-            :component  => "text-field",
-            :name       => "endpoints.default.password",
-            :label      => "Password",
-            :type       => "password",
-            :isRequired => true,
-            :validate   => [{:type => "required-validator"}]
+            :component => 'sub-form',
+            :name      => 'endpoints-subform',
+            :title     => _("Endpoints"),
+            :fields    => [
+              :component => 'tabs',
+              :name      => 'tabs',
+              :fields    => [
+                {
+                  :component => 'tab-item',
+                  :name      => 'default-tab',
+                  :title     => _('Default'),
+                  :fields    => [
+                    {
+                      :component              => 'validate-provider-credentials',
+                      :name                   => 'endpoints.default.valid',
+                      :skipSubmit             => true,
+                      :validationDependencies => %w[type zone_id],
+                      :fields                 => [
+                        {
+                          :component  => "text-field",
+                          :name       => "endpoints.default.hostname",
+                          :label      => _("Hostname (or IPv4 or IPv6 address)"),
+                          :isRequired => true,
+                          :validate   => [{:type => "required-validator"}]
+                        },
+                        {
+                          :component  => "text-field",
+                          :name       => "authentications.default.userid",
+                          :label      => _("Username"),
+                          :isRequired => true,
+                          :validate   => [{:type => "required-validator"}]
+                        },
+                        {
+                          :component  => "password-field",
+                          :name       => "authentications.default.password",
+                          :label      => _("Password"),
+                          :type       => "password",
+                          :isRequired => true,
+                          :validate   => [{:type => "required-validator"}]
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  :component => 'tab-item',
+                  :name      => 'console-tab',
+                  :title     => _('VMRC Console'),
+                  :fields    => [
+                    {
+                      :component    => 'protocol-selector',
+                      :name         => 'vmrc_console',
+                      :skipSubmit   => true,
+                      :label        => _('Access'),
+                      :initialValue => 'none',
+                      :options      => [
+                        {
+                          :label => _("Disabled"),
+                          :value => 'none',
+                        },
+                        {
+                          :label => _("Enabled"),
+                          :value => "enabled",
+                          :pivot => 'authentications.console.userid',
+                        },
+                      ],
+                    },
+                    {
+                      :component              => 'validate-provider-credentials',
+                      :name                   => 'endpoints.console.valid',
+                      :skipSubmit             => true,
+                      :validationDependencies => %w[type endpoints.default.hostname],
+                      :condition              => {
+                        :when => 'vmrc_console',
+                        :is   => 'enabled',
+                      },
+                      :fields                 => [
+                        {
+                          :component  => "text-field",
+                          :name       => "authentications.console.userid",
+                          :label      => "Username",
+                          :isRequired => true,
+                          :validate   => [{:type => "required-validator"}],
+                        },
+                        {
+                          :component  => "password-field",
+                          :name       => "authentications.console.password",
+                          :label      => "Password",
+                          :type       => "password",
+                          :isRequired => true,
+                          :validate   => [{:type => "required-validator"}],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ]
+            ]
           },
-          {
-            :component => "text-field",
-            :name      => "endpoints.console.username",
-            :label     => "Console Username"
-          },
-          {
-            :component => "text-field",
-            :name      => "endpoints.console.password",
-            :label     => "Password",
-            :type      => "password"
-          }
         ]
       }.freeze
     end
 
-    # Verify Credentials
-    # args: {
-    #   "endpoints" => {
-    #     "default" => {
-    #       "server"   => nil,
-    #       "username" => nil,
-    #       "password" => nil
-    #     },
-    #     "console" => {
-    #       "username" => nil,
-    #       "password" => nil
-    #     }
-    #   }
-    # }
     def self.verify_credentials(args)
-      default_endpoint = args.dig("endpoints", "default")
-      username, password, server = default_endpoint&.values_at("username", "password", "server")
+      hostname = args.dig("endpoints", 'default', 'hostname')
 
-      !!raw_connect(:ip => server, :user => username, :pass => password)
+      authtype = args.dig("authentications").keys.first
+      authentication = args.dig("authentications", authtype)
+      userid, password = authentication&.values_at('userid', 'password')
+
+      password = MiqPassword.try_decrypt(password)
+      password ||= find(args["id"]).authentication_password(authtype) if args['id']
+
+      !!raw_connect(:ip => hostname, :user => userid, :pass => password)
     end
 
     def supported_auth_types
