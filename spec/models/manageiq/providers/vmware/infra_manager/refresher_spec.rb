@@ -890,7 +890,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :allow_promiscuous => false,
         :forged_transmits  => false,
         :mac_changes       => false,
-        :tag               => nil
+        :tag               => "1"
       )
 
       expect(lan.switch.uid_ems).to eq("dvs-8")
