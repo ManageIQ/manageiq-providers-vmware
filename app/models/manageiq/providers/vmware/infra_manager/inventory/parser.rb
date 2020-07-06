@@ -234,6 +234,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     default_port_config = props.fetch_path(:config, :defaultPortConfig)
     security_policy = default_port_config&.securityPolicy
+    vlan_spec = default_port_config&.vlan
+    tag = vlan_spec.vlanId if vlan_spec&.kind_of?(RbVmomi::VIM::VmwareDistributedVirtualSwitchVlanIdSpec)
 
     if security_policy
       allow_promiscuous = security_policy.allowPromiscuous&.value
@@ -252,6 +254,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :allow_promiscuous => allow_promiscuous,
       :forged_transmits  => forged_transmits,
       :mac_changes       => mac_changes,
+      :tag               => tag
     }
 
     persister.distributed_virtual_lans.find_or_build_by(lan_hash)
