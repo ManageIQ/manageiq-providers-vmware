@@ -155,6 +155,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
         expect(vm.snapshots.count).to eq(1)
         expect(vm.snapshots.first).to have_attributes(
+          :uid_ems     => "2018-05-19T06:47:56.000000Z",
           :uid         => "2018-05-19T06:47:56.000000Z",
           :parent_uid  => nil,
           :name        => "VM Snapshot 5%2f19%2f2018, 6:47:56 AM",
@@ -162,7 +163,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           :current     => 1,
           :create_time => Time.parse("2018-05-19 06:47:56 UTC").utc,
           :parent_id   => nil,
-          :uid_ems     => "2018-05-19 06:47:56 UTC",
           :ems_ref     => "snapshot-1100"
         )
 

@@ -356,20 +356,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       snap = snapshot[:snapshot]
       return if snap.nil?
 
-      create_time = snapshot[:createTime]
+      create_time     = snapshot[:createTime]
+      create_time_ems = create_time.iso8601(6)
+
       parent = persister.snapshots.lazy_find(:vm_or_template => vm, :uid => Time.parse(parent_uid).iso8601(6)) if parent_uid
 
       snapshot_hash = {
         :vm_or_template => vm,
         :ems_ref        => snap._ref,
         :ems_ref_type   => snap.class.wsdl_name,
-        :uid_ems        => create_time.to_s,
-        :uid            => create_time.iso8601(6),
+        :uid_ems        => create_time_ems,
+        :uid            => create_time_ems,
         :parent_uid     => parent_uid,
         :parent         => parent,
         :name           => CGI.unescape(snapshot[:name]),
         :description    => snapshot[:description],
-        :create_time    => create_time.to_s,
+        :create_time    => create_time.utc.to_s,
         :current        => snap._ref == current._ref,
       }
 
