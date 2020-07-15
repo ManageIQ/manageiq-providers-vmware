@@ -61,7 +61,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
         },
         {
           :component => 'sub-form',
-          :name      => 'endpoints',
+          :name      => 'endpoints-subform',
           :title     => _("Endpoints"),
           :fields    => [
             :component => 'tabs',
@@ -69,7 +69,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
             :fields    => [
               {
                 :component => 'tab-item',
-                :name      => 'default',
+                :name      => 'default-tab',
                 :title     => _('Default'),
                 :fields    => [
                   {
@@ -95,15 +95,19 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :initialValue => 443,
                       },
                       {
-                        :component => "text-field",
-                        :name      => "authentications.default.userid",
-                        :label     => _("Username")
+                        :component  => "text-field",
+                        :name       => "authentications.default.userid",
+                        :label      => _("Username"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
                       },
                       {
-                        :component => "password-field",
-                        :name      => "authentications.default.password",
-                        :label     => _("Password"),
-                        :type      => "password"
+                        :component  => "password-field",
+                        :name       => "authentications.default.password",
+                        :label      => _("Password"),
+                        :type       => "password",
+                        :isRequired => true,
+                        :validate   => [{:type => "required-validator"}],
                       },
                     ],
                   },
@@ -111,7 +115,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
               },
               {
                 :component => 'tab-item',
-                :name      => 'events',
+                :name      => 'events-tab',
                 :title     => _('Events'),
                 :fields    => [
                   {

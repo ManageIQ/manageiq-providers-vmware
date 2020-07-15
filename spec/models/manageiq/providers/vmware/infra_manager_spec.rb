@@ -23,7 +23,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   end
 
   context ".verify_credentials" do
-    let(:verify_params) { {"endpoints" => {"default" => {"server" => "vcenter", "username" => "root", "password" => "vmware"}}} }
+    let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "vcenter"}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
     before do
       miq_vim = double("VMwareWebService/MiqVim")
       allow(miq_vim).to receive(:isVirtualCenter).and_return(is_virtual_center)
