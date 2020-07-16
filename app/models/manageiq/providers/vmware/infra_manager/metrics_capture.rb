@@ -205,12 +205,6 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
     if data.key?('childEntity')
       raise 'composite is not supported yet'
-      #      child_ar  = Array.new
-      #      data['childEntity'].to_miq_a.each do |c|
-      #        child_data = process_entity(c, mor)
-      #        child_ar << child_data
-      #        base[:children] << child_data[:mor]
-      #      end
     end
 
     values = data['value'].to_miq_a
