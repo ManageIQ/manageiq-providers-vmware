@@ -58,7 +58,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Disk
   end
 
   def add_scsi_controller(vmcs, busNumber, new_dev_key)
-    controller_settings = options[:ctrl_scsi].to_miq_a.detect { |c| c[:busnumber] == busNumber.to_i } || {}
+    controller_settings = Array.wrap(options[:ctrl_scsi]).detect { |c| c[:busnumber] == busNumber.to_i } || {}
     _log.info "Adding SCSI controller on bus <#{busNumber}>  Settings: <#{controller_settings.inspect}>"
     device_type = get_config_spec_value(controller_settings, 'VirtualLsiLogicController', nil, [:devicetype])
     add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
