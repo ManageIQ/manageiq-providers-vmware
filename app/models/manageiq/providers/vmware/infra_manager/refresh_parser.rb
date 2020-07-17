@@ -41,7 +41,7 @@ module ManageIQ::Providers
         result = []
         return result if inv.nil?
 
-        inv.to_miq_a.each do |data|
+        Array.wrap(inv).each do |data|
           # Collect Rule Set values
           current_rule_set = {:group => data['key'], :enabled => data['enabled'], :required => data['required']}
 
@@ -68,8 +68,8 @@ module ManageIQ::Providers
         result = []
         return result if inv.nil?
 
-        settings = inv['option'].to_miq_a.index_by { |o| o['key'] }
-        details = inv['optionDef'].to_miq_a.index_by { |o| o['key'] }
+        settings = Array.wrap(inv['option']).index_by { |o| o['key'] }
+        details = Array.wrap(inv['optionDef']).index_by { |o| o['key'] }
 
         settings.each do |key, setting|
           detail = details[key]

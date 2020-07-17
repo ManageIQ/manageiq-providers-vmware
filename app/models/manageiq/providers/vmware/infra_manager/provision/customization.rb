@@ -105,7 +105,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
   end
 
   def collect_nic_settings
-    nics = options[:nic_settings].to_miq_a
+    nics = Array.wrap(options[:nic_settings])
     nic = nics[0]
     nic = {} if nic.blank?
     [:dns_domain, :dns_servers, :sysprep_netbios_mode, :wins_servers, :addr_mode,
@@ -168,7 +168,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     return if spec.blank?
 
     requested_network_adapter_count = options[:requested_network_adapter_count].to_i
-    nic_count = spec.nicSettingMap.to_miq_a.length
+    nic_count = Array.wrap(spec.nicSettingMap).length
 
     if requested_network_adapter_count < nic_count
       # Remove nicSettings to match network adapter count

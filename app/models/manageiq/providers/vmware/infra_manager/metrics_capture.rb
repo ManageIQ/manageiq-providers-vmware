@@ -158,7 +158,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     meth = nil
 
     # The data is organized in an array such as [timestamp1, value1, timestamp2, value2, ...]
-    vim_data.to_miq_a.each_slice(2) do |t, v|
+    Array.wrap(vim_data).each_slice(2) do |t, v|
       if t.kind_of?(String) # VimString
         t = t.to_s
       else
@@ -205,15 +205,9 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
     if data.key?('childEntity')
       raise 'composite is not supported yet'
-      #      child_ar  = Array.new
-      #      data['childEntity'].to_miq_a.each do |c|
-      #        child_data = process_entity(c, mor)
-      #        child_ar << child_data
-      #        base[:children] << child_data[:mor]
-      #      end
     end
 
-    values = data['value'].to_miq_a
+    values = Array.wrap(data['value'])
     samples = parse_csv_safe(data['sampleInfoCSV'].to_s)
 
     ret = []
@@ -408,7 +402,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
     def parse_csv_safe(str)
       if str.include?("\"")
-        CSV.parse(str).first.to_miq_a
+        Array.wrap(CSV.parse(str).first)
       else
         str.split(",")
       end

@@ -19,9 +19,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
       end
 
       # Remove any unneeded template networks
-      # Use .to_miq_a to handle cases where more networks are requested then exist on the source VM
+      # Use Array.wrap to handle cases where more networks are requested than exist on the source VM
       # in which case the array [length..-1] logic will return nil.  (So please do not remove it...again.)
-      template_networks[requested_networks.length..-1].to_miq_a.each do |vim_net_adapter|
+      Array.wrap(template_networks[requested_networks.length..-1]).each do |vim_net_adapter|
         build_config_spec_delete_existing_vlan(vmcs, vim_net_adapter)
       end
     end
