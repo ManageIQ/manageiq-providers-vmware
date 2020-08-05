@@ -1,5 +1,3 @@
-require 'miq-uuid'
-
 module ManageIQ::Providers
   module Vmware
     module InfraManager::RefreshParser
