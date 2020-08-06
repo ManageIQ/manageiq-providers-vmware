@@ -1,3 +1,5 @@
+require 'VMwareWebService/VimTypes'
+
 describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
   let(:custom_spec_name) { 'custom_spec_name' }
   let(:target_vm_name)   { 'computerName' }
