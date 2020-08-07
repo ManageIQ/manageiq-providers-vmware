@@ -1,3 +1,5 @@
+require 'VMwareWebService/VimTypes'
+
 describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
   let(:storage) { FactoryBot.create(:storage_vmware) }
   let(:host) do
