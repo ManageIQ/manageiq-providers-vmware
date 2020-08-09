@@ -1,3 +1,5 @@
+require 'VMwareWebService/VimTypes'
+
 describe ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin do
   let(:vm) { FactoryBot.create(:vm_vmware, :ems_ref_type => "VirtualMachine") }
 

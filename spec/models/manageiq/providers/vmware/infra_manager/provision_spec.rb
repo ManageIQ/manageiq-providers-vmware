@@ -1,3 +1,5 @@
+require 'VMwareWebService/VimTypes'
+
 describe ManageIQ::Providers::Vmware::InfraManager::Provision do
   context "A new provision request," do
     before(:each) do
