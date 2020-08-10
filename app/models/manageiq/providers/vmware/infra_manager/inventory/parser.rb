@@ -41,12 +41,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.clusters.targeted_scope << object._ref
     return if kind == "leave"
 
+    # If a host isn't in a cluster VMware still puts it in a ComputeResource
+    # parent object but this isn't shown on their UI
+    hidden = object.class.wsdl_name == "ComputeResource"
+
     cluster_hash = {
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
       :uid_ems      => object._ref,
       :name         => CGI.unescape(props[:name]),
       :parent       => lazy_find_managed_object(props[:parent]),
+      :hidden       => hidden
     }
 
     parse_compute_resource_summary(cluster_hash, props)
