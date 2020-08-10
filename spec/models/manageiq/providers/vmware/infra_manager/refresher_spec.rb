@@ -784,7 +784,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :ha_enabled              => false,
         :ha_max_failures         => 1,
         :name                    => "DC0_C0",
-        :uid_ems                 => "domain-c12"
+        :uid_ems                 => "domain-c12",
+        :hidden                  => false
       )
 
       expect(cluster.parent).not_to be_nil
