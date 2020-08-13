@@ -130,30 +130,6 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
     result
   end
 
-  def self.parse_new_target(event)
-    obj_type = event[:objType]
-
-    method = "#{obj_type.downcase}_update_to_hash"
-    public_send(method, event) if respond_to?(method)
-  end
-
-  def self.folder_update_to_hash(event)
-    mor = event[:mor]
-    klass = 'ManageIQ::Providers::Vmware::InfraManager::Folder'
-    hash = {
-      :folders => [
-        {
-          :type         => klass,
-          :ems_ref      => mor,
-          :ems_ref_type => "Folder",
-          :uid_ems      => mor
-        }
-      ]
-    }
-
-    return hash, klass, :uid_ems => mor
-  end
-
   def self.vim_types_to_basic_types(obj)
     case obj
     when VimString
