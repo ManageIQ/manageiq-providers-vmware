@@ -99,14 +99,14 @@ module ManageIQ::Providers
                           :name       => "endpoints.default.hostname",
                           :label      => _("Hostname (or IPv4 or IPv6 address)"),
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                         {
                           :component  => "text-field",
                           :name       => "authentications.default.userid",
                           :label      => _("Username"),
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                         {
                           :component  => "password-field",
@@ -114,7 +114,7 @@ module ManageIQ::Providers
                           :label      => _("Password"),
                           :type       => "password",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                       ],
                     },
@@ -158,7 +158,7 @@ module ManageIQ::Providers
                           :name       => "authentications.console.userid",
                           :label      => "Username",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}],
+                          :validate   => [{:type => "required"}],
                         },
                         {
                           :component  => "password-field",
@@ -166,7 +166,7 @@ module ManageIQ::Providers
                           :label      => "Password",
                           :type       => "password",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}],
+                          :validate   => [{:type => "required"}],
                         },
                       ],
                     },

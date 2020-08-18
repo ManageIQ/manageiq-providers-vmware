@@ -34,12 +34,12 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     @params_for_create ||= {
       :fields => [
         {
-          :component    => "select-field",
+          :component    => "select",
           :name         => "api_version",
           :label        => _("API Version"),
           :initialValue => "9.0",
           :isRequired   => true,
-          :validate     => [{:type => "required-validator"}],
+          :validate     => [{:type => "required"}],
           :options      => [
             {
               :label => 'vCloud API 5.1',
@@ -83,7 +83,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :name       => "endpoints.default.hostname",
                         :label      => _("Hostname (or IPv4 or IPv6 address)"),
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}]
+                        :validate   => [{:type => "required"}]
                       },
                       {
                         :component    => "text-field",
@@ -91,7 +91,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :label        => _("API Port"),
                         :type         => "number",
                         :isRequired   => true,
-                        :validate     => [{:type => "required-validator"}],
+                        :validate     => [{:type => "required"}],
                         :initialValue => 443,
                       },
                       {
@@ -99,7 +99,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :name       => "authentications.default.userid",
                         :label      => _("Username"),
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                       },
                       {
                         :component  => "password-field",
@@ -107,7 +107,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :label      => _("Password"),
                         :type       => "password",
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                       },
                     ],
                   },
@@ -147,11 +147,11 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     },
                     :fields                 => [
                       {
-                        :component  => "select-field",
+                        :component  => "select",
                         :name       => "endpoints.amqp.security_protocol",
                         :label      => _("Security Protocol"),
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                         :options    => [
                           {
                             :label => _("SSL without validation"),
@@ -172,7 +172,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :name       => "endpoints.amqp.hostname",
                         :label      => _("Hostname (or IPv4 or IPv6 address)"),
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                       },
                       {
                         :component    => "text-field",
@@ -181,14 +181,14 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :type         => "number",
                         :isRequired   => true,
                         :initialValue => 5672,
-                        :validate     => [{:type => "required-validator"}],
+                        :validate     => [{:type => "required"}],
                       },
                       {
                         :component  => "text-field",
                         :name       => "authentications.amqp.userid",
                         :label      => "Username",
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                       },
                       {
                         :component  => "password-field",
@@ -196,7 +196,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :label      => "Password",
                         :type       => "password",
                         :isRequired => true,
-                        :validate   => [{:type => "required-validator"}],
+                        :validate   => [{:type => "required"}],
                       },
                     ],
                   },
