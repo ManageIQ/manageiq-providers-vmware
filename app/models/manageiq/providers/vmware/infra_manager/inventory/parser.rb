@@ -73,7 +73,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :typ              => spec_info[:type],
         :description      => spec_info[:description],
         :last_update_time => spec_info[:last_update_time].to_s,
-        :spec             => rbvmomi_to_vim_types(spec_info[:spec])
+        :spec             => rbvmomi_to_basic_types(spec_info[:spec]).deep_stringify_keys
       )
     end
   end
@@ -408,12 +408,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parent_collection.lazy_find(managed_object._ref)
   end
 
-  def rbvmomi_to_vim_types(obj)
+  def rbvmomi_to_basic_types(obj)
     case obj
     when RbVmomi::BasicTypes::DataObject
-      VimHash.new(obj.class.wsdl_name) do |new_obj|
-        obj.props.each { |k, v| new_obj[k.to_s] = rbvmomi_to_vim_types(v) }
-      end
+      obj.props.transform_values { |v| rbvmomi_to_basic_types(v) }
     when Array
       obj.map { |v| rbvmomi_to_basic_types(v) }
     else

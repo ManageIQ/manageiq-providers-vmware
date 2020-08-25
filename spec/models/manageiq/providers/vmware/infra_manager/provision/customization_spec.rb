@@ -98,6 +98,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
 
   context 'build_customization_spec for windows template' do
     it 'loads existing spec' do
+      expect(prov_vm).to receive(:load_customization_spec).and_return(spec)
       expect(prov_vm.build_customization_spec).to(eq(spec))
     end
 
@@ -108,7 +109,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
       spec_for_compare.identity.userData.orgName = options[:sysprep_organization]
       options[:sysprep_full_name] = 'sysprep_full_name_value'
       spec_for_compare.identity.userData.fullName = options[:sysprep_full_name]
-      spec_for_compare.identity.identification = {}
+      spec_for_compare.identity.identification = VimHash.new
+
+      expect(prov_vm).to receive(:load_customization_spec).and_return(spec)
       expect(prov_vm.build_customization_spec).to(eq(spec_for_compare))
     end
 
@@ -116,6 +119,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
       custom_spec.spec = nil
       options[:sysprep_full_name] = 'sysprep_full_name_value'
       options[:sysprep_organization] = 'sysprep_organization_value'
+      expect(prov_vm).to receive(:load_customization_spec).and_return(nil)
       expect(prov_vm.build_customization_spec).to(eq(new_spec))
     end
   end
