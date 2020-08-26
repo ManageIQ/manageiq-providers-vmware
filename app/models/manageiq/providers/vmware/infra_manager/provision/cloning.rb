@@ -13,6 +13,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
           phase_context[:new_vm_ems_ref] = task_info&.result&.to_s
           phase_context[:clone_vm_task_completion_time] = task_info&.completeTime&.to_s
           return true
+        when TaskInfoState::Error
+          raise "VM Clone Failed: #{task_info&.error&.localizedMessage}"
         when TaskInfoState::Running
           progress = task_info&.progress
           return false, progress.nil? ? "beginning" : "#{progress}% complete"
