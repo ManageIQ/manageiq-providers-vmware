@@ -102,6 +102,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     def parse_virtual_machine_cpu_allocation(vm_hash, props)
       cpu_allocation = props.fetch_path(:resourceConfig, :cpuAllocation)
+      return if cpu_allocation.nil?
+
       vm_hash[:cpu_reserve] = cpu_allocation[:reservation]
       vm_hash[:cpu_reserve_expand] = cpu_allocation[:expandableReservation].to_s.downcase == "true"
       vm_hash[:cpu_limit] = cpu_allocation[:limit]
