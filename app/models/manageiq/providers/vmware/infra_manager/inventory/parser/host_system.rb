@@ -1,5 +1,15 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module HostSystem
+    def validate_host_system_props(object, props)
+      if props.fetch_path(:config).nil? || props.fetch_path(:summary).nil? || props.fetch_path(:summary, :config, :product).nil?
+        [true, "Missing configuration for Host [#{object._ref}]"]
+      elsif props.fetch_path(:config, :network, :dnsConfig, :hostName).blank?
+        [true, "Missing hostname information for Host [#{object._ref}]"]
+      else
+        false
+      end
+    end
+
     def parse_host_system_summary(host_hash, props)
       summary = props[:summary]
       return if summary.nil?
