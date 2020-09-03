@@ -167,7 +167,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         # cast numCoresPerSocket to an integer so that we can check for nil and 0
         cpu_cores_per_socket                 = config.dig(:hardware, :numCoresPerSocket).to_i
         hardware_hash[:cpu_cores_per_socket] = cpu_cores_per_socket.zero? ? 1 : cpu_cores_per_socket
-        hardware_hash[:cpu_sockets]          = hardware_hash[:cpu_total_cores] / hardware_hash[:cpu_cores_per_socket]
+        hardware_hash[:cpu_sockets]          = hardware_hash[:cpu_total_cores] / hardware_hash[:cpu_cores_per_socket] if hardware_hash[:cpu_total_cores]
         hardware_hash[:virtual_hw_version]   = config[:version].to_s.split('-').last if config[:version].present?
         hardware_hash[:firmware_type]        = config[:firmware].to_s.downcase == "efi" ? "EFI" : "BIOS"
       end
