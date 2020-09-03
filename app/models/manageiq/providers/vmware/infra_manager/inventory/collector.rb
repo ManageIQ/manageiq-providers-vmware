@@ -191,6 +191,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       props          = uncached_props.present? ? cached_props.deep_merge(uncached_props) : cached_props
 
       parser.parse(managed_object, update_kind, props)
+    rescue => err
+      _log.warn("Failed to parse #{managed_object.class.wsdl_name}:#{managed_object._ref}: #{err}")
+      _log.log_backtrace(err)
+      raise
     end
   end
 

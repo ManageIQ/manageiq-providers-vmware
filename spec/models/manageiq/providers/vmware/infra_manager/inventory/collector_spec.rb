@@ -144,6 +144,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(prev_respool.reload.children).not_to include(vm)
       end
 
+      it "skip disconnected vms" do
+        run_targeted_refresh(targeted_update_set(vm_disconnected_object_updates))
+
+        expect(ems.vms.pluck(:ems_ref)).not_to include("vm-999")
+      end
+
       it "creating and deleting a snapshot" do
         vm = ems.vms.find_by(:ems_ref => "vm-107")
 
@@ -310,6 +316,33 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
               ),
             ],
             :missingSet      => [],
+          ),
+        ]
+      end
+
+      def vm_disconnected_object_updates
+        [
+          RbVmomi::VIM.ObjectUpdate(
+            :kind       => "enter",
+            :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-999"),
+            :changeSet  => [
+              RbVmomi::VIM.PropertyChange(
+                :name => "name",
+                :op   => "assign",
+                :val  => "disconnected-vm"
+              ),
+              RbVmomi::VIM.PropertyChange(
+                :name => "config.version",
+                :op   => "assign",
+                :val  => "7"
+              ),
+              RbVmomi::VIM.PropertyChange(
+                :name => "runtime.connectionState",
+                :op   => "assign",
+                :val  => "disconnected"
+              ),
+            ],
+            :missingSet => []
           ),
         ]
       end

@@ -1,6 +1,8 @@
 require 'VMwareWebService/VimTypes'
 
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  include Vmdb::Logging
+
   include_concern :ComputeResource
   include_concern :Datastore
   include_concern :DistributedVirtualSwitch
@@ -160,6 +162,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_host_system(object, kind, props)
     persister.hosts.targeted_scope << object._ref
     return if kind == "leave"
+
+    invalid, err = validate_host_system_props(object, props)
+    if invalid
+      _log.warn("#{err} Skipping.")
+
+      return
+    end
 
     cluster = lazy_find_managed_object(props[:parent])
     host_hash = {
@@ -331,6 +340,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_virtual_machine(object, kind, props)
     persister.vms_and_templates.targeted_scope << object._ref
     return if kind == "leave"
+
+    invalid, err = validate_virtual_machine_props(object, props)
+    if invalid
+      _log.warn("#{err} Skipping.")
+
+      return
+    end
 
     vm_hash = {
       :ems_ref       => object._ref,
