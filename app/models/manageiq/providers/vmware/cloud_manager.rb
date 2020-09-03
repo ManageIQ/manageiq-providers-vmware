@@ -35,6 +35,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
       :fields => [
         {
           :component    => "select",
+          :id           => "api_version",
           :name         => "api_version",
           :label        => _("API Version"),
           :initialValue => "9.0",
@@ -61,6 +62,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
         },
         {
           :component => 'sub-form',
+          :id        => 'endpoints-subform',
           :name      => 'endpoints-subform',
           :title     => _("Endpoints"),
           :fields    => [
@@ -69,17 +71,20 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
             :fields    => [
               {
                 :component => 'tab-item',
+                :id        => 'default-tab',
                 :name      => 'default-tab',
                 :title     => _('Default'),
                 :fields    => [
                   {
                     :component              => 'validate-provider-credentials',
+                    :id                     => 'endpoints.default.valid',
                     :name                   => 'endpoints.default.valid',
                     :skipSubmit             => true,
                     :validationDependencies => %w[type zone_id api_version],
                     :fields                 => [
                       {
                         :component  => "text-field",
+                        :id         => "endpoints.default.hostname",
                         :name       => "endpoints.default.hostname",
                         :label      => _("Hostname (or IPv4 or IPv6 address)"),
                         :isRequired => true,
@@ -87,6 +92,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component    => "text-field",
+                        :id           => "endpoints.default.port",
                         :name         => "endpoints.default.port",
                         :label        => _("API Port"),
                         :type         => "number",
@@ -96,6 +102,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component  => "text-field",
+                        :id         => "authentications.default.userid",
                         :name       => "authentications.default.userid",
                         :label      => _("Username"),
                         :isRequired => true,
@@ -103,6 +110,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component  => "password-field",
+                        :id         => "authentications.default.password",
                         :name       => "authentications.default.password",
                         :label      => _("Password"),
                         :type       => "password",
@@ -115,11 +123,13 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
               },
               {
                 :component => 'tab-item',
+                :id        => 'events-tab',
                 :name      => 'events-tab',
                 :title     => _('Events'),
                 :fields    => [
                   {
                     :component    => 'protocol-selector',
+                    :id           => 'event_stream_selection',
                     :name         => 'event_stream_selection',
                     :skipSubmit   => true,
                     :label        => _('Type'),
@@ -138,6 +148,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                   },
                   {
                     :component              => 'validate-provider-credentials',
+                    :id                     => 'endpoints.amqp.valid',
                     :name                   => 'endpoints.amqp.valid',
                     :skipSubmit             => true,
                     :validationDependencies => %w[type event_stream_selection],
@@ -148,6 +159,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     :fields                 => [
                       {
                         :component  => "select",
+                        :id         => "endpoints.amqp.security_protocol",
                         :name       => "endpoints.amqp.security_protocol",
                         :label      => _("Security Protocol"),
                         :isRequired => true,
@@ -169,6 +181,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component  => "text-field",
+                        :id         => "endpoints.amqp.hostname",
                         :name       => "endpoints.amqp.hostname",
                         :label      => _("Hostname (or IPv4 or IPv6 address)"),
                         :isRequired => true,
@@ -176,6 +189,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component    => "text-field",
+                        :id           => "endpoints.amqp.port",
                         :name         => "endpoints.amqp.port",
                         :label        => _("API Port"),
                         :type         => "number",
@@ -185,6 +199,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component  => "text-field",
+                        :id         => "authentications.amqp.userid",
                         :name       => "authentications.amqp.userid",
                         :label      => "Username",
                         :isRequired => true,
@@ -192,6 +207,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                       },
                       {
                         :component  => "password-field",
+                        :id         => "authentications.amqp.password",
                         :name       => "authentications.amqp.password",
                         :label      => "Password",
                         :type       => "password",
