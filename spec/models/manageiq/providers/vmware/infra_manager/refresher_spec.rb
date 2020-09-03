@@ -146,6 +146,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
       it "skip disconnected vms" do
         run_targeted_refresh(targeted_update_set(vm_disconnected_object_updates))
+
+        expect(ems.vms.pluck(:ems_ref)).not_to include("vm-999")
       end
 
       it "creating and deleting a snapshot" do

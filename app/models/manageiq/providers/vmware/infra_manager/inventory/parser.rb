@@ -1,6 +1,8 @@
 require 'VMwareWebService/VimTypes'
 
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  include Vmdb::Logging
+
   include_concern :ComputeResource
   include_concern :Datastore
   include_concern :DistributedVirtualSwitch
@@ -165,6 +167,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_host_system(object, kind, props)
     persister.hosts.targeted_scope << object._ref
     return if kind == "leave"
+
+    invalid, err = if props.fetch_path(:config).nil? || props.fetch_path(:summary, :config, :product).nil? || props.fetch_path(:summary).nil?
+      [true, "Missing configuration for Host [#{object._ref}]"]
+    elsif props.fetch_path(:config, :network, :dnsConfig, :hostName).blank?
+      [true, "Missing hostname information for Host [#{object._ref}]"]
+    else
+      false
+    end
+
+    if invalid
+      _log.warn("#{err} Skipping.")
+
+      return
+    end
 
     cluster = lazy_find_managed_object(props[:parent])
     host_hash = {
@@ -339,6 +355,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_virtual_machine(object, kind, props)
     persister.vms_and_templates.targeted_scope << object._ref
     return if kind == "leave"
+
+    invalid, err = if props.fetch_path(:summary, :config).nil? || props.fetch_path(:config).nil?
+      [true, "Missing configuration for VM [#{object._ref}]"]
+    elsif props.fetch_path(:summary, :config, :uuid).blank? && props.fetch_path(:config, :uuid).blank?
+      [true, "Missing UUID for VM [#{object._ref}]"]
+    elsif props.fetch_path(:summary, :config, :vmPathName).blank?
+      [true, "Missing pathname location for VM [#{object._ref}]"]
+    else
+      false
+    end
+
+    if invalid
+      _log.warn("#{err} Skipping.")
+
+      return
+    end
 
     vm_hash = {
       :ems_ref       => object._ref,
