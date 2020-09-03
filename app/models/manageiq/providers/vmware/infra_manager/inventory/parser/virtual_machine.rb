@@ -2,6 +2,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   UUID_REGEX_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
 
   module VirtualMachine
+    def validate_virtual_machine_props(object, props)
+      if props.fetch_path(:summary, :config).nil? || props.fetch_path(:config).nil?
+        [true, "Missing configuration for VM [#{object._ref}]"]
+      elsif props.fetch_path(:summary, :config, :uuid).blank? && props.fetch_path(:config, :uuid).blank?
+        [true, "Missing UUID for VM [#{object._ref}]"]
+      elsif props.fetch_path(:summary, :config, :vmPathName).blank?
+        [true, "Missing pathname location for VM [#{object._ref}]"]
+      else
+        false
+      end
+    end
+
     def parse_virtual_machine_config(vm_hash, props)
       config = props[:config]
       return if config.nil?
