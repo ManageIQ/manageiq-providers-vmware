@@ -27,9 +27,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
 
       run_command_via_parent(:vm_remove_snapshot, :snMor => snapshot.uid_ems)
     rescue => err
+      # If the exception is a VimFault then err.message is a VimString
       error = err.message.to_s
+
       create_notification(:vm_snapshot_failure, :error => error, :snapshot_op => "remove")
-      if error.include?('not found')
+      if err.kind_of?(VimFault)
         raise MiqException::MiqVmSnapshotError, error
       else
         raise
