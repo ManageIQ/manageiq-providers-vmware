@@ -16,6 +16,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot do
     context "with a snapshot" do
       let!(:snapshot) { FactoryBot.create(:snapshot, :vm_or_template => vm, :uid_ems => Time.now.utc) }
 
+      before do
+        NotificationType.seed
+      end
+
       it "calls to remove the snapshot" do
         expect(vm).to receive(:run_command_via_parent).with(:vm_remove_snapshot, :snMor => snapshot.uid_ems)
 
@@ -24,6 +28,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot do
 
       it "with an invalid snapshot id raises an exception" do
         expect { vm.remove_snapshot(nil) }.to raise_error("Requested VM snapshot not found, unable to remove snapshot")
+      end
+
+      it "when the VimTask raises an exception" do
+        require "VMwareWebService/VimTypes"
+
+        localized_message = VimString.new("The object 'vim.vm.Snapshot:snapshot-1234' has already been deleted or has not been completely created")
+        fault             = VimHash.new(:LocalizedMethodFault) { |f| f.localizedMessage = localized_message }
+        exception         = VimFault.new(fault)
+
+        expect(vm).to receive(:run_command_via_parent).with(:vm_remove_snapshot, :snMor => snapshot.uid_ems).and_raise(exception)
+        expect { vm.remove_snapshot(snapshot) }.to raise_error(MiqException::MiqVmSnapshotError)
+        expect(Notification.count).to eq(1)
+        expect(Notification.first.options[:error]).to eq("The object 'vim.vm.Snapshot:snapshot-1234' has already been deleted or has not been completely created")
       end
 
       context "with a consolidate helper snapshot" do

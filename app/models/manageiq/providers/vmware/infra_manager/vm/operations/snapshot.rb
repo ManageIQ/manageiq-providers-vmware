@@ -8,8 +8,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
   def raw_create_snapshot(name, desc = nil, memory)
     run_command_via_parent(:vm_create_snapshot, :name => name, :desc => desc, :memory => memory)
   rescue => err
-    create_notification(:vm_snapshot_failure, :error => err.to_s, :snapshot_op => "create")
-    raise MiqException::MiqVmSnapshotError, err.to_s
+    error = String.new(err.message)
+    create_notification(:vm_snapshot_failure, :error => error, :snapshot_op => "create")
+    raise MiqException::MiqVmSnapshotError, error
   end
 
   def raw_remove_snapshot(snapshot_id)
@@ -26,9 +27,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
 
       run_command_via_parent(:vm_remove_snapshot, :snMor => snapshot.uid_ems)
     rescue => err
-      create_notification(:vm_snapshot_failure, :error => err.to_s, :snapshot_op => "remove")
-      if err.to_s.include?('not found')
-        raise MiqException::MiqVmSnapshotError, err.to_s
+      error = String.new(err.message)
+
+      create_notification(:vm_snapshot_failure, :error => error, :snapshot_op => "remove")
+      if err.kind_of?(VimFault)
+        raise MiqException::MiqVmSnapshotError, error
       else
         raise
       end
