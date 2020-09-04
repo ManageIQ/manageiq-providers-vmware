@@ -8,7 +8,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
   def raw_create_snapshot(name, desc = nil, memory)
     run_command_via_parent(:vm_create_snapshot, :name => name, :desc => desc, :memory => memory)
   rescue => err
-    error = err.message.to_s
+    error = String.new(err.message)
     create_notification(:vm_snapshot_failure, :error => error, :snapshot_op => "create")
     raise MiqException::MiqVmSnapshotError, error
   end
@@ -27,8 +27,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
 
       run_command_via_parent(:vm_remove_snapshot, :snMor => snapshot.uid_ems)
     rescue => err
-      # If the exception is a VimFault then err.message is a VimString
-      error = err.message.to_s
+      error = String.new(err.message)
 
       create_notification(:vm_snapshot_failure, :error => error, :snapshot_op => "remove")
       if err.kind_of?(VimFault)
