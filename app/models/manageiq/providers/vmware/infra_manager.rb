@@ -57,6 +57,7 @@ module ManageIQ::Providers
         :fields => [
           {
             :component => 'text-field',
+            :id        => 'host_default_vnc_port_start',
             :name      => 'host_default_vnc_port_start',
             :label     => _('Host Default VNC Start Port'),
             :type      => 'number',
@@ -67,6 +68,7 @@ module ManageIQ::Providers
           },
           {
             :component => 'text-field',
+            :id        => 'host_default_vnc_port_end',
             :name      => 'host_default_vnc_port_end',
             :label     => _('Host Default VNC End Port'),
             :type      => 'number',
@@ -77,6 +79,7 @@ module ManageIQ::Providers
           },
           {
             :component => 'sub-form',
+            :id        => 'endpoints-subform',
             :name      => 'endpoints-subform',
             :title     => _("Endpoints"),
             :fields    => [
@@ -85,36 +88,41 @@ module ManageIQ::Providers
               :fields    => [
                 {
                   :component => 'tab-item',
+                  :id        => 'default-tab',
                   :name      => 'default-tab',
                   :title     => _('Default'),
                   :fields    => [
                     {
                       :component              => 'validate-provider-credentials',
+                      :id                     => 'endpoints.default.valid',
                       :name                   => 'endpoints.default.valid',
                       :skipSubmit             => true,
                       :validationDependencies => %w[type zone_id],
                       :fields                 => [
                         {
                           :component  => "text-field",
+                          :id         => "endpoints.default.hostname",
                           :name       => "endpoints.default.hostname",
                           :label      => _("Hostname (or IPv4 or IPv6 address)"),
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                         {
                           :component  => "text-field",
+                          :id         => "authentications.default.userid",
                           :name       => "authentications.default.userid",
                           :label      => _("Username"),
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                         {
                           :component  => "password-field",
+                          :id         => "authentications.default.password",
                           :name       => "authentications.default.password",
                           :label      => _("Password"),
                           :type       => "password",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}]
+                          :validate   => [{:type => "required"}]
                         },
                       ],
                     },
@@ -122,11 +130,13 @@ module ManageIQ::Providers
                 },
                 {
                   :component => 'tab-item',
+                  :id        => 'console-tab',
                   :name      => 'console-tab',
                   :title     => _('VMRC Console'),
                   :fields    => [
                     {
                       :component    => 'protocol-selector',
+                      :id           => 'vmrc_console',
                       :name         => 'vmrc_console',
                       :skipSubmit   => true,
                       :label        => _('Access'),
@@ -145,6 +155,7 @@ module ManageIQ::Providers
                     },
                     {
                       :component              => 'validate-provider-credentials',
+                      :id                     => 'endpoints.console.valid',
                       :name                   => 'endpoints.console.valid',
                       :skipSubmit             => true,
                       :validationDependencies => %w[type endpoints.default.hostname],
@@ -155,18 +166,20 @@ module ManageIQ::Providers
                       :fields                 => [
                         {
                           :component  => "text-field",
+                          :id         => "authentications.console.userid",
                           :name       => "authentications.console.userid",
                           :label      => "Username",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}],
+                          :validate   => [{:type => "required"}],
                         },
                         {
                           :component  => "password-field",
+                          :id         => "authentications.console.password",
                           :name       => "authentications.console.password",
                           :label      => "Password",
                           :type       => "password",
                           :isRequired => true,
-                          :validate   => [{:type => "required-validator"}],
+                          :validate   => [{:type => "required"}],
                         },
                       ],
                     },
