@@ -53,6 +53,13 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       validate_connection do
         vim = MiqVim.new(ip, user, pass)
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
+
+        # If the time on the vCenter is very far off from MIQ system time then
+        # any comparison of last_refresh_on and VMware TaskInfo.completeTime can be
+        # unreliable.
+        vc_time_diff = Time.parse(vim.currentTime).utc - Time.now.utc
+        raise MiqException::Error, _("vCenter time is too far out of sync with the system time") if vc_time_diff.abs > 10.minutes
+
         true
       ensure
         vim&.disconnect rescue nil
