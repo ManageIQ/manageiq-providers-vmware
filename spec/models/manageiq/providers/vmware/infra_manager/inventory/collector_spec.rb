@@ -204,6 +204,21 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         expect(lan.reload.name).to eq("DC0_DVPG1_RENAMED")
       end
 
+      it "adding a new distributed virtual portgroup" do
+        run_targeted_refresh(targeted_update_set([dvpg_create_object_update]))
+
+        new_dvpg = ems.distributed_virtual_lans.find_by(:name => "New DVPG")
+        expect(new_dvpg).not_to be_nil
+        expect(new_dvpg.ems_ref).to eq("dvportgroup-99")
+        expect(new_dvpg.switch.uid_ems).to eq("dvs-8")
+      end
+
+      it "deleting a distributed virtual portgroup" do
+        run_targeted_refresh(targeted_update_set([dvpg_delete_object_update]))
+
+        expect(ems.distributed_virtual_lans.find_by(:name => "DC0_DVPG1")).to be_nil
+      end
+
       it "adding a customValue to a VM" do
         vm = ems.vms.find_by(:ems_ref => "vm-107")
         expect(vm.ems_custom_attributes).to be_empty
@@ -635,6 +650,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
           RbVmomi::VIM.PropertyChange(:name => "name", :op => "assign", :val => "DC0_DVPG1_RENAMED"),
           RbVmomi::VIM.PropertyChange(:name => "summary.name", :op => "assign", :val => "DC0_DVPG1_RENAMED")
         ]
+      )
+    end
+
+    def dvpg_create_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind      => "enter",
+        :obj       => RbVmomi::VIM.DistributedVirtualPortgroup(vim, "dvportgroup-99"),
+        :changeSet => [
+          RbVmomi::VIM.PropertyChange(:name => "config.distributedVirtualSwitch", :op => "assign", :val => RbVmomi::VIM.VmwareDistributedVirtualSwitch(vim, "dvs-8")),
+          RbVmomi::VIM.PropertyChange(:name => "config.key",                      :op => "assign", :val => "dvportgroup-99"),
+          RbVmomi::VIM.PropertyChange(:name => "config.name",                     :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "host",                            :op => "assign", :val => []),
+          RbVmomi::VIM.PropertyChange(:name => "parent",                          :op => "assign", :val => RbVmomi::VIM.Folder(vim, "group-n6")),
+          RbVmomi::VIM.PropertyChange(:name => "name",                            :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.name",                    :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "tag",                             :op => "assign", :val => [])
+        ]
+      )
+    end
+
+    def dvpg_delete_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind => "leave",
+        :obj  => RbVmomi::VIM.DistributedVirtualPortgroup(vim, "dvportgroup-11")
       )
     end
 

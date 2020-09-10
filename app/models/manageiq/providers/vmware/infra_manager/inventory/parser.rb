@@ -227,14 +227,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   alias parse_opaque_networks parse_network
 
   def parse_distributed_virtual_portgroup(_object, kind, props)
-    return if kind == "leave"
-
     dvs = props.fetch_path(:config, :distributedVirtualSwitch)
     parse_distributed_virtual_switch(dvs, kind, cache.find(dvs))
   end
 
   def parse_portgroups_internal(object, props)
-    return if props[:tag].detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
+    return if Array.wrap(props[:tag]).detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
     ref  = object._ref
     uid  = props.fetch_path(:config, :key)
