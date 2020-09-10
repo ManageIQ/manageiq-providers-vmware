@@ -24,9 +24,13 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context ".verify_credentials" do
     let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "vcenter"}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
+    let(:current_time)  { Time.now.utc.to_s }
+    let(:is_virtual_center) { true }
+
     before do
       miq_vim = double("VMwareWebService/MiqVim")
       allow(miq_vim).to receive(:isVirtualCenter).and_return(is_virtual_center)
+      allow(miq_vim).to receive(:currentTime).and_return(current_time)
       allow(miq_vim).to receive(:disconnect)
 
       require "VMwareWebService/MiqVim"
@@ -34,8 +38,6 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
 
     context "virtual-center" do
-      let(:is_virtual_center) { true }
-
       it "is successful" do
         expect(described_class.verify_credentials(verify_params)).to be_truthy
       end
@@ -49,13 +51,25 @@ describe ManageIQ::Providers::Vmware::InfraManager do
           .to raise_error(MiqException::Error, "Adding ESX/ESXi Hosts is not supported")
       end
     end
+
+    context "vCenter currentTime out of sync" do
+      let(:current_time) { 1.hour.ago.utc.to_s }
+
+      it "returns a failure" do
+        expect { described_class.verify_credentials(verify_params) }
+          .to raise_error(MiqException::Error, "vCenter time is too far out of sync with the system time")
+      end
+    end
   end
 
   context "#verify_credentials" do
     let(:ems) { FactoryBot.create(:ems_vmware_with_authentication) }
+    let(:current_time) { Time.now.utc.to_s }
+
     before do
       miq_vim = double("VMwareWebService/MiqVim")
       allow(miq_vim).to receive(:isVirtualCenter).and_return(true)
+      allow(miq_vim).to receive(:currentTime).and_return(current_time)
       allow(miq_vim).to receive(:disconnect)
 
       require "VMwareWebService/MiqVim"
@@ -64,6 +78,15 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
     it "success with correct credentials" do
       expect(ems.verify_credentials("default")).to be_truthy
+    end
+
+    context "vCenter currentTime out of sync" do
+      let(:current_time) { 1.hour.ago.utc.to_s }
+
+      it "returns a failure" do
+        expect { ems.verify_credentials("default") }
+          .to raise_error(MiqException::Error, "vCenter time is too far out of sync with the system time")
+      end
     end
   end
 
