@@ -11,7 +11,18 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
         case task_state
         when TaskInfoState::Success
           phase_context[:new_vm_ems_ref] = task_info&.result&.to_s
-          phase_context[:clone_vm_task_completion_time] = task_info&.completeTime&.to_s
+
+          if task_info&.completeTime
+            # Adjust the task completeTime for the VC currentTime
+            # E.g. if the VC is 4 hours ahead of our current system time we have
+            # to take that off of the clone_vm_task_completion_time so that the
+            # ems.last_inventory_date matches the task completion time
+            vc_time_offset     = Time.now.utc - Time.parse(vim.currentTime).utc
+            task_complete_time = task_info.completeTime + vc_time_offset
+
+            phase_context[:clone_vm_task_completion_time] = task_complete_time.to_s
+          end
+
           return true
         when TaskInfoState::Error
           raise "VM Clone Failed: #{task_info&.error&.localizedMessage}"
