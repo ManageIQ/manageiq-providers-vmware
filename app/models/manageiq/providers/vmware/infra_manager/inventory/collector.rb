@@ -56,7 +56,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def vim_collector
     _log.info("#{log_header} Monitor updates thread started")
 
-    vim = connect
+    vim = vim_connect
     property_filter = create_property_filter(vim, ems_inventory_filter_spec(vim))
 
     _log.info("#{log_header} Refreshing initial inventory")
@@ -87,8 +87,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     parse_updates(vim, parser, updated_objects)
     parse_storage_profiles(vim, parser)
     if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
-      parse_content_libraries(parser)
+      cis_api_client = cis_connect
+      parse_content_libraries(cis_api_client, parser)
+      parse_taggings(cis_api_client, parser)
     end
+
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
@@ -122,7 +125,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return version, updated_objects
   end
 
-  def connect
+  def vim_connect
     host = ems.hostname
     username, password = ems.auth_user_pwd
 
@@ -151,6 +154,26 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def pbm_connect(vim)
     require "rbvmomi/pbm"
     RbVmomi::PBM.connect(vim, :insecure => true)
+  end
+
+  def cis_connect
+    require 'vsphere-automation-content'
+    require 'vsphere-automation-cis'
+
+    configuration = VSphereAutomation::Configuration.new.tap do |c|
+      c.host = ems.hostname
+      c.username = ems.auth_user_pwd.first
+      c.password = ems.auth_user_pwd.last
+      c.scheme = 'https'
+      c.verify_ssl = false
+      c.verify_ssl_host = false
+    end
+
+    api_client = VSphereAutomation::ApiClient.new(configuration)
+
+    VSphereAutomation::CIS::SessionApi.new(api_client).create('')
+
+    api_client
   end
 
   def disconnect(vim)
@@ -285,31 +308,41 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     end
   end
 
-  def parse_content_libraries(parser)
-    require 'vsphere-automation-content'
-    require 'vsphere-automation-cis'
+  def parse_content_libraries(api_client, parser)
+    library_api      = VSphereAutomation::Content::LibraryApi.new(api_client)
+    library_item_api = VSphereAutomation::Content::LibraryItemApi.new(api_client)
 
-    configuration = VSphereAutomation::Configuration.new.tap do |c|
-      c.host = ems.hostname
-      c.username = ems.auth_user_pwd.first
-      c.password = ems.auth_user_pwd.last
-      c.scheme = 'https'
-      c.verify_ssl = false
-      c.verify_ssl_host = false
-    end
-
-    api_client = VSphereAutomation::ApiClient.new(configuration)
-    VSphereAutomation::CIS::SessionApi.new(api_client).create('')
-    api_libs = VSphereAutomation::Content::LibraryApi.new(api_client)
-    api_items = VSphereAutomation::Content::LibraryItemApi.new(api_client)
-
-    api_libs.list.value.each do |lib_id|
-      api_items.list(lib_id).value.each do |item_id|
-        parser.parse_content_library_item(api_items.get(item_id).value)
+    library_api.list.value.each do |lib_id|
+      library_item_api.list(lib_id).value.each do |item_id|
+        parser.parse_content_library_item(library_item_api.get(item_id).value)
       end
     end
   rescue VSphereAutomation::ApiError
     nil
+  end
+
+  def parse_taggings(api_client, parser)
+    tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
+    tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
+    tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
+
+    categories_by_id = tagging_category_api.list.value.to_a.map do |category_id|
+      tagging_category_api.get(category_id).value
+    end.index_by(&:id)
+
+    tags_by_id = tagging_tag_api.list.value.to_a.map do |tag_id|
+      tagging_tag_api.get(tag_id).value
+    end.index_by(&:id)
+
+    tags_by_attached_object = tags_by_id.each_with_object({}) do |(tag_id, tag), hash|
+      tagging_tag_association_api.list_attached_objects(tag_id).value.to_a.each do |obj|
+        hash[obj.type] ||= {}
+        hash[obj.type][obj.id] ||= []
+        hash[obj.type][obj.id] << tag_id
+      end
+    end
+
+    _log.info(tags_by_attached_object)
   end
 
   def parse_storage_profiles(vim, parser)
@@ -349,11 +382,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.debug do
       object_str = "#{object_update.obj.class.wsdl_name}:#{object_update.obj._ref}"
 
-      prop_changes = object_update.changeSet.map(&:name).take(5).join(", ")
-      prop_changes << ", ..." if object_update.changeSet.length > 5
-
       s =  "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
-      s << " Props: [#{prop_changes}]" if object_update.kind == "modify"
+      if object_update.kind == "modify"
+        prop_changes = object_update.changeSet.map(&:name).take(5).join(", ")
+        prop_changes << ", ..." if object_update.changeSet.length > 5
+
+        s << " Props: [#{prop_changes}]"
+      end
+
       s
     end
   end
