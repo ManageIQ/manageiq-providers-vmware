@@ -25,7 +25,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::StateMachine
   end
 
   def poll_clone_complete
-    clone_status, status_message = do_clone_task_check(phase_context[:clone_task_mor])
+    task_mor = VimString.new(phase_context[:clone_task_mor], "Task", :ManagedObjectReference)
+    clone_status, status_message = do_clone_task_check(task_mor)
 
     status_message = "completed; post provision work queued" if clone_status
     message = "Clone of #{clone_direction} is #{status_message}"
