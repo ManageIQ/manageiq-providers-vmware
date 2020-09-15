@@ -3,11 +3,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include Vmdb::Logging
 
   def initialize(ems)
-    @ems             = ems
-    @exit_requested  = false
-    @inventory_cache = ems.class::Inventory::Cache.new
-    @saver           = ems.class::Inventory::Saver.new
-    @vim_thread      = nil
+    @ems            = ems
+    @exit_requested = false
+    @cache          = ems.class::Inventory::Cache.new
+    @saver          = ems.class::Inventory::Saver.new
+    @vim_thread     = nil
   end
 
   def refresh
@@ -44,9 +44,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     self.vim_thread     = vim_collector_thread
   end
 
+  attr_accessor :categories_by_id, :tags_by_id, :tag_ids_by_attached_object
+  attr_reader   :cache
+
   private
 
-  attr_reader   :ems, :inventory_cache, :saver
+  attr_reader   :ems, :saver
   attr_accessor :exit_requested, :vim_thread, :last_full_refresh
 
   def vim_collector_thread
@@ -80,16 +83,24 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def full_refresh(vim, property_filter)
     persister = full_persister_klass.new(ems)
-    parser    = parser_klass.new(inventory_cache, persister)
+    parser    = parser_klass.new(self, persister)
+
+    persister.initialize_tag_mapper
 
     version, updated_objects = monitor_updates(vim, property_filter, "")
 
+    if vim.rev >= "6.0"
+      cis_api_client = cis_connect
+
+      collect_cis_taggings(cis_api_client)
+    end
+
     parse_updates(vim, parser, updated_objects)
     parse_storage_profiles(vim, parser)
+
     if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
       cis_api_client = cis_connect
       parse_content_libraries(cis_api_client, parser)
-      parse_taggings(cis_api_client, parser)
     end
 
     save_inventory(persister)
@@ -101,7 +112,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def targeted_refresh(vim, property_filter, version)
     persister = targeted_persister_klass.new(ems)
-    parser    = parser_klass.new(inventory_cache, persister)
+    parser    = parser_klass.new(self, persister)
 
     version, updated_objects = monitor_updates(vim, property_filter, version)
 
@@ -250,17 +261,17 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def process_object_update_enter(obj, change_set, _missing_set = [])
-    inventory_cache.insert(obj, process_change_set(change_set))
+    cache.insert(obj, process_change_set(change_set))
   end
 
   def process_object_update_modify(obj, change_set, _missing_set = [])
-    inventory_cache.update(obj) do |props|
+    cache.update(obj) do |props|
       process_change_set(change_set, props)
     end
   end
 
   def process_object_update_leave(obj)
-    inventory_cache.delete(obj)
+    cache.delete(obj)
   end
 
   def retrieve_uncached_props(obj)
@@ -321,28 +332,60 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     nil
   end
 
-  def parse_taggings(api_client, parser)
+  def collect_cis_taggings(api_client)
     tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
     tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
     tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
 
-    categories_by_id = tagging_category_api.list.value.to_a.map do |category_id|
-      tagging_category_api.get(category_id).value
-    end.index_by(&:id)
+    category_ids     = tagging_category_api.list.value.to_a
+    tag_ids          = tagging_tag_api.list.value.to_a
 
-    tags_by_id = tagging_tag_api.list.value.to_a.map do |tag_id|
-      tagging_tag_api.get(tag_id).value
-    end.index_by(&:id)
+    categories       = category_ids.map { |category_id| tagging_category_api.get(category_id).value }
+    tags             = tag_ids.map { |tag_id| tagging_tag_api.get(tag_id).value }
 
-    tags_by_attached_object = tags_by_id.each_with_object({}) do |(tag_id, tag), hash|
-      tagging_tag_association_api.list_attached_objects(tag_id).value.to_a.each do |obj|
-        hash[obj.type] ||= {}
-        hash[obj.type][obj.id] ||= []
-        hash[obj.type][obj.id] << tag_id
+    self.categories_by_id = categories.index_by(&:id)
+    self.tags_by_id       = tags.index_by(&:id)
+
+    self.tag_ids_by_attached_object = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = [] } }
+
+    tags.each do |tag|
+      tagging_tag_association_api.list_attached_objects(tag.id).value.to_a.each do |obj|
+        tag_ids_by_attached_object[obj.type][obj.id] << tag.id
       end
     end
+  end
 
-    _log.info(tags_by_attached_object)
+  def parse_taggings(api_client, persister)
+    tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
+    tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
+    tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
+
+    category_ids     = tagging_category_api.list.value.to_a
+    tag_ids          = tagging_tag_api.list.value.to_a
+
+    categories       = category_ids.map { |category_id| tagging_category_api.get(category_id).value }
+    tags             = tag_ids.map { |tag_id| tagging_tag_api.get(tag_id).value }
+
+    categories_by_id = categories.index_by(&:id)
+
+    tags.each do |tag|
+      category = categories_by_id[tag.category_id]
+
+      tagged_objects = tagging_tag_association_api.list_attached_objects(tag.id).value.to_a
+      tagged_vms     = tagged_objects.select { |obj| obj.type == "VirtualMachine" }
+
+      tagged_vms.each do |obj|
+        resource = persister.vms_and_templates.lazy_find(obj.id)
+
+        persister.vm_and_template_labels
+                 .find_or_build_by(:resource => resource, :name => category.name)
+                 .assign_attributes(:section => "labels", :source => "VC", :value => tag.name, :description => tag.description)
+
+        persister.tag_mapper.map_labels("VmOrTemplate", [{:name => category.name, :value => tag.name}]).each do |persister_tag|
+          persister.vm_and_template_taggings.build(:taggable => resource, :tag => persister_tag)
+        end
+      end
+    end
   end
 
   def parse_storage_profiles(vim, parser)

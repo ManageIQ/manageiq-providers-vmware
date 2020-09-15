@@ -354,6 +354,24 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
+    def parse_virtual_machine_labels(vm, _props)
+      # Tags are only fetched on full refresh so during a targeted refresh the
+      # tag_ids_by_attached_object/tags_by_id/categories_by_id will be nil
+      collector.tag_ids_by_attached_object&.dig("VirtualMachine", vm.ems_ref)&.each do |tag_id|
+        tag      = collector.tags_by_id[tag_id]
+        category = collector.categories_by_id[tag&.category_id]
+
+        next if tag.nil? || category.nil?
+
+        persister.vm_and_template_labels
+                 .find_or_build_by(:resource => vm, :name => category.name)
+                 .assign_attributes(:section => "labels", :source => "VC", :value => tag.name, :description => tag.description)
+      end
+    end
+
+    def parse_virtual_machine_taggings(_vm, _props)
+    end
+
     def parse_virtual_machine_snapshots(vm, props)
       snapshots = props[:snapshot]
       return if snapshots.blank?

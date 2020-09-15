@@ -2,6 +2,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   require_nested :Batch
   require_nested :Targeted
 
+  attr_reader :tag_mapper
+
   def initialize_inventory_collections
     add_collection(infra, :customization_specs)
     add_collection(infra, :disks, :parent_inventory_collections => %i[vms_and_templates])
@@ -9,6 +11,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :distributed_virtual_lans)
     add_collection(infra, :clusters)
     add_collection(infra, :ems_custom_attributes, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :vm_and_template_labels, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :vm_and_template_taggings, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :ems_extensions)
     add_collection(infra, :ems_folders)
     add_collection(infra, :ems_licenses)
@@ -42,6 +46,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
     add_collection(infra, :orchestration_templates)
+  end
+
+  def initialize_tag_mapper
+    @tag_mapper = ContainerLabelTagMapping.mapper
+    collections[:tags_to_resolve] = @tag_mapper.tags_to_resolve_collection
   end
 
   def vim_class_to_collection(managed_object)
