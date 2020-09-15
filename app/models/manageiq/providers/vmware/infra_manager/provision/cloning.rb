@@ -160,6 +160,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
     source.with_provider_object do |vim_vm|
       task_mor = vim_vm.cloneVM_raw(vim_clone_options[:folder], vim_clone_options[:name], cspec, vim_clone_options[:wait])
+
+      # task_mor is a VimString xsiType: ManagedObjectReference vimType: Task but
+      # we have to serialize just the String to the phase_context
+      task_mor = task_mor.to_s if task_mor
     end
 
     task_mor
