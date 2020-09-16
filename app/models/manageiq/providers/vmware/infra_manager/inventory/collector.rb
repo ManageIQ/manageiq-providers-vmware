@@ -351,39 +351,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     end
   end
 
-  def parse_taggings(api_client, persister)
-    tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
-    tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
-    tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
-
-    category_ids     = tagging_category_api.list.value.to_a
-    tag_ids          = tagging_tag_api.list.value.to_a
-
-    categories       = category_ids.map { |category_id| tagging_category_api.get(category_id).value }
-    tags             = tag_ids.map { |tag_id| tagging_tag_api.get(tag_id).value }
-
-    categories_by_id = categories.index_by(&:id)
-
-    tags.each do |tag|
-      category = categories_by_id[tag.category_id]
-
-      tagged_objects = tagging_tag_association_api.list_attached_objects(tag.id).value.to_a
-      tagged_vms     = tagged_objects.select { |obj| obj.type == "VirtualMachine" }
-
-      tagged_vms.each do |obj|
-        resource = persister.vms_and_templates.lazy_find(obj.id)
-
-        persister.vm_and_template_labels
-                 .find_or_build_by(:resource => resource, :name => category.name)
-                 .assign_attributes(:section => "labels", :source => "VC", :value => tag.name, :description => tag.description)
-
-        persister.tag_mapper.map_labels("VmOrTemplate", [{:name => category.name, :value => tag.name}]).each do |persister_tag|
-          persister.vm_and_template_taggings.build(:taggable => resource, :tag => persister_tag)
-        end
-      end
-    end
-  end
-
   def parse_storage_profiles(vim, parser)
     pbm = pbm_connect(vim)
 

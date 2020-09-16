@@ -39,6 +39,57 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           assert_specific_vm
         end
       end
+
+      context "with taggings and labels" do
+        before do
+          require "vsphere-automation-cis"
+
+          collector.categories_by_id = {
+            "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL" => VSphereAutomation::CIS::CisTaggingCategoryModel.new(
+              :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Category1",
+              :description => "Description",
+              :cardinality => "SINGLE",
+              :used_by     => []
+            )
+          }
+
+          collector.tags_by_id = {
+            "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL" => VSphereAutomation::CIS::CisTaggingTagModel.new(
+              :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
+              :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Tag1",
+              :description => "Tag Description",
+              :used_by     => []
+            )
+          }
+
+          collector.tag_ids_by_attached_object = {
+            "VirtualMachine" => {
+              "vm-21" => ["urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL"]
+            }
+          }
+        end
+
+        it "saves vm labels" do
+          with_vcr { collector.refresh }
+
+          ems.reload
+
+          expect(ems.vm_and_template_labels.count).to eq(1)
+
+          vm = ems.vms.find_by(:ems_ref => "vm-21")
+          expect(vm.labels.count).to eq(1)
+          expect(vm.labels.first).to have_attributes(
+            :section     => "labels",
+            :name        => "Category1",
+            :value       => "Tag1",
+            :resource    => vm,
+            :source      => "VC",
+            :description => "Tag Description"
+          )
+        end
+      end
     end
 
     context "targeted refresh" do
@@ -54,7 +105,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         end
       end
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
-      let(:cache)           { collector.send(:inventory_cache) }
 
       before do
         # Use the VCR to prime the cache and do the initial save_inventory
