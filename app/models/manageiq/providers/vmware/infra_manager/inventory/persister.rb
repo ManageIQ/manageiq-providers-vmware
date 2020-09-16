@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ::Providers::Inventory::Persister
   require_nested :Batch
+  require_nested :Full
   require_nested :Targeted
 
   attr_reader :tag_mapper
@@ -46,11 +47,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
     add_collection(infra, :orchestration_templates)
-  end
-
-  def initialize_tag_mapper
-    @tag_mapper = ContainerLabelTagMapping.mapper
-    collections[:tags_to_resolve] = @tag_mapper.tags_to_resolve_collection
   end
 
   def vim_class_to_collection(managed_object)

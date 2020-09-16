@@ -85,8 +85,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     persister = full_persister_klass.new(ems)
     parser    = parser_klass.new(self, persister)
 
-    persister.initialize_tag_mapper
-
     version, updated_objects = monitor_updates(vim, property_filter, "")
 
     if vim.rev >= "6.0"
@@ -446,7 +444,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def full_persister_klass
-    @full_persister_klass ||= ems.class::Inventory::Persister
+    @full_persister_klass ||= ems.class::Inventory::Persister::Full
   end
 
   def targeted_persister_klass
