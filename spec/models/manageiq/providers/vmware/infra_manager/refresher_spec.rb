@@ -247,7 +247,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
-        parser          = ems.class::Inventory::Parser.new(cache, persister)
+        parser          = ems.class::Inventory::Parser.new(collector, persister)
         updated_objects = collector.send(:process_update_set, property_filter, update_set)
 
         collector.send(:parse_updates, vim, parser, updated_objects)

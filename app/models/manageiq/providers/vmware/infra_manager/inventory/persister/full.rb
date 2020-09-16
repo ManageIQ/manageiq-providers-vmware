@@ -1,5 +1,4 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Full < ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister
-
   def initialize_inventory_collections
     super
 

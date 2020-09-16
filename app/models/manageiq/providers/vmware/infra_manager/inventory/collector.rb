@@ -44,8 +44,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     self.vim_thread     = vim_collector_thread
   end
 
-  attr_accessor :categories_by_id, :tags_by_id, :tag_ids_by_attached_object
-  attr_reader   :cache
+  attr_accessor :cache, :categories_by_id, :tags_by_id, :tag_ids_by_attached_object
 
   private
 
@@ -87,9 +86,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version, updated_objects = monitor_updates(vim, property_filter, "")
 
-    if vim.rev >= "6.0"
+    if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
       cis_api_client = cis_connect
-
       collect_cis_taggings(cis_api_client)
     end
 

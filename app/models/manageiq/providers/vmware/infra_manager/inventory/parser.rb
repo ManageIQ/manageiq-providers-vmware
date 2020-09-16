@@ -388,7 +388,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_virtual_machine_hardware(vm, props)
     parse_virtual_machine_custom_attributes(vm, props)
     parse_virtual_machine_labels(vm, props)
-    parse_virtual_machine_taggings(vm, props)
     parse_virtual_machine_snapshots(vm, props)
   end
 
