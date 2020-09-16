@@ -72,7 +72,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         end
 
         it "saves vm labels" do
-          with_vcr { collector.refresh }
+          2.times { with_vcr { collector.refresh } }
 
           ems.reload
 

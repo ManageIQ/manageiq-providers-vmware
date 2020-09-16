@@ -344,7 +344,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       available_field.to_a.each { |af| key_to_name[af.key] = af.name }
 
       custom_values.to_a.each do |cv|
-        persister.ems_custom_attributes.build(
+        persister.vm_and_template_labels.build(
           :resource => vm,
           :section  => "custom_field",
           :name     => key_to_name[cv.key],
@@ -366,9 +366,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
         next if tag.nil? || category.nil?
 
-        persister.vm_and_template_labels
-                 .find_or_build_by(:resource => vm, :name => category.name)
-                 .assign_attributes(:section => "labels", :source => "VC", :value => tag.name, :description => tag.description)
+        persister.vm_and_template_labels.build(
+          :resource    => vm,
+          :name        => category.name,
+          :section     => "labels",
+          :source      => "VC",
+          :value       => tag.name,
+          :description => tag.description
+        )
       end.compact
 
       persister.tag_mapper.map_labels("VmOrTemplate", persister_labels).each do |tag|
