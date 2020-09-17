@@ -3,8 +3,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   require_nested :Full
   require_nested :Targeted
 
-  attr_reader :tag_mapper
-
   def initialize_inventory_collections
     add_collection(infra, :customization_specs)
     add_collection(infra, :disks, :parent_inventory_collections => %i[vms_and_templates])
