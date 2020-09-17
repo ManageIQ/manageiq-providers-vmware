@@ -9,9 +9,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
 
     # If an existing VC customization spec was selected connect to VC and get the spec
     custom_spec_name = get_option(:sysprep_custom_spec).to_s.strip
+    custom_spec_name = nil if custom_spec_name == "__VC__NONE__"
+
     sysprep_spec_override = get_option(:sysprep_spec_override)
-    spec = load_customization_spec(custom_spec_name)
-    spec = spec.spec unless spec.nil?
+    spec = load_customization_spec(custom_spec_name) if custom_spec_name
+
     _log.info "Loaded custom spec [#{custom_spec_name}].  Override flag: [#{sysprep_spec_override}]"
     if spec && sysprep_spec_override == false
       adjust_nicSettingMap(spec)
@@ -197,18 +199,20 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
   end
 
   def load_customization_spec(custom_spec_name)
-    custom_spec_name = nil if custom_spec_name == "__VC__NONE__"
-    unless custom_spec_name.blank?
-      _log.info "Using customization spec [#{custom_spec_name}]"
-      cs = source.ext_management_system.customization_specs.find_by_id(custom_spec_name)
-      cs = source.ext_management_system.customization_specs.find_by(:name => custom_spec_name) if cs.nil?
-      raise MiqException::MiqProvisionError, "Customization Specification [#{custom_spec_name}] does not exist." if cs.nil?
-      raise MiqException::MiqProvisionError, "Customization Specification [#{custom_spec_name}] for OS type [#{cs[:typ]}] does not match the template VM OS" if cs[:typ].downcase != source.platform
-      _log.info "Using customization spec [#{cs.name}]"
-      return cs
-    else
-      _log.info "Customization spec name is empty, no spec will be loaded."
-      return nil
+    _log.info("Using customization spec [#{custom_spec_name}]")
+    cs = source.ext_management_system.customization_specs.find_by(:id => custom_spec_name)
+    cs = source.ext_management_system.customization_specs.find_by(:name => custom_spec_name) if cs.nil?
+
+    raise MiqException::MiqProvisionError, "Customization Specification [#{custom_spec_name}] does not exist." if cs.nil?
+    raise MiqException::MiqProvisionError, "Customization Specification [#{custom_spec_name}] for OS type [#{cs[:typ]}] does not match the template VM OS" if cs[:typ].downcase != source.platform
+
+    _log.info("Using customization spec [#{cs.name}]")
+
+    source.ext_management_system.with_provider_connection do |vim|
+      vim.getVimCustomizationSpecManager&.getCustomizationSpec(cs.name)&.spec
+    rescue Handsoap::Fault => err
+      _log.warn("Failed to load customization spec [#{cs.name}]: #{err}")
+      nil
     end
   end
 

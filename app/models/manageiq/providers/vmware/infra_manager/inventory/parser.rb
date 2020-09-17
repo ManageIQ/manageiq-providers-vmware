@@ -59,6 +59,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_cluster_compute_resource parse_compute_resource
 
+  def parse_customization_spec_manager(_object, kind, props)
+    return if kind == "leave"
+
+    props[:info].to_a.each do |spec_info|
+      persister.customization_specs.build(
+        :name             => spec_info[:name],
+        :typ              => spec_info[:type],
+        :description      => spec_info[:description],
+        :last_update_time => spec_info[:last_update_time].to_s,
+        :spec             => rbvmomi_to_basic_types(spec_info[:spec]).deep_stringify_keys
+      )
+    end
+  end
+
   def parse_datacenter(object, kind, props)
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
@@ -382,5 +396,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     parent_collection = persister.vim_class_to_collection(managed_object)
     parent_collection.lazy_find(managed_object._ref)
+  end
+
+  def rbvmomi_to_basic_types(obj)
+    case obj
+    when RbVmomi::BasicTypes::DataObject
+      obj.props.transform_values { |v| rbvmomi_to_basic_types(v) }
+    when Array
+      obj.map { |v| rbvmomi_to_basic_types(v) }
+    else
+      obj
+    end
   end
 end
