@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ::Providers::Inventory::Persister
   require_nested :Batch
+  require_nested :Full
   require_nested :Targeted
 
   def initialize_inventory_collections
@@ -9,6 +10,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :distributed_virtual_lans)
     add_collection(infra, :clusters)
     add_collection(infra, :ems_custom_attributes, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :vm_and_template_labels, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :vm_and_template_taggings, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :ems_extensions)
     add_collection(infra, :ems_folders)
     add_collection(infra, :ems_licenses)

@@ -10,11 +10,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include_concern :ResourcePool
   include_concern :VirtualMachine
 
-  attr_reader :cache, :persister
-  private     :cache, :persister
+  attr_reader :cache, :collector, :persister
+  private     :cache, :collector, :persister
 
-  def initialize(cache, persister)
-    @cache     = cache
+  def initialize(collector, persister)
+    @cache     = collector.cache
+    @collector = collector
     @persister = persister
   end
 
@@ -386,6 +387,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_virtual_machine_operating_system(vm, props)
     parse_virtual_machine_hardware(vm, props)
     parse_virtual_machine_custom_attributes(vm, props)
+    parse_virtual_machine_labels(vm, props)
     parse_virtual_machine_snapshots(vm, props)
   end
 
