@@ -1,6 +1,3 @@
-require "manageiq/providers/vmware/engine"
-require "manageiq/providers/vmware/version"
-
 module ManageIQ
   module Providers
     module Vmware
