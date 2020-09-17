@@ -162,3 +162,5 @@
 - licenses
 :ExtensionManager:
 - extensionList
+:CustomizationSpecManager:
+- info

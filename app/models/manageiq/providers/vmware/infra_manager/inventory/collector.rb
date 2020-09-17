@@ -187,8 +187,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     parser.parse_ext_management_system(ems, vim.serviceContent.about)
 
     updated_objects.each do |managed_object, update_kind, cached_props|
+      props = cached_props
+
       uncached_props = retrieve_uncached_props(managed_object)
-      props          = uncached_props.present? ? cached_props.deep_merge(uncached_props) : cached_props
+      props          = props.deep_merge(uncached_props) if uncached_props.present?
+
+      retrieve_extra_props(managed_object, props)
 
       parser.parse(managed_object, update_kind, props)
     rescue => err
@@ -263,6 +267,22 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if obj.nil?
 
     @uncached_prop_set[obj.class.wsdl_name]
+  end
+
+  def retrieve_extra_props(obj, cached_props)
+    case obj.class.wsdl_name
+    when "CustomizationSpecManager"
+      retrieve_customization_spec(obj, cached_props)
+    end
+  end
+
+  def retrieve_customization_spec(spec_manager, cached_props)
+    cached_props[:info].to_a.each do |spec_info|
+      spec_info.props[:spec] = spec_manager.GetCustomizationSpec(:name => spec_info.name)&.spec
+    rescue RbVmomi::Fault => err
+      # Don't fail the refresh for issues with specific items
+      _log.warn("Failed to get customization spec for [#{spec_info.name}]: #{err}")
+    end
   end
 
   def parse_content_libraries(parser)
