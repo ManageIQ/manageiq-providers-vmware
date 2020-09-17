@@ -86,7 +86,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             :name        => "Category1",
             :value       => "Tag1",
             :resource    => vm,
-            :source      => "VC",
+            :source      => "vmware",
             :description => "Tag Description"
           )
           expect(vm.tags.count).to eq(1)

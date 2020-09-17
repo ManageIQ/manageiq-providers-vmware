@@ -344,7 +344,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       available_field.to_a.each { |af| key_to_name[af.key] = af.name }
 
       custom_values.to_a.each do |cv|
-        persister.vm_and_template_labels.build(
+        persister.ems_custom_attributes.build(
           :resource => vm,
           :section  => "custom_field",
           :name     => key_to_name[cv.key],
@@ -370,7 +370,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :resource    => vm,
           :name        => category.name,
           :section     => "labels",
-          :source      => "VC",
+          :source      => "vmware",
           :value       => tag.name,
           :description => tag.description
         )
