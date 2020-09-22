@@ -189,7 +189,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     updated_objects.each do |managed_object, update_kind, cached_props|
       props = cached_props
 
-      uncached_props = retrieve_uncached_props(managed_object)
+      uncached_props = retrieve_uncached_props(managed_object) unless update_kind == "leave"
       props          = props.deep_merge(uncached_props) if uncached_props.present?
 
       retrieve_extra_props(managed_object, props)
@@ -253,6 +253,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       h[tag] = val
     end
+  rescue RbVmomi::Fault => err
+    _log.warn("Unable to retrieve uncached properties for #{obj.class.wsdl_name}:#{obj._ref}: #{err}")
+    _log.log_backtrace
+    nil
   end
 
   def uncached_prop_set(obj)
