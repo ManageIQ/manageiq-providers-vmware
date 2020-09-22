@@ -299,6 +299,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "baz", :source => "VC")
       end
 
+      it "deleting a host" do
+        managed_object_not_found_fault = RbVmomi::Fault.new(
+          "The object 'vim.HostSystem:host-41' has already been deleted or has not been completely created",
+          RbVmomi::VIM::ManagedObjectNotFound.new
+        )
+
+        host = RbVmomi::VIM.HostSystem(vim, "host-41")
+        allow(host).to receive(:collect!).and_raise(managed_object_not_found_fault)
+
+        run_targeted_refresh(targeted_update_set([host_delete_object_update(host)]))
+
+        expect(ems.hosts.find_by(:ems_ref => "host-41")).to be_nil
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(collector, persister)
@@ -714,6 +728,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :obj        => obj,
         :changeSet  => [],
         :missingSet => []
+      )
+    end
+
+    def host_delete_object_update(host)
+      RbVmomi::VIM.ObjectUpdate(
+        :kind => "leave",
+        :obj  => host
       )
     end
 
