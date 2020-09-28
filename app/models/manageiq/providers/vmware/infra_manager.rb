@@ -97,6 +97,7 @@ module ManageIQ::Providers
                       :id                     => 'endpoints.default.valid',
                       :name                   => 'endpoints.default.valid',
                       :skipSubmit             => true,
+                      :isRequired             => true,
                       :validationDependencies => %w[type zone_id],
                       :fields                 => [
                         {
@@ -158,6 +159,7 @@ module ManageIQ::Providers
                       :id                     => 'endpoints.console.valid',
                       :name                   => 'endpoints.console.valid',
                       :skipSubmit             => true,
+                      :isRequired             => true,
                       :validationDependencies => %w[type endpoints.default.hostname],
                       :condition              => {
                         :when => 'vmrc_console',

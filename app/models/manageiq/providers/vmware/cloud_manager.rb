@@ -80,6 +80,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     :id                     => 'endpoints.default.valid',
                     :name                   => 'endpoints.default.valid',
                     :skipSubmit             => true,
+                    :isRequired             => true,
                     :validationDependencies => %w[type zone_id api_version],
                     :fields                 => [
                       {
@@ -151,6 +152,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     :id                     => 'endpoints.amqp.valid',
                     :name                   => 'endpoints.amqp.valid',
                     :skipSubmit             => true,
+                    :isRequired             => true,
                     :validationDependencies => %w[type event_stream_selection],
                     :condition              => {
                       :when => 'event_stream_selection',
