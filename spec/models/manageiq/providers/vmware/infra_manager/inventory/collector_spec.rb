@@ -1109,6 +1109,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
       expect(vm.storage).not_to be_nil
       expect(vm.storage.name).to eq("GlobalDS_0")
 
+      expect(vm.storages.count).to eq(1)
+      expect(vm.storages.first.name).to eq("GlobalDS_0")
+
       expect(vm.parent_blue_folder).not_to be_nil
       expect(vm.parent_blue_folder.ems_ref).to eq("group-v3")
 

@@ -32,6 +32,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       vm_hash[:memory_hot_add_increment] = config[:hotPlugMemoryIncrementSize]
     end
 
+    def parse_virtual_machine_datastore(vm_hash, props)
+      vm_hash[:storages] = props[:datastore].to_a.map do |datastore|
+        persister.storages.lazy_find(datastore._ref)
+      end
+    end
+
     def parse_virtual_machine_summary(vm_hash, props)
       summary = props[:summary]
       return if summary.nil?
