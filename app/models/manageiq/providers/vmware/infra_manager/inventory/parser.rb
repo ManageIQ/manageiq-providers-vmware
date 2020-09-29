@@ -378,6 +378,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     }
 
     parse_virtual_machine_config(vm_hash, props)
+    parse_virtual_machine_datastore(vm_hash, props)
     parse_virtual_machine_resource_config(vm_hash, props)
     parse_virtual_machine_summary(vm_hash, props)
     parse_virtual_machine_storage(vm_hash, props)
