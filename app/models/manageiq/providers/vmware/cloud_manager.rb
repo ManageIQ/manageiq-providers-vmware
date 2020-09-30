@@ -263,7 +263,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     api_version = args['api_version']
 
     userid, password = authentication&.values_at('userid', 'password')
-    password = MiqPassword.try_decrypt(password)
+    password = ManageIQ::Password.try_decrypt(password)
     password ||= find(args["id"]).authentication_password(endpoint_name)
 
     if args['event_stream_selection'] == 'amqp'

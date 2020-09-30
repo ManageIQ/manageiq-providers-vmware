@@ -201,7 +201,7 @@ module ManageIQ::Providers
       authentication = args.dig("authentications", authtype)
       userid, password = authentication&.values_at('userid', 'password')
 
-      password = MiqPassword.try_decrypt(password)
+      password = ManageIQ::Password.try_decrypt(password)
       password ||= find(args["id"]).authentication_password(authtype) if args['id']
 
       !!raw_connect(:ip => hostname, :user => userid, :pass => password)
