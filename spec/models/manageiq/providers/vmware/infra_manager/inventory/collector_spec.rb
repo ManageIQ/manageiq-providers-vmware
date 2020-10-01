@@ -217,6 +217,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
         run_targeted_refresh(targeted_update_set([dvpg_delete_object_update]))
 
         expect(ems.distributed_virtual_lans.find_by(:name => "DC0_DVPG1")).to be_nil
+        expect(ems.distributed_virtual_switches.count).to eq(2)
       end
 
       it "adding a customValue to a VM" do
