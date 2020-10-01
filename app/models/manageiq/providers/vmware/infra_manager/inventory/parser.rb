@@ -248,6 +248,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
   def parse_distributed_virtual_portgroup(_object, kind, props)
     dvs = props.fetch_path(:config, :distributedVirtualSwitch)
+
+    # If the dvportgroup is deleted we don't want to pass kind="leave" to the
+    # switch parser because it will think the switch is being deleted
+    kind = "update" if kind == "leave"
     parse_distributed_virtual_switch(dvs, kind, cache.find(dvs))
   end
 
