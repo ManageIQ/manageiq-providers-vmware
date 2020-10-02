@@ -7,4 +7,8 @@ class ManageIQ::Providers::Vmware::CloudManager::Template < ManageIQ::Providers:
   def validate_smartstate_analysis
     validate_unsupported("Smartstate Analysis")
   end
+
+  def self.display_name(number = 1)
+    n_('Image (VMware vCloud)', 'Images (VMware vCloud)', number)
+  end
 end
