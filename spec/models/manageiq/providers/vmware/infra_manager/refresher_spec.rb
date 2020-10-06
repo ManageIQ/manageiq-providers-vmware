@@ -312,6 +312,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         run_targeted_refresh(targeted_update_set([host_delete_object_update(host)]))
 
         expect(ems.hosts.find_by(:ems_ref => "host-41")).to be_nil
+        expect(Host.find_by(:ems_ref => "host-41")).to be_archived
       end
 
       def run_targeted_refresh(update_set)
