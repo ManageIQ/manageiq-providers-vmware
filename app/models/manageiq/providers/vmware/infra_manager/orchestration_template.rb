@@ -1,6 +1,8 @@
 class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::OrchestrationTemplate
   belongs_to :ext_management_system, :foreign_key => "ems_id", :class_name => "ManageIQ::Providers::Vmware::InfraManager", :inverse_of => false
 
+  delegate :allowed_resource_pools, :allowed_folders, :allowed_hosts, :to => :workflow_helper
+
   SPEC_KEY_MAPPING = {
     "resource_pool" => "resource_pool_id",
     "ems_folder"    => "folder_id",
@@ -58,6 +60,10 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
     _log.info("Content Library deployment request body: #{deploy_options}")
 
     deploy_options
+  end
+
+  def workflow_helper
+    @workflow_helper ||= MiqProvisionOrchWorkflow.new({:src_vm_id => [id]}, User.current_user, :skip_dialog_load => true, :initial_pass => true)
   end
 
   def unique_md5?
