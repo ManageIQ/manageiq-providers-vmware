@@ -164,23 +164,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def cis_connect
-    require 'vsphere-automation-content'
-    require 'vsphere-automation-cis'
-
-    configuration = VSphereAutomation::Configuration.new.tap do |c|
-      c.host = ems.hostname
-      c.username = ems.auth_user_pwd.first
-      c.password = ems.auth_user_pwd.last
-      c.scheme = 'https'
-      c.verify_ssl = false
-      c.verify_ssl_host = false
-    end
-
-    api_client = VSphereAutomation::ApiClient.new(configuration)
-
-    VSphereAutomation::CIS::SessionApi.new(api_client).create('')
-
-    api_client
+    ems.connect(:service => :cis)
   end
 
   def disconnect(vim)
@@ -320,6 +304,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def parse_content_libraries(api_client, parser)
+    require 'vsphere-automation-content'
+
     library_api      = VSphereAutomation::Content::LibraryApi.new(api_client)
     library_item_api = VSphereAutomation::Content::LibraryItemApi.new(api_client)
 

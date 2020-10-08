@@ -1,11 +1,11 @@
 describe ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate do
+  let(:ems) { FactoryBot.create(:ems_vmware) }
+  let(:resource_pool) { FactoryBot.create(:resource_pool, :ems_ref => 'obj-103') }
+  let(:options) { {:accept_all_EULA => false, :resource_pool_id => resource_pool.id} }
   subject { FactoryBot.create(:orchestration_template_vmware_infra) }
 
   context "#deployment_spec" do
     describe "required fields" do
-      let(:resource_pool) { FactoryBot.create(:resource_pool, :ems_ref => 'obj-103') }
-      let(:options) { {:accept_all_EULA => false, :resource_pool_id => resource_pool.id} }
-
       it "raises an error if accept_all_EULA is absent" do
         options.delete(:accept_all_EULA)
         expect { subject.deployment_spec(options) }.to raise_error(/accept_all_EULA is required for content library item deployment./)
@@ -23,6 +23,22 @@ describe ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate do
         expect(result.dig("deployment_spec", "accept_all_EULA")).to be false
         expect(result.dig("deployment_spec", "name")).to eq(options["vm_name"])
       end
+    end
+  end
+
+  context "#deploy" do
+    before { require 'vsphere-automation-vcenter' }
+
+    it "calls provider#cis_connect" do
+      item_api = double("VSphereAutomation::VCenter::OvfLibraryItemApi")
+      allow(subject).to receive(:ext_management_system).and_return(ems)
+
+      expect(ems).to receive(:cis_connect).once
+      expect(ems).not_to receive(:vim_connect)
+      expect(VSphereAutomation::VCenter::OvfLibraryItemApi).to receive(:new).and_return(item_api)
+      expect(item_api).to receive(:deploy)
+
+      subject.deploy(options)
     end
   end
 end

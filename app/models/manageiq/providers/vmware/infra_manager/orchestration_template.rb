@@ -3,39 +3,18 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
 
   delegate :allowed_resource_pools, :allowed_folders, :allowed_hosts, :to => :workflow_helper
 
+  include ProviderObjectMixin
+
   SPEC_KEY_MAPPING = {
     "resource_pool" => "resource_pool_id",
     "ems_folder"    => "folder_id",
     "host"          => "host_id"
   }.freeze
 
-  def connect
-    require 'vsphere-automation-cis'
-
-    configuration = VSphereAutomation::Configuration.new.tap do |c|
-      c.host = ext_management_system.hostname
-      c.username = ext_management_system.auth_user_pwd.first
-      c.password = ext_management_system.auth_user_pwd.last
-      c.verify_ssl = false
-      c.verify_ssl_host = false
-    end
-
-    api_client = VSphereAutomation::ApiClient.new(configuration)
-    VSphereAutomation::CIS::SessionApi.new(api_client).create('')
-    api_client
-  end
-
-  def with_provider_connection
-    raise _("no block given") unless block_given?
-
-    _log.info("Connecting through #{ext_management_system.class.name}: [#{ext_management_system.name}]")
-    yield connect
-  end
-
   def deploy(options = {})
     require 'vsphere-automation-vcenter'
 
-    with_provider_connection do |api_client|
+    with_provider_connection(:service => :cis) do |api_client|
       request_body = VSphereAutomation::VCenter::VcenterOvfLibraryItemDeploy.new(deployment_spec(options))
       api_instance = VSphereAutomation::VCenter::OvfLibraryItemApi.new(api_client)
       api_instance.deploy(ems_ref, request_body)
