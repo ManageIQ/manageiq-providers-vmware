@@ -18,6 +18,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       config = props[:config]
       return if config.nil?
 
+      vm_hash[:ems_created_on] = config[:createDate]
+
       affinity_set = config.fetch_path(:cpuAffinity, :affinitySet)
 
       cpu_affinity = nil
