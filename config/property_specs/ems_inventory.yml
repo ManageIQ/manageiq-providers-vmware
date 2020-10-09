@@ -1,166 +1,170 @@
 ---
-:ManagedEntity:
-- name
-- parent
-:VirtualMachine:
-- availableField
-- config.cpuAffinity.affinitySet
-- config.cpuHotAddEnabled
-- config.cpuHotRemoveEnabled
-- config.defaultPowerOps.standbyAction
-- config.firmware
-- config.hardware.device
-- config.hardware.numCoresPerSocket
-- config.hotPlugMemoryIncrementSize
-- config.hotPlugMemoryLimit
-- config.memoryHotAddEnabled
-- config.version
-- datastore
-- guest.ipStack
-- guest.net
-- resourceConfig.cpuAllocation.expandableReservation
-- resourceConfig.cpuAllocation.limit
-- resourceConfig.cpuAllocation.reservation
-- resourceConfig.cpuAllocation.shares.level
-- resourceConfig.cpuAllocation.shares.shares
-- resourceConfig.memoryAllocation.expandableReservation
-- resourceConfig.memoryAllocation.limit
-- resourceConfig.memoryAllocation.reservation
-- resourceConfig.memoryAllocation.shares.level
-- resourceConfig.memoryAllocation.shares.shares
-- resourcePool
-- snapshot
-- summary.vm
-- summary.config.annotation
-- summary.config.ftInfo.instanceUuids
-- summary.config.guestFullName
-- summary.config.guestId
-- summary.config.memorySizeMB
-- summary.config.name
-- summary.config.numCpu
-- summary.config.template
-- summary.config.uuid
-- summary.config.vmPathName
-- summary.customValue
-- summary.guest.hostName
-- summary.guest.ipAddress
-- summary.guest.toolsStatus
-- summary.runtime.bootTime
-- summary.runtime.connectionState
-- summary.runtime.host
-- summary.runtime.powerState
-- summary.storage.unshared
-- summary.storage.committed
-:ComputeResource:
-- host
-- resourcePool
-:ClusterComputeResource:
-- configuration.dasConfig.admissionControlPolicy
-- configuration.dasConfig.admissionControlEnabled
-- configuration.dasConfig.enabled
-- configuration.dasConfig.failoverLevel
-- configuration.drsConfig.defaultVmBehavior
-- configuration.drsConfig.enabled
-- configuration.drsConfig.vmotionRate
-- summary.effectiveCpu
-- summary.effectiveMemory
-- host
-- resourcePool
-:ResourcePool:
-- resourcePool
-- summary.config.cpuAllocation.expandableReservation
-- summary.config.cpuAllocation.limit
-- summary.config.cpuAllocation.reservation
-- summary.config.cpuAllocation.shares.level
-- summary.config.cpuAllocation.shares.shares
-- summary.config.memoryAllocation.expandableReservation
-- summary.config.memoryAllocation.limit
-- summary.config.memoryAllocation.reservation
-- summary.config.memoryAllocation.shares.level
-- summary.config.memoryAllocation.shares.shares
-- vm
-:Folder: []
-:Datacenter:
-- datastoreFolder
-- hostFolder
-- networkFolder
-- vmFolder
-:HostSystem:
-- config.adminDisabled
-- config.consoleReservation.serviceConsoleReserved
-- config.hyperThread.active
-- config.network.consoleVnic
-- config.network.dnsConfig.domainName
-- config.network.dnsConfig.hostName
-- config.network.ipRouteConfig.defaultGateway
-- config.network.opaqueNetwork
-- config.network.opaqueSwitch
-- config.network.pnic
-- config.network.portgroup
-- config.network.vnic
-- config.network.vswitch
-- config.service.service
-- datastore
-- hardware.systemInfo.otherIdentifyingInfo
-- summary.host
-- summary.config.name
-- summary.config.product.build
-- summary.config.product.name
-- summary.config.product.osType
-- summary.config.product.vendor
-- summary.config.product.version
-- summary.config.vmotionEnabled
-- summary.hardware.cpuMhz
-- summary.hardware.cpuModel
-- summary.hardware.memorySize
-- summary.hardware.model
-- summary.hardware.numCpuCores
-- summary.hardware.numCpuPkgs
-- summary.hardware.numNics
-- summary.hardware.vendor
-- summary.quickStats.overallCpuUsage
-- summary.quickStats.overallMemoryUsage
-- summary.runtime.connectionState
-- summary.runtime.inMaintenanceMode
-:Datastore:
-- info
-- host
-- capability.directoryHierarchySupported
-- capability.perFileThinProvisioningSupported
-- capability.rawDiskMappingsSupported
-- summary.accessible
-- summary.capacity
-- summary.datastore
-- summary.freeSpace
-- summary.maintenanceMode
-- summary.multipleHostAccess
-- summary.name
-- summary.type
-- summary.uncommitted
-- summary.url
-:StoragePod:
-- summary.capacity
-- summary.freeSpace
-- summary.name
-:DistributedVirtualPortgroup:
-- summary.name
-- config.key
-- config.defaultPortConfig
-- config.distributedVirtualSwitch
-- config.name
-- host
-- tag
-:DistributedVirtualSwitch:
-- config.uplinkPortgroup
-- config.defaultPortConfig
-- config.numPorts
-- summary.name
-- summary.uuid
-- summary.host
-- summary.hostMember
-:LicenseManager:
-- licenses
-:ExtensionManager:
-- extensionList
-:CustomizationSpecManager:
-- info
+base: &base
+  :ManagedEntity:
+  - name
+  - parent
+  :VirtualMachine:
+  - availableField
+  - config.cpuAffinity.affinitySet
+  - config.cpuHotAddEnabled
+  - config.cpuHotRemoveEnabled
+  - config.defaultPowerOps.standbyAction
+  - config.firmware
+  - config.hardware.device
+  - config.hardware.numCoresPerSocket
+  - config.hotPlugMemoryIncrementSize
+  - config.hotPlugMemoryLimit
+  - config.memoryHotAddEnabled
+  - config.version
+  - datastore
+  - guest.ipStack
+  - guest.net
+  - resourceConfig.cpuAllocation.expandableReservation
+  - resourceConfig.cpuAllocation.limit
+  - resourceConfig.cpuAllocation.reservation
+  - resourceConfig.cpuAllocation.shares.level
+  - resourceConfig.cpuAllocation.shares.shares
+  - resourceConfig.memoryAllocation.expandableReservation
+  - resourceConfig.memoryAllocation.limit
+  - resourceConfig.memoryAllocation.reservation
+  - resourceConfig.memoryAllocation.shares.level
+  - resourceConfig.memoryAllocation.shares.shares
+  - resourcePool
+  - snapshot
+  - summary.vm
+  - summary.config.annotation
+  - summary.config.ftInfo.instanceUuids
+  - summary.config.guestFullName
+  - summary.config.guestId
+  - summary.config.memorySizeMB
+  - summary.config.name
+  - summary.config.numCpu
+  - summary.config.template
+  - summary.config.uuid
+  - summary.config.vmPathName
+  - summary.customValue
+  - summary.guest.hostName
+  - summary.guest.ipAddress
+  - summary.guest.toolsStatus
+  - summary.runtime.bootTime
+  - summary.runtime.connectionState
+  - summary.runtime.host
+  - summary.runtime.powerState
+  - summary.storage.unshared
+  - summary.storage.committed
+  :ComputeResource:
+  - host
+  - resourcePool
+  :ClusterComputeResource:
+  - configuration.dasConfig.admissionControlPolicy
+  - configuration.dasConfig.admissionControlEnabled
+  - configuration.dasConfig.enabled
+  - configuration.dasConfig.failoverLevel
+  - configuration.drsConfig.defaultVmBehavior
+  - configuration.drsConfig.enabled
+  - configuration.drsConfig.vmotionRate
+  - summary.effectiveCpu
+  - summary.effectiveMemory
+  - host
+  - resourcePool
+  :ResourcePool:
+  - resourcePool
+  - summary.config.cpuAllocation.expandableReservation
+  - summary.config.cpuAllocation.limit
+  - summary.config.cpuAllocation.reservation
+  - summary.config.cpuAllocation.shares.level
+  - summary.config.cpuAllocation.shares.shares
+  - summary.config.memoryAllocation.expandableReservation
+  - summary.config.memoryAllocation.limit
+  - summary.config.memoryAllocation.reservation
+  - summary.config.memoryAllocation.shares.level
+  - summary.config.memoryAllocation.shares.shares
+  - vm
+  :Folder: []
+  :Datacenter:
+  - datastoreFolder
+  - hostFolder
+  - networkFolder
+  - vmFolder
+  :HostSystem:
+  - config.adminDisabled
+  - config.consoleReservation.serviceConsoleReserved
+  - config.hyperThread.active
+  - config.network.consoleVnic
+  - config.network.dnsConfig.domainName
+  - config.network.dnsConfig.hostName
+  - config.network.ipRouteConfig.defaultGateway
+  - config.network.opaqueNetwork
+  - config.network.opaqueSwitch
+  - config.network.pnic
+  - config.network.portgroup
+  - config.network.vnic
+  - config.network.vswitch
+  - config.service.service
+  - datastore
+  - hardware.systemInfo.otherIdentifyingInfo
+  - summary.host
+  - summary.config.name
+  - summary.config.product.build
+  - summary.config.product.name
+  - summary.config.product.osType
+  - summary.config.product.vendor
+  - summary.config.product.version
+  - summary.config.vmotionEnabled
+  - summary.hardware.cpuMhz
+  - summary.hardware.cpuModel
+  - summary.hardware.memorySize
+  - summary.hardware.model
+  - summary.hardware.numCpuCores
+  - summary.hardware.numCpuPkgs
+  - summary.hardware.numNics
+  - summary.hardware.vendor
+  - summary.quickStats.overallCpuUsage
+  - summary.quickStats.overallMemoryUsage
+  - summary.runtime.connectionState
+  - summary.runtime.inMaintenanceMode
+  :Datastore:
+  - info
+  - host
+  - capability.directoryHierarchySupported
+  - capability.perFileThinProvisioningSupported
+  - capability.rawDiskMappingsSupported
+  - summary.accessible
+  - summary.capacity
+  - summary.datastore
+  - summary.freeSpace
+  - summary.maintenanceMode
+  - summary.multipleHostAccess
+  - summary.name
+  - summary.type
+  - summary.uncommitted
+  - summary.url
+  :StoragePod:
+  - summary.capacity
+  - summary.freeSpace
+  - summary.name
+  :DistributedVirtualPortgroup:
+  - summary.name
+  - config.key
+  - config.defaultPortConfig
+  - config.distributedVirtualSwitch
+  - config.name
+  - host
+  - tag
+  :DistributedVirtualSwitch:
+  - config.uplinkPortgroup
+  - config.defaultPortConfig
+  - config.numPorts
+  - summary.name
+  - summary.uuid
+  - summary.host
+  - summary.hostMember
+  :LicenseManager:
+  - licenses
+  :ExtensionManager:
+  - extensionList
+  :CustomizationSpecManager:
+  - info
+"6.7":
+  :VirtualMachine:
+  - config.createDate
