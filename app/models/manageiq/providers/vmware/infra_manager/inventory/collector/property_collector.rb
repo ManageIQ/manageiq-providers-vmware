@@ -29,8 +29,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     engine_root = ManageIQ::Providers::Vmware::Engine.root
     hash = YAML.load_file(engine_root.join("config", "property_specs", "#{file_name}.yml"))
 
+    major_minor_version = api_version.split(".").take(2).join(".")
+
     prop_set = hash["base"]
-    prop_set = merge_prop_set!(prop_set, hash[api_version]) if hash.key?(api_version)
+    prop_set = merge_prop_set!(prop_set, hash[major_minor_version]) if hash.key?(major_minor_version)
 
     prop_set.collect do |type, props|
       RbVmomi::VIM.PropertySpec(
