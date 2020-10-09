@@ -30,7 +30,11 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfServiceTemplate < ServiceTem
   end
 
   def self.validate_config_info(info)
-    info[:provision][:fqname] ||= default_provisioning_entry_point(SERVICE_TYPE_ATOMIC) if info.key?(:provision)
+    raise ArgumentError, _(":provision section is missing from :config_info in options hash.") if info[:provision].blank?
+    raise ArgumentError, _("Resource pool is required for content library item deployment.") if info.dig(:provision, :resource_pool_id).blank?
+
+    info[:provision][:fqname] ||= default_provisioning_entry_point(SERVICE_TYPE_ATOMIC)
+    info[:provision][:accept_all_eula] ||= false
 
     # TODO: Add more validation for required fields
     info
@@ -51,7 +55,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfServiceTemplate < ServiceTem
     @manager ||= ovf_template.try(:ext_management_system)
   end
 
-  def update_catalog_item(options)
+  def update_catalog_item(options, _auth_user = nil)
     config_info = validate_update_config_info(options)
     config_info[:provision][:configuration_template] ||= ovf_template_from_config_info(config_info) if config_info.key?(:provision)
     options[:config_info] = config_info

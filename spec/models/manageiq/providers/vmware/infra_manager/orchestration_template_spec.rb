@@ -1,14 +1,14 @@
 describe ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate do
   let(:ems) { FactoryBot.create(:ems_vmware) }
   let(:resource_pool) { FactoryBot.create(:resource_pool, :ems_ref => 'obj-103') }
-  let(:options) { {:accept_all_EULA => false, :resource_pool_id => resource_pool.id} }
+  let(:options) { {:accept_all_eula => false, :resource_pool_id => resource_pool.id} }
   subject { FactoryBot.create(:orchestration_template_vmware_infra) }
 
   context "#deployment_spec" do
     describe "required fields" do
-      it "raises an error if accept_all_EULA is absent" do
-        options.delete(:accept_all_EULA)
-        expect { subject.deployment_spec(options) }.to raise_error(/accept_all_EULA is required for content library item deployment./)
+      it "raises an error if accept_all_eula is absent" do
+        options.delete(:accept_all_eula)
+        expect { subject.deployment_spec(options) }.to raise_error(/accept_all_eula is required for content library item deployment./)
       end
 
       it "raises an error if resource pool is absent" do
