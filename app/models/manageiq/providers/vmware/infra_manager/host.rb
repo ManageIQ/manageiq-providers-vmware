@@ -2,6 +2,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
   include ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
 
+  def connect(options = {})
+    vim_connect(options)
+  end
+
   def provider_object(connection)
     api_type = connection.about["apiType"]
     mor =

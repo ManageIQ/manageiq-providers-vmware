@@ -28,6 +28,7 @@ module ManageIQ::Providers
     require_nested :Vm
 
     include VimConnectMixin
+    include CisConnectMixin
 
     before_save :stop_event_monitor_queue_on_change
     before_destroy :stop_event_monitor
@@ -680,9 +681,14 @@ module ManageIQ::Providers
         get_files_on_datastore(datastore), datastore.vm_ids_by_path)
       EmsRefresh.save_storage_files_inventory(datastore, hashes)
     end
-  end
 
-  def self.display_name(number = 1)
-    n_('Infrastructure Provider (VMware)', 'Infrastructure Providers (VMware)', number)
+    def connect(options = {})
+      service = options[:service] || 'vim'
+      send("#{service}_connect", options)
+    end
+
+    def self.display_name(number = 1)
+      n_('Infrastructure Provider (VMware)', 'Infrastructure Providers (VMware)', number)
+    end
   end
 end
