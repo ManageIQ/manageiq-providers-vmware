@@ -397,6 +397,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def parse_content_library_item(library_item)
+    return unless library_item.type == 'ovf'
+
     props = {
       :ems_ref     => library_item.id,
       :name        => library_item.name,
