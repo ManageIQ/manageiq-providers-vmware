@@ -24,9 +24,9 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
   def deployment_spec(opts)
     opts = opts.with_indifferent_access
     raise _("Resource pool is required for content library item deployment.") if opts[:resource_pool_id].blank?
-    raise _("accept_all_EULA is required for content library item deployment.") if opts[:accept_all_EULA].nil?
+    raise _("accept_all_eula is required for content library item deployment.") if opts[:accept_all_eula].nil?
 
-    spec = {"accept_all_EULA" => opts[:accept_all_EULA]}
+    spec = {"accept_all_EULA" => opts[:accept_all_eula]}
     spec["name"] = opts[:vm_name] if opts[:vm_name].present?
 
     target = {}
@@ -43,6 +43,16 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
 
   def workflow_helper
     @workflow_helper ||= MiqProvisionOrchWorkflow.new({:src_vm_id => [id]}, User.current_user, :skip_dialog_load => true, :initial_pass => true)
+  end
+
+  def target_name_valid?(name, ems_folder_id = nil)
+    # TODO: need a way to tell the ovf template is for VM template (where target is a VM) or vApp template (where target is a resource pool with VMs)
+    folder = EmsFolder.find_by(:id => ems_folder_id)
+    if folder
+      folder.vms.none? { |vm| vm.name == name }
+    else
+      !ext_management_system.vms.where(:name => name).exists?
+    end
   end
 
   def unique_md5?

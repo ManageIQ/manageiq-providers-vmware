@@ -1,6 +1,14 @@
 class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
   delegate :ovf_template, :manager, :to => :service_template, :allow_nil => true
 
+  CONFIG_OPTIONS_WHITELIST = %i[
+    accept_all_eula
+    ems_folder_id
+    host_id
+    resource_pool_id
+    vm_name
+  ].freeze
+
   # A chance for taking options from automate script to override options from a service dialog
   def preprocess(action, new_options = {})
     return unless action == ResourceAction::PROVISION
@@ -109,27 +117,29 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
   def save_action_options(action, overrides)
     return unless action == ResourceAction::PROVISION
 
-    action_options = options.fetch_path(:config_info, action.downcase.to_sym).with_indifferent_access
-    %w[resource_pool ems_folder host].each do |r|
-      next if action_options[r].blank?
-
-      action_options["#{r}_id"] = action_options.delete(r).split.first.to_i
-    end
-
+    action_options = options.fetch_path(:config_info, action.downcase.to_sym).slice(*CONFIG_OPTIONS_WHITELIST).with_indifferent_access
     action_options.deep_merge!(parse_dialog_options)
     action_options.deep_merge!(overrides)
+    validate_target_name(action_options)
 
     options[action_option_key(action)] = action_options
     save!
   end
 
+  def validate_target_name(options)
+    unless ovf_template.target_name_valid?(options[:vm_name], options[:ems_folder_id])
+      _log.warn("A target with name [#{options[:vm_name]}] already exists.")
+      options[:vm_name] = "#{options[:vm_name]}_#{Time.zone.now.iso8601(6)}"
+      _log.warn("Target name has been changed to [#{options[:vm_name]}]")
+    end
+  end
+
   def parse_dialog_options
     dialog_options = options[:dialog] || {}
-    options = {:vm_name => dialog_options['dialog_vm_name']}
-    options[:accept_all_EULA] = dialog_options['dialog_accept_all_EULA'] == 't'
+    options = {}
 
-    %w[resource_pool ems_folder host storage].each do |r|
-      options["#{r}_id"] = dialog_options["dialog_#{r}"].split.first.to_i if dialog_options["dialog_#{r}"].present?
+    %w[vm_name resource_pool_id ems_folder_id host_id].each do |r|
+      options[r] = dialog_options["dialog_#{r}"] if dialog_options["dialog_#{r}"].present?
     end
     options
   end
