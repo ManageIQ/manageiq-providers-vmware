@@ -184,23 +184,26 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
       context "reconnecting a virtual machine" do
         let!(:vm)     { FactoryBot.create(:vm_vmware, :ems_ref => ems_ref, :uid_ems => uid_ems) }
-        let(:ems_ref) { "vm-999" }
+        let(:ems_ref) { "vm-456" }
         let(:uid_ems) { "7cb139af-20fb-4fc7-9195-0d3fbd32fe73" }
 
         context "with the same ems_ref" do
-          it "reconnects the virtual machine" do
+          let(:ems_ref) { "vm-999" }
+
+          it "reconnects the virtual machine and doesn't creating a new one" do
+            num_vms = VmOrTemplate.count
+
             run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
 
             vm.reload
 
             expect(vm.archived?).to be_falsy
             expect(vm.ext_management_system).to eq(ems)
+            expect(VmOrTemplate.count).to eq(num_vms)
           end
         end
 
         context "with a different ems_ref" do
-          let(:ems_ref) { "vm-456" }
-
           it "reconnects the virtual machine" do
             run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
 
