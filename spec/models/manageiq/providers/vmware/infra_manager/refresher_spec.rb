@@ -177,6 +177,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(vm.reload.archived?).to be_truthy
       end
 
+      it "create a virtual machine" do
+        run_targeted_refresh(targeted_update_set([vm_create_object_update]))
+        expect(ems.vms.pluck(:ems_ref)).to include("vm-999")
+      end
+
       context "reconnecting a virtual machine" do
         let!(:vm)     { FactoryBot.create(:vm_vmware, :ems_ref => ems_ref, :uid_ems => uid_ems) }
         let(:ems_ref) { "vm-999" }
@@ -184,7 +189,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
         context "with the same ems_ref" do
           it "reconnects the virtual machine" do
-            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
 
             vm.reload
 
@@ -197,7 +202,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           let(:ems_ref) { "vm-456" }
 
           it "reconnects the virtual machine" do
-            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
 
             vm.reload
 
@@ -210,14 +215,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           let!(:other_vm) { FactoryBot.create(:vm_vmware, :ems_ref => "vm-789", :uid_ems => uid_ems) }
 
           it "reconnects the older vm" do
-            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
 
             expect(vm.reload.ext_management_system).to eq(ems)
             expect(other_vm.reload.ext_management_system).to be_nil
           end
 
           it "and two new vms with the same uuids" do
-            update_set = ["vm-999", "vm-456"].map { |ems_ref| vm_reconnect_object_update(ems_ref) }
+            update_set = ["vm-999", "vm-456"].map { |ems_ref| vm_create_object_update(:ems_ref => ems_ref, :uuid => uid_ems) }
             run_targeted_refresh(targeted_update_set(update_set))
 
             expect(vm.reload.ext_management_system).to eq(ems)
@@ -475,15 +480,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         ]
       end
 
-      def vm_reconnect_object_update(vm_ems_ref = "vm-999")
+      def vm_create_object_update(ems_ref: "vm-999", uuid: SecureRandom.uuid, name: "new-vm")
         RbVmomi::VIM.ObjectUpdate(
           :kind       => "enter",
-          :obj        => RbVmomi::VIM.VirtualMachine(vim, vm_ems_ref),
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, ems_ref),
           :changeSet  => [
             RbVmomi::VIM.PropertyChange(
               :name => "name",
               :op   => "assign",
-              :val  => "reconnected-vm"
+              :val  => name
             ),
             RbVmomi::VIM.PropertyChange(
               :name => "config.version",
@@ -493,7 +498,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             RbVmomi::VIM.PropertyChange(
               :name => "config.uuid",
               :op   => "assign",
-              :val  => "7cb139af-20fb-4fc7-9195-0d3fbd32fe73"
+              :val  => uuid
             ),
             RbVmomi::VIM.PropertyChange(
               :name => "summary.config.name",
@@ -503,7 +508,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             RbVmomi::VIM.PropertyChange(
               :name => "summary.config.uuid",
               :op   => "assign",
-              :val  => "7cb139af-20fb-4fc7-9195-0d3fbd32fe73"
+              :val  => uuid
             ),
             RbVmomi::VIM.PropertyChange(
               :name => "summary.config.vmPathName",
