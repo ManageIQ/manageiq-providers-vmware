@@ -211,6 +211,16 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           end
         end
 
+        context "with a vm with the same uuid in a different active ems" do
+          let(:other_ems) { FactoryBot.create(:ems_vmware) }
+          let!(:other_vm) { FactoryBot.create(:vm_vmware, :ext_management_system => other_ems, :ems_ref => ems_ref, :uid_ems => uid_ems) }
+
+          it "creates a new record and doesn't steal the other vm" do
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
+            expect(other_vm.reload.ext_management_system).to eq(other_ems)
+          end
+        end
+
         context "two vms with duplicate uuids" do
           let!(:other_vm) { FactoryBot.create(:vm_vmware, :ems_ref => "vm-789", :uid_ems => uid_ems) }
 
