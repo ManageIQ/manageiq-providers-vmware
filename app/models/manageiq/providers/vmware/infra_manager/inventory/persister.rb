@@ -40,7 +40,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :storage_profiles)
     add_collection(infra, :storage_profile_storages)
     add_collection(infra, :parent_blue_folders)
-    add_collection(infra, :vms_and_templates, &:vm_template_shared)
+    add_collection(infra, :vms_and_templates) do |builder|
+      builder.vm_template_shared
+      builder.add_properties(:custom_reconnect_block => vms_and_templates_reconnect_block)
+    end
     add_collection(infra, :vm_parent_blue_folders)
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
@@ -79,6 +82,33 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vms_and_templates_assign_created_on, {}, settings) do |builder|
       builder.add_custom_save_block(custom_save_block)
       builder.add_dependency_attributes(:vms_and_templates => ->(persister) { [persister.vms_and_templates] })
+    end
+  end
+
+  def vms_and_templates_reconnect_block
+    lambda do |inventory_collection, inventory_objects_index, attributes_index|
+      relation = inventory_collection.model_class.where(:ems_id => nil)
+      return if relation.count <= 0
+
+      vms_by_uid_ems = inventory_objects_index.values.group_by(&:uid_ems).except(nil)
+      vms_by_uid_ems.each_slice(100) do |batch|
+        vm_uids = batch.map(&:first).compact
+        relation.where(:uid_ems => vm_uids).order(:id => :asc).each do |record|
+          inventory_object = vms_by_uid_ems[record.uid_ems].shift
+          hash             = attributes_index.delete(inventory_object.ems_ref)
+
+          # Skip if hash is blank, which can happen when having several archived entities with the same ref
+          next unless hash
+
+          record.assign_attributes(hash.except(:id, :type))
+          if !inventory_collection.check_changed? || record.changed?
+            record.save!
+            inventory_collection.store_updated_records(record)
+          end
+
+          inventory_object.id = record.id
+        end
+      end
     end
   end
 end

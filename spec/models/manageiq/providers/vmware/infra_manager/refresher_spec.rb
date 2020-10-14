@@ -177,6 +177,36 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(vm.reload.archived?).to be_truthy
       end
 
+      context "reconnecting a virtual machine" do
+        let!(:vm)     { FactoryBot.create(:vm_vmware, :ems_ref => ems_ref, :uid_ems => uid_ems) }
+        let(:ems_ref) { "vm-999" }
+        let(:uid_ems) { "7cb139af-20fb-4fc7-9195-0d3fbd32fe73" }
+
+        context "with the same ems_ref" do
+          it "reconnects the virtual machine" do
+            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+
+            vm.reload
+
+            expect(vm.archived?).to be_falsy
+            expect(vm.ext_management_system).to eq(ems)
+          end
+        end
+
+        context "with a different ems_ref" do
+          let(:ems_ref) { "vm-456" }
+
+          it "reconnects the virtual machine" do
+            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+
+            vm.reload
+
+            expect(vm.archived?).to be_falsy
+            expect(vm.ext_management_system).to eq(ems)
+          end
+        end
+      end
+
       it "moving a vm to a new folder and resource-pool" do
         vm = ems.vms.find_by(:ems_ref => "vm-107")
 
@@ -424,6 +454,46 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             :missingSet => []
           ),
         ]
+      end
+
+      def vm_reconnect_object_update
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "enter",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-999"),
+          :changeSet  => [
+            RbVmomi::VIM.PropertyChange(
+              :name => "name",
+              :op   => "assign",
+              :val  => "reconnected-vm"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.version",
+              :op   => "assign",
+              :val  => "7"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.uuid",
+              :op   => "assign",
+              :val  => "7cb139af-20fb-4fc7-9195-0d3fbd32fe73"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.name",
+              :op   => "assign",
+              :val  => "reconnected-vm"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.uuid",
+              :op   => "assign",
+              :val  => "7cb139af-20fb-4fc7-9195-0d3fbd32fe73"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.vmPathName",
+              :op   => "assign",
+              :val  => "[GlobalDS_0] vm/vm.vmx"
+            ),
+          ],
+          :missingSet => []
+        )
       end
 
       def vm_new_folder_object_updates
