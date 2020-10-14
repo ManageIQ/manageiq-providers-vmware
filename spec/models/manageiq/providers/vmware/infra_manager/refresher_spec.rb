@@ -205,6 +205,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             expect(vm.ext_management_system).to eq(ems)
           end
         end
+
+        context "two vms with duplicate uuids" do
+          let!(:other_vm) { FactoryBot.create(:vm_vmware, :ems_ref => "vm-789", :uid_ems => uid_ems) }
+
+          it "reconnects the older vm" do
+            run_targeted_refresh(targeted_update_set([vm_reconnect_object_update]))
+
+            expect(vm.reload.ext_management_system).to eq(ems)
+            expect(other_vm.reload.ext_management_system).to be_nil
+          end
+
+          it "and two new vms with the same uuids" do
+            update_set = ["vm-999", "vm-456"].map { |ems_ref| vm_reconnect_object_update(ems_ref) }
+            run_targeted_refresh(targeted_update_set(update_set))
+
+            expect(vm.reload.ext_management_system).to eq(ems)
+            expect(other_vm.reload.ext_management_system).to eq(ems)
+          end
+        end
       end
 
       it "moving a vm to a new folder and resource-pool" do
@@ -456,10 +475,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         ]
       end
 
-      def vm_reconnect_object_update
+      def vm_reconnect_object_update(vm_ems_ref = "vm-999")
         RbVmomi::VIM.ObjectUpdate(
           :kind       => "enter",
-          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-999"),
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, vm_ems_ref),
           :changeSet  => [
             RbVmomi::VIM.PropertyChange(
               :name => "name",
