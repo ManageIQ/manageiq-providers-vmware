@@ -91,24 +91,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       return if relation.count <= 0
 
       vms_by_uid_ems = inventory_objects_index.values.group_by(&:uid_ems).except(nil)
-      vms_by_uid_ems.each_slice(100) do |batch|
-        vm_uids = batch.map(&:first).compact
-        relation.where(:uid_ems => vm_uids).order(:id => :asc).each do |record|
-          inventory_object = vms_by_uid_ems[record.uid_ems].shift
-          hash             = attributes_index.delete(inventory_object.ems_ref)
-          inventory_objects_index.delete(inventory_object.ems_ref)
+      relation.where(:uid_ems => vms_by_uid_ems.keys).order(:id => :asc).find_each(:batch_size => 100).each do |record|
+        inventory_object = vms_by_uid_ems[record.uid_ems].shift
+        hash             = attributes_index.delete(inventory_object.ems_ref)
+        inventory_objects_index.delete(inventory_object.ems_ref)
 
-          # Skip if hash is blank, which can happen when having several archived entities with the same ref
-          next unless hash
+        # Skip if hash is blank, which can happen when having several archived entities with the same ref
+        next unless hash
 
-          record.assign_attributes(hash.except(:id, :type))
-          if !inventory_collection.check_changed? || record.changed?
-            record.save!
-            inventory_collection.store_updated_records(record)
-          end
-
-          inventory_object.id = record.id
+        record.assign_attributes(hash.except(:id, :type))
+        if !inventory_collection.check_changed? || record.changed?
+          record.save!
+          inventory_collection.store_updated_records(record)
         end
+
+        inventory_object.id = record.id
       end
     end
   end
