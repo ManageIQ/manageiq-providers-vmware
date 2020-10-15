@@ -96,6 +96,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
         relation.where(:uid_ems => vm_uids).order(:id => :asc).each do |record|
           inventory_object = vms_by_uid_ems[record.uid_ems].shift
           hash             = attributes_index.delete(inventory_object.ems_ref)
+          inventory_objects_index.delete(inventory_object.ems_ref)
 
           # Skip if hash is blank, which can happen when having several archived entities with the same ref
           next unless hash
