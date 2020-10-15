@@ -224,6 +224,19 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           end
         end
 
+        context "with a vm with the same uuid in the current ems" do
+          let(:uid_ems) { "420f40d6-29c2-a569-9299-457167e88bb0" }
+
+          it "doesn't pick the archived VM over the active one" do
+            active_vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+            run_targeted_refresh(targeted_update_set([vm_update_object_update(:ems_ref => "vm-107")]))
+
+            expect(active_vm.reload.ext_management_system).to eq(ems)
+            expect(vm.reload).to be_archived
+          end
+        end
+
         context "two vms with duplicate uuids" do
           let!(:other_vm) { FactoryBot.create(:vm_vmware, :ems_ref => "vm-789", :uid_ems => uid_ems) }
 
@@ -529,6 +542,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
               :val  => "[GlobalDS_0] vm/vm.vmx"
             ),
           ],
+          :missingSet => []
+        )
+      end
+
+      def vm_update_object_update(ems_ref:)
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, ems_ref),
+          :changeSet  => [],
           :missingSet => []
         )
       end
