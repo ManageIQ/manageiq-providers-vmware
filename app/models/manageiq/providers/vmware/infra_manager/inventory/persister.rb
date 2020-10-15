@@ -18,7 +18,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :ext_management_system)
     add_collection(infra, :guest_devices, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :hardwares, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :hosts)
+    add_collection(infra, :hosts) do |builder|
+      builder.add_properties(:custom_reconnect_block => hosts_reconnect_block)
+    end
     add_collection(infra, :host_hardwares)
     add_collection(infra, :host_guest_devices)
     add_collection(infra, :host_networks)
@@ -82,6 +84,38 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vms_and_templates_assign_created_on, {}, settings) do |builder|
       builder.add_custom_save_block(custom_save_block)
       builder.add_dependency_attributes(:vms_and_templates => ->(persister) { [persister.vms_and_templates] })
+    end
+  end
+
+  def hosts_reconnect_block
+    lambda do |inventory_collection, inventory_objects_index, attributes_index|
+      relation = inventory_collection.model_class.where(:ems_id => nil)
+      return if relation.count <= 0
+
+      inventory_objects_index.each do |ref, obj|
+        hostname = obj.hostname
+        ipaddr   = obj.ipaddress
+
+        if ["localhost", "localhost.localdomain", "127.0.0.1"].include_none?(hostname, ipaddr)
+          record   = relation.where("lower(hostname) = ?", hostname.downcase).find_by(:ipaddress => ipaddr) if hostname && ipaddr
+          record ||= relation.find_by("lower(hostname) = ?", hostname.downcase)                             if hostname
+          record ||= relation.find_by(:ipaddress => ipaddr)                                                 if ipaddr
+          record ||= relation.find_by("lower(hostname) LIKE ?", "#{hostname.downcase}.%")                   if hostname
+        end
+
+        next if record.nil?
+
+        inventory_objects_index.delete(ref)
+        hash = attributes_index.delete(ref)
+
+        record.assign_attributes(hash.except(:id, :type))
+        if !inventory_collection.check_changed? || record.changed?
+          record.save!
+          inventory_collection.store_updated_records(record)
+        end
+
+        inventory_object.id = record.id
+      end
     end
   end
 

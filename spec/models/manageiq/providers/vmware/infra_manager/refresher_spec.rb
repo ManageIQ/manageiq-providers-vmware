@@ -395,6 +395,44 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(Host.find_by(:ems_ref => "host-41")).to be_archived
       end
 
+      context "reconnecting a host" do
+        let!(:host)       { FactoryBot.create(:host_vmware, :hostname => hostname, :ipaddress => ipaddress) }
+        let(:host_system) { RbVmomi::VIM.HostSystem(vim, ems_ref) }
+        let(:ems_ref)     { "host-999" }
+        let(:hostname)    { nil }
+        let(:ipaddress)   { nil }
+
+        before { host_config_storage_device_stub(host_system) }
+
+        context "with a hostname" do
+          let(:hostname) { "myhost.example.com" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+
+        context "with an IP address" do
+          let(:ipaddress) { "1.2.3.4" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+
+        context "with a hostname and IP address" do
+          let(:hostname)  { "myhost.example.com" }
+          let(:ipaddress) { "1.2.3.4" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(collector, persister)
@@ -858,6 +896,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :kind       => "modify",
         :obj        => obj,
         :changeSet  => [],
+        :missingSet => []
+      )
+    end
+
+    def host_create_object_update(host)
+      RbVmomi::VIM.ObjectUpdate(
+        :kind       => "enter",
+        :obj        => host,
+        :changeSet  => [
+          RbVmomi::VIM.PropertyChange(:name => "config.network.dnsConfig", :op => "assign", :val => {:domainName => "example.com", :hostName => "myhost"}),
+          RbVmomi::VIM.PropertyChange(:name => "config.network.ipRouteConfig.defaultGateway", :op => "assign", :val => "1.2.3.255"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.config.product", :op => "assign", :val => {:build => "5.0.0.19", :name => "VMware ESX", :osType => "vmnix-x86", :vendor => "VMware, Inc.", :version => "5.0.0"}),
+          RbVmomi::VIM.PropertyChange(
+            :name => "config.network.vnic",
+            :op   => "assign",
+            :val  => [
+              RbVmomi::VIM::HostVirtualNic(
+                :spec => RbVmomi::VIM::HostVirtualNicSpec(
+                  :ip => RbVmomi::VIM::HostIpConfig(:ipAddress => "1.2.3.4", :subnetMask => "255.255.255.0")
+                )
+              )
+            ]
+          )
+        ],
         :missingSet => []
       )
     end
