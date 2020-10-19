@@ -309,9 +309,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     library_api      = VSphereAutomation::Content::LibraryApi.new(api_client)
     library_item_api = VSphereAutomation::Content::LibraryItemApi.new(api_client)
 
-    library_api.list.value.each do |lib_id|
-      library_item_api.list(lib_id).value.each do |item_id|
-        parser.parse_content_library_item(library_item_api.get(item_id).value)
+    library_ids = library_api.list&.value.to_a
+    library_ids.each do |lib_id|
+      library_item_ids = library_item_api.list(lib_id)&.value.to_a
+      library_item_ids.to_a.each do |item_id|
+        library_item = library_item_api.get(item_id)&.value
+        parser.parse_content_library_item(library_item) if library_item
       end
     end
   rescue VSphereAutomation::ApiError
@@ -323,11 +326,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
     tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
 
-    category_ids     = tagging_category_api.list.value.to_a
-    tag_ids          = tagging_tag_api.list.value.to_a
+    category_ids     = tagging_category_api.list&.value
+    tag_ids          = tagging_tag_api.list&.value
 
-    categories       = category_ids.map { |category_id| tagging_category_api.get(category_id).value }
-    tags             = tag_ids.map { |tag_id| tagging_tag_api.get(tag_id).value }
+    categories       = category_ids.to_a.map { |category_id| tagging_category_api.get(category_id)&.value }.compact
+    tags             = tag_ids.to_a.map { |tag_id| tagging_tag_api.get(tag_id)&.value }.compact
 
     self.categories_by_id = categories.index_by(&:id)
     self.tags_by_id       = tags.index_by(&:id)
@@ -335,7 +338,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     self.tag_ids_by_attached_object = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = [] } }
 
     tags.each do |tag|
-      tagging_tag_association_api.list_attached_objects(tag.id).value.to_a.each do |obj|
+      tagging_tag_association_api.list_attached_objects(tag.id)&.value.to_a.each do |obj|
         tag_ids_by_attached_object[obj.type][obj.id] << tag.id
       end
     end
