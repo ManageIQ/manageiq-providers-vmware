@@ -778,8 +778,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       expect(ems.vms_and_templates.count).to eq(64)
       expect(ems.switches.count).to eq(18)
       expect(ems.lans.count).to eq(36)
-      expect(ems.ems_extensions.count).to eq(12)
-      expect(ems.ems_licenses.count).to eq(3)
+      expect(ems.ems_extensions.count).to eq(0)
+      expect(ems.ems_licenses.count).to eq(0)
       expect(ems.networks.count).to eq(48)
     end
 

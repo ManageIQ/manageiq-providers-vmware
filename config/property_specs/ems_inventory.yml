@@ -159,10 +159,6 @@ base: &base
   - summary.uuid
   - summary.host
   - summary.hostMember
-  :LicenseManager:
-  - licenses
-  :ExtensionManager:
-  - extensionList
   :CustomizationSpecManager:
   - info
 "6.7":
