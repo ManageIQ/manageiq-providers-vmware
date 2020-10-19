@@ -224,11 +224,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_license_manager(_object, kind, props)
     return if kind == "leave"
 
+    require "digest"
     props[:licenses].to_a.each do |license|
+      uid = Digest::SHA1.hexdigest(license.licenseKey)
+
       persister.ems_licenses.build(
-        :ems_ref         => license.licenseKey,
+        :ems_ref         => uid,
         :name            => license.name,
-        :license_key     => license.licenseKey,
         :license_edition => license.editionKey,
         :total_licenses  => license.total,
         :used_licenses   => license.used
