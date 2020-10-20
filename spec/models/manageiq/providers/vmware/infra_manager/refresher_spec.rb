@@ -177,6 +177,86 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(vm.reload.archived?).to be_truthy
       end
 
+      it "create a virtual machine" do
+        run_targeted_refresh(targeted_update_set([vm_create_object_update]))
+        expect(ems.vms.pluck(:ems_ref)).to include("vm-999")
+      end
+
+      context "reconnecting a virtual machine" do
+        let!(:vm)     { FactoryBot.create(:vm_vmware, :ems_ref => ems_ref, :uid_ems => uid_ems) }
+        let(:ems_ref) { "vm-456" }
+        let(:uid_ems) { "7cb139af-20fb-4fc7-9195-0d3fbd32fe73" }
+
+        context "with the same ems_ref" do
+          let(:ems_ref) { "vm-999" }
+
+          it "reconnects the virtual machine and doesn't creating a new one" do
+            num_vms = VmOrTemplate.count
+
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
+
+            vm.reload
+
+            expect(vm.archived?).to be_falsy
+            expect(vm.ext_management_system).to eq(ems)
+            expect(VmOrTemplate.count).to eq(num_vms)
+          end
+        end
+
+        context "with a different ems_ref" do
+          it "reconnects the virtual machine" do
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
+
+            vm.reload
+
+            expect(vm.archived?).to be_falsy
+            expect(vm.ext_management_system).to eq(ems)
+          end
+        end
+
+        context "with a vm with the same uuid in a different active ems" do
+          let(:other_ems) { FactoryBot.create(:ems_vmware) }
+          let!(:other_vm) { FactoryBot.create(:vm_vmware, :ext_management_system => other_ems, :ems_ref => ems_ref, :uid_ems => uid_ems) }
+
+          it "creates a new record and doesn't steal the other vm" do
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
+            expect(other_vm.reload.ext_management_system).to eq(other_ems)
+          end
+        end
+
+        context "with a vm with the same uuid in the current ems" do
+          let(:uid_ems) { "420f40d6-29c2-a569-9299-457167e88bb0" }
+
+          it "doesn't pick the archived VM over the active one" do
+            active_vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+            run_targeted_refresh(targeted_update_set([vm_update_object_update(:ems_ref => "vm-107")]))
+
+            expect(active_vm.reload.ext_management_system).to eq(ems)
+            expect(vm.reload).to be_archived
+          end
+        end
+
+        context "two vms with duplicate uuids" do
+          let!(:other_vm) { FactoryBot.create(:vm_vmware, :ems_ref => "vm-789", :uid_ems => uid_ems) }
+
+          it "reconnects the older vm" do
+            run_targeted_refresh(targeted_update_set([vm_create_object_update(:uuid => uid_ems)]))
+
+            expect(vm.reload.ext_management_system).to eq(ems)
+            expect(other_vm.reload.ext_management_system).to be_nil
+          end
+
+          it "and two new vms with the same uuids" do
+            update_set = ["vm-999", "vm-456"].map { |ems_ref| vm_create_object_update(:ems_ref => ems_ref, :uuid => uid_ems) }
+            run_targeted_refresh(targeted_update_set(update_set))
+
+            expect(vm.reload.ext_management_system).to eq(ems)
+            expect(other_vm.reload.ext_management_system).to eq(ems)
+          end
+        end
+      end
+
       it "moving a vm to a new folder and resource-pool" do
         vm = ems.vms.find_by(:ems_ref => "vm-107")
 
@@ -424,6 +504,55 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             :missingSet => []
           ),
         ]
+      end
+
+      def vm_create_object_update(ems_ref: "vm-999", uuid: SecureRandom.uuid, name: "new-vm")
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "enter",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, ems_ref),
+          :changeSet  => [
+            RbVmomi::VIM.PropertyChange(
+              :name => "name",
+              :op   => "assign",
+              :val  => name
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.version",
+              :op   => "assign",
+              :val  => "7"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.uuid",
+              :op   => "assign",
+              :val  => uuid
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.name",
+              :op   => "assign",
+              :val  => "reconnected-vm"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.uuid",
+              :op   => "assign",
+              :val  => uuid
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.vmPathName",
+              :op   => "assign",
+              :val  => "[GlobalDS_0] vm/vm.vmx"
+            ),
+          ],
+          :missingSet => []
+        )
+      end
+
+      def vm_update_object_update(ems_ref:)
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, ems_ref),
+          :changeSet  => [],
+          :missingSet => []
+        )
       end
 
       def vm_new_folder_object_updates
