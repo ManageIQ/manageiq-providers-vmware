@@ -217,7 +217,7 @@ module ManageIQ::Providers
     end
 
     def self.catalog_types
-      {"vmware" => N_("VMware"), "generic_ovf_template" => N_("VMware Content Libary OVF Template")}
+      {"vmware" => N_("VMware"), "generic_ovf_template" => N_("VMware Content Library OVF Template")}
     end
 
     def streaming_refresh_enabled?
