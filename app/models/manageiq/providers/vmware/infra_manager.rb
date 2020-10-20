@@ -671,16 +671,22 @@ module ManageIQ::Providers
 
       # Of the VMs without a VM create time, filter out the ones for which we
       #   already have a VM create event
+      events = EmsEvent
+        .where(
+          :vm_or_template_id => vms_to_update.map(&:id),
+          :event_type        => ["VmCreatedEvent", "VmDeployedEvent"]
+        )
+        .group_by(&:vm_or_template_id)
+
       vms_to_update = vms_to_update.reject do |v|
-        event = v.ems_events.find_by(:event_type => ["VmCreatedEvent", "VmDeployedEvent"])
-        v.update_attribute(:ems_created_on, event.timestamp) if event && v.ems_created_on != event.timestamp
-        event
+        events[v.id].tap do |event|
+          v.update_attribute(:ems_created_on, event.timestamp) if event && v.ems_created_on != event.timestamp
+        end
       end
       return if vms_to_update.empty?
 
       # Of the VMs still without an VM create time, use historical events, if
       #   available, to determine the VM create time
-
       vms_list = vms_to_update.collect { |v| {:id => v.id, :name => v.name, :uid_ems => v.uid_ems} }
       found = find_vm_create_events(vms_list)
 
