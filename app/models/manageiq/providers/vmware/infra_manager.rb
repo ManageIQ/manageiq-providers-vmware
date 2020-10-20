@@ -654,6 +654,43 @@ module ManageIQ::Providers
       found
     end
 
+    def assign_ems_created_on_queue(vm_ids)
+      MiqQueue.submit_job(
+        :class_name  => self.class.name,
+        :instance_id => id,
+        :method_name => 'assign_ems_created_on',
+        :role        => 'ems_operations',
+        :args        => [vm_ids],
+        :priority    => MiqQueue::MIN_PRIORITY
+      )
+    end
+
+    def assign_ems_created_on(vm_ids)
+      vms_to_update = vms_and_templates.where(:id => vm_ids, :ems_created_on => nil)
+      return if vms_to_update.empty?
+
+      # Of the VMs without a VM create time, filter out the ones for which we
+      #   already have a VM create event
+      vms_to_update = vms_to_update.reject do |v|
+        event = v.ems_events.find_by(:event_type => ["VmCreatedEvent", "VmDeployedEvent"])
+        v.update_attribute(:ems_created_on, event.timestamp) if event && v.ems_created_on != event.timestamp
+        event
+      end
+      return if vms_to_update.empty?
+
+      # Of the VMs still without an VM create time, use historical events, if
+      #   available, to determine the VM create time
+
+      vms_list = vms_to_update.collect { |v| {:id => v.id, :name => v.name, :uid_ems => v.uid_ems} }
+      found = find_vm_create_events(vms_list)
+
+      # Loop through the found VMs and set their create times
+      found.each do |vmh|
+        v = vms_to_update.detect { |vm| vm.id == vmh[:id] }
+        v.update_attribute(:ems_created_on, vmh[:created_time])
+      end
+    end
+
     def get_files_on_datastore(datastore)
       with_provider_connection do |vim|
         begin

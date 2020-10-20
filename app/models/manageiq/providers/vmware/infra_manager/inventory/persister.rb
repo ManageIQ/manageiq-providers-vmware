@@ -45,6 +45,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
     add_collection(infra, :orchestration_templates)
+    vms_and_templates_assign_created_on if ::Settings.ems_refresh.capture_vm_created_on_date
   end
 
   def vim_class_to_collection(managed_object)
@@ -59,6 +60,25 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       ems_folders
     when RbVmomi::VIM::ResourcePool
       resource_pools
+    end
+  end
+
+  private
+
+  def vms_and_templates_assign_created_on
+    custom_save_block = lambda do |ems, inventory_collection|
+      vms_and_templates = inventory_collection.dependency_attributes[:vms_and_templates]&.first
+      return if vms_and_templates.nil?
+
+      created_vm_ids = vms_and_templates.created_records.map { |rec| rec[:id] }
+      ems.assign_ems_created_on_queue(created_vm_ids) unless created_vm_ids.empty?
+    end
+
+    settings = {:without_model_class => true, :auto_inventory_attributes => false}
+
+    add_collection(infra, :vms_and_templates_assign_created_on, {}, settings) do |builder|
+      builder.add_custom_save_block(custom_save_block)
+      builder.add_dependency_attributes(:vms_and_templates => ->(persister) { [persister.vms_and_templates] })
     end
   end
 end
