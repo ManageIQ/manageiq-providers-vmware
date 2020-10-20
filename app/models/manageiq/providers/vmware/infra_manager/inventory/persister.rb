@@ -37,7 +37,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :storage_profiles)
     add_collection(infra, :storage_profile_storages)
     add_collection(infra, :parent_blue_folders)
-    add_collection(infra, :vms_and_templates, &:vm_template_shared)
+    add_collection(infra, :vms_and_templates) do |builder|
+      builder.vm_template_shared
+      builder.add_properties(:custom_reconnect_block => vms_and_templates_reconnect_block)
+    end
     add_collection(infra, :vm_parent_blue_folders)
     add_collection(infra, :vm_resource_pools)
     add_collection(infra, :root_folder_relationship)
@@ -56,6 +59,33 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       ems_folders
     when RbVmomi::VIM::ResourcePool
       resource_pools
+    end
+  end
+
+  private
+
+  def vms_and_templates_reconnect_block
+    lambda do |inventory_collection, inventory_objects_index, attributes_index|
+      relation = inventory_collection.model_class.where(:ems_id => nil)
+      return if relation.count <= 0
+
+      vms_by_uid_ems = inventory_objects_index.values.group_by(&:uid_ems).except(nil)
+      relation.where(:uid_ems => vms_by_uid_ems.keys).order(:id => :asc).find_each(:batch_size => 100).each do |record|
+        inventory_object = vms_by_uid_ems[record.uid_ems].shift
+        hash             = attributes_index.delete(inventory_object.ems_ref)
+        inventory_objects_index.delete(inventory_object.ems_ref)
+
+        # Skip if hash is blank, which can happen when having several archived entities with the same ref
+        next unless hash
+
+        record.assign_attributes(hash.except(:id, :type))
+        if !inventory_collection.check_changed? || record.changed?
+          record.save!
+          inventory_collection.store_updated_records(record)
+        end
+
+        inventory_object.id = record.id
+      end
     end
   end
 end
