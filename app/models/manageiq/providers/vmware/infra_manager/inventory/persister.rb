@@ -93,16 +93,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       return if relation.count <= 0
 
       inventory_objects_index.each do |ref, obj|
-        hostname = obj.hostname
-        ipaddr   = obj.ipaddress
-
-        if ["localhost", "localhost.localdomain", "127.0.0.1"].include_none?(hostname, ipaddr)
-          record   = relation.where("lower(hostname) = ?", hostname.downcase).find_by(:ipaddress => ipaddr) if hostname && ipaddr
-          record ||= relation.find_by("lower(hostname) = ?", hostname.downcase)                             if hostname
-          record ||= relation.find_by(:ipaddress => ipaddr)                                                 if ipaddr
-          record ||= relation.find_by("lower(hostname) LIKE ?", "#{hostname.downcase}.%")                   if hostname
-        end
-
+        record = look_up_host(relation, obj)
         next if record.nil?
 
         inventory_objects_index.delete(ref)
@@ -117,6 +108,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
         inventory_object.id = record.id
       end
     end
+  end
+
+  def look_up_host(relation, inventory_object)
+    hostname = inventory_object.hostname
+    ipaddr   = inventory_object.ipaddress
+
+    return unless ["localhost", "localhost.localdomain", "127.0.0.1"].include_none?(hostname, ipaddr)
+
+    record   = relation.where("lower(hostname) = ?", hostname.downcase).find_by(:ipaddress => ipaddr) if hostname && ipaddr
+    record ||= relation.find_by("lower(hostname) = ?", hostname.downcase)                             if hostname
+    record ||= relation.find_by(:ipaddress => ipaddr)                                                 if ipaddr
+    record ||= relation.find_by("lower(hostname) LIKE ?", "#{hostname.downcase}.%")                   if hostname
+
+    record
   end
 
   def vms_and_templates_reconnect_block
