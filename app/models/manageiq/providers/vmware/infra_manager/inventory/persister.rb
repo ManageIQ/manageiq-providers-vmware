@@ -93,7 +93,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       return if relation.count <= 0
 
       inventory_objects_index.each do |ref, obj|
-        record = look_up_host(relation, obj)
+        record = look_up_host(relation, obj.hostname, obj.ipaddress)
         next if record.nil?
 
         inventory_objects_index.delete(ref)
@@ -110,10 +110,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     end
   end
 
-  def look_up_host(relation, inventory_object)
-    hostname = inventory_object.hostname
-    ipaddr   = inventory_object.ipaddress
-
+  def look_up_host(relation, hostname, ipaddr)
     return unless ["localhost", "localhost.localdomain", "127.0.0.1"].include_none?(hostname, ipaddr)
 
     record   = relation.where("lower(hostname) = ?", hostname.downcase).find_by(:ipaddress => ipaddr) if hostname && ipaddr
