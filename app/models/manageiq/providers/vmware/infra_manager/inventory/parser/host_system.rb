@@ -73,7 +73,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       vnics = Array(network[:consoleVnic]) + Array(network[:vnic])
       vnics.each do |vnic|
         port_key = vnic.port
-        portgroup = network[:portgroup].find { |pg| pg.port.find { |p| p.key == port_key } }
+        portgroup = Array(network[:portgroup]).find { |pg| pg.port.find { |p| p.key == port_key } }
         next if portgroup.nil?
 
         vswitch_key = portgroup[:vswitch]
