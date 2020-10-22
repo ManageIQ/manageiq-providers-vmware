@@ -111,7 +111,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   end
 
   def look_up_host(relation, hostname, ipaddr)
-    return unless ["localhost", "localhost.localdomain", "127.0.0.1"].include_none?(hostname, ipaddr)
+    return if ["localhost", "localhost.localdomain", "127.0.0.1"].include_any?(hostname, ipaddr)
 
     record   = relation.where("lower(hostname) = ?", hostname.downcase).find_by(:ipaddress => ipaddr) if hostname && ipaddr
     record ||= relation.find_by("lower(hostname) = ?", hostname.downcase)                             if hostname
