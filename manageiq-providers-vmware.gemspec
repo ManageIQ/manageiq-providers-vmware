@@ -24,5 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "vmware_web_service",     "~>2.0.2"
   spec.add_dependency "vsphere-automation-sdk", "~>0.4.7"
 
+  spec.add_development_dependency "manageiq-style"
   spec.add_development_dependency "simplecov"
 end
