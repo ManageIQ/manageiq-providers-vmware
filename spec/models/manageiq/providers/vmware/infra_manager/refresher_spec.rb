@@ -395,6 +395,53 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(Host.find_by(:ems_ref => "host-41")).to be_archived
       end
 
+      context "reconnecting a host" do
+        let!(:host)       { FactoryBot.create(:host_vmware, :hostname => hostname, :ipaddress => ipaddress) }
+        let(:host_system) { RbVmomi::VIM.HostSystem(vim, ems_ref) }
+        let(:ems_ref)     { "host-999" }
+        let(:hostname)    { nil }
+        let(:ipaddress)   { nil }
+
+        before { host_config_storage_device_stub(host_system) }
+
+        context "with a hostname" do
+          let(:hostname) { "myhost.example.com" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+
+        context "with a partial hostname" do
+          let(:hostname) { "myhost.example.com.io" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+
+        context "with an IP address" do
+          let(:ipaddress) { "1.2.3.4" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+
+        context "with a hostname and IP address" do
+          let(:hostname)  { "myhost.example.com" }
+          let(:ipaddress) { "1.2.3.4" }
+
+          it "reconnects the host" do
+            run_targeted_refresh(targeted_update_set([host_create_object_update(host_system)]))
+            expect(host.reload.archived?).to be_falsy
+          end
+        end
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(collector, persister)
@@ -858,6 +905,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :kind       => "modify",
         :obj        => obj,
         :changeSet  => [],
+        :missingSet => []
+      )
+    end
+
+    def host_create_object_update(host)
+      RbVmomi::VIM.ObjectUpdate(
+        :kind       => "enter",
+        :obj        => host,
+        :changeSet  => [
+          RbVmomi::VIM.PropertyChange(:name => "config.network.dnsConfig", :op => "assign", :val => {:domainName => "example.com", :hostName => "myhost"}),
+          RbVmomi::VIM.PropertyChange(:name => "config.network.ipRouteConfig.defaultGateway", :op => "assign", :val => "1.2.3.255"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.config.product", :op => "assign", :val => {:build => "5.0.0.19", :name => "VMware ESX", :osType => "vmnix-x86", :vendor => "VMware, Inc.", :version => "5.0.0"}),
+          RbVmomi::VIM.PropertyChange(
+            :name => "config.network.vnic",
+            :op   => "assign",
+            :val  => [
+              RbVmomi::VIM::HostVirtualNic(
+                :spec => RbVmomi::VIM::HostVirtualNicSpec(
+                  :ip => RbVmomi::VIM::HostIpConfig(:ipAddress => "1.2.3.4", :subnetMask => "255.255.255.0")
+                )
+              )
+            ]
+          )
+        ],
         :missingSet => []
       )
     end
@@ -1430,6 +1501,59 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         host_mount = props[:host].detect { |h| h.key._ref == "host-244" }
         expect(host_mount.mountInfo.props).to include(:mounted => false, :accessible => false)
       end
+    end
+  end
+
+  describe "#look_up_host (private)" do
+    let(:persister)                { ems.class::Inventory::Persister::Targeted.new(ems) }
+    let(:relation)                 { persister.hosts.model_class.where(:ems_id => nil) }
+    let!(:host_3_part_hostname)    { FactoryBot.create(:host_vmware, :hostname => "test1.example.com",       :ipaddress => "192.168.1.1") }
+    let!(:host_4_part_hostname)    { FactoryBot.create(:host_vmware, :hostname => "test2.dummy.example.com", :ipaddress => "192.168.1.2") }
+    let!(:host_duplicate_hostname) { FactoryBot.create(:host_vmware, :hostname => "test2.example.com",       :ipaddress => "192.168.1.3", :ems_ref => "host-1", :ems_id => 1) }
+    let!(:host_no_ems_id)          { FactoryBot.create(:host_vmware, :hostname => "test2.example.com",       :ipaddress => "192.168.1.4", :ems_ref => "host-2") }
+
+    it "with exact hostname and IP" do
+      expect(persister.send(:look_up_host, relation, host_3_part_hostname.hostname, host_3_part_hostname.ipaddress)).to eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, host_4_part_hostname.hostname, host_4_part_hostname.ipaddress)).to eq(host_4_part_hostname)
+    end
+
+    it "with exact hostname and updated IP" do
+      expect(persister.send(:look_up_host, relation, host_3_part_hostname.hostname, "192.168.1.254")).to eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, host_4_part_hostname.hostname, "192.168.1.254")).to eq(host_4_part_hostname)
+    end
+
+    it "with exact IP and updated hostname" do
+      expect(persister.send(:look_up_host, relation, "not_it.example.com", host_3_part_hostname.ipaddress)).to       eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, "not_it.dummy.example.com", host_4_part_hostname.ipaddress)).to eq(host_4_part_hostname)
+    end
+
+    it "with exact IP only" do
+      expect(persister.send(:look_up_host, relation, nil, host_3_part_hostname.ipaddress)).to eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, nil, host_4_part_hostname.ipaddress)).to eq(host_4_part_hostname)
+    end
+
+    it "with exact hostname only" do
+      expect(persister.send(:look_up_host, relation, host_3_part_hostname.hostname, nil)).to eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, host_4_part_hostname.hostname, nil)).to eq(host_4_part_hostname)
+    end
+
+    it "with bad fqdn hostname only" do
+      expect(persister.send(:look_up_host, relation, "test1.example.org", nil)).to           be_nil
+      expect(persister.send(:look_up_host, relation, "test2.something.example.com", nil)).to be_nil
+    end
+
+    it "with bad partial hostname only" do
+      expect(persister.send(:look_up_host, relation, "test", nil)).to            be_nil
+      expect(persister.send(:look_up_host, relation, "test2.something", nil)).to be_nil
+    end
+
+    it "with partial hostname only" do
+      expect(persister.send(:look_up_host, relation, "test1", nil)).to       eq(host_3_part_hostname)
+      expect(persister.send(:look_up_host, relation, "test2.dummy", nil)).to eq(host_4_part_hostname)
+    end
+
+    it "with fqdn, ipaddress, and ems_ref finds right host without an ems_id (reconnect orphaned host)" do
+      expect(persister.send(:look_up_host, relation, host_no_ems_id.hostname, host_no_ems_id.ipaddress)).to eq(host_no_ems_id)
     end
   end
 end
