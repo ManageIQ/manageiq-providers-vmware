@@ -169,6 +169,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           @vm_prov.signal :autostart_destination
         end
 
+        it "autostart_destination with a vm cache error requeues the phase" do
+          @vm_prov.options[:vm_auto_start] = true
+          allow(@vm_prov.destination).to receive(:start).and_raise(MiqException::MiqVimResourceNotFound)
+          expect(@vm_prov).not_to receive(:post_create_destination)
+          expect(@vm_prov).to receive(:requeue_phase)
+          @vm_prov.signal :autostart_destination
+        end
+
         it "autostart_destination with error" do
           @vm_prov.options[:vm_auto_start] = true
           allow(@vm_prov.destination).to receive(:start).and_raise
