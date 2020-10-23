@@ -314,10 +314,51 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       library_item_ids = library_item_api.list(lib_id)&.value.to_a
       library_item_ids.to_a.each do |item_id|
         library_item = library_item_api.get(item_id)&.value
-        parser.parse_content_library_item(library_item) if library_item
+        next unless  library_item&.type == 'ovf'
+
+        ovf_descriptor = collect_ovf_descriptor(item_id)
+        parser.parse_content_library_item(library_item, ovf_descriptor)
       end
     end
   rescue VSphereAutomation::ApiError
+    nil
+  end
+
+  def collect_ovf_descriptor(item_id)
+    require 'vsphere-automation-content'
+    require "open-uri"
+
+    api_client = cis_connect
+    api_instance = VSphereAutomation::Content::LibraryItemDownloadSessionApi.new(api_client)
+
+    options = {"create_spec" => {"library_item_id" => item_id}}
+    request_body = VSphereAutomation::Content::ContentLibraryItemDownloadSessionCreate.new(options)
+    download_session_id = api_instance.create(request_body).value
+
+    file_api_instance = VSphereAutomation::Content::LibraryItemDownloadsessionFileApi.new(api_client)
+    files = file_api_instance.list(download_session_id)
+    content = nil
+    files.value.each do |file|
+      next unless file.name.ends_with?(".ovf")
+
+      prepare_options = {"endpoint_type" => "HTTPS", "file_name" => file.name}
+      prepare_request_body = VSphereAutomation::Content::ContentLibraryItemDownloadsessionFilePrepare.new(prepare_options)
+      file_api_instance.prepare(download_session_id, prepare_request_body)
+
+      file_request_body = VSphereAutomation::Content::ContentLibraryItemDownloadsessionFileGet.new("file_name" => file.name)
+      result = file_api_instance.get(download_session_id, file_request_body).value
+      while result.status != VSphereAutomation::Content::ContentLibraryItemDownloadsessionFilePrepareStatus::PREPARED
+        sleep(1)
+        result = file_api_instance.get(download_session_id, file_request_body).value
+      end
+
+      xml = open(result.download_endpoint.uri, {:http_basic_authentication => ems.auth_user_pwd, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE}).read
+      api_instance.delete(download_session_id)
+      content = Hash.from_xml(xml).to_json
+    end
+    content
+  rescue VSphereAutomation::ApiError => e
+    _log.error("Exception when downloading ovf descriptor for item [#{item_id}]: #{e}")
     nil
   end
 
