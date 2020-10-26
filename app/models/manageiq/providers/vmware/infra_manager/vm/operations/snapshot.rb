@@ -1,8 +1,12 @@
 module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
   extend ActiveSupport::Concern
 
-  def snapshotting_memory_allowed?
-    current_state == 'on'
+  included do
+    supports :snapshot_memory do
+      unless current_state == 'on'
+        unsupported_reason_add(:snapshot_memory, "Memory can only be included in the snapshot if the VM is running")
+      end
+    end
   end
 
   def raw_create_snapshot(name, desc = nil, memory)
