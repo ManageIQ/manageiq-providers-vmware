@@ -3,9 +3,12 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
 
   CONFIG_OPTIONS_WHITELIST = %i[
     accept_all_eula
+    disk_format
     ems_folder_id
     host_id
+    network_id
     resource_pool_id
+    storage_id
     vm_name
   ].freeze
 
@@ -138,7 +141,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
     dialog_options = options[:dialog] || {}
     options = {}
 
-    %w[vm_name resource_pool_id ems_folder_id host_id].each do |r|
+    CONFIG_OPTIONS_WHITELIST.each do |r|
       options[r] = dialog_options["dialog_#{r}"] if dialog_options["dialog_#{r}"].present?
     end
     options
