@@ -39,6 +39,8 @@ module ManageIQ::Providers
       unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
     end
 
+    supports :label_mapping
+
     has_many :host_guest_devices, :through => :host_hardwares, :source => :guest_devices
     has_many :miq_scsi_targets, -> { distinct }, :through => :host_guest_devices
     has_many :miq_scsi_luns, -> { distinct }, :through => :miq_scsi_targets
@@ -726,6 +728,18 @@ module ManageIQ::Providers
 
     def self.display_name(number = 1)
       n_('Infrastructure Provider (VMware)', 'Infrastructure Providers (VMware)', number)
+    end
+
+    LABEL_MAPPING_ENTITIES = {
+      "VmVmware" => "ManageIQ::Providers::Vmware::InfraManager::Vm"
+    }.freeze
+
+    def self.entities_for_label_mapping
+      LABEL_MAPPING_ENTITIES
+    end
+
+    def self.label_mapping_prefix
+      "vmware"
     end
   end
 end
