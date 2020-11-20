@@ -31,6 +31,7 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
         "dialog_vm_name"          => "dialog_vm_name",
         "dialog_resource_pool_id" => "5",
         "dialog_ems_folder_id"    => "30",
+        "dialog_storage_id"       => "3",
       }
     }
   end
@@ -45,7 +46,8 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
           :accept_all_eula  => true,
           :resource_pool_id => "2",
           :ems_folder_id    => "3",
-          :host_id          => "1"
+          :host_id          => "1",
+          :storage_id       => "1"
         }
       }
     }
@@ -58,6 +60,7 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
       "vm_name"          => "dialog_vm_name",
       "accept_all_eula"  => true,
       "host_id"          => "1",
+      "storage_id"       => "3",
       "resource_pool_id" => "5",
       "ems_folder_id"    => "30"
     }
@@ -65,7 +68,7 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
 
   let(:failed_response) { {:value => {:succeeded => false, :error => {:errors => [{:category => "SERVER", :error => {:@class => "com.vmware.vapi.std.errors.already_exists", :messages => [{:args => ["VirtualMachine", "lucy-api-vm-2"], :default_message => "An object of type \"VirtualMachine\" named \"lucy-api-vm-2\" already exists.", :id => "com.vmware.vdcs.util.duplicate_name"}]}}], :warnings => [], :information => []}}} }
 
-  let(:deploy_task) { FactoryBot.create(:miq_task, :state => "Active")}
+  let(:deploy_task) { FactoryBot.create(:miq_task, :state => "Active") }
 
   describe '#preprocess' do
     it 'prepares job options from dialog' do
