@@ -224,7 +224,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     dvs_switches = parse_host_system_distributed_switches(host)
 
     parse_host_system_host_switches(host, switches + dvs_switches)
-    parse_host_system_lans(host, switches, props)
+    parse_host_system_lans(object, host, switches, props)
   end
 
   def parse_license_manager(_object, kind, props)
@@ -415,6 +415,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     parent_collection = persister.vim_class_to_collection(managed_object)
     parent_collection.lazy_find(managed_object._ref)
+  end
+
+  def find_parent_datacenter(obj)
+    find_parent_of_type(obj, "Datacenter")
+  end
+
+  def find_parent_of_type(obj, wsdl_name)
+    parent = obj
+    parent = cache.find(parent)&.dig(:parent) until parent.nil? || parent.class.wsdl_name == wsdl_name
+    parent
   end
 
   def rbvmomi_to_basic_types(obj)

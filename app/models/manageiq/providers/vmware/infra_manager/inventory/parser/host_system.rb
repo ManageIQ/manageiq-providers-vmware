@@ -1,5 +1,17 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   module HostSystem
+    def datacenter_ref_by_host(host)
+      @datacenter_ref_by_host ||= {}
+      @datacenter_ref_by_host[host._ref] ||= find_parent_datacenter(host)
+    end
+
+    def network_ref_by_datacenter_and_name
+      @network_ref_by_datacenter_and_name ||= cache["Network"].each_with_object({}) do |(ref, data), result|
+        result[find_parent_datacenter(data[:parent])._ref] ||= {}
+        result[find_parent_datacenter(data[:parent])._ref][data[:name]] = ref
+      end
+    end
+
     def validate_host_system_props(object, props)
       if props.fetch_path(:config).nil? || props.fetch_path(:summary).nil? || props.fetch_path(:summary, :config, :product).nil?
         [true, "Missing configuration for Host [#{object._ref}]"]
@@ -426,22 +438,25 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_system_lans(host, switches, props)
+    def parse_host_system_lans(object, host, switches, props)
       network = props.fetch_path(:config, :network)
       return if network.blank?
 
       switch_uids = switches.index_by(&:name)
+      datacenter = datacenter_ref_by_host(object)
 
       network[:portgroup].to_a.each do |portgroup|
         next if portgroup.spec.nil?
 
-        name = portgroup.spec.name
+        name    = portgroup.spec.name
+        ems_ref = network_ref_by_datacenter_and_name.dig(datacenter._ref, name) if datacenter
 
         lan_hash = {
           :uid_ems => name,
           :name    => name,
           :tag     => portgroup.spec.vlanId.to_s,
           :switch  => switch_uids[portgroup.spec.vswitchName],
+          :ems_ref => ems_ref
         }
 
         security = portgroup.spec.policy&.security
