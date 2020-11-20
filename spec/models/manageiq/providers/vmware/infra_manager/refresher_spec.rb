@@ -1199,6 +1199,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       expect(lan).to have_attributes(
         :name                       => "VM Network",
         :uid_ems                    => "VM Network",
+        :ems_ref                    => "network-7",
         :tag                        => "0",
         :allow_promiscuous          => false,
         :forged_transmits           => true,
