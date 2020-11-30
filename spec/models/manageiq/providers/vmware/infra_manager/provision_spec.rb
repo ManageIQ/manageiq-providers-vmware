@@ -157,22 +157,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         end
 
         it "autostart_destination, vm_auto_start disabled" do
-          expect(@vm_prov.destination).not_to receive(:start)
+          expect(@vm_prov.destination).not_to receive(:raw_start)
           expect(@vm_prov).to receive(:post_create_destination)
           @vm_prov.signal :autostart_destination
         end
 
         it "autostart_destination" do
           @vm_prov.options[:vm_auto_start] = true
-          expect(@vm_prov.destination).to receive(:start)
+          expect(@vm_prov.destination).to receive(:raw_start)
           expect(@vm_prov).to receive(:post_create_destination)
+          @vm_prov.signal :autostart_destination
+        end
+
+        it "autostart_destination with a vm cache error requeues the phase" do
+          @vm_prov.options[:vm_auto_start] = true
+          allow(@vm_prov.destination).to receive(:raw_start).and_raise(MiqException::MiqVimResourceNotFound)
+          expect(@vm_prov).not_to receive(:post_create_destination)
+          expect(@vm_prov).to receive(:requeue_phase)
           @vm_prov.signal :autostart_destination
         end
 
         it "autostart_destination with error" do
           @vm_prov.options[:vm_auto_start] = true
-          allow(@vm_prov.destination).to receive(:start).and_raise
-          expect(@vm_prov.destination).to receive(:start).once
+          allow(@vm_prov.destination).to receive(:raw_start).and_raise
+          expect(@vm_prov.destination).to receive(:raw_start).once
           @vm_prov.signal :autostart_destination
         end
       end
