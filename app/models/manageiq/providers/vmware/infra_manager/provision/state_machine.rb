@@ -55,6 +55,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::StateMachine
     end
   end
 
+  def autostart_destination
+    return signal :post_create_destination unless get_option(:vm_auto_start)
+
+    _log.info("Starting #{for_destination}")
+    update_and_notify_parent(:message => "Starting")
+
+    destination.raw_start
+    signal :post_create_destination
+  rescue MiqException::MiqVimResourceNotFound
+    _log.info("Unable to start #{for_destination}.  Retrying...")
+    requeue_phase
+  end
+
   def customize_destination
     _log.info("Post-processing #{destination_type} id: [#{destination.id}], name: [#{dest_name}]")
     update_and_notify_parent(:message => "Starting New #{destination_type} Customization")
