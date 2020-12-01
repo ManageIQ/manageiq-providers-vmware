@@ -22,8 +22,9 @@
     :password:
     :port:
     :user:
-#:log:
-#  :level_vim: warn
+:log:
+  :level_vcloud: info
+  :level_vim: warn
 :workers:
   :worker_base:
     :event_catcher:
