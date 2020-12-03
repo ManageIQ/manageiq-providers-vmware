@@ -82,4 +82,8 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
   def unique_md5?
     false
   end
+
+  def self.display_name(number = 1)
+    n_('OVF Template', 'OVF Templates', number)
+  end
 end
