@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 
+require "manageiq-password"
+
 class EventCatcher
   def initialize(ems_id, hostname, username, password, port, page_size = 20)
     @ems_id    = ems_id
     @hostname  = hostname
     @username  = username
-    @password  = password
+    @password  = ManageIQ::Password.try_decrypt(password)
     @port      = port
     @page_size = page_size
   end
@@ -29,7 +31,7 @@ class EventCatcher
 
   private
 
-  attr_reader :ems_id, :hostname, :username, :password, :port, :page_size
+  attr_reader :ems_id, :hostname, :password, :port, :page_size, :username
 
   def connect
     vim_opts = {
@@ -119,6 +121,8 @@ class EventCatcher
 end
 
 def main(args)
+  ManageIQ::Password.key_root = Pathname.new(ENV["APP_ROOT"]).join("certs")
+
   event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port))
   event_catcher.run!
 end
@@ -127,10 +131,10 @@ def parse_args
   require "optimist"
 
   Optimist.options do
-    opt :ems_id,   "EMS ID",   :type => :int,    :default => ENV["EMS_ID"],   :required => ENV["EMS_ID"].nil?
-    opt :hostname, "Hostname", :type => :string, :default => ENV["HOSTNAME"], :required => ENV["HOSTNAME"].nil?
-    opt :username, "Username", :type => :string, :default => ENV["USERNAME"], :required => ENV["USERNAME"].nil?
-    opt :password, "Password", :type => :string, :default => ENV["PASSWORD"], :required => ENV["PASSWORD"].nil?
+    opt :ems_id,   "EMS ID",   :type => :int,    :default => ENV["EMS_ID"].to_i, :required => ENV["EMS_ID"].nil?
+    opt :hostname, "Hostname", :type => :string, :default => ENV["HOSTNAME"],    :required => ENV["HOSTNAME"].nil?
+    opt :username, "Username", :type => :string, :default => ENV["USERNAME"],    :required => ENV["USERNAME"].nil?
+    opt :password, "Password", :type => :string, :default => ENV["PASSWORD"],    :required => ENV["PASSWORD"].nil?
     opt :port,     "Port",     :type => :int,    :default => (ENV["PORT"] || 443).to_i
   end
 end
