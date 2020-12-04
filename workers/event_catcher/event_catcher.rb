@@ -1,15 +1,19 @@
 #!/usr/bin/env ruby
 
+require "manageiq-messaging"
 require "manageiq-password"
+require "pathname"
 
 class EventCatcher
-  def initialize(ems_id, hostname, username, password, port, page_size = 20)
-    @ems_id    = ems_id
-    @hostname  = hostname
-    @username  = username
-    @password  = ManageIQ::Password.try_decrypt(password)
-    @port      = port
-    @page_size = page_size
+  def initialize(ems_id, hostname, username, password, port, messaging_host, messaging_port, page_size = 20)
+    @ems_id         = ems_id
+    @hostname       = hostname
+    @username       = username
+    @password       = ManageIQ::Password.try_decrypt(password)
+    @port           = port
+    @messaging_host = messaging_host
+    @messaging_port = messaging_port
+    @page_size      = page_size
   end
 
   def run!
@@ -21,7 +25,7 @@ class EventCatcher
       next unless property_change.name =~ /latestPage.*/
 
       events = Array(property_change.val).map { |event| parse_event(event) }
-      puts events
+      publish_events(events)
     end
   ensure
     property_filter&.DestroyPropertyFilter
@@ -31,7 +35,7 @@ class EventCatcher
 
   private
 
-  attr_reader :ems_id, :hostname, :password, :port, :page_size, :username
+  attr_reader :ems_id, :hostname, :messaging_host, :messaging_port, :password, :port, :page_size, :username
 
   def connect
     vim_opts = {
@@ -118,12 +122,35 @@ class EventCatcher
 
     result
   end
+
+  def publish_events(events)
+    events.each do |event|
+      messaging_client.publish_topic(
+        :service => "manageiq.ems-events",
+        :sender  => ems_id,
+        :event   => event[:event_type],
+        :payload => event
+      )
+    end
+  end
+
+  def messaging_client
+    @messaging_client ||= begin
+      ManageIQ::Messaging::Client.open(
+        :host       => messaging_host,
+        :port       => messaging_port,
+        :protocol   => :Kafka,
+        :encoding   => "json",
+        :client_ref => "vmware-event-catcher-#{ems_id}"
+      )
+    end
+  end
 end
 
 def main(args)
   ManageIQ::Password.key_root = Pathname.new(ENV["APP_ROOT"]).join("certs")
 
-  event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port))
+  event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port, :messaging_host, :messaging_port))
   event_catcher.run!
 end
 
@@ -131,11 +158,13 @@ def parse_args
   require "optimist"
 
   Optimist.options do
-    opt :ems_id,   "EMS ID",   :type => :int,    :default => ENV["EMS_ID"].to_i, :required => ENV["EMS_ID"].nil?
-    opt :hostname, "Hostname", :type => :string, :default => ENV["HOSTNAME"],    :required => ENV["HOSTNAME"].nil?
-    opt :username, "Username", :type => :string, :default => ENV["USERNAME"],    :required => ENV["USERNAME"].nil?
-    opt :password, "Password", :type => :string, :default => ENV["PASSWORD"],    :required => ENV["PASSWORD"].nil?
-    opt :port,     "Port",     :type => :int,    :default => (ENV["PORT"] || 443).to_i
+    opt :ems_id,         "EMS ID",   :type => :int,          :default => ENV["EMS_ID"]&.to_i,         :required => ENV["EMS_ID"].nil?
+    opt :hostname,       "Hostname", :type => :string,       :default => ENV["HOSTNAME"],             :required => ENV["HOSTNAME"].nil?
+    opt :username,       "Username", :type => :string,       :default => ENV["USERNAME"],             :required => ENV["USERNAME"].nil?
+    opt :password,       "Password", :type => :string,       :default => ENV["PASSWORD"],             :required => ENV["PASSWORD"].nil?
+    opt :messaging_host, "Messaging Host", :type => :string, :default => ENV["MESSAGING_HOST"],       :required => ENV["MESSAGING_HOST"].nil?
+    opt :messaging_port, "Messaging Port", :type => :int,    :default => ENV["MESSAGING_PORT"]&.to_i, :required => ENV["MESSAGING_PORT"].nil?
+    opt :port,           "Port",     :type => :int,          :default => (ENV["PORT"] || 443).to_i
   end
 end
 
