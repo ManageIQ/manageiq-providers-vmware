@@ -2,6 +2,7 @@
 
 require "manageiq-messaging"
 require "pathname"
+require "sd_notify"
 
 class EventCatcher
   def initialize(ems_id, hostname, username, password, port, messaging_host, messaging_port, page_size = 20)
@@ -20,6 +21,8 @@ class EventCatcher
     event_history_collector = create_event_history_collector(vim, page_size)
     property_filter         = create_property_filter(vim, event_history_collector)
 
+    notify_started
+
     wait_for_updates(vim) do |property_change|
       next unless property_change.name =~ /latestPage.*/
 
@@ -27,6 +30,7 @@ class EventCatcher
       publish_events(events)
     end
   ensure
+    notify_stopping
     property_filter&.DestroyPropertyFilter
     event_history_collector&.DestroyCollector
     vim&.close
@@ -89,6 +93,7 @@ class EventCatcher
 
     loop do
       update_set = vim.propertyCollector.WaitForUpdatesEx(:version => version, :options => options)
+      heartbeat
       next if update_set.nil?
 
       version = update_set.version
@@ -143,6 +148,24 @@ class EventCatcher
         :client_ref => "vmware-event-catcher-#{ems_id}"
       )
     end
+  end
+
+  def notify_started
+    SdNotify.ready if ENV["NOTIFY_SOCKET"]
+  end
+
+  def heartbeat
+    if ENV["NOTIFY_SOCKET"]
+      SdNotify.watchdog
+    else
+      heartbeat_file = File.join(ENV["APP_ROOT"], "tmp", "#{ENV["GUID"]}.hb")
+      timeout = 120
+      File.write(heartbeat_file, (Time.now.utc + timeout).to_s)
+    end
+  end
+
+  def notify_stopping
+    SdNotify.stopping if ENV["NOTIFY_SOCKET"]
   end
 end
 
