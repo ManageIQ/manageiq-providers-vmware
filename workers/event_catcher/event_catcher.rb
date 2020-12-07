@@ -179,7 +179,14 @@ def decrypt_env_vars
   YAML.load(output)
 end
 
+def setproctitle
+  proc_title = "MIQ: Vmware::InfraManager::EventCatcher guid: #{ENV["GUID"]}"
+  Process.setproctitle(proc_title)
+end
+
 def main(args)
+  setproctitle
+
   event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port, :messaging_host, :messaging_port))
   event_catcher.run!
 end
