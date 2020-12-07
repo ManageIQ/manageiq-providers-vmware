@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require "manageiq-messaging"
-require "manageiq-password"
 require "pathname"
 
 class EventCatcher
@@ -9,7 +8,7 @@ class EventCatcher
     @ems_id         = ems_id
     @hostname       = hostname
     @username       = username
-    @password       = ManageIQ::Password.try_decrypt(password)
+    @password       = password
     @port           = port
     @messaging_host = messaging_host
     @messaging_port = messaging_port
@@ -147,9 +146,17 @@ class EventCatcher
   end
 end
 
-def main(args)
-  ManageIQ::Password.key_root = Pathname.new(ENV["APP_ROOT"]).join("certs")
+def decrypt_env_vars
+  require "open3"
+  output, status = Open3.capture2("tools/decrypt_env_vars", :chdir => ENV["APP_ROOT"])
 
+  # Skip the ** ManageIQ master, codename: Lasker comment
+  output = output.split("\n")[1..-1].join("\n")
+
+  YAML.load(output)
+end
+
+def main(args)
   event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port, :messaging_host, :messaging_port))
   event_catcher.run!
 end
@@ -157,14 +164,16 @@ end
 def parse_args
   require "optimist"
 
+  env_vars = decrypt_env_vars
+
   Optimist.options do
-    opt :ems_id,         "EMS ID",   :type => :int,          :default => ENV["EMS_ID"]&.to_i,         :required => ENV["EMS_ID"].nil?
-    opt :hostname,       "Hostname", :type => :string,       :default => ENV["HOSTNAME"],             :required => ENV["HOSTNAME"].nil?
-    opt :username,       "Username", :type => :string,       :default => ENV["USERNAME"],             :required => ENV["USERNAME"].nil?
-    opt :password,       "Password", :type => :string,       :default => ENV["PASSWORD"],             :required => ENV["PASSWORD"].nil?
-    opt :messaging_host, "Messaging Host", :type => :string, :default => ENV["MESSAGING_HOST"],       :required => ENV["MESSAGING_HOST"].nil?
-    opt :messaging_port, "Messaging Port", :type => :int,    :default => ENV["MESSAGING_PORT"]&.to_i, :required => ENV["MESSAGING_PORT"].nil?
-    opt :port,           "Port",     :type => :int,          :default => (ENV["PORT"] || 443).to_i
+    opt :ems_id,         "EMS ID",   :type => :int,          :default => env_vars["EMS_ID"]&.to_i,         :required => env_vars["EMS_ID"].nil?
+    opt :hostname,       "Hostname", :type => :string,       :default => env_vars["HOSTNAME"],             :required => env_vars["HOSTNAME"].nil?
+    opt :username,       "Username", :type => :string,       :default => env_vars["USERNAME"],             :required => env_vars["USERNAME"].nil?
+    opt :password,       "Password", :type => :string,       :default => env_vars["PASSWORD"],             :required => env_vars["PASSWORD"].nil?
+    opt :messaging_host, "Messaging Host", :type => :string, :default => env_vars["MESSAGING_HOST"],       :required => env_vars["MESSAGING_HOST"].nil?
+    opt :messaging_port, "Messaging Port", :type => :int,    :default => env_vars["MESSAGING_PORT"]&.to_i, :required => env_vars["MESSAGING_PORT"].nil?
+    opt :port,           "Port",     :type => :int,          :default => (env_vars["PORT"] || 443).to_i
   end
 end
 
