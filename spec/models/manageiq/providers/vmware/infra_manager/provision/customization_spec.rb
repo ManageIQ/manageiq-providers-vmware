@@ -115,11 +115,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
       expect(prov_vm.build_customization_spec).to(eq(spec_for_compare))
     end
 
-    it 'creates a new spec' do
-      custom_spec.spec = nil
+    it 'creates a new spec when the saved spec is nil' do
       options[:sysprep_full_name] = 'sysprep_full_name_value'
       options[:sysprep_organization] = 'sysprep_organization_value'
       expect(prov_vm).to receive(:load_customization_spec).and_return(nil)
+      expect(prov_vm.build_customization_spec).to(eq(new_spec))
+    end
+
+    it 'creates a new spec when the name is blank' do
+      options[:sysprep_custom_spec] = ''
+      options[:sysprep_full_name] = 'sysprep_full_name_value'
+      options[:sysprep_organization] = 'sysprep_organization_value'
+      expect(prov_vm).not_to receive(:load_customization_spec)
       expect(prov_vm.build_customization_spec).to(eq(new_spec))
     end
   end
