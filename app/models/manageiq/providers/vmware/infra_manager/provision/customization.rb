@@ -12,7 +12,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     custom_spec_name = nil if custom_spec_name == "__VC__NONE__"
 
     sysprep_spec_override = get_option(:sysprep_spec_override)
-    spec = load_customization_spec(custom_spec_name) if custom_spec_name
+    spec = load_customization_spec(custom_spec_name) if custom_spec_name.present?
 
     _log.info "Loaded custom spec [#{custom_spec_name}].  Override flag: [#{sysprep_spec_override}]"
     if spec && sysprep_spec_override == false
