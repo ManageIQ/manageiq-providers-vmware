@@ -41,6 +41,37 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
   supports :snapshots
   supports :quick_stats
 
+  def params_for_create_snapshot
+    {
+      :fields => [
+        {
+          :component  => 'text-field',
+          :name       => 'name',
+          :id         => 'name',
+          :label      => _('Name'),
+          :isRequired => true,
+          :validate   => [{:type => 'required'}],
+        },
+        {
+          :component => 'textarea',
+          :name      => 'description',
+          :id        => 'description',
+          :label     => _('Description'),
+        },
+        {
+          :component  => 'switch',
+          :name       => 'memory',
+          :id         => 'memory',
+          :label      => _('Snapshot VM memory'),
+          :onText     => _('Yes'),
+          :offText    => _('No'),
+          :isDisabled => current_state != 'on',
+          :helperText => _('Snapshotting the memory is only available if the VM is powered on.'),
+        },
+      ],
+    }
+  end
+
   def self.display_name(number = 1)
     n_('Virtual Machine (VMware)', 'Virtual Machines (VMware)', number)
   end

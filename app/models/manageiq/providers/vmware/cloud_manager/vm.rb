@@ -27,6 +27,27 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
     "suspended" => "suspended"
   }.freeze
 
+  def self.params_for_create_snapshot
+    {
+      :fields => [
+        {
+          :component  => 'text-field',
+          :name       => 'name',
+          :id         => 'name',
+          :label      => _('Name'),
+          :isRequired => true,
+          :validate   => [{:type => 'required'}],
+        },
+        {
+          :component => 'textarea',
+          :name      => 'description',
+          :id        => 'description',
+          :label     => _('Description'),
+        },
+      ],
+    }
+  end
+
   def self.calculate_power_state(raw_power_state)
     # https://github.com/xlab-si/fog-vcloud-director/blob/master/lib/fog/vcloud_director/parsers/compute/vm.rb#L70
     POWER_STATES[raw_power_state.to_s] || "terminated"
