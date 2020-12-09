@@ -3,6 +3,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
 
   CONFIG_OPTIONS_WHITELIST = %i[
     accept_all_eula
+    datacenter_id
     disk_format
     ems_folder_id
     host_id

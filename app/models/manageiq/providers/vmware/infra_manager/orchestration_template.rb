@@ -1,7 +1,7 @@
 class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::OrchestrationTemplate
   belongs_to :ext_management_system, :foreign_key => "ems_id", :class_name => "ManageIQ::Providers::Vmware::InfraManager", :inverse_of => false
 
-  delegate :allowed_resource_pools, :allowed_folders, :allowed_hosts, :allowed_storages, :to => :workflow_helper
+  delegate :allowed_resource_pools, :allowed_folders, :allowed_hosts, :allowed_storages, :allowed_datacenters, :refresh_field_values, :to => :workflow_helper
 
   include ProviderObjectMixin
 
@@ -47,6 +47,12 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
       target[SPEC_KEY_MAPPING[r]] = resource.ems_ref if resource.present?
     end
 
+    if target["folder_id"].blank? && opts[:datacenter_id].present?
+      dc = Datacenter.find_by(:id => opts[:datacenter_id])
+      vm_folder = dc.folders.find { |f| f.name == 'vm' } if dc
+      target["folder_id"] = vm_folder.ems_ref if vm_folder
+    end
+
     deploy_options = {"deployment_spec" => spec, "target" => target}
     _log.info("Content Library deployment request body: #{deploy_options}")
 
@@ -61,12 +67,12 @@ class ManageIQ::Providers::Vmware::InfraManager::OrchestrationTemplate < ::Orche
   end
 
   def workflow_helper
-    @workflow_helper ||= MiqProvisionOrchWorkflow.new({:src_vm_id => [id]}, User.current_user, :skip_dialog_load => true, :initial_pass => true)
+    @workflow_helper ||= MiqProvisionOrchWorkflow.new({:src_vm_id => [id]}, User.current_user, :initial_pass => true)
   end
 
   def allowed_vlans
     # workflow_helper.allowed_vlans returns back host level networks which have no ems_ref
-    Lan.where(:name => [workflow_helper.allowed_vlans.keys]).where.not(:ems_ref => nil).uniq(&:name).pluck(:id, :name)
+    Lan.where(:name => [workflow_helper.allowed_vlans&.keys]).where.not(:ems_ref => nil).uniq(&:name).pluck(:id, :name)
   end
 
   def target_name_valid?(name, ems_folder_id = nil)
