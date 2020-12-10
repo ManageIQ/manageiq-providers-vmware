@@ -105,7 +105,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
           inventory_collection.store_updated_records(record)
         end
 
-        inventory_object.id = record.id
+        obj.id = record.id
       end
     end
   end
@@ -129,7 +129,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
       vms_by_uid_ems = inventory_objects_index.values.group_by(&:uid_ems).except(nil)
       relation.where(:uid_ems => vms_by_uid_ems.keys).order(:id => :asc).find_each(:batch_size => 100).each do |record|
         inventory_object = vms_by_uid_ems[record.uid_ems].shift
-        hash             = attributes_index.delete(inventory_object.ems_ref)
+        next if inventory_object.nil?
+
+        hash = attributes_index.delete(inventory_object.ems_ref)
         inventory_objects_index.delete(inventory_object.ems_ref)
 
         # Skip if hash is blank, which can happen when having several archived entities with the same ref
