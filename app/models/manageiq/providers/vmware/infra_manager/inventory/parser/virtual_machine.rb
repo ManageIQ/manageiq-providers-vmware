@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  require "more_core_extensions/core_ext/string/formats"
+
   UUID_REGEX_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
 
   module VirtualMachine
@@ -302,7 +304,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         props.fetch_path(:guest, :net).to_a.each do |net|
           ip_config_by_ip_addr = net.ipConfig&.ipAddress&.index_by(&:ipAddress) || {}
 
-          ipv4, ipv6 = net[:ipAddress].to_a.compact.collect(&:to_s).sort.partition { |ip| ip =~ /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
+          ipv4, ipv6 = net[:ipAddress].to_a.compact.collect(&:to_s).select(&:ipaddress?).sort.partition(&:ipv4?)
           ipv4 << nil if ipv4.empty?
           ipaddresses = ipv4.zip_stretched(ipv6)
 
