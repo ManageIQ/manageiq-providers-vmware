@@ -394,6 +394,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
         collector.send(:parse_updates, vim, parser, updated_objects)
         collector.send(:save_inventory, persister)
+
+        expect(ems.reload.last_refresh_error).to be_nil
       end
 
       def targeted_update_set(object_updates)
@@ -939,6 +941,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
     def run_full_refresh
       collector.refresh
+      expect(ems.reload.last_refresh_error).to be_nil
     end
 
     def assert_ems
