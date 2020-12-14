@@ -347,7 +347,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def parse_storage_profiles(vim, parser)
     pbm = pbm_connect(vim)
 
-    profile_manager = pbm.serviceContent.profileManager
     profile_ids = pbm.serviceContent.profileManager.PbmQueryProfile(
       :resourceType => RbVmomi::PBM::PbmProfileResourceType(:resourceType => "STORAGE")
     )

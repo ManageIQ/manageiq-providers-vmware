@@ -22,8 +22,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
     vm_name  = ManageIQ::Smartstate::Util.uri_to_local_path(ost.args[0])
     $log.debug "#{log_pref} VM = #{vm_name}"
 
-    args1 = ost.args[1]
-
     begin
       @vm_cfg_file = vm_name
       connect_to_ems(ost)
