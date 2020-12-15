@@ -155,7 +155,6 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
 
   def self.perf_vim_data_to_hashes(vim_data)
     ret = []
-    meth = nil
 
     # The data is organized in an array such as [timestamp1, value1, timestamp2, value2, ...]
     Array.wrap(vim_data).each_slice(2) do |t, v|

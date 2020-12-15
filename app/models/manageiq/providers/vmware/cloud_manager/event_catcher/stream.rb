@@ -11,7 +11,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
       connection = connect(options)
       connection.start
       return true
-    rescue Bunny::AuthenticationFailureError => e
+    rescue Bunny::AuthenticationFailureError
       raise MiqException::MiqInvalidCredentialsError.new "bad username or password for #{options[:hostname]}"
     rescue Bunny::TCPConnectionFailed, Bunny::TCPConnectionFailedForAllHosts
       raise MiqException::MiqHostError.new "cannot reach #{options[:hostname]}:#{options[:port]}"

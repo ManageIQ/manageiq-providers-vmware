@@ -128,7 +128,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_dvs_config(switch_hash, props[:config])
     parse_dvs_summary(switch_hash, props[:summary])
 
-    persister_switch = persister.distributed_virtual_switches.build(switch_hash)
+    persister.distributed_virtual_switches.build(switch_hash)
 
     # Since Lans aren't a top-level collection but belong_to a switch we have
     # to send all dvportgroups for a dvswitch when doing a targeted refresh of the switch
