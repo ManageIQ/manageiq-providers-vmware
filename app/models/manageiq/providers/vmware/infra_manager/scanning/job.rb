@@ -59,7 +59,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
     rescue => err
       _log.log_backtrace(err)
       signal(:abort, err.message, "error")
-      return
     end
   end
 
