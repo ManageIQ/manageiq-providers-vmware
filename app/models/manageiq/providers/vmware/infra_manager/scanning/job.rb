@@ -49,10 +49,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         end
       end
       signal(:snapshot_complete)
-    rescue => err
-      _log.log_backtrace(err)
-      signal(:abort, err.message, "error")
-      return
     rescue Timeout::Error
       msg = case options[:snapshot]
             when :smartProxy, :skipped then "Request to log snapshot user event with EMS timed out."
@@ -60,6 +56,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
             end
       _log.error(msg)
       signal(:abort, msg, "error")
+    rescue => err
+      _log.log_backtrace(err)
+      signal(:abort, err.message, "error")
     end
   end
 
@@ -132,12 +131,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         _log.info("Deleting snapshot: reference: [#{mor}]")
         begin
           delete_snapshot(mor)
-        rescue => err
-          _log.error(err.to_s)
-          return
         rescue Timeout::Error
           msg = "Request to delete snapshot timed out"
           _log.error(msg)
+        rescue => err
+          _log.error(err.to_s)
+          return
         end
 
         unless options[:snapshot] == :smartProxy

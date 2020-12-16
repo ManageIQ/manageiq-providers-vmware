@@ -139,10 +139,10 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
         hashes = sp.parse_data_hostd(vim)
         EventLog.add_elements(self, hashes)
       end
-    rescue => err
-      _log.log_backtrace(err)
     rescue Timeout::Error
       _log.warn "Timeout encountered during log collection for Host [#{name}]"
+    rescue => err
+      _log.log_backtrace(err)
     ensure
       vim.disconnect rescue nil
     end
@@ -172,5 +172,5 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   def thumbprint_sha1
     require 'VMwareWebService/esx_thumb_print'
     ESXThumbPrint.new(ipaddress, authentication_userid, authentication_password).to_sha1
-  end 
+  end
 end
