@@ -117,6 +117,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector do
 
       it "deleting a virtual machine" do
         vm = ems.vms.find_by(:ems_ref => 'vm-107')
+        vm.ems_events.create!(:event_type => "DestroyVM_Task_Complete")
 
         expect(vm.archived?).to be_falsy
         run_targeted_refresh(targeted_update_set(vm_delete_object_updates))

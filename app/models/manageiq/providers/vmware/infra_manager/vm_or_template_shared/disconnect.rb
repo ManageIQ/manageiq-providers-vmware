@@ -4,14 +4,14 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Disconnect
   def disconnect_storage
     # If the VM was unregistered don't clear the storage because the disks
     # are still on the underlying datastore
-    super unless unregistered?
+    super unless vm_unregistered?
   end
 
-  def destroyed?
+  def vm_destroyed?
     disconnect_events.last&.event_type == "DestroyVM_Task_Complete"
   end
 
-  def unregistered?
+  def vm_unregistered?
     disconnect_events.last&.event_type == "UnregisterVM_Complete"
   end
 
