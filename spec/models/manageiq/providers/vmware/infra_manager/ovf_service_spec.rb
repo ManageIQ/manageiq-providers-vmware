@@ -21,8 +21,8 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
 
     FactoryBot.create(:service_ovf,
                       :options          => {:provision_options => provision_options}.merge(config_info_options),
-                      :service_template => service_template).tap do |svc|
-    end
+                      :evm_owner        => FactoryBot.create(:user),
+                      :service_template => service_template)
   end
 
   let(:dialog_options) do
@@ -110,12 +110,21 @@ describe(ManageIQ::Providers::Vmware::InfraManager::OvfService) do
 
   describe '#check_refreshed' do
     it 'successful deployment response ' do
-      response = {:value => {:succeeded => true, :resource_id=>{:type=>"VirtualMachine", :id=>"vm-934"}}}
+      response = {:value => {:succeeded => true, :resource_id => {:type => "VirtualMachine", :id => "vm-934"}}}
       loaded_service.update(:options => loaded_service.options.merge(:deploy_response => response))
       expect(loaded_service.check_refreshed(action)).to eq([false, nil])
 
-      FactoryBot.create(:vm_vmware, :ems_ref_type => "VirtualMachine", :ems_ref => "vm-934", :ems_id => ems.id)
+      vm = FactoryBot.create(:vm_vmware, :ems_ref_type => "VirtualMachine", :ems_ref => "vm-934", :ems_id => ems.id)
+      event_hash = {
+        :type    => "automate_user_info",
+        :subject => loaded_service,
+        :user_id => loaded_service.evm_owner.id,
+        :options => {:message => "[#{vm.class}] [#{vm.id}] has been tagged with /lifecycle/retire_full"}
+      }
+
+      expect(Notification).to receive(:create).with(event_hash)
       expect(loaded_service.check_refreshed(action)).to eq([true, nil])
+      expect(Vm.find_tagged_with(:all => "lifecycle/retire_full", :ns => "/managed")).to eq([vm])
     end
 
     it 'no successful deployment response ' do
