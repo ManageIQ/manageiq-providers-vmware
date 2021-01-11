@@ -76,9 +76,13 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
     dest = find_destination_in_vmdb
     if dest
       add_resource!(dest, :name => action)
+      tag_lifecycle(dest)
 
       if dest.kind_of?(ResourcePool)
-        dest.vms.each { |vm| add_resource!(vm, :name => action) }
+        dest.vms.each do |vm|
+          add_resource!(vm, :name => action)
+          tag_lifecycle(vm)
+        end
       end
 
       [true, nil]
@@ -150,5 +154,15 @@ class ManageIQ::Providers::Vmware::InfraManager::OvfService < ServiceGeneric
 
   def action_option_key(action)
     "#{action.downcase}_options".to_sym
+  end
+
+  def tag_lifecycle(target)
+    target.tag_add("retire_full", :ns => "/managed", :cat => "lifecycle")
+    Notification.create(
+      :type    => "automate_user_info",
+      :subject => self,
+      :options => {:message => "[#{target.class}] [#{target.id}] has been tagged with /lifecycle/retire_full"},
+      :user_id => evm_owner.id
+    )
   end
 end
