@@ -233,11 +233,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
     end
   end
 
-  def start_scan
-    scanning
-    call_scan
-  end
-
   # All other signals
   alias_method :start_snapshot,     :call_snapshot_create
   alias_method :snapshot_delete,    :call_snapshot_delete
