@@ -17,6 +17,16 @@ module ManageIQ
         def self.seedable_classes
           %w[ManageIQ::Providers::Vmware]
         end
+
+        def self.init_loggers
+          $vim_log ||= Vmdb::Loggers.create_logger("vim.log")
+          $vcloud_log ||= Vmdb::Loggers.create_logger("vcloud.log")
+        end
+
+        def self.apply_logger_config(config)
+          Vmdb::Loggers.apply_config_value(config, $vim_log, :level_vim)
+          Vmdb::Loggers.apply_config_value(config, $vcloud_log, :level_vcloud)
+        end
       end
     end
   end
