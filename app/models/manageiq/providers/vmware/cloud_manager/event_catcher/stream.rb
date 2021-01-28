@@ -1,5 +1,4 @@
 require 'bunny'
-require 'thread'
 
 # Listens to RabbitMQ events
 class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
