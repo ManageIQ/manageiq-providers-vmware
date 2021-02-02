@@ -1,11 +1,11 @@
 [Unit]
-PartOf=vmware_infra_manager_event_catcher.target
+PartOf=manageiq-providers-vmware_infra_manager_event_catcher.target
 [Install]
-WantedBy=vmware_infra_manager_event_catcher.target
+WantedBy=manageiq-providers-vmware_infra_manager_event_catcher.target
 [Service]
 WorkingDirectory=/var/www/miq/vmdb
 Environment=BUNDLER_GROUPS=manageiq_default,ui_dependencies
 ExecStart=/bin/bash -lc 'exec ruby lib/workers/bin/run_single_worker.rb ManageIQ::Providers::Vmware::InfraManager::EventCatcher --heartbeat --guid=%i'
 Restart=no
 Type=notify
-Slice=miq-vmware_infra_manager_event_catcher.slice
+Slice=manageiq-providers-vmware_infra_manager_event_catcher.slice

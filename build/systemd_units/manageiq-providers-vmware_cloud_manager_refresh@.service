@@ -1,11 +1,11 @@
 [Unit]
-PartOf=vmware_cloud_manager_refresh.target
+PartOf=manageiq-providers-vmware_cloud_manager_refresh.target
 [Install]
-WantedBy=vmware_cloud_manager_refresh.target
+WantedBy=manageiq-providers-vmware_cloud_manager_refresh.target
 [Service]
 WorkingDirectory=/var/www/miq/vmdb
 Environment=BUNDLER_GROUPS=manageiq_default,ui_dependencies
 ExecStart=/bin/bash -lc 'exec ruby lib/workers/bin/run_single_worker.rb ManageIQ::Providers::Vmware::CloudManager::RefreshWorker --heartbeat --guid=%i'
 Restart=no
 Type=notify
-Slice=miq-vmware_cloud_manager_refresh.slice
+Slice=manageiq-providers-vmware_cloud_manager_refresh.slice
