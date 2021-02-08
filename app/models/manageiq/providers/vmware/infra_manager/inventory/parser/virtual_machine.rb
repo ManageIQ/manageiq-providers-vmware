@@ -359,7 +359,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :section  => "custom_field",
           :name     => key_to_name[cv.key],
           :value    => cv.value,
-          :source   => "VC",
+          :source   => "VC"
         )
       end
     end
@@ -386,7 +386,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         )
       end.compact
 
-      persister.tag_mapper.map_labels("VmVmware", persister_labels).each do |tag|
+      persister.tag_mapper&.map_labels("VmVmware", persister_labels)&.each do |tag|
         persister.vm_and_template_taggings.build(:taggable => vm, :tag => tag)
       end
     end
