@@ -36,7 +36,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :guid                => object.guid,
       :api_version         => api_version,
       :uid_ems             => instance_uuid,
-      :last_inventory_date => Time.now.utc,
+      :last_inventory_date => Time.now.utc
     )
   end
 
@@ -87,7 +87,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
       :uid_ems      => object._ref,
-      :type        => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Datacenter",
       :name         => CGI.unescape(props[:name]),
       :parent       => lazy_find_managed_object(props[:parent]),
     }
@@ -132,9 +132,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
     # Since Lans aren't a top-level collection but belong_to a switch we have
     # to send all dvportgroups for a dvswitch when doing a targeted refresh of the switch
-    cache["DistributedVirtualPortgroup"].select do |_mor, dvpg_props|
+    dvpgs = cache["DistributedVirtualPortgroup"].select do |_mor, dvpg_props|
       dvpg_props.fetch_path(:config, :distributedVirtualSwitch)&._ref == object._ref
-    end.each do |mor, dvpg_props|
+    end
+
+    dvpgs.each do |mor, dvpg_props|
       portgroup = RbVmomi::VIM::DistributedVirtualPortgroup(object._connection, mor)
       parse_portgroups_internal(portgroup, dvpg_props)
     end
@@ -169,7 +171,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     folder_hash = {
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
-      :type        => "ManageIQ::Providers::Vmware::InfraManager::Folder",
+      :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :uid_ems      => object._ref,
       :name         => CGI.unescape(props[:name]),
       :parent       => lazy_find_managed_object(props[:parent]),
@@ -205,7 +207,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     parse_host_system_runtime(host_hash, props)
     parse_host_system_system_info(host_hash, props)
 
-    host_hash[:type] = if host_hash.include?(:vmm_product) && !%w(esx esxi).include?(host_hash[:vmm_product].to_s.downcase)
+    host_hash[:type] = if host_hash.include?(:vmm_product) && !%w[esx esxi].include?(host_hash[:vmm_product].to_s.downcase)
                          "ManageIQ::Providers::Vmware::InfraManager::Host"
                        else
                          "ManageIQ::Providers::Vmware::InfraManager::HostEsx"
@@ -268,7 +270,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     default_port_config = props.fetch_path(:config, :defaultPortConfig)
     security_policy = default_port_config&.securityPolicy
     vlan_spec = default_port_config&.vlan
-    tag = vlan_spec.vlanId if vlan_spec&.kind_of?(RbVmomi::VIM::VmwareDistributedVirtualSwitchVlanIdSpec)
+    tag = vlan_spec.vlanId if vlan_spec.kind_of?(RbVmomi::VIM::VmwareDistributedVirtualSwitchVlanIdSpec)
 
     if security_policy
       allow_promiscuous = security_policy.allowPromiscuous&.value

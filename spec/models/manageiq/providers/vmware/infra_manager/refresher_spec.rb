@@ -884,9 +884,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
     def vm_add_new_custom_value_update
       RbVmomi::VIM.ObjectUpdate(
-        :kind       => "modify",
-        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-        :changeSet  => [
+        :kind      => "modify",
+        :obj       => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet => [
           RbVmomi::VIM.PropertyChange(:name => "availableField", :op => "assign", :val => [RbVmomi::VIM.CustomFieldDef(:key => 300, :managedObjectType => "VirtualMachine", :name => "foo", :type => "string")]),
           RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "add", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "bar"))
         ]
@@ -895,9 +895,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
     def vm_edit_custom_value_update
       RbVmomi::VIM.ObjectUpdate(
-        :kind       => "modify",
-        :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
-        :changeSet  => [
+        :kind      => "modify",
+        :obj       => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :changeSet => [
           RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "assign", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "baz"))
         ]
       )
@@ -943,11 +943,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       )
     end
 
-    def with_vcr(suffix = nil)
+    def with_vcr(suffix = nil, &block)
       path = described_class.name
       path << "::#{suffix}" if suffix
 
-      VCR.use_cassette(path.underscore, :match_requests_on => [:body]) { yield }
+      VCR.use_cassette(path.underscore, :match_requests_on => [:body], &block)
     end
 
     def run_full_refresh

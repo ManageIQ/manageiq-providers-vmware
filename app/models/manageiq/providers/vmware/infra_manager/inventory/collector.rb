@@ -122,13 +122,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def monitor_updates(vim, property_filter, version)
     updated_objects = []
 
-    begin
+    loop do
       update_set = wait_for_updates(vim, version)
       break if update_set.nil?
 
       version = update_set.version
       updated_objects.concat(process_update_set(property_filter, update_set))
-    end while update_set.truncated
+      break unless update_set.truncated
+    end
 
     return version, updated_objects
   end
@@ -387,7 +388,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.debug do
       object_str = "#{object_update.obj.class.wsdl_name}:#{object_update.obj._ref}"
 
-      s =  "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
+      s = "#{log_header} Object: [#{object_str}] Kind: [#{object_update.kind}]"
       if object_update.kind == "modify"
         prop_changes = object_update.changeSet.map(&:name).take(5).join(", ")
         prop_changes << ", ..." if object_update.changeSet.length > 5

@@ -78,7 +78,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_host_system_host_networks(host, hardware, props)
+    def parse_host_system_host_networks(_host, hardware, props)
       network = props.fetch_path(:config, :network)
       return if network.nil?
 
@@ -104,7 +104,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :description  => pnic.device,
           :dhcp_enabled => ip.dhcp,
           :ipaddress    => ip.ipAddress,
-          :subnet_mask  => ip.subnetMask,
+          :subnet_mask  => ip.subnetMask
         )
       end
     end
@@ -165,7 +165,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         :product_name => host.data[:vmm_product],
         :version      => host.data[:vmm_version],
         :build_number => host.data[:vmm_buildnumber],
-        :product_type => props.fetch_path(:summary, :config, :product, :osType),
+        :product_type => props.fetch_path(:summary, :config, :product, :osType)
       )
     end
 
@@ -178,7 +178,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :host         => host,
           :name         => service[:key],
           :display_name => service[:label],
-          :running      => service[:running],
+          :running      => service[:running]
         )
       end
     end
@@ -202,7 +202,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:memory_console] = is_numeric?(memory_console) ? (memory_console.to_f / 1.megabyte).round : nil
         hardware_hash[:cpu_sockets] = hardware[:numCpuPkgs]
         hardware_hash[:cpu_total_cores] = hardware[:numCpuCores]
-        hardware_hash[:cpu_cores_per_socket] = (hardware_hash[:cpu_total_cores].to_f / hardware_hash[:cpu_sockets].to_f).to_i
+        hardware_hash[:cpu_cores_per_socket] = (hardware_hash[:cpu_total_cores].to_f / hardware_hash[:cpu_sockets]).to_i
       end
 
       summary_config = props.fetch_path(:summary, :config)
@@ -306,7 +306,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       storage_devices = props.dig(:config, :storageDevice)
       return if storage_devices.blank?
 
-      scsi_lun_uids = parse_host_system_scsi_luns(storage_devices.dig(:scsiLun))
+      scsi_lun_uids = parse_host_system_scsi_luns(storage_devices[:scsiLun])
 
       scsi_adapters = storage_devices.dig(:scsiTopology, :adapter)
       scsi_targets_by_adapter = parse_host_system_scsi_targets(scsi_adapters, scsi_lun_uids)
@@ -347,7 +347,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :location          => location,
           :model             => model,
           :chap_auth_enabled => chap_auth_enabled,
-          :controller_type   => controller_type,
+          :controller_type   => controller_type
         )
 
         scsi_targets_by_adapter[hba.key].to_a.each do |scsi_target|
@@ -390,7 +390,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
           :ports             => switch[:numPorts],
           :allow_promiscuous => allow_promiscuous,
           :forged_transmits  => forged_transmits,
-          :mac_changes       => mac_changes,
+          :mac_changes       => mac_changes
         )
 
         switch.pnic.to_a.each do |pnic|

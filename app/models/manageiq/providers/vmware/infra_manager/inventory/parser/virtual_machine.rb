@@ -51,9 +51,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       summary_config = summary[:config]
       if summary_config
         uuid = summary_config[:uuid]
-        unless uuid.blank?
-          vm_hash[:uid_ems] = clean_guid(uuid)
-        end
+        vm_hash[:uid_ems] = clean_guid(uuid) if uuid.present?
 
         name = summary_config[:name]
         vm_hash[:name] = CGI.unescape(name) if name
@@ -106,11 +104,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       vm_hash[:host] = lazy_find_managed_object(runtime[:host])
       vm_hash[:ems_cluster] = lazy_find_managed_object(cache.find(runtime[:host])&.dig(:parent))
       vm_hash[:boot_time] = runtime[:bootTime]
-      vm_hash[:raw_power_state] = if props.fetch_path(:summary, :config, :template)
-                                      "never"
-                                    else
-                                      runtime[:powerState]
-                                    end
+      vm_hash[:raw_power_state] =
+        if props.fetch_path(:summary, :config, :template)
+          "never"
+        else
+          runtime[:powerState]
+        end
     end
 
     def parse_virtual_machine_memory_allocation(vm_hash, props)
@@ -144,7 +143,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       guest_full_name = props.fetch_path(:summary, :config, :guestFullName)
       persister.operating_systems.build(
         :vm_or_template => vm,
-        :product_name   => guest_full_name.blank? ? "Other" : guest_full_name
+        :product_name   => guest_full_name.presence || "Other"
       )
     end
 
@@ -157,19 +156,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hardware_hash[:guest_os] = guest_id.blank? ? "Other" : guest_id.to_s.downcase.chomp("guest")
 
         guest_full_name = summary_config[:guestFullName]
-        hardware_hash[:guest_os_full_name] = guest_full_name.blank? ? "Other" : guest_full_name
+        hardware_hash[:guest_os_full_name] = guest_full_name.presence || "Other"
 
         uuid = summary_config[:uuid]
         bios = clean_guid(uuid)
-        hardware_hash[:bios] = bios unless bios.blank?
+        hardware_hash[:bios] = bios if bios.present?
 
         hardware_hash[:cpu_total_cores] = summary_config[:numCpu].to_i
 
         annotation = summary_config[:annotation]
-        hardware_hash[:annotation] = annotation.present? ? annotation : nil
+        hardware_hash[:annotation] = annotation.presence
 
         memory_size_mb = summary_config[:memorySizeMB]
-        hardware_hash[:memory_mb] = memory_size_mb unless memory_size_mb.blank?
+        hardware_hash[:memory_mb] = memory_size_mb if memory_size_mb.present?
       end
 
       config = props[:config]
@@ -242,7 +241,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         if device_type == "disk"
           disk_hash[:mode] = backing.diskMode
           disk_hash[:size] = device.capacityInKB.to_i.kilobytes
-          disk_hash[:disk_type], disk_hash[:thin], disk_hash[:format] = case backing
+          disk_hash[:disk_type], disk_hash[:thin], disk_hash[:format] =
+            case backing
             when RbVmomi::VIM::VirtualDiskRawDiskMappingVer1BackingInfo
               format = "rdm-#{backing.compatibilityMode.to_s[0...-4]}" # physicalMode or virtualMode
               [format, "thick", format]
@@ -267,6 +267,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       veth_devices = devices.select { |dev| dev.kind_of?(RbVmomi::VIM::VirtualEthernetCard) }
       veth_devices.map do |device|
         next if device.macAddress.nil?
+
         uid = address = device.macAddress
 
         name = device.deviceInfo.label
@@ -291,7 +292,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       end
     end
 
-    def parse_virtual_machine_networks(vm, props, hardware, guest_devices)
+    def parse_virtual_machine_networks(_vm, props, hardware, guest_devices)
       summary_guest = props.fetch_path(:summary, :guest)
       return if summary_guest.nil?
 
@@ -484,9 +485,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     #
     def clean_guid(guid)
       return nil if guid.nil?
+
       g = guid.to_s.downcase
       return nil if g.strip.empty?
       return g if g.length == 36 && g =~ UUID_REGEX_FORMAT
+
       g.delete!('^0-9a-f')
       g.sub!(/^([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})$/, '\1-\2-\3-\4-\5')
     end
