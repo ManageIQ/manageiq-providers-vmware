@@ -1,4 +1,5 @@
 class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::Vmware::InfraManager::Host
+  supports :refresh_advanced_settings
   supports :refresh_firewall_rules
 
   def vim_shutdown(force = false)
