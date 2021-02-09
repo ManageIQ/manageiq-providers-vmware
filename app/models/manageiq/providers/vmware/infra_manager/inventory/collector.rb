@@ -102,6 +102,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
+    clear_cis_taggings
 
     version
   end
@@ -342,6 +343,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         tag_ids_by_attached_object[obj.type][obj.id] << tag.id
       end
     end
+  end
+
+  # These are only collected for full refreshes, after a full they can be cleared
+  # to free up memory and prevent targeted refreshes from trying to map labels
+  def clear_cis_taggings
+    self.categories_by_id = self.tags_by_id = self.tag_ids_by_attached_object = nil
   end
 
   def parse_storage_profiles(vim, parser)
