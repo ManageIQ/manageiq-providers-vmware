@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::Vmware::InfraManager::Host
+  supports :refresh_firewall_rules
+
   def vim_shutdown(force = false)
     with_provider_object do |vim_host|
       _log.info "Invoking with: force: [#{force}]"
