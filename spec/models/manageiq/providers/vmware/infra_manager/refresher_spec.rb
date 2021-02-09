@@ -66,14 +66,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
         let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
 
-        before do
-          collector.categories_by_id           = {category.id => category}
-          collector.tags_by_id                 = {tag.id => tag}
-          collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-21" => [tag.id]}}
-        end
-
         it "saves vm labels" do
-          2.times { with_vcr { collector.refresh } }
+          2.times do
+            collector.categories_by_id           = {category.id => category}
+            collector.tags_by_id                 = {tag.id => tag}
+            collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-21" => [tag.id]}}
+
+            with_vcr { collector.refresh }
+          end
 
           ems.reload
 
