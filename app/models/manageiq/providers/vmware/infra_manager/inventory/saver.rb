@@ -1,11 +1,11 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   include Vmdb::Logging
 
-  def initialize
+  def initialize(threaded: true)
     @join_limit  = 30
     @queue       = Queue.new
     @should_exit = Concurrent::AtomicBoolean.new
-    @threaded    = ENV["RAILS_ENV"] != "test"
+    @threaded    = threaded
     @thread      = nil
   end
 

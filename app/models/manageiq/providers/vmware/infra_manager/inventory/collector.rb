@@ -2,23 +2,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems)
+  def initialize(ems, saver)
     @ems            = ems
     @exit_requested = false
     @cache          = ems.class::Inventory::Cache.new
-    @saver          = ems.class::Inventory::Saver.new
+    @saver          = saver
     @vim_thread     = nil
   end
 
   def refresh
-    saver.start_thread
     self.exit_requested = true
     vim_collector
-    saver.stop_thread
   end
 
   def start
-    saver.start_thread
+    self.exit_requested = false
     self.vim_thread = vim_collector_thread
   end
 
@@ -29,19 +27,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def stop(join_timeout = 2.minutes)
     _log.info("#{log_header} Monitor updates thread exiting...")
     self.exit_requested = true
-    return if join_timeout.nil?
 
     # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
-    vim_thread&.join(join_timeout) if vim_thread&.alive?
-    saver.stop_thread
+    vim_thread&.join(join_timeout) if join_timeout
   end
 
   def restart(join_timeout = 2.minutes)
-    self.exit_requested = true
-    vim_thread&.join(join_timeout)
-
-    self.exit_requested = false
-    self.vim_thread     = vim_collector_thread
+    stop(join_timeout)
+    start
   end
 
   attr_accessor :cache, :categories_by_id, :tags_by_id, :tag_ids_by_attached_object
