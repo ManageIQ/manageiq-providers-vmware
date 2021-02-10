@@ -32,7 +32,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if join_timeout.nil?
 
     # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
-    vim_thread&.join(join_timeout)
+    vim_thread&.join(join_timeout) if vim_thread&.alive?
     saver.stop_thread
   end
 

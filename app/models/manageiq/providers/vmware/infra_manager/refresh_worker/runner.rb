@@ -44,6 +44,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     return if collector&.running?
 
     _log.warn("Inventory collector thread not running, restarting...") unless collector.nil?
+    stop_inventory_collector
     start_inventory_collector
   end
 
