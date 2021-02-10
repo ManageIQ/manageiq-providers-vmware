@@ -16,7 +16,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def start
-    self.exit_requested = false
     self.vim_thread = vim_collector_thread
   end
 
@@ -26,10 +25,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def stop(join_timeout = 2.minutes)
     _log.info("#{log_header} Monitor updates thread exiting...")
-    self.exit_requested = true
 
     # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
-    vim_thread&.join(join_timeout) if join_timeout
+    self.exit_requested = true
+    vim_thread&.join(join_timeout)
+    self.exit_requested = false
   end
 
   def restart(join_timeout = 2.minutes)
