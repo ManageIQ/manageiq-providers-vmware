@@ -28,13 +28,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       storage_hash[:raw_disk_mappings_supported] = capability[:rawDiskMappingsSupported].to_s.downcase == 'true'
     end
 
-    def parse_datastore_host_mount(storage, datastore_ref, props)
+    def parse_datastore_host_mount(storage, _datastore_ref, props)
       props[:host].to_a.each do |host_mount|
         persister.host_storages.build(
           :storage    => storage,
           :host       => persister.hosts.lazy_find(host_mount.key._ref),
           :read_only  => host_mount.mountInfo.accessMode == "readOnly",
-          :accessible => host_mount.mountInfo.accessible,
+          :accessible => host_mount.mountInfo.accessible
         )
       end
     end

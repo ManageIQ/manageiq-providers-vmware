@@ -99,6 +99,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
     # Do any post-operations for this EMS
     post_process_refresh_classes.each do |klass|
       next unless klass.respond_to?(:post_refresh_ems)
+
       _log.info("#{log_header} Performing post-refresh operations for #{klass} instances...")
       klass.post_refresh_ems(ems.id, save_inventory_start_time)
       _log.info("#{log_header} Performing post-refresh operations for #{klass} instances...Complete")
