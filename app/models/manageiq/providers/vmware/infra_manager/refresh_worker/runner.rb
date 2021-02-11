@@ -9,7 +9,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
   end
 
   def do_before_work_loop
-    # No need to queue an initial full refresh if we are streaming
+    start_inventory_collector
   end
 
   def do_work
@@ -34,8 +34,12 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   attr_accessor :ems, :collector
 
+  def saver
+    @saver ||= ems.class::Inventory::Saver.new
+  end
+
   def start_inventory_collector
-    self.collector = ems.class::Inventory::Collector.new(ems)
+    self.collector = ems.class::Inventory::Collector.new(ems, saver)
     collector.start
     _log.info("Started inventory collector")
   end
@@ -44,7 +48,7 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
     return if collector&.running?
 
     _log.warn("Inventory collector thread not running, restarting...") unless collector.nil?
-    start_inventory_collector
+    restart_inventory_collector
   end
 
   def stop_inventory_collector

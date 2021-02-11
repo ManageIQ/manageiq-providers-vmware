@@ -16,7 +16,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems) }
+  let(:saver)     { ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver.new(:threaded => false) }
+  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems, saver) }
 
   context "#monitor_updates" do
     context "full refresh" do
