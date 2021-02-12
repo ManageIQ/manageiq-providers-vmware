@@ -17,6 +17,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
     require "VMwareWebService/MiqVimVm"
 
     raise MiqException::MiqVmError, unsupported_reason(:remove_snapshot) unless supports?(:remove_snapshot)
+
     snapshot = snapshots.find_by(:id => snapshot_id)
     raise _("Requested VM snapshot not found, unable to remove snapshot") unless snapshot
     raise _("Refusing to delete a VCB Snapshot") if snapshot.name == MiqVimVm::VCB_SNAPSHOT_NAME
@@ -40,6 +41,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
 
   def raw_remove_snapshot_by_description(description, refresh = false)
     raise MiqException::MiqVmError, unsupported_reason(:remove_snapshot_by_description) unless supports?(:remove_snapshot_by_description)
+
     run_command_via_parent(:vm_remove_snapshot_by_description, :description => description, :refresh => refresh)
   end
 
@@ -64,11 +66,13 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot
 
   def raw_remove_all_snapshots
     raise MiqException::MiqVmError, unsupported_reason(:remove_all_snapshots) unless supports?(:remove_all_snapshots)
+
     run_command_via_parent(:vm_remove_all_snapshots)
   end
 
   def raw_revert_to_snapshot(snapshot_id)
     raise MiqException::MiqVmError, unsupported_reason(:revert_to_snapshot) unless supports?(:revert_to_snapshot)
+
     snapshot = snapshots.find_by(:id => snapshot_id)
     raise _("Requested VM snapshot not found, unable to RevertTo snapshot") unless snapshot
     run_command_via_parent(:vm_revert_to_snapshot, :snMor => snapshot.uid_ems)
