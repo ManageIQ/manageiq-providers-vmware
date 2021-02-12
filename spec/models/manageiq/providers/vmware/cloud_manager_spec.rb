@@ -123,12 +123,12 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
 
       it 'supports snapshot create' do
-        expect(vm.supports_snapshot_create?).to be_truthy
+        expect(vm.supports?(:snapshot_create)).to be_truthy
       end
 
       it 'supports snapshot create (for second snapshot)' do
         FactoryBot.create(:snapshot, :vm_or_template_id => vm.id)
-        expect(vm.supports_snapshot_create?).to be_truthy
+        expect(vm.supports?(:snapshot_create)).to be_truthy
       end
     end
 
@@ -141,7 +141,7 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
 
       it 'supports revert to snapshot' do
-        expect(vm.supports_revert_to_snapshot?).to be_truthy
+        expect(vm.supports?(:revert_to_snapshot)).to be_truthy
       end
     end
 
@@ -154,11 +154,11 @@ describe ManageIQ::Providers::Vmware::CloudManager do
       end
 
       it 'supports remove all snapshots' do
-        expect(vm.supports_remove_all_snapshots?).to be_truthy
+        expect(vm.supports?(:remove_all_snapshots)).to be_truthy
       end
 
       it 'supports remove snapshot' do
-        expect(vm.supports_remove_snapshot?).to be_falsey
+        expect(vm.supports?(:remove_snapshot)).to be_falsey
       end
     end
   end
@@ -174,25 +174,25 @@ describe ManageIQ::Providers::Vmware::CloudManager do
     let(:options)    { { :spec => 'fog-options' } }
 
     it 'supports reconfigure_disks' do
-      expect(vm.supports_reconfigure_disks?).to be_truthy
+      expect(vm.supports?(:reconfigure_disks)).to be_truthy
     end
 
     describe 'supports reconfigure_disksize' do
       it 'without snapshots' do
-        expect(vm.supports_reconfigure_disksize?).to be_truthy
+        expect(vm.supports?(:reconfigure_disksize)).to be_truthy
       end
 
       context 'with snapshots' do
         before { FactoryBot.create(:snapshot, :vm_or_template => vm) }
 
         it do
-          expect(vm.supports_reconfigure_disksize?).to be_falsey
+          expect(vm.supports?(:reconfigure_disksize)).to be_falsey
         end
       end
     end
 
     it 'supports reconfigure_network_adapters' do
-      expect(vm.supports_reconfigure_network_adapters?).to be_truthy
+      expect(vm.supports?(:reconfigure_network_adapters)).to be_truthy
     end
 
     it '.vm_reconfigure' do

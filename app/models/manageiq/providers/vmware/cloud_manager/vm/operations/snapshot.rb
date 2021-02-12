@@ -9,7 +9,7 @@ module ManageIQ::Providers::Vmware::CloudManager::Vm::Operations::Snapshot
   end
 
   def raw_revert_to_snapshot(snapshot_id)
-    raise MiqException::MiqVmError, unsupported_reason(:revert_to_snapshot) unless supports_revert_to_snapshot?
+    raise MiqException::MiqVmError, unsupported_reason(:revert_to_snapshot) unless supports?(:revert_to_snapshot)
     snapshot = snapshots.find_by(:id => snapshot_id)
     raise _("Requested VM snapshot not found, unable to RevertTo snapshot") unless snapshot
     run_command_via_parent(:vm_revert_to_snapshot, :snMor => snapshot.uid_ems)

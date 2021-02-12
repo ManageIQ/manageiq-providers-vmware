@@ -16,9 +16,9 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
-  context "#supports_streaming_refresh?" do
+  context "#supports?(:streaming_refresh)" do
     it "returns true for streaming_refresh" do
-      expect(ems.supports_streaming_refresh?).to be_truthy
+      expect(ems.supports?(:streaming_refresh)).to be_truthy
     end
   end
 
