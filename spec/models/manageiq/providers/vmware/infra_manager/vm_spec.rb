@@ -39,13 +39,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
-  context "supports_clone?" do
+  context "supports?(:clone)" do
     it "returns true" do
       expect(vm.supports?(:clone)).to eq(true)
     end
   end
 
-  context "supports_warm_migrate?" do
+  context "supports?(:warm_migrate)" do
     it "returns true" do
       expect(vm.supports?(:warm_migrate)).to eq(true)
     end
@@ -56,7 +56,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
-  context "supports_shutdown_guest?" do
+  context "supports?(:shutdown_guest)" do
     let(:op) { 'shutdown_guest' }
 
     context "when powered off" do
@@ -65,14 +65,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       it 'is not available if tools is not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
 
       it 'is not available even if tools is installed' do
         vm_status[:tools_status] = nil
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
     end
@@ -83,18 +83,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       it 'is not available if tools not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("tools")
       end
 
       it 'is available if tools installed' do
         vm_status[:tools_status] = nil
-        expect(vm.public_send("supports_#{op}?")).to be true
+        expect(vm.supports?(op)).to be true
       end
     end
   end
 
-  context "supports_reboot_guest?" do
+  context "supports?(:reboot_guest)" do
     let(:op) { 'reboot_guest' }
 
     context "when powered off" do
@@ -103,14 +103,14 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       it 'is not available if tools is not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
 
       it 'is not available even if tools is installed' do
         vm_status[:tools_status] = nil
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("power")
       end
     end
@@ -121,13 +121,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       it 'is not available if tools not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
         vm.update(vm_status)
-        expect(vm.public_send("supports_#{op}?")).to be false
+        expect(vm.supports?(op)).to be false
         expect(vm.unsupported_reason(op)).to include("tools")
       end
 
       it 'is available if tools installed' do
         vm_status[:tools_status] = nil
-        expect(vm.public_send("supports_#{op}?")).to be true
+        expect(vm.supports?(op)).to be true
       end
     end
   end
@@ -151,10 +151,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
   end
 
-  describe "#supports_terminate?" do
+  describe "#supports?(:terminate)" do
     context "when connected to a provider" do
       it "returns true" do
-        expect(vm.supports_terminate?).to be_truthy
+        expect(vm.supports?(:terminate)).to be_truthy
       end
     end
 
@@ -162,7 +162,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
       let(:archived_vm) { FactoryBot.create(:vm_vmware, :host => host) }
 
       it "returns false" do
-        expect(archived_vm.supports_terminate?).to be_falsey
+        expect(archived_vm.supports?(:terminate)).to be_falsey
         expect(archived_vm.unsupported_reason(:terminate)).to eq("The VM is not connected to an active Provider")
       end
     end
