@@ -160,13 +160,14 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     },
                     :fields                 => [
                       {
-                        :component  => "select",
-                        :id         => "endpoints.amqp.security_protocol",
-                        :name       => "endpoints.amqp.security_protocol",
-                        :label      => _("Security Protocol"),
-                        :isRequired => true,
-                        :validate   => [{:type => "required"}],
-                        :options    => [
+                        :component    => "select",
+                        :id           => "endpoints.amqp.security_protocol",
+                        :name         => "endpoints.amqp.security_protocol",
+                        :label        => _("Security Protocol"),
+                        :isRequired   => true,
+                        :validate     => [{:type => "required"}],
+                        :initialValue => 'ssl-with-validation',
+                        :options      => [
                           {
                             :label => _("SSL without validation"),
                             :value => "ssl-no-validation"
