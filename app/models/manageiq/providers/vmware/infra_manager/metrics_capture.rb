@@ -98,6 +98,10 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       stats    = c['statsType'].to_s.downcase
       unit_key = c.fetch_path('unitInfo', 'key').to_s.downcase
 
+      # VM disk info is primarily in the "virtualdisk" group where hosts use the
+      # "disk" group.
+      group = "disk" if group == "virtualdisk"
+
       counter_key = "#{group}_#{name}_#{stats}_#{rollup}"
 
       # Filter the metrics for only the cols we will use
