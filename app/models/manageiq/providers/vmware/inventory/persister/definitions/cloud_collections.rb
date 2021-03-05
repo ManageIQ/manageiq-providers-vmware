@@ -3,6 +3,7 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudColl
 
   def initialize_cloud_inventory_collections
     %i(vms
+       miq_templates
        availability_zones
        disks
        hardwares
@@ -15,17 +16,9 @@ module ManageIQ::Providers::Vmware::Inventory::Persister::Definitions::CloudColl
     add_orchestration_templates
 
     add_orchestration_stacks
-
-    add_miq_templates
   end
 
   # ------ IC provider specific definitions -------------------------
-
-  def add_miq_templates
-    add_collection(cloud, :miq_templates) do |builder|
-      builder.add_properties(:model_class => ::ManageIQ::Providers::Vmware::CloudManager::Template)
-    end
-  end
 
   # TODO: mslemr - parent model_class used anywhere? If not, should be deleted from core
   def add_orchestration_stacks
