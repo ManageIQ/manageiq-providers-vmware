@@ -5,27 +5,30 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
 
   def initialize_inventory_collections
     add_collection(infra, :customization_specs)
-    add_collection(infra, :disks, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :disks, &parent_inventory_collections_vms_and_templates)
     add_collection(infra, :distributed_virtual_switches)
     add_collection(infra, :distributed_virtual_lans)
     add_collection(infra, :clusters)
-    add_collection(infra, :ems_custom_attributes, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :vm_and_template_labels, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :vm_and_template_taggings, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :ems_custom_attributes, &parent_inventory_collections_vms_and_templates)
+    add_collection(infra, :vm_and_template_labels, &parent_inventory_collections_vms_and_templates)
+    add_collection(infra, :vm_and_template_taggings, &parent_inventory_collections_vms_and_templates)
     add_collection(infra, :ems_extensions)
     add_collection(infra, :ems_folders)
     add_collection(infra, :ems_licenses)
     add_collection(infra, :ext_management_system)
-    add_collection(infra, :guest_devices, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :hardwares, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :guest_devices, &parent_inventory_collections_vms_and_templates)
+    add_collection(infra, :hardwares, &parent_inventory_collections_vms_and_templates)
     add_collection(infra, :hosts) do |builder|
       builder.add_properties(:custom_reconnect_block => hosts_reconnect_block)
     end
     add_collection(infra, :host_hardwares)
     add_collection(infra, :host_guest_devices)
     add_collection(infra, :host_networks)
-    add_collection(infra, :host_storages, :parent_inventory_collections => %i[storages]) do |builder|
-      builder.add_properties(:arel => manager.host_storages.joins(:storage))
+    add_collection(infra, :host_storages) do |builder|
+      builder.add_properties(
+        :parent_inventory_collections => %i[storages],
+        :arel                         => manager.host_storages.joins(:storage)
+      )
     end
     add_collection(infra, :host_switches)
     add_collection(infra, :host_system_services)
@@ -34,10 +37,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :host_virtual_lans)
     add_collection(infra, :miq_scsi_luns)
     add_collection(infra, :miq_scsi_targets)
-    add_collection(infra, :networks, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :operating_systems, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :networks, &parent_inventory_collections_vms_and_templates)
+    add_collection(infra, :operating_systems, &parent_inventory_collections_vms_and_templates)
     add_collection(infra, :resource_pools)
-    add_collection(infra, :snapshots, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :snapshots, &parent_inventory_collections_vms_and_templates)
     add_collection(infra, :storages)
     add_collection(infra, :storage_profiles)
     add_collection(infra, :storage_profile_storages)
@@ -145,6 +148,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
 
         inventory_object.id = record.id
       end
+    end
+  end
+
+  def parent_inventory_collections_vms_and_templates
+    lambda do |builder|
+      builder.add_properties(:parent_inventory_collections => %i[vms_and_templates])
     end
   end
 end
