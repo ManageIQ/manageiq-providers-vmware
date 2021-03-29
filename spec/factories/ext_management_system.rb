@@ -6,12 +6,12 @@ FactoryBot.define do
     end
 
     after(:build) do |ems|
-      ems.hostname = Rails.application.secrets.vmware_cloud.try(:[], 'host') || 'vmwarecloudhost'
+      ems.hostname = Rails.application.secrets.vmware_cloud[:host]
     end
 
     after(:create) do |ems|
-      userid   = Rails.application.secrets.vmware_cloud.try(:[], 'userid') || 'VMWARE_CLOUD_USERID'
-      password = Rails.application.secrets.vmware_cloud.try(:[], 'password') || 'VMWARE_CLOUD_PASSWORD'
+      userid   = Rails.application.secrets.vmware_cloud[:userid]
+      password = Rails.application.secrets.vmware_cloud[:password]
 
       cred = {
         :userid   => userid,
