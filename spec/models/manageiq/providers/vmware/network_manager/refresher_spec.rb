@@ -4,22 +4,6 @@ describe ManageIQ::Providers::Vmware::NetworkManager::Refresher do
     @ems_network = @ems.network_manager
   end
 
-  before(:each) do
-    userid   = Rails.application.secrets.vmware_cloud.try(:[], 'userid') || 'VMWARE_CLOUD_USERID'
-    password = Rails.application.secrets.vmware_cloud.try(:[], 'password') || 'VMWARE_CLOUD_PASSWORD'
-    hostname = @ems.hostname
-
-    # Ensure that VCR will obfuscate the basic auth
-    VCR.configure do |c|
-      # workaround for escaping host
-      c.before_playback do |interaction|
-        interaction.filter!(CGI.escape(hostname), hostname)
-        interaction.filter!(CGI.escape('VMWARE_CLOUD_HOST'), 'vmwarecloudhost')
-      end
-      c.filter_sensitive_data('VMWARE_CLOUD_AUTHORIZATION') { Base64.encode64("#{userid}:#{password}").chomp }
-    end
-  end
-
   let(:network_type_vdc)  { 'ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::OrgVdcNet' }
   let(:network_type_vapp) { 'ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::VappNet' }
   let(:subnet_type)       { 'ManageIQ::Providers::Vmware::NetworkManager::CloudSubnet' }
