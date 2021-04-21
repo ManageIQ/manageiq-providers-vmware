@@ -173,7 +173,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::Reconfigure do
         it "raises an exception if adding more than the memory limit" do
           options[:vm_memory] = '4096'
 
-          expect { subject }.to raise_error(MiqException::MiqVmError, "Cannot add more than 2048MB to this VM")
+          expect { subject }.to raise_error(MiqException::MiqVmError, "Cannot add more than 2048MB to this VM while it is running")
         end
 
         it "sets memoryMB correctly" do
