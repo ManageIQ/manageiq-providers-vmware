@@ -365,7 +365,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         parser.parse_pbm_placement_hub(persister_storage_profile, placement_hub, "enter", placement_hub.props)
       end
     end
-  rescue RbVmomi::Fault => err
+  rescue RbVmomi::Fault, Nokogiri::SyntaxError => err
     _log.warn("#{log_header} Unable to collect storage profiles: #{err}")
   end
 

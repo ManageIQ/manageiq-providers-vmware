@@ -353,13 +353,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     persister.ems_folders.targeted_scope << object._ref
     return if kind == "leave"
 
-    name = props.fetch_path(:summary, :name)
+    name = CGI.unescape(props[:name]) if props[:name]
 
     pod_hash = {
       :ems_ref => object._ref,
       :uid_ems => object._ref,
       :type    => "StorageCluster",
-      :name    => CGI.unescape(name),
+      :name    => name,
       :parent  => lazy_find_managed_object(props[:parent]),
     }
 
