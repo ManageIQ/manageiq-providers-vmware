@@ -7,7 +7,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       dvs_hash[:ports] = config[:numPorts] || 0
       dvs_hash[:switch_uuid] ||= config[:uuid]
 
-      parse_dvs_security_policy(dvs_hash, config[:defaultPortConfig].securityPolicy)
+      parse_dvs_security_policy(dvs_hash, config[:defaultPortConfig]&.securityPolicy)
     end
 
     def parse_dvs_summary(dvs_hash, summary)
