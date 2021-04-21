@@ -101,8 +101,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version, updated_objects = monitor_updates(vim, property_filter, version)
 
+    new_vms = updated_objects.select do |managed_object, update_kind, _|
+      managed_object.class.wsdl_name == "VirtualMachine" && update_kind == "enter"
+    end.map(&:first)
+
+    if new_vms.any?
+      cis = cis_connect
+      collect_cis_taggings_targeted(cis, new_vms) if cis
+    end
+
     parse_updates(vim, parser, updated_objects)
     save_inventory(persister)
+
+    clear_cis_taggings
 
     version
   end
@@ -334,6 +345,41 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         tag_ids_by_attached_object[obj.type][obj.id] << tag.id
       end
     end
+  rescue VSphereAutomation::ApiError, Timeout::Error => err
+    _log.warn("Failed to collect Taggings: #{err}")
+  end
+
+  def collect_cis_taggings_targeted(api_client, targets = [])
+    tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
+    tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
+    tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
+
+    self.tag_ids_by_attached_object = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = [] } }
+
+    object_ids = targets.map do |target|
+      VSphereAutomation::CIS::VapiStdDynamicID.new(:type => target.class.wsdl_name, :id => target._ref)
+    end
+
+    objects_to_tags = tagging_tag_association_api.list_attached_tags_on_objects(
+      VSphereAutomation::CIS::CisTaggingTagAssociationListAttachedTagsOnObjects.new(
+        :object_ids => object_ids
+      )
+    )&.value
+
+    all_tag_ids = Set.new
+
+    objects_to_tags.to_a.each do |object_to_tags|
+      object  = object_to_tags.object_id
+      tag_ids = object_to_tags.tag_ids
+
+      all_tag_ids.merge(tag_ids)
+      tag_ids_by_attached_object[object.type][object.id] = tag_ids
+    end
+
+    self.tags_by_id = all_tag_ids.map { |id| tagging_tag_api.get(id)&.value }.compact.index_by(&:id)
+    all_category_ids = tags_by_id.values.map(&:category_id).uniq
+
+    self.categories_by_id = all_category_ids.map { |id| tagging_category_api.get(id)&.value }.compact.index_by(&:id)
   rescue VSphereAutomation::ApiError, Timeout::Error => err
     _log.warn("Failed to collect Taggings: #{err}")
   end
