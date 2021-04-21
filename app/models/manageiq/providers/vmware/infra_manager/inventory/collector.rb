@@ -79,18 +79,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version, updated_objects = monitor_updates(vim, property_filter, "")
 
-    if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
-      cis_api_client = cis_connect
-      collect_cis_taggings(cis_api_client)
-    end
+    cis = cis_connect(vim)
+
+    collect_cis_taggings(cis) if cis.present?
 
     parse_updates(vim, parser, updated_objects)
     parse_storage_profiles(vim, parser)
-
-    if vim.rev >= '6.0' && vim.serviceContent.about.apiType == 'VirtualCenter'
-      cis_api_client = cis_connect
-      parse_content_libraries(cis_api_client, parser)
-    end
+    parse_content_libraries(cis, parser) if cis.present?
 
     save_inventory(persister)
 
@@ -158,7 +153,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     RbVmomi::PBM.connect(vim, :insecure => true)
   end
 
-  def cis_connect
+  def cis_connect(vim)
+    return if vim.rev < '6.0' || vim.serviceContent.about.apiType != 'VirtualCenter'
+
     ems.connect(:service => :cis)
   end
 
@@ -312,8 +309,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         parser.parse_content_library_item(library_item) if library_item
       end
     end
-  rescue VSphereAutomation::ApiError
-    nil
+  rescue VSphereAutomation::ApiError, Timeout::Error => err
+    _log.warn("Failed to collect Content Libraries: #{err}")
   end
 
   def collect_cis_taggings(api_client)
@@ -337,6 +334,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
         tag_ids_by_attached_object[obj.type][obj.id] << tag.id
       end
     end
+  rescue VSphereAutomation::ApiError, Timeout::Error => err
+    _log.warn("Failed to collect Taggings: #{err}")
   end
 
   # These are only collected for full refreshes, after a full they can be cleared
