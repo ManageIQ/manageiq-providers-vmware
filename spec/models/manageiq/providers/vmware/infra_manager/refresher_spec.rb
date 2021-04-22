@@ -444,6 +444,63 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         end
       end
 
+      context "with taggings and labels" do
+        let(:category) do
+          require "vsphere-automation-cis"
+          VSphereAutomation::CIS::CisTaggingCategoryModel.new(
+            :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+            :name        => "Category1",
+            :description => "Description",
+            :cardinality => "SINGLE",
+            :used_by     => []
+          )
+        end
+
+        let(:tag) do
+          require "vsphere-automation-cis"
+          VSphereAutomation::CIS::CisTaggingTagModel.new(
+            :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
+            :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+            :name        => "Tag1",
+            :description => "Tag Description",
+            :used_by     => []
+          )
+        end
+
+        let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
+        let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
+
+        it "saves vm labels for a new vm" do
+          collector.categories_by_id           = {category.id => category}
+          collector.tags_by_id                 = {tag.id => tag}
+          collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-999" => [tag.id]}}
+
+          allow(collector).to receive(:wait_for_updates).and_return(targeted_update_set([vm_create_object_update]))
+          allow(collector).to receive(:cis_connect).and_return(double("VSphereAutomation::CIS"))
+          expect(collector).to receive(:collect_cis_taggings_targeted)
+
+          collector.send(:targeted_refresh, vim, property_filter, "version")
+
+          ems.reload
+
+          expect(ems.vm_and_template_labels.count).to eq(1)
+
+          new_vm = ems.vms_and_templates.find_by(:ems_ref => "vm-999")
+          expect(new_vm.labels.count).to eq(1)
+          expect(new_vm.labels.first).to have_attributes(
+            :section     => "labels",
+            :name        => "Category1",
+            :value       => "Tag1",
+            :resource    => new_vm,
+            :source      => "vmware",
+            :description => "Tag Description"
+          )
+          expect(new_vm.tags.count).to eq(1)
+          expect(new_vm.tags.first.category).to eq(env_tag_mapping_category)
+          expect(new_vm.tags.first.classification.description).to eq("Tag1")
+        end
+      end
+
       def run_targeted_refresh(update_set)
         persister       = ems.class::Inventory::Persister::Targeted.new(ems)
         parser          = ems.class::Inventory::Parser.new(collector, persister)
