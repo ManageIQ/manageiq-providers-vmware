@@ -90,6 +90,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     save_inventory(persister)
 
     self.last_full_refresh = Time.now.utc
+
+    # Clear the memoized tags as they are now stale
     clear_cis_taggings
 
     version
@@ -101,18 +103,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     version, updated_objects = monitor_updates(vim, property_filter, version)
 
-    new_vms = updated_objects.select do |managed_object, update_kind, _|
-      managed_object.class.wsdl_name == "VirtualMachine" && update_kind == "enter"
-    end.map(&:first)
-
-    if new_vms.any?
-      cis = cis_connect
-      collect_cis_taggings_targeted(cis, new_vms) if cis
-    end
+    collect_cis_taggings_targeted(vim, updated_objects)
 
     parse_updates(vim, parser, updated_objects)
     save_inventory(persister)
 
+    # Clear the memoized tags as they are now stale
     clear_cis_taggings
 
     version
@@ -349,7 +345,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.warn("Failed to collect Taggings: #{err}")
   end
 
-  def collect_cis_taggings_targeted(api_client, targets = [])
+  def collect_cis_taggings_targeted(vim, updated_objects)
+    new_vms = Array(updated_objects).select do |obj, kind, _|
+      obj.class.wsdl_name == "VirtualMachine" && kind == "enter"
+    end.map(&:first)
+
+    return if new_vms.empty?
+
+    api_client = cis_connect(vim)
+    return if api_client.nil?
+
     tagging_category_api        = VSphereAutomation::CIS::TaggingCategoryApi.new(api_client)
     tagging_tag_api             = VSphereAutomation::CIS::TaggingTagApi.new(api_client)
     tagging_tag_association_api = VSphereAutomation::CIS::TaggingTagAssociationApi.new(api_client)
