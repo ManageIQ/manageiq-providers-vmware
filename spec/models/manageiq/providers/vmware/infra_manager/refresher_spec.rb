@@ -42,57 +42,119 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       end
 
       context "with taggings and labels" do
-        let(:category) do
-          require "vsphere-automation-cis"
-          VSphereAutomation::CIS::CisTaggingCategoryModel.new(
-            :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
-            :name        => "Category1",
-            :description => "Description",
-            :cardinality => "SINGLE",
-            :used_by     => []
-          )
-        end
-
-        let(:tag) do
-          require "vsphere-automation-cis"
-          VSphereAutomation::CIS::CisTaggingTagModel.new(
-            :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
-            :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
-            :name        => "Tag1",
-            :description => "Tag Description",
-            :used_by     => []
-          )
-        end
-
-        let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
-        let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
-
-        it "saves vm labels" do
-          2.times do
-            collector.categories_by_id           = {category.id => category}
-            collector.tags_by_id                 = {tag.id => tag}
-            collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-21" => [tag.id]}}
-
-            with_vcr { collector.refresh }
+        context "with a single tag per category" do
+          let(:category) do
+            require "vsphere-automation-cis"
+            VSphereAutomation::CIS::CisTaggingCategoryModel.new(
+              :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Category1",
+              :description => "Description",
+              :cardinality => "SINGLE",
+              :used_by     => []
+            )
           end
 
-          ems.reload
+          let(:tag) do
+            require "vsphere-automation-cis"
+            VSphereAutomation::CIS::CisTaggingTagModel.new(
+              :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
+              :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Tag1",
+              :description => "Tag Description",
+              :used_by     => []
+            )
+          end
 
-          expect(ems.vm_and_template_labels.count).to eq(1)
+          let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
+          let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
 
-          vm = ems.vms.find_by(:ems_ref => "vm-21")
-          expect(vm.labels.count).to eq(1)
-          expect(vm.labels.first).to have_attributes(
-            :section     => "labels",
-            :name        => "Category1",
-            :value       => "Tag1",
-            :resource    => vm,
-            :source      => "vmware",
-            :description => "Tag Description"
-          )
-          expect(vm.tags.count).to eq(1)
-          expect(vm.tags.first.category).to eq(env_tag_mapping_category)
-          expect(vm.tags.first.classification.description).to eq("Tag1")
+          it "saves vm labels" do
+            2.times do
+              collector.categories_by_id           = {category.id => category}
+              collector.tags_by_id                 = {tag.id => tag}
+              collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-21" => [tag.id]}}
+
+              with_vcr { collector.refresh }
+            end
+
+            ems.reload
+
+            expect(ems.vm_and_template_labels.count).to eq(1)
+
+            vm = ems.vms.find_by(:ems_ref => "vm-21")
+            expect(vm.labels.count).to eq(1)
+            expect(vm.labels.first).to have_attributes(
+              :section     => "labels",
+              :name        => "Category1",
+              :value       => "Tag1",
+              :resource    => vm,
+              :source      => "vmware",
+              :description => "Tag Description"
+            )
+            expect(vm.tags.count).to eq(1)
+            expect(vm.tags.first.category).to eq(env_tag_mapping_category)
+            expect(vm.tags.first.classification.description).to eq("Tag1")
+          end
+        end
+
+        context "with multiple tags per category" do
+          let(:category) do
+            require "vsphere-automation-cis"
+            VSphereAutomation::CIS::CisTaggingCategoryModel.new(
+              :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Category1",
+              :description => "Description",
+              :cardinality => "MULTIPLE",
+              :used_by     => []
+            )
+          end
+
+          let(:tag1) do
+            require "vsphere-automation-cis"
+            VSphereAutomation::CIS::CisTaggingTagModel.new(
+              :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
+              :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Tag1",
+              :description => "Tag Description",
+              :used_by     => []
+            )
+          end
+
+          let(:tag2) do
+            require "vsphere-automation-cis"
+            VSphereAutomation::CIS::CisTaggingTagModel.new(
+              :id          => "urn:vmomi:InventoryServiceTag:5912cadc-397f-4b87-a704-c1c87a3ebbef:GLOBAL",
+              :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+              :name        => "Tag2",
+              :description => "Tag Description",
+              :used_by     => []
+            )
+          end
+
+          let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1/Tag1") }
+          let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
+
+          it "saves vm labels" do
+            2.times do
+              collector.categories_by_id           = {category.id => category}
+              collector.tags_by_id                 = {tag1.id => tag1, tag2.id => tag2}
+              collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-21" => [tag1.id, tag2.id]}}
+
+              with_vcr { collector.refresh }
+            end
+
+            ems.reload
+
+            expect(ems.vm_and_template_labels.count).to eq(2)
+
+            vm = ems.vms.find_by(:ems_ref => "vm-21")
+            expect(vm.labels.count).to eq(2)
+            expect(vm.labels.pluck(:name)).to include("Category1/Tag1", "Category1/Tag2")
+
+            expect(vm.tags.count).to eq(1)
+            expect(vm.tags.first.category).to eq(env_tag_mapping_category)
+            expect(vm.tags.first.classification.description).to eq("Tag1")
+          end
         end
       end
     end

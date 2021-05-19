@@ -377,12 +377,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
 
         next if tag.nil? || category.nil?
 
+        label_name, label_value =
+          case category.cardinality
+          when "SINGLE"
+            [category.name, tag.name]
+          when "MULTIPLE"
+            ["#{category.name}/#{tag.name}", tag.name]
+          end
+
         persister.vm_and_template_labels.build(
           :resource    => vm,
-          :name        => category.name,
+          :name        => label_name,
           :section     => "labels",
           :source      => "vmware",
-          :value       => tag.name,
+          :value       => label_value,
           :description => tag.description
         )
       end.compact
