@@ -33,6 +33,7 @@ module ManageIQ::Providers
     before_save :stop_event_monitor_queue_on_change
     before_destroy :stop_event_monitor
 
+    supports :metrics
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
