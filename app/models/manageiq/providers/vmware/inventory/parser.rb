@@ -2,6 +2,17 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
   require_nested :CloudManager
   require_nested :NetworkManager
 
+  def parse
+    vdcs
+    vapps
+    vms
+    vapp_templates
+    images
+    networks
+    network_subnets
+    network_routers
+  end
+
   private
 
   def vdcs

@@ -32,7 +32,6 @@ class ManageIQ::Providers::Vmware::Inventory::Collector < ManageIQ::Providers::I
   end
 
   VAPP_TEMPLATE_STATUS_READY = "8".freeze
-  VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2, :netmask, :enabled, :dhcp_enabled, :orchestration_stack)
 
   def orgs
     return @orgs if @orgs.any?
@@ -126,17 +125,17 @@ class ManageIQ::Providers::Vmware::Inventory::Collector < ManageIQ::Providers::I
   def vapp_networks
     return @vapp_networks if @vapp_networks.any?
 
-    @vapp_networks = manager.orchestration_stacks.each_with_object([]) do |stack, res|
-      fetch_network_configurations_for_vapp(stack.ems_ref).map do |net_conf|
+    @vapp_networks = vapps.each_with_object([]) do |vapp, res|
+      fetch_network_configurations_for_vapp(vapp.id).map do |net_conf|
         # 'none' is special network placeholder that we must ignore
         next if net_conf[:networkName] == 'none'
 
         network_id = network_id_from_links(net_conf)
         if (vdc_net = corresponding_vdc_network(net_conf, @vdc_networks_idx))
-          memorize_network_name_mapping(stack.ems_ref, vdc_net.name, vdc_net.id)
+          memorize_network_name_mapping(vapp.id, vdc_net.name, vdc_net.id)
         else
-          memorize_network_name_mapping(stack.ems_ref, net_conf[:networkName], network_id)
-          res << build_vapp_network(stack, network_id, net_conf)
+          memorize_network_name_mapping(vapp.id, net_conf[:networkName], network_id)
+          res << build_vapp_network(vapp, network_id, net_conf)
 
           # routers connecting vApp networks to VDC networks
           if (parent_net = parent_vdc_network(net_conf, @vdc_networks_idx))
@@ -172,10 +171,12 @@ class ManageIQ::Providers::Vmware::Inventory::Collector < ManageIQ::Providers::I
 
   # Utility
 
+  VappNetwork = Struct.new(:id, :name, :type, :is_shared, :gateway, :dns1, :dns2, :netmask, :enabled, :dhcp_enabled, :vapp_id)
+
   def build_vapp_network(vapp, network_id, net_conf)
     n = VappNetwork.new(network_id)
     n.name = vapp_network_name(net_conf[:networkName], vapp)
-    n.orchestration_stack = vapp
+    n.vapp_id = vapp.id
     n.is_shared = false
     n.type = 'application/vnd.vmware.vcloud.vAppNetwork+xml'
     Array.wrap(net_conf.dig(:Configuration, :IpScopes)).each do |ip_scope|

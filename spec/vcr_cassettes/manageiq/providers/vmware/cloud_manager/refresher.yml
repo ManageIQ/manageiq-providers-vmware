@@ -4200,4 +4200,1477 @@ http_interactions:
         </VAppTemplate>
     http_version:
   recorded_at: Wed, 14 Mar 2018 10:54:33 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/org/6d6733f6-536a-454f-bbc3-efee7f6de081
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:29 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 7f0f4f42-f231-4c51-97f7-82d3fb63d74a
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.org+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '117'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '3075'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Org xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" name="miq-dev" id="urn:vcloud:org:6d6733f6-536a-454f-bbc3-efee7f6de081" href="https://vmwarecloudhost/api/org/6d6733f6-536a-454f-bbc3-efee7f6de081" type="application/vnd.vmware.vcloud.org+xml">
+            <Link rel="down" href="https://vmwarecloudhost/api/vdc/0946827a-1a9e-4b9f-8ea3-732b3afe47c6" name="MIQ Devel VDC" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/tasksList/6d6733f6-536a-454f-bbc3-efee7f6de081" type="application/vnd.vmware.vcloud.tasksList+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/catalog/d3e213db-d4fa-49e4-a940-5810ab811648" name="RedHat Catalog2" type="application/vnd.vmware.vcloud.catalog+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/catalog/d3e213db-d4fa-49e4-a940-5810ab811648/controlAccess/" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/catalog/8fac6233-474c-44b4-a45b-87e488102170" name="My First Catalog" type="application/vnd.vmware.vcloud.catalog+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/catalog/8fac6233-474c-44b4-a45b-87e488102170/controlAccess/" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="controlAccess" href="https://vmwarecloudhost/api/catalog/8fac6233-474c-44b4-a45b-87e488102170/action/controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="add" href="https://vmwarecloudhost/api/admin/org/6d6733f6-536a-454f-bbc3-efee7f6de081/catalogs" type="application/vnd.vmware.admin.catalog+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/9e381434-a787-49b5-949e-5d67eff76a18" name="ManageIQ Development network" type="application/vnd.vmware.vcloud.orgNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/5038b60d-fbb8-42e8-8bf3-e711f703507c" name="ManageIQ Dev external network" type="application/vnd.vmware.vcloud.orgNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/supportedSystemsInfo/" type="application/vnd.vmware.vcloud.supportedSystemsInfo+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/org/6d6733f6-536a-454f-bbc3-efee7f6de081/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Description></Description>
+            <FullName>ManageIQ Development Org</FullName>
+        </Org>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:29 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 20 Dec 2017 08:05:57 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 99134851-2620-45e8-9af3-16e7feaf36cf
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+      Set-Cookie:
+      - vcloud-token=240c05cc41334110975741af5097358c; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.orgvdcnetwork+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '70'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '2839'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <OrgVdcNetwork xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" status="1" name="RedHat Private network 43" id="urn:vcloud:network:9e381434-a787-49b5-949e-5d67eff76a18" href="https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml">
+            <Link rel="edit" href="https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml"/>
+            <Link rel="remove" href="https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18"/>
+            <Link rel="up" href="https://vmwarecloudhost/api/vdc/e05af224-b15b-4a7a-9e23-7dc0a5442481" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/admin/network/9e381434-a787-49b5-949e-5d67eff76a18/allocatedAddresses/" type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"/>
+            <Description></Description>
+            <Configuration>
+                <IpScopes>
+                    <IpScope>
+                        <IsInherited>false</IsInherited>
+                        <Gateway>192.168.43.1</Gateway>
+                        <Netmask>255.255.255.0</Netmask>
+                        <Dns1>192.168.43.1</Dns1>
+                        <IsEnabled>true</IsEnabled>
+                        <IpRanges>
+                            <IpRange>
+                                <StartAddress>192.168.43.2</StartAddress>
+                                <EndAddress>192.168.43.99</EndAddress>
+                            </IpRange>
+                        </IpRanges>
+                    </IpScope>
+                </IpScopes>
+                <FenceMode>natRouted</FenceMode>
+                <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+            </Configuration>
+            <EdgeGateway href="https://vmwarecloudhost/api/admin/edgeGateway/49db2538-da09-479f-9467-5d198698e564" id="49db2538-da09-479f-9467-5d198698e564" name="RedHat Edge Gateway" type="application/vnd.vmware.admin.edgeGateway+xml"/>
+            <IsShared>true</IsShared>
+        </OrgVdcNetwork>
+    http_version:
+  recorded_at: Wed, 20 Dec 2017 08:05:57 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 20 Dec 2017 08:05:57 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - a0156fbf-0e92-4a05-a72f-ea701731bf40
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+      Set-Cookie:
+      - vcloud-token=240c05cc41334110975741af5097358c; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.orgvdcnetwork+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '63'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '2595'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <OrgVdcNetwork xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" status="1" name="RedHat Private network 42" id="urn:vcloud:network:5038b60d-fbb8-42e8-8bf3-e711f703507c" href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml">
+            <Link rel="edit" href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml"/>
+            <Link rel="remove" href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c"/>
+            <Link rel="up" href="https://vmwarecloudhost/api/vdc/e05af224-b15b-4a7a-9e23-7dc0a5442481" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c/allocatedAddresses/" type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"/>
+            <Description></Description>
+            <Configuration>
+                <IpScopes>
+                    <IpScope>
+                        <IsInherited>false</IsInherited>
+                        <Gateway>192.168.42.1</Gateway>
+                        <Netmask>255.255.255.0</Netmask>
+                        <Dns1>192.168.42.1</Dns1>
+                        <IsEnabled>true</IsEnabled>
+                    </IpScope>
+                </IpScopes>
+                <FenceMode>natRouted</FenceMode>
+                <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+            </Configuration>
+            <EdgeGateway href="https://vmwarecloudhost/api/admin/edgeGateway/49db2538-da09-479f-9467-5d198698e564" id="49db2538-da09-479f-9467-5d198698e564" name="RedHat Edge Gateway" type="application/vnd.vmware.admin.edgeGateway+xml"/>
+            <IsShared>false</IsShared>
+        </OrgVdcNetwork>
+    http_version:
+  recorded_at: Wed, 20 Dec 2017 08:05:57 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:30 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - edca07c9-328e-4a8a-9648-426fde43ca03
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.vapp+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '155'
+      Vary:
+      - Accept-Encoding, User-Agent
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <VApp xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" ovfDescriptorUploaded="true" deployed="true" status="4" name="spec1-vapp" id="urn:vcloud:vapp:a715dec5-7ab1-487e-993b-82fcd7eb8172" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172" type="application/vnd.vmware.vcloud.vApp+xml">
+            <Link rel="power:powerOff" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/power/action/powerOff"/>
+            <Link rel="power:reboot" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/power/action/reboot"/>
+            <Link rel="power:reset" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/power/action/reset"/>
+            <Link rel="power:shutdown" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/power/action/shutdown"/>
+            <Link rel="power:suspend" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/power/action/suspend"/>
+            <Link rel="deploy" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/action/deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml"/>
+            <Link rel="undeploy" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/action/undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/479eadc5-a17f-46b4-b580-6e2fb87971c9" name="spec1-network" type="application/vnd.vmware.vcloud.vAppNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/controlAccess/" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="controlAccess" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/action/controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="recompose" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/action/recomposeVApp" type="application/vnd.vmware.vcloud.recomposeVAppParams+xml"/>
+            <Link rel="up" href="https://vmwarecloudhost/api/vdc/0946827a-1a9e-4b9f-8ea3-732b3afe47c6" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172" type="application/vnd.vmware.vcloud.vApp+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/owner" type="application/vnd.vmware.vcloud.owner+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Link rel="ovf" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/ovf" type="text/xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+            <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+            <Description></Description>
+            <LeaseSettingsSection href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" ovf:required="false">
+                <ovf:Info>Lease settings section</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"/>
+                <DeploymentLeaseInSeconds>2592000</DeploymentLeaseInSeconds>
+                <StorageLeaseInSeconds>7776000</StorageLeaseInSeconds>
+                <DeploymentLeaseExpiration>2018-04-12T11:18:05.418+02:00</DeploymentLeaseExpiration>
+            </LeaseSettingsSection>
+            <ovf:StartupSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.startupSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/startupSection/">
+                <ovf:Info>VApp startup section</ovf:Info>
+                <ovf:Item ovf:id="spec1-vm1" ovf:order="0" ovf:startAction="powerOn" ovf:startDelay="0" ovf:stopAction="powerOff" ovf:stopDelay="0"/>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/startupSection/" type="application/vnd.vmware.vcloud.startupSection+xml"/>
+            </ovf:StartupSection>
+            <ovf:NetworkSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.networkSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/networkSection/">
+                <ovf:Info>The list of logical networks</ovf:Info>
+                <ovf:Network ovf:name="spec1-network">
+                    <ovf:Description></ovf:Description>
+                </ovf:Network>
+            </ovf:NetworkSection>
+            <NetworkConfigSection href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml" ovf:required="false">
+                <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml"/>
+                <NetworkConfig networkName="spec1-network">
+                    <Link rel="repair" href="https://vmwarecloudhost/api/admin/network/479eadc5-a17f-46b4-b580-6e2fb87971c9/action/reset"/>
+                    <Description></Description>
+                    <Configuration>
+                        <IpScopes>
+                            <IpScope>
+                                <IsInherited>false</IsInherited>
+                                <Gateway>192.168.2.1</Gateway>
+                                <Netmask>255.255.255.0</Netmask>
+                                <IsEnabled>true</IsEnabled>
+                                <IpRanges>
+                                    <IpRange>
+        <StartAddress>192.168.2.100</StartAddress>
+        <EndAddress>192.168.2.199</EndAddress>
+                                    </IpRange>
+                                </IpRanges>
+                            </IpScope>
+                        </IpScopes>
+                        <FenceMode>isolated</FenceMode>
+                        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+                        <Features>
+                            <DhcpService>
+                                <IsEnabled>false</IsEnabled>
+                                <DefaultLeaseTime>3600</DefaultLeaseTime>
+                                <MaxLeaseTime>7200</MaxLeaseTime>
+                            </DhcpService>
+                        </Features>
+                    </Configuration>
+                    <IsDeployed>true</IsDeployed>
+                </NetworkConfig>
+            </NetworkConfigSection>
+            <SnapshotSection href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                <ovf:Info>Snapshot information section</ovf:Info>
+            </SnapshotSection>
+            <DateCreated>2018-03-09T13:36:41.966+01:00</DateCreated>
+            <Owner type="application/vnd.vmware.vcloud.owner+xml">
+                <User href="https://vmwarecloudhost/api/admin/user/f3555478-d7ea-4d9c-9b48-4bced57539e3" name="system" type="application/vnd.vmware.admin.user+xml"/>
+            </Owner>
+            <InMaintenanceMode>false</InMaintenanceMode>
+            <Children>
+                <Vm needsCustomization="true" nestedHypervisorEnabled="false" deployed="true" status="4" name="spec1-vm1" id="urn:vcloud:vm:84faa107-c0b9-4a21-adc5-b17e0c5355a2" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2" type="application/vnd.vmware.vcloud.vm+xml">
+                    <Link rel="power:powerOff" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/power/action/powerOff"/>
+                    <Link rel="power:reboot" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/power/action/reboot"/>
+                    <Link rel="power:reset" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/power/action/reset"/>
+                    <Link rel="power:shutdown" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/power/action/shutdown"/>
+                    <Link rel="power:suspend" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/power/action/suspend"/>
+                    <Link rel="undeploy" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/action/undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml"/>
+                    <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+                    <Link rel="screen:thumbnail" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/screen"/>
+                    <Link rel="screen:acquireTicket" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/screen/action/acquireTicket"/>
+                    <Link rel="media:insertMedia" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/media/action/insertMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="media:ejectMedia" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/media/action/ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="disk:attach" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/disk/action/attach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="disk:detach" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/disk/action/detach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="installVmwareTools" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/action/installVMwareTools"/>
+                    <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+                    <Link rel="reconfigureVm" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/action/reconfigureVm" name="spec1-vm1" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="up" href="https://vmwarecloudhost/api/vApp/vapp-a715dec5-7ab1-487e-993b-82fcd7eb8172" type="application/vnd.vmware.vcloud.vApp+xml"/>
+                    <Description></Description>
+                    <ovf:VirtualHardwareSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:transport="" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/">
+                        <ovf:Info>Virtual hardware requirements</ovf:Info>
+                        <ovf:System>
+                            <vssd:AutomaticRecoveryAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticShutdownAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionDelay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionSequenceNumber xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:CreationTime xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+                            <vssd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:InstanceID>0</vssd:InstanceID>
+                            <vssd:LogDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:RecoveryFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SnapshotDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SuspendDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SwapFileDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:VirtualSystemIdentifier>spec1-vm1</vssd:VirtualSystemIdentifier>
+                            <vssd:VirtualSystemType>vmx-13</vssd:VirtualSystemType>
+                        </ovf:System>
+                        <ovf:Item>
+                            <rasd:Address>00:50:56:01:00:d8</rasd:Address>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Connection ns13:ipAddressingMode="POOL" ns13:ipAddress="192.168.2.100" ns13:primaryNetworkConnection="true">spec1-network</rasd:Connection>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>E1000s ethernet adapter on "spec1-network"</rasd:Description>
+                            <rasd:ElementName>Network adapter 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>1</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>E1000E</rasd:ResourceSubType>
+                            <rasd:ResourceType>10</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address>0</rasd:Address>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>SCSI Controller</rasd:Description>
+                            <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>2</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>lsilogicsas</rasd:ResourceSubType>
+                            <rasd:ResourceType>6</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Hard disk</rasd:Description>
+                            <rasd:ElementName>Hard disk 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource ns13:busType="6" ns13:busSubType="lsilogicsas" ns13:capacity="10240"></rasd:HostResource>
+                            <rasd:InstanceID>2000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent>2</rasd:Parent>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>17</rasd:ResourceType>
+                            <rasd:VirtualQuantity>10737418240</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits>byte</rasd:VirtualQuantityUnits>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address>0</rasd:Address>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>IDE Controller</rasd:Description>
+                            <rasd:ElementName>IDE Controller 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>3</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>5</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>CD/DVD Drive</rasd:Description>
+                            <rasd:ElementName>CD/DVD Drive 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource></rasd:HostResource>
+                            <rasd:InstanceID>3000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent>3</rasd:Parent>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>15</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Floppy Drive</rasd:Description>
+                            <rasd:ElementName>Floppy Drive 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource></rasd:HostResource>
+                            <rasd:InstanceID>8000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>14</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Number of Virtual CPUs</rasd:Description>
+                            <rasd:ElementName>8 virtual CPU(s)</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>4</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>3</rasd:ResourceType>
+                            <rasd:VirtualQuantity>8</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <vmw:CoresPerSocket ovf:required="false">4</vmw:CoresPerSocket>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Memory Size</rasd:Description>
+                            <rasd:ElementName>512 MB of memory</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>5</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>4</rasd:ResourceType>
+                            <rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/" type="application/vnd.vmware.vcloud.virtualHardwareSection+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/media" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                    </ovf:VirtualHardwareSection>
+                    <ovf:OperatingSystemSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:id="102" ns13:type="application/vnd.vmware.vcloud.operatingSystemSection+xml" vmw:osType="windows9Server64Guest" ns13:href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/operatingSystemSection/">
+                        <ovf:Info>Specifies the operating system installed</ovf:Info>
+                        <ovf:Description>Microsoft Windows Server 2016 (64-bit)</ovf:Description>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/operatingSystemSection/" type="application/vnd.vmware.vcloud.operatingSystemSection+xml"/>
+                    </ovf:OperatingSystemSection>
+                    <NetworkConnectionSection href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies the available VM network connections</ovf:Info>
+                        <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+                        <NetworkConnection needsCustomization="true" network="spec1-network">
+                            <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                            <IpAddress>192.168.2.100</IpAddress>
+                            <IsConnected>true</IsConnected>
+                            <MACAddress>00:50:56:01:00:d8</MACAddress>
+                            <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+                        </NetworkConnection>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+                    </NetworkConnectionSection>
+                    <GuestCustomizationSection href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                        <Enabled>false</Enabled>
+                        <ChangeSid>true</ChangeSid>
+                        <VirtualMachineId>84faa107-c0b9-4a21-adc5-b17e0c5355a2</VirtualMachineId>
+                        <JoinDomainEnabled>false</JoinDomainEnabled>
+                        <UseOrgSettings>false</UseOrgSettings>
+                        <AdminPasswordEnabled>true</AdminPasswordEnabled>
+                        <AdminPasswordAuto>true</AdminPasswordAuto>
+                        <ResetPasswordRequired>false</ResetPasswordRequired>
+                        <ComputerName>spec1-vm1</ComputerName>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+                    </GuestCustomizationSection>
+                    <RuntimeInfoSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/runtimeInfoSection">
+                        <ovf:Info>Specifies Runtime info</ovf:Info>
+                    </RuntimeInfoSection>
+                    <SnapshotSection href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                        <ovf:Info>Snapshot information section</ovf:Info>
+                    </SnapshotSection>
+                    <DateCreated>2018-03-09T13:36:47.296+01:00</DateCreated>
+                    <VAppScopedLocalId>c209ef9f-25c8-4fe5-a7f4-c522fbd45ea7</VAppScopedLocalId>
+                    <VmCapabilities href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml">
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml"/>
+                        <MemoryHotAddEnabled>true</MemoryHotAddEnabled>
+                        <CpuHotAddEnabled>true</CpuHotAddEnabled>
+                    </VmCapabilities>
+                    <StorageProfile href="https://vmwarecloudhost/api/vdcStorageProfile/b652f213-33aa-4c1f-8f30-ea2919a30843" name="*" type="application/vnd.vmware.vcloud.vdcStorageProfile+xml"/>
+                </Vm>
+            </Children>
+        </VApp>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:30 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:30 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 68c353d1-6ec5-46da-9e3f-58627f6910ba
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.vapp+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '189'
+      Vary:
+      - Accept-Encoding, User-Agent
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <VApp xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" ovfDescriptorUploaded="true" deployed="true" status="4" name="miq-devel-vm" id="urn:vcloud:vapp:2c385915-c0c5-4cfe-81ca-ce8f59b21dd1" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1" type="application/vnd.vmware.vcloud.vApp+xml">
+            <Link rel="power:powerOff" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/power/action/powerOff"/>
+            <Link rel="power:reboot" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/power/action/reboot"/>
+            <Link rel="power:reset" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/power/action/reset"/>
+            <Link rel="power:shutdown" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/power/action/shutdown"/>
+            <Link rel="power:suspend" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/power/action/suspend"/>
+            <Link rel="deploy" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/action/deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml"/>
+            <Link rel="undeploy" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/action/undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/3ce8a1be-aa11-476b-8afc-642a25a9dfa0" name="ManageIQ Dev external network" type="application/vnd.vmware.vcloud.vAppNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/af20c7e3-79aa-4cdb-bd94-935e4f43d3d3" name="VM Network" type="application/vnd.vmware.vcloud.vAppNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/controlAccess/" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="controlAccess" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/action/controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="recompose" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/action/recomposeVApp" type="application/vnd.vmware.vcloud.recomposeVAppParams+xml"/>
+            <Link rel="up" href="https://vmwarecloudhost/api/vdc/0946827a-1a9e-4b9f-8ea3-732b3afe47c6" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1" type="application/vnd.vmware.vcloud.vApp+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/owner" type="application/vnd.vmware.vcloud.owner+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Link rel="ovf" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/ovf" type="text/xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+            <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+            <Description></Description>
+            <LeaseSettingsSection href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" ovf:required="false">
+                <ovf:Info>Lease settings section</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"/>
+                <DeploymentLeaseInSeconds>2592000</DeploymentLeaseInSeconds>
+                <StorageLeaseInSeconds>7776000</StorageLeaseInSeconds>
+                <DeploymentLeaseExpiration>2018-03-22T12:27:19.638+01:00</DeploymentLeaseExpiration>
+            </LeaseSettingsSection>
+            <ovf:StartupSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.startupSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/startupSection/">
+                <ovf:Info>VApp startup section</ovf:Info>
+                <ovf:Item ovf:id="93e8f5e5-7b61-40ed-ae94-4193eda19fec" ovf:order="0" ovf:startAction="powerOn" ovf:startDelay="0" ovf:stopAction="powerOff" ovf:stopDelay="0"/>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/startupSection/" type="application/vnd.vmware.vcloud.startupSection+xml"/>
+            </ovf:StartupSection>
+            <ovf:NetworkSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.networkSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/networkSection/">
+                <ovf:Info>The list of logical networks</ovf:Info>
+                <ovf:Network ovf:name="ManageIQ Dev external network">
+                    <ovf:Description></ovf:Description>
+                </ovf:Network>
+                <ovf:Network ovf:name="VM Network">
+                    <ovf:Description>The VM Network network</ovf:Description>
+                </ovf:Network>
+            </ovf:NetworkSection>
+            <NetworkConfigSection href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml" ovf:required="false">
+                <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml"/>
+                <NetworkConfig networkName="ManageIQ Dev external network">
+                    <Link rel="repair" href="https://vmwarecloudhost/api/admin/network/3ce8a1be-aa11-476b-8afc-642a25a9dfa0/action/reset"/>
+                    <Description></Description>
+                    <Configuration>
+                        <IpScopes>
+                            <IpScope>
+                                <IsInherited>true</IsInherited>
+                                <Gateway>10.12.0.24</Gateway>
+                                <Netmask>255.255.0.0</Netmask>
+                                <Dns1>10.12.0.13</Dns1>
+                                <DnsSuffix>redhat.xlab.si</DnsSuffix>
+                                <IsEnabled>true</IsEnabled>
+                                <IpRanges>
+                                    <IpRange>
+        <StartAddress>10.12.6.10</StartAddress>
+        <EndAddress>10.12.6.100</EndAddress>
+                                    </IpRange>
+                                </IpRanges>
+                            </IpScope>
+                        </IpScopes>
+                        <ParentNetwork href="https://vmwarecloudhost/api/admin/network/5038b60d-fbb8-42e8-8bf3-e711f703507c" id="5038b60d-fbb8-42e8-8bf3-e711f703507c" name="ManageIQ Dev external network"/>
+                        <FenceMode>bridged</FenceMode>
+                        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+                    </Configuration>
+                    <IsDeployed>true</IsDeployed>
+                </NetworkConfig>
+                <NetworkConfig networkName="VM Network">
+                    <Link rel="repair" href="https://vmwarecloudhost/api/admin/network/af20c7e3-79aa-4cdb-bd94-935e4f43d3d3/action/reset"/>
+                    <Description>The VM Network network</Description>
+                    <Configuration>
+                        <IpScopes>
+                            <IpScope>
+                                <IsInherited>false</IsInherited>
+                                <Gateway>192.168.254.1</Gateway>
+                                <Netmask>255.255.255.0</Netmask>
+                                <IsEnabled>true</IsEnabled>
+                                <IpRanges>
+                                    <IpRange>
+        <StartAddress>192.168.254.100</StartAddress>
+        <EndAddress>192.168.254.199</EndAddress>
+                                    </IpRange>
+                                </IpRanges>
+                            </IpScope>
+                        </IpScopes>
+                        <FenceMode>isolated</FenceMode>
+                        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+                    </Configuration>
+                    <IsDeployed>true</IsDeployed>
+                </NetworkConfig>
+            </NetworkConfigSection>
+            <SnapshotSection href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                <ovf:Info>Snapshot information section</ovf:Info>
+            </SnapshotSection>
+            <DateCreated>2018-02-20T12:19:04.030+01:00</DateCreated>
+            <Owner type="application/vnd.vmware.vcloud.owner+xml">
+                <User href="https://vmwarecloudhost/api/admin/user/a4a18dd6-d9aa-4d4e-a024-653b924e7091" name="administrator" type="application/vnd.vmware.admin.user+xml"/>
+            </Owner>
+            <InMaintenanceMode>false</InMaintenanceMode>
+            <Children>
+                <Vm needsCustomization="true" deployed="true" status="4" name="93e8f5e5-7b61-40ed-ae94-4193eda19fec" id="urn:vcloud:vm:350947aa-c16e-4eb3-98c1-fced9dac6dbc" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc" type="application/vnd.vmware.vcloud.vm+xml">
+                    <Link rel="power:powerOff" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/power/action/powerOff"/>
+                    <Link rel="power:reboot" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/power/action/reboot"/>
+                    <Link rel="power:reset" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/power/action/reset"/>
+                    <Link rel="power:shutdown" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/power/action/shutdown"/>
+                    <Link rel="power:suspend" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/power/action/suspend"/>
+                    <Link rel="undeploy" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/action/undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml"/>
+                    <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+                    <Link rel="screen:thumbnail" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/screen"/>
+                    <Link rel="screen:acquireTicket" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/screen/action/acquireTicket"/>
+                    <Link rel="media:insertMedia" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/media/action/insertMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="media:ejectMedia" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/media/action/ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="disk:attach" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/disk/action/attach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="disk:detach" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/disk/action/detach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="installVmwareTools" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/action/installVMwareTools"/>
+                    <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+                    <Link rel="reconfigureVm" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/action/reconfigureVm" name="93e8f5e5-7b61-40ed-ae94-4193eda19fec" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="up" href="https://vmwarecloudhost/api/vApp/vapp-2c385915-c0c5-4cfe-81ca-ce8f59b21dd1" type="application/vnd.vmware.vcloud.vApp+xml"/>
+                    <Description></Description>
+                    <ovf:VirtualHardwareSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:transport="" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/">
+                        <ovf:Info>Virtual hardware requirements</ovf:Info>
+                        <ovf:System>
+                            <vssd:AutomaticRecoveryAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticShutdownAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionDelay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionSequenceNumber xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:CreationTime xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+                            <vssd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:InstanceID>0</vssd:InstanceID>
+                            <vssd:LogDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:RecoveryFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SnapshotDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SuspendDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SwapFileDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:VirtualSystemIdentifier>93e8f5e5-7b61-40ed-ae94-4193eda19fec</vssd:VirtualSystemIdentifier>
+                            <vssd:VirtualSystemType>vmx-08</vssd:VirtualSystemType>
+                        </ovf:System>
+                        <ovf:Item>
+                            <rasd:Address>00:50:56:01:00:66</rasd:Address>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Connection ns13:ipAddressingMode="DHCP" ns13:ipAddress="10.12.6.23" ns13:primaryNetworkConnection="true">ManageIQ Dev external network</rasd:Connection>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>E1000 ethernet adapter on "ManageIQ Dev external network"</rasd:Description>
+                            <rasd:ElementName>Network adapter 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>1</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+                            <rasd:ResourceType>10</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address>0</rasd:Address>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>SCSI Controller</rasd:Description>
+                            <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>2</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+                            <rasd:ResourceType>6</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Hard disk</rasd:Description>
+                            <rasd:ElementName>Hard disk 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource ns13:busType="6" ns13:busSubType="lsilogic" ns13:capacity="67584"></rasd:HostResource>
+                            <rasd:InstanceID>2000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent>2</rasd:Parent>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>17</rasd:ResourceType>
+                            <rasd:VirtualQuantity>70866960384</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits>byte</rasd:VirtualQuantityUnits>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/cpu">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Number of Virtual CPUs</rasd:Description>
+                            <rasd:ElementName>4 virtual CPU(s)</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>3</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>3</rasd:ResourceType>
+                            <rasd:VirtualQuantity>4</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/memory">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Memory Size</rasd:Description>
+                            <rasd:ElementName>6144 MB of memory</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>4</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>4</rasd:ResourceType>
+                            <rasd:VirtualQuantity>6144</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/" type="application/vnd.vmware.vcloud.virtualHardwareSection+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/media" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                    </ovf:VirtualHardwareSection>
+                    <ovf:OperatingSystemSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:id="102" ns13:type="application/vnd.vmware.vcloud.operatingSystemSection+xml" vmw:osType="rhel6_64Guest" ns13:href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/operatingSystemSection/">
+                        <ovf:Info>Specifies the operating system installed</ovf:Info>
+                        <ovf:Description>Red Hat Enterprise Linux 6 (64-bit)</ovf:Description>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/operatingSystemSection/" type="application/vnd.vmware.vcloud.operatingSystemSection+xml"/>
+                    </ovf:OperatingSystemSection>
+                    <NetworkConnectionSection href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies the available VM network connections</ovf:Info>
+                        <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+                        <NetworkConnection needsCustomization="true" network="ManageIQ Dev external network">
+                            <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                            <IpAddress>10.12.6.23</IpAddress>
+                            <IsConnected>true</IsConnected>
+                            <MACAddress>00:50:56:01:00:66</MACAddress>
+                            <IpAddressAllocationMode>DHCP</IpAddressAllocationMode>
+                        </NetworkConnection>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+                    </NetworkConnectionSection>
+                    <GuestCustomizationSection href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                        <Enabled>false</Enabled>
+                        <ChangeSid>false</ChangeSid>
+                        <VirtualMachineId>350947aa-c16e-4eb3-98c1-fced9dac6dbc</VirtualMachineId>
+                        <JoinDomainEnabled>false</JoinDomainEnabled>
+                        <UseOrgSettings>false</UseOrgSettings>
+                        <AdminPasswordEnabled>true</AdminPasswordEnabled>
+                        <AdminPasswordAuto>true</AdminPasswordAuto>
+                        <ResetPasswordRequired>false</ResetPasswordRequired>
+                        <ComputerName>93e8f5e5-7b-001</ComputerName>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+                    </GuestCustomizationSection>
+                    <ovf:ProductSection ovf:class="" ovf:instance="" ovf:required="true">
+                        <ovf:Info>Information about the installed software</ovf:Info>
+                        <ovf:Product>ManageIQ</ovf:Product>
+                        <ovf:Vendor>ManageIQ</ovf:Vendor>
+                        <ovf:Version>gaprindashvili</ovf:Version>
+                    </ovf:ProductSection>
+                    <RuntimeInfoSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/runtimeInfoSection">
+                        <ovf:Info>Specifies Runtime info</ovf:Info>
+                        <VMWareTools version="10277"/>
+                    </RuntimeInfoSection>
+                    <SnapshotSection href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                        <ovf:Info>Snapshot information section</ovf:Info>
+                    </SnapshotSection>
+                    <DateCreated>2018-02-20T12:19:59.892+01:00</DateCreated>
+                    <VAppScopedLocalId>93e8f5e5-7b61-40ed-ae94-4193eda19fec</VAppScopedLocalId>
+                    <ovfenv:Environment xmlns:ve="http://www.vmware.com/schema/ovfenv" ovfenv:id="" ve:vCenterId="vm-609">
+                        <ovfenv:PlatformSection>
+                            <ovfenv:Kind>VMware ESXi</ovfenv:Kind>
+                            <ovfenv:Version>6.5.0</ovfenv:Version>
+                            <ovfenv:Vendor>VMware, Inc.</ovfenv:Vendor>
+                            <ovfenv:Locale>en</ovfenv:Locale>
+                        </ovfenv:PlatformSection>
+                        <ve:EthernetAdapterSection xmlns="http://schemas.dmtf.org/ovf/environment/1" xmlns:oe="http://schemas.dmtf.org/ovf/environment/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <ve:Adapter ve:mac="00:50:56:01:00:66" ve:network="VM Network" ve:unitNumber="7"/>
+           </ve:EthernetAdapterSection>
+                    </ovfenv:Environment>
+                    <VmCapabilities href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml">
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml"/>
+                        <MemoryHotAddEnabled>false</MemoryHotAddEnabled>
+                        <CpuHotAddEnabled>false</CpuHotAddEnabled>
+                    </VmCapabilities>
+                    <StorageProfile href="https://vmwarecloudhost/api/vdcStorageProfile/b652f213-33aa-4c1f-8f30-ea2919a30843" name="*" type="application/vnd.vmware.vcloud.vdcStorageProfile+xml"/>
+                </Vm>
+            </Children>
+        </VApp>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:30 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 10:54:30 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 826936e7-4744-4144-8cfd-d5b83cca7ffb
+      X-Vcloud-Authorization:
+      - ee9f52dbb4d245048614dba57e182fd3
+      Set-Cookie:
+      - vcloud-token=ee9f52dbb4d245048614dba57e182fd3; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.vapp+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '109'
+      Vary:
+      - Accept-Encoding, User-Agent
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <VApp xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" ovfDescriptorUploaded="true" deployed="false" status="8" name="spec2-vapp" id="urn:vcloud:vapp:0e8b6b49-f42f-43c0-9c15-368d01c222c9" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9" type="application/vnd.vmware.vcloud.vApp+xml">
+            <Link rel="power:powerOn" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/power/action/powerOn"/>
+            <Link rel="deploy" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/network/bff5aa08-9e67-45ce-a02e-a10eb64b292a" name="spec2-network" type="application/vnd.vmware.vcloud.vAppNetwork+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/controlAccess/" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="controlAccess" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"/>
+            <Link rel="recompose" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/recomposeVApp" type="application/vnd.vmware.vcloud.recomposeVAppParams+xml"/>
+            <Link rel="up" href="https://vmwarecloudhost/api/vdc/0946827a-1a9e-4b9f-8ea3-732b3afe47c6" type="application/vnd.vmware.vcloud.vdc+xml"/>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9" type="application/vnd.vmware.vcloud.vApp+xml"/>
+            <Link rel="remove" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9"/>
+            <Link rel="enable" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/enableDownload"/>
+            <Link rel="disable" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/disableDownload"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/owner" type="application/vnd.vmware.vcloud.owner+xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+            <Link rel="ovf" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/ovf" type="text/xml"/>
+            <Link rel="down" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+            <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+            <Link rel="snapshot:revertToCurrent" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/revertToCurrentSnapshot"/>
+            <Link rel="snapshot:removeAll" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/action/removeAllSnapshots"/>
+            <Description></Description>
+            <LeaseSettingsSection href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" ovf:required="false">
+                <ovf:Info>Lease settings section</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/leaseSettingsSection/" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"/>
+                <DeploymentLeaseInSeconds>2592000</DeploymentLeaseInSeconds>
+                <StorageLeaseInSeconds>7776000</StorageLeaseInSeconds>
+                <StorageLeaseExpiration>2018-06-07T14:54:52.870+02:00</StorageLeaseExpiration>
+            </LeaseSettingsSection>
+            <ovf:StartupSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.startupSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/startupSection/">
+                <ovf:Info>VApp startup section</ovf:Info>
+                <ovf:Item ovf:id="spec2-vm1" ovf:order="0" ovf:startAction="powerOn" ovf:startDelay="0" ovf:stopAction="powerOff" ovf:stopDelay="0"/>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/startupSection/" type="application/vnd.vmware.vcloud.startupSection+xml"/>
+            </ovf:StartupSection>
+            <ovf:NetworkSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.networkSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/networkSection/">
+                <ovf:Info>The list of logical networks</ovf:Info>
+                <ovf:Network ovf:name="spec2-network">
+                    <ovf:Description></ovf:Description>
+                </ovf:Network>
+            </ovf:NetworkSection>
+            <NetworkConfigSection href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml" ovf:required="false">
+                <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+                <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/networkConfigSection/" type="application/vnd.vmware.vcloud.networkConfigSection+xml"/>
+                <NetworkConfig networkName="spec2-network">
+                    <Link rel="repair" href="https://vmwarecloudhost/api/admin/network/bff5aa08-9e67-45ce-a02e-a10eb64b292a/action/reset"/>
+                    <Description></Description>
+                    <Configuration>
+                        <IpScopes>
+                            <IpScope>
+                                <IsInherited>false</IsInherited>
+                                <Gateway>192.168.2.1</Gateway>
+                                <Netmask>255.255.255.0</Netmask>
+                                <IsEnabled>true</IsEnabled>
+                                <IpRanges>
+                                    <IpRange>
+        <StartAddress>192.168.2.100</StartAddress>
+        <EndAddress>192.168.2.199</EndAddress>
+                                    </IpRange>
+                                </IpRanges>
+                            </IpScope>
+                        </IpScopes>
+                        <FenceMode>isolated</FenceMode>
+                        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+                        <Features>
+                            <DhcpService>
+                                <IsEnabled>false</IsEnabled>
+                                <DefaultLeaseTime>3600</DefaultLeaseTime>
+                                <MaxLeaseTime>7200</MaxLeaseTime>
+                            </DhcpService>
+                        </Features>
+                    </Configuration>
+                    <IsDeployed>false</IsDeployed>
+                </NetworkConfig>
+            </NetworkConfigSection>
+            <SnapshotSection href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                <ovf:Info>Snapshot information section</ovf:Info>
+                <Snapshot created="2018-03-12T15:43:30.986+01:00" poweredOn="false" size="17179869184"/>
+            </SnapshotSection>
+            <DateCreated>2018-03-09T13:39:00.260+01:00</DateCreated>
+            <Owner type="application/vnd.vmware.vcloud.owner+xml">
+                <User href="https://vmwarecloudhost/api/admin/user/f3555478-d7ea-4d9c-9b48-4bced57539e3" name="system" type="application/vnd.vmware.admin.user+xml"/>
+            </Owner>
+            <InMaintenanceMode>false</InMaintenanceMode>
+            <Children>
+                <Vm needsCustomization="false" nestedHypervisorEnabled="false" deployed="false" status="8" name="spec2-vm1" id="urn:vcloud:vm:aaf94123-cbf9-4de9-841c-41dd41ac310e" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e" type="application/vnd.vmware.vcloud.vm+xml">
+                    <Link rel="power:powerOn" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/power/action/powerOn"/>
+                    <Link rel="deploy" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml"/>
+                    <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="remove" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/metadata" type="application/vnd.vmware.vcloud.metadata+xml"/>
+                    <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/productSections/" type="application/vnd.vmware.vcloud.productSections+xml"/>
+                    <Link rel="screen:thumbnail" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/screen"/>
+                    <Link rel="media:insertMedia" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/media/action/insertMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="media:ejectMedia" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/media/action/ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml"/>
+                    <Link rel="disk:attach" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/disk/action/attach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="disk:detach" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/disk/action/detach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml"/>
+                    <Link rel="enable" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/enableNestedHypervisor"/>
+                    <Link rel="snapshot:create" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/createSnapshot" type="application/vnd.vmware.vcloud.createSnapshotParams+xml"/>
+                    <Link rel="snapshot:revertToCurrent" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/revertToCurrentSnapshot"/>
+                    <Link rel="snapshot:removeAll" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/removeAllSnapshots"/>
+                    <Link rel="reconfigureVm" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/action/reconfigureVm" name="spec2-vm1" type="application/vnd.vmware.vcloud.vm+xml"/>
+                    <Link rel="up" href="https://vmwarecloudhost/api/vApp/vapp-0e8b6b49-f42f-43c0-9c15-368d01c222c9" type="application/vnd.vmware.vcloud.vApp+xml"/>
+                    <Description></Description>
+                    <ovf:VirtualHardwareSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:transport="" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/">
+                        <ovf:Info>Virtual hardware requirements</ovf:Info>
+                        <ovf:System>
+                            <vssd:AutomaticRecoveryAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticShutdownAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionDelay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:AutomaticStartupActionSequenceNumber xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:CreationTime xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:Description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+                            <vssd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:InstanceID>0</vssd:InstanceID>
+                            <vssd:LogDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:RecoveryFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SnapshotDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SuspendDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:SwapFileDataRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <vssd:VirtualSystemIdentifier>spec2-vm1</vssd:VirtualSystemIdentifier>
+                            <vssd:VirtualSystemType>vmx-13</vssd:VirtualSystemType>
+                        </ovf:System>
+                        <ovf:Item>
+                            <rasd:Address>00:50:56:01:00:d9</rasd:Address>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Connection ns13:ipAddressingMode="POOL" ns13:ipAddress="192.168.2.100" ns13:primaryNetworkConnection="true">spec2-network</rasd:Connection>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Vmxnet3 ethernet adapter on "spec2-network"</rasd:Description>
+                            <rasd:ElementName>Network adapter 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>1</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>VMXNET3</rasd:ResourceSubType>
+                            <rasd:ResourceType>10</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address>0</rasd:Address>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>SCSI Controller</rasd:Description>
+                            <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>2</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType>VirtualSCSI</rasd:ResourceSubType>
+                            <rasd:ResourceType>6</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Hard disk</rasd:Description>
+                            <rasd:ElementName>Hard disk 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource ns13:busType="6" ns13:busSubType="VirtualSCSI" ns13:capacity="16384"></rasd:HostResource>
+                            <rasd:InstanceID>2000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent>2</rasd:Parent>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>17</rasd:ResourceType>
+                            <rasd:VirtualQuantity>17179869184</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits>byte</rasd:VirtualQuantityUnits>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address>0</rasd:Address>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>IDE Controller</rasd:Description>
+                            <rasd:ElementName>IDE Controller 0</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>3</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>5</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>CD/DVD Drive</rasd:Description>
+                            <rasd:ElementName>CD/DVD Drive 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource></rasd:HostResource>
+                            <rasd:InstanceID>3000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent>3</rasd:Parent>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>15</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item>
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                            <rasd:AllocationUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Floppy Drive</rasd:Description>
+                            <rasd:ElementName>Floppy Drive 1</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:HostResource></rasd:HostResource>
+                            <rasd:InstanceID>8000</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>14</rasd:ResourceType>
+                            <rasd:VirtualQuantity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/cpu">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Number of Virtual CPUs</rasd:Description>
+                            <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>4</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>3</rasd:ResourceType>
+                            <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <ovf:Item ns13:type="application/vnd.vmware.vcloud.rasdItem+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/memory">
+                            <rasd:Address xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AddressOnParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+                            <rasd:AutomaticAllocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:AutomaticDeallocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Caption xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ChangeableType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConfigurationName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ConsumerVisibility xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Description>Memory Size</rasd:Description>
+                            <rasd:ElementName>256 MB of memory</rasd:ElementName>
+                            <rasd:Generation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:InstanceID>5</rasd:InstanceID>
+                            <rasd:Limit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:MappingBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:OtherResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Parent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:PoolID xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Reservation>0</rasd:Reservation>
+                            <rasd:ResourceSubType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:ResourceType>4</rasd:ResourceType>
+                            <rasd:VirtualQuantity>256</rasd:VirtualQuantity>
+                            <rasd:VirtualQuantityUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <rasd:Weight>0</rasd:Weight>
+                            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        </ovf:Item>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/" type="application/vnd.vmware.vcloud.virtualHardwareSection+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/cpu" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/memory" type="application/vnd.vmware.vcloud.rasdItem+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/disks" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/media" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/networkCards" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="down" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/virtualHardwareSection/serialPorts" type="application/vnd.vmware.vcloud.rasdItemsList+xml"/>
+                    </ovf:VirtualHardwareSection>
+                    <ovf:OperatingSystemSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ovf:id="102" ns13:type="application/vnd.vmware.vcloud.operatingSystemSection+xml" vmw:osType="vmwarePhoton64Guest" ns13:href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/operatingSystemSection/">
+                        <ovf:Info>Specifies the operating system installed</ovf:Info>
+                        <ovf:Description>VMware Photon OS (64-bit)</ovf:Description>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/operatingSystemSection/" type="application/vnd.vmware.vcloud.operatingSystemSection+xml"/>
+                    </ovf:OperatingSystemSection>
+                    <NetworkConnectionSection href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies the available VM network connections</ovf:Info>
+                        <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+                        <NetworkConnection needsCustomization="false" network="spec2-network">
+                            <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                            <IpAddress>192.168.2.100</IpAddress>
+                            <IsConnected>true</IsConnected>
+                            <MACAddress>00:50:56:01:00:d9</MACAddress>
+                            <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+                        </NetworkConnection>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+                    </NetworkConnectionSection>
+                    <GuestCustomizationSection href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" ovf:required="false">
+                        <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                        <Enabled>false</Enabled>
+                        <ChangeSid>false</ChangeSid>
+                        <VirtualMachineId>aaf94123-cbf9-4de9-841c-41dd41ac310e</VirtualMachineId>
+                        <JoinDomainEnabled>false</JoinDomainEnabled>
+                        <UseOrgSettings>false</UseOrgSettings>
+                        <AdminPasswordEnabled>true</AdminPasswordEnabled>
+                        <AdminPasswordAuto>true</AdminPasswordAuto>
+                        <ResetPasswordRequired>false</ResetPasswordRequired>
+                        <ComputerName>spec2-vm1</ComputerName>
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/guestCustomizationSection/" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"/>
+                    </GuestCustomizationSection>
+                    <RuntimeInfoSection xmlns:ns13="http://www.vmware.com/vcloud/v1.5" ns13:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml" ns13:href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/runtimeInfoSection">
+                        <ovf:Info>Specifies Runtime info</ovf:Info>
+                    </RuntimeInfoSection>
+                    <SnapshotSection href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/snapshotSection" type="application/vnd.vmware.vcloud.snapshotSection+xml" ovf:required="false">
+                        <ovf:Info>Snapshot information section</ovf:Info>
+                        <Snapshot created="2018-03-12T15:43:30.986+01:00" poweredOn="false" size="17179869184"/>
+                    </SnapshotSection>
+                    <DateCreated>2018-03-09T13:39:02.741+01:00</DateCreated>
+                    <VAppScopedLocalId>0166f57b-6ae3-47fe-a68b-4f7bebb61074</VAppScopedLocalId>
+                    <VmCapabilities href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml">
+                        <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/vmCapabilities/" type="application/vnd.vmware.vcloud.vmCapabilitiesSection+xml"/>
+                        <MemoryHotAddEnabled>false</MemoryHotAddEnabled>
+                        <CpuHotAddEnabled>false</CpuHotAddEnabled>
+                    </VmCapabilities>
+                    <StorageProfile href="https://vmwarecloudhost/api/vdcStorageProfile/b652f213-33aa-4c1f-8f30-ea2919a30843" name="*" type="application/vnd.vmware.vcloud.vdcStorageProfile+xml"/>
+                </Vm>
+            </Children>
+        </VApp>
+    http_version:
+  recorded_at: Wed, 14 Mar 2018 10:54:30 GMT
 recorded_with: VCR 3.0.3

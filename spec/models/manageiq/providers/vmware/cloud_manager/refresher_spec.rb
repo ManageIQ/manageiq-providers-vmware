@@ -47,6 +47,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       assert_specific_vm_powered_off
       assert_specific_orchestration_template
       assert_specific_vm_with_snapshot
+      assert_specific_network
     end
   end
 
@@ -56,8 +57,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(AvailabilityZone.count).to eq(1)
     expect(FloatingIp.count).to eq(0)
     expect(AuthPrivateKey.count).to eq(0)
-    expect(CloudNetwork.count).to eq(0)
-    expect(CloudSubnet.count).to eq(0)
+    expect(CloudNetwork.count).to eq(5)
+    expect(CloudSubnet.count).to eq(5)
     expect(OrchestrationTemplate.count).to eq(1)
     expect(OrchestrationStack.count).to eq(3)
     expect(OrchestrationStackParameter.count).to eq(0)
@@ -91,7 +92,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(@ems.availability_zones.size).to eq(1)
     expect(@ems.floating_ips.count).to eq(0)
     expect(@ems.key_pairs.size).to eq(0)
-    expect(@ems.cloud_networks.count).to eq(0)
+    expect(@ems.cloud_networks.count).to eq(5)
     expect(@ems.security_groups.count).to eq(0)
     expect(@ems.vms_and_templates.size).to eq(4)
     expect(@ems.vms.size).to eq(3)
@@ -360,5 +361,17 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :total_size => 17_179_869_184
     )
     expect(vm.snapshots.first.create_time.to_s).to eq('2018-03-12 14:43:30 UTC')
+  end
+
+  def assert_specific_network
+    vdc_net = @ems.cloud_networks.find_by(:ems_ref => "9e381434-a787-49b5-949e-5d67eff76a18")
+    expect(vdc_net).to be
+    expect(vdc_net).to have_attributes(
+      :name   => "ManageIQ Development network",
+      :cidr   => "192.168.43.1/24",
+      :shared => true,
+      :type   => "ManageIQ::Providers::Vmware::NetworkManager::CloudNetwork::OrgVdcNet"
+    )
+    expect(vdc_net.cloud_subnets.count).to eq(1)
   end
 end
