@@ -1,24 +1,4 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
-  ALL_REFRESH_SETTINGS = [
-    {
-      :inventory_collections    => {
-        :saver_strategy => :default,
-      },
-    }, {
-      :inventory_collections    => {
-        :saver_strategy => :batch,
-        :use_ar_object  => true,
-      },
-    }, {
-      :inventory_collections    => {
-        :saver_strategy => :batch,
-        :use_ar_object  => false,
-      },
-    }, {
-      :inventory_object_saving_strategy => :recursive,
-    }
-  ].freeze
-
   before do
     @host = Rails.application.secrets.vmware_cloud[:host]
     host_uri = URI.parse("https://#{@host}")
@@ -50,35 +30,23 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(described_class.ems_type).to eq(:vmware_cloud)
   end
 
-  ALL_REFRESH_SETTINGS.each do |settings|
-    context "with settings #{settings}" do
-      before(:each) do
-        stub_settings_merge(
-          :ems_refresh => {
-            :vmware_cloud => settings
-          }
-        )
+  it 'will perform a full refresh' do
+    2.times do
+      @ems.reload
+      VCR.use_cassette(described_class.name.underscore) do
+        EmsRefresh.refresh(@ems)
       end
+      @ems.reload
 
-      it 'will perform a full refresh' do
-        2.times do
-          @ems.reload
-          VCR.use_cassette(described_class.name.underscore, :allow_unused_http_interactions => true) do
-            EmsRefresh.refresh(@ems)
-          end
-          @ems.reload
-
-          assert_specific_orchestration_stack
-          assert_table_counts
-          assert_ems
-          assert_specific_vdc
-          assert_specific_template
-          assert_specific_vm_powered_on
-          assert_specific_vm_powered_off
-          assert_specific_orchestration_template
-          assert_specific_vm_with_snapshot
-        end
-      end
+      assert_specific_orchestration_stack
+      assert_table_counts
+      assert_ems
+      assert_specific_vdc
+      assert_specific_template
+      assert_specific_vm_powered_on
+      assert_specific_vm_powered_off
+      assert_specific_orchestration_template
+      assert_specific_vm_with_snapshot
     end
   end
 
