@@ -12,6 +12,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
     network_subnets
     network_routers
     network_ports
+    floating_ips
   end
 
   private
@@ -226,8 +227,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
     return unless floating_ip
 
     uid = floating_ip_id(nic_data)
-    network_id = collector.read_network_name_mapping(nic_data[:vm].orchestration_stack.ems_ref, nic_data[:network])
-    #network = @data_index.fetch_path(:cloud_networks, network_id)
+    network_id = collector.read_network_name_mapping(nic_data[:vm].vapp_id, nic_data[:network])
 
     new_result = {
       :type             => "ManageIQ::Providers::Vmware::NetworkManager::FloatingIp",
@@ -236,7 +236,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
       :fixed_ip_address => floating_ip,
       :cloud_network    => persister.cloud_networks.lazy_find(network_id),
       :network_port     => persister.network_ports.lazy_find(port_id(nic_data)),
-      :vm               => persister.vms.lazy_find(nic_data[:vm].ems_ref)
+      :vm               => persister.vms.lazy_find(nic_data[:vm].id)
     }
 
     persister.floating_ips.build(new_result)

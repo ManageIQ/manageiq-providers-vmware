@@ -49,6 +49,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       assert_specific_vm_with_snapshot
       assert_specific_network
       assert_specific_subnet
+      assert_specific_network_port
+      assert_specific_vm_networking
     end
   end
 
@@ -56,7 +58,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(ExtManagementSystem.count).to eq(2) # cloud_manager + network_manager
     expect(Flavor.count).to eq(0)
     expect(AvailabilityZone.count).to eq(1)
-    expect(FloatingIp.count).to eq(0)
+    expect(FloatingIp.count).to eq(1)
     expect(AuthPrivateKey.count).to eq(0)
     expect(CloudNetwork.count).to eq(5)
     expect(CloudSubnet.count).to eq(5)
@@ -91,7 +93,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
 
     expect(@ems.flavors.size).to eq(0)
     expect(@ems.availability_zones.size).to eq(1)
-    expect(@ems.floating_ips.count).to eq(0)
+    expect(@ems.floating_ips.count).to eq(1)
     expect(@ems.key_pairs.size).to eq(0)
     expect(@ems.cloud_networks.count).to eq(5)
     expect(@ems.security_groups.count).to eq(0)
@@ -180,7 +182,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(v.ext_management_system).to eq(@ems)
     expect(v.orchestration_stack).to eq(@orchestration_stack1)
     expect(v.availability_zone).to be_nil
-    expect(v.floating_ip).to be_nil
+    expect(v.floating_ip).not_to be_nil
     expect(v.key_pairs.size).to eq(0)
     expect(v.cloud_network).to be_nil
     expect(v.cloud_subnet).to be_nil
@@ -388,7 +390,5 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :ext_management_system          => @ems.network_manager,
       :cloud_network                  => @ems.cloud_networks.find_by(:ems_ref => "9e381434-a787-49b5-949e-5d67eff76a18")
     )
-    # TODO: expect(vdc_subnet.network_ports.count).to eq(4)
-    # TODO: expect(vdc_subnet.vms.count).to eq(4)
   end
 end
