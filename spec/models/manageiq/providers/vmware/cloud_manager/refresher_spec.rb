@@ -49,8 +49,6 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       assert_specific_vm_with_snapshot
       assert_specific_network
       assert_specific_subnet
-      assert_specific_network_port
-      assert_specific_vm_networking
     end
   end
 
@@ -82,7 +80,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     expect(SystemService.count).to eq(0)
 
     expect(Relationship.count).to eq(0)
-    expect(MiqQueue.count).to eq(5)
+    expect(MiqQueue.count).to eq(4)
   end
 
   def assert_ems
@@ -382,13 +380,13 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   def assert_specific_subnet
     vdc_subnet = @ems.cloud_subnets.find_by(:ems_ref => "subnet-9e381434-a787-49b5-949e-5d67eff76a18")
     expect(vdc_subnet).to have_attributes(
-      :name                           => "RedHat Private network 43",
-      :cidr                           => "192.168.43.1/24",
-      :gateway                        => "192.168.43.1",
-      :dns_nameservers                => ["192.168.43.1"],
-      :type                           => "ManageIQ::Providers::Vmware::NetworkManager::CloudSubnet",
-      :ext_management_system          => @ems.network_manager,
-      :cloud_network                  => @ems.cloud_networks.find_by(:ems_ref => "9e381434-a787-49b5-949e-5d67eff76a18")
+      :name                  => "RedHat Private network 43",
+      :cidr                  => "192.168.43.1/24",
+      :gateway               => "192.168.43.1",
+      :dns_nameservers       => ["192.168.43.1"],
+      :type                  => "ManageIQ::Providers::Vmware::NetworkManager::CloudSubnet",
+      :ext_management_system => @ems.network_manager,
+      :cloud_network         => @ems.cloud_networks.find_by(:ems_ref => "9e381434-a787-49b5-949e-5d67eff76a18")
     )
   end
 end
