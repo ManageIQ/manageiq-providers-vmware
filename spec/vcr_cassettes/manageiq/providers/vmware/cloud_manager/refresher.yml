@@ -5673,4 +5673,160 @@ http_interactions:
         </VApp>
     http_version:
   recorded_at: Wed, 14 Mar 2018 10:54:30 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/networkConnectionSection/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 20 Dec 2017 08:05:58 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - ad7aea4c-fac0-46c0-9e25-65a4ec4046e2
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+      Set-Cookie:
+      - vcloud-token=240c05cc41334110975741af5097358c; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.networkconnectionsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '162'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1796'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <NetworkConnectionSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+            <ovf:Info>Specifies the available VM network connections</ovf:Info>
+            <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+            <NetworkConnection needsCustomization="false" network="vApp network test">
+                <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                <IpAddress>192.168.2.100</IpAddress>
+                <ExternalIpAddress>10.12.7.4</ExternalIpAddress>
+                <IsConnected>true</IsConnected>
+                <MACAddress>00:50:56:01:00:0c</MACAddress>
+                <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+            </NetworkConnection>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-84faa107-c0b9-4a21-adc5-b17e0c5355a2/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+        </NetworkConnectionSection>
+    http_version:
+  recorded_at: Wed, 20 Dec 2017 08:05:58 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/networkConnectionSection/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 20 Dec 2017 08:05:58 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 3590b226-88b7-47d3-8d53-7305ed2a3992
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+      Set-Cookie:
+      - vcloud-token=240c05cc41334110975741af5097358c; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.networkconnectionsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '59'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1742'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <NetworkConnectionSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+            <ovf:Info>Specifies the available VM network connections</ovf:Info>
+            <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+            <NetworkConnection needsCustomization="false" network="RedHat external network">
+                <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                <IpAddress>10.12.6.17</IpAddress>
+                <IsConnected>true</IsConnected>
+                <MACAddress>00:50:56:01:00:09</MACAddress>
+                <IpAddressAllocationMode>DHCP</IpAddressAllocationMode>
+            </NetworkConnection>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-350947aa-c16e-4eb3-98c1-fced9dac6dbc/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+        </NetworkConnectionSection>
+    http_version:
+  recorded_at: Wed, 20 Dec 2017 08:05:58 GMT
+- request:
+    method: get
+    uri: https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/networkConnectionSection/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.45.0
+      Accept:
+      - application/*+xml;version=5.1
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 20 Dec 2017 08:05:59 GMT
+      X-Vmware-Vcloud-Request-Id:
+      - 87dae2f8-3d9b-46c7-9919-d7a43327f483
+      X-Vcloud-Authorization:
+      - 240c05cc41334110975741af5097358c
+      Set-Cookie:
+      - vcloud-token=240c05cc41334110975741af5097358c; Secure; Path=/
+      Content-Type:
+      - application/vnd.vmware.vcloud.networkconnectionsection+xml;version=5.1
+      X-Vmware-Vcloud-Request-Execution-Time:
+      - '52'
+      Vary:
+      - Accept-Encoding, User-Agent
+      Content-Length:
+      - '1700'
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <NetworkConnectionSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns9="http://www.vmware.com/vcloud/networkservice/1.0" xmlns:ns10="http://www.vmware.com/vcloud/networkservice/common/1.0" xmlns:ns11="http://www.vmware.com/vcloud/networkservice/ipam/1.0" xmlns:ns12="http://www.vmware.com/vcloud/versions" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" ovf:required="false">
+            <ovf:Info>Specifies the available VM network connections</ovf:Info>
+            <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+            <NetworkConnection needsCustomization="false" network="RedHat external network">
+                <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                <IsConnected>true</IsConnected>
+                <MACAddress>00:50:56:01:00:05</MACAddress>
+                <IpAddressAllocationMode>DHCP</IpAddressAllocationMode>
+            </NetworkConnection>
+            <Link rel="edit" href="https://vmwarecloudhost/api/vApp/vm-aaf94123-cbf9-4de9-841c-41dd41ac310e/networkConnectionSection/" type="application/vnd.vmware.vcloud.networkConnectionSection+xml"/>
+        </NetworkConnectionSection>
+    http_version:
+  recorded_at: Wed, 20 Dec 2017 08:05:59 GMT
 recorded_with: VCR 3.0.3

@@ -153,11 +153,11 @@ class ManageIQ::Providers::Vmware::Inventory::Collector < ManageIQ::Providers::I
   def network_ports
     return @network_ports if @network_ports.any?
 
-    @network_ports = manager.vms.each_with_object([]) do |vm, res|
-      fetch_nic_configurations_for_vm(vm.ems_ref).each do |nic|
+    @network_ports = vms.each_with_object([]) do |vm, res|
+      fetch_nic_configurations_for_vm(vm[:vm].id).each do |nic|
         next unless nic[:IsConnected]
 
-        nic[:vm] = vm
+        nic[:vm] = vm[:vm]
         res << nic
       end
     end

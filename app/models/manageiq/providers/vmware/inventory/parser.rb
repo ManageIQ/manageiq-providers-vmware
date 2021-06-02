@@ -11,6 +11,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
     networks
     network_subnets
     network_routers
+    network_ports
   end
 
   private
@@ -206,7 +207,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
 
     network_port = persister.network_ports.build(new_result)
 
-    network_id = collector.read_network_name_mapping(nic_data[:vm].orchestration_stack.ems_ref, nic_data.dig(:network))
+    network_id = collector.read_network_name_mapping(nic_data[:vm].vapp_id, nic_data.dig(:network))
     unless network_id.nil?
       persister.cloud_subnet_network_ports.build(
         :address      => nic_data[:IpAddress],
@@ -246,7 +247,7 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
   end
 
   def port_id(nic_data)
-    "#{nic_data[:vm].ems_ref}#NIC##{nic_data[:NetworkConnectionIndex]}"
+    "#{nic_data[:vm].id}#NIC##{nic_data[:NetworkConnectionIndex]}"
   end
 
   def floating_ip_id(nic_data)
