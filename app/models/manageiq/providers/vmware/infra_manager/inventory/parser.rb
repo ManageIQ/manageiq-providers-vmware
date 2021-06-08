@@ -339,7 +339,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       :profile_type => props[:profileCategory]
     )
   end
-  alias parse_pbm_capability_profile parse_pbm_profile
+  alias parse_pbm_capability_profile         parse_pbm_profile
+  alias parse_pbm_default_capability_profile parse_pbm_profile
 
   def parse_pbm_placement_hub(persister_storage_profile, _object, _kind, props)
     persister_storage = persister.storages.lazy_find(props[:hubId])
