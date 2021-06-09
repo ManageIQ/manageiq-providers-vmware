@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Vmware::CloudManager::OrchestrationTemplate < OrchestrationTemplate
+  belongs_to :ext_management_system, :foreign_key => :ems_id, :inverse_of => :orchestration_templates
+
   def parameter_groups
     template = ManageIQ::Providers::Vmware::CloudManager::OvfTemplate.new(content)
     vapp_parameter_group + vapp_net_param_groups(template) + vm_param_groups(template)

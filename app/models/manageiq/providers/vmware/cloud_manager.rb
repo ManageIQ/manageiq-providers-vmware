@@ -14,6 +14,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   include ManageIQ::Providers::Vmware::CloudManager::ManagerEventsMixin
   include HasNetworkManagerMixin
 
+  has_many :orchestration_templates, :foreign_key => :ems_id, :inverse_of => :ext_management_system, :dependent => :destroy
   has_many :snapshots, :through => :vms_and_templates
 
   before_create :ensure_managers
