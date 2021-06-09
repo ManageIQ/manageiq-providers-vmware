@@ -678,6 +678,33 @@
           :display: :edit
           :data_type: :integer
           :validation_method: :validate_memory_reservation
+        :cpu_hot_add:
+          :values:
+            false: 0
+            true: 1
+          :description: Enable CPU Hot Add
+          :required: false
+          :display: :edit
+          :default: false
+          :data_type: :boolean
+        :cpu_hot_remove:
+          :values:
+            false: 0
+            true: 1
+          :description: Enable CPU Hot Remove
+          :required: false
+          :display: :edit
+          :default: false
+          :data_type: :boolean
+        :memory_hot_add:
+          :values:
+            false: 0
+            true: 1
+          :description: Enable Memory Hot Add
+          :required: false
+          :display: :edit
+          :default: false
+          :data_type: :boolean
         :network_adapters:
           :values:
             1: "1"

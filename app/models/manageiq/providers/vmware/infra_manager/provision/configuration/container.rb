@@ -42,6 +42,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Cont
         end
       end
 
+      set_spec_option(vmcs, :cpuHotAddEnabled, :cpu_hot_add, nil, :to_s)
+      set_spec_option(vmcs, :cpuHotRemoveEnabled, :cpu_hot_remove, nil, :to_s)
+      set_spec_option(vmcs, :memoryHotAddEnabled, :memory_hot_add, nil, :to_s)
+
       build_config_network_adapters(vmcs)
       build_config_disk_spec(vmcs)
     end
