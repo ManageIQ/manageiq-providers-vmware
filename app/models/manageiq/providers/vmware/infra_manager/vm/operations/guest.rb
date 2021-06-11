@@ -25,13 +25,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Guest
     end
 
     supports :reset do
-      unsupported_reason_add(:reset, unsupported_reason(:control)) unless supports?(:control)
-      unsupported_reason_add(:reset, _("The VM is not powered on")) unless current_state == "on"
+      reason   = unsupported_reason(:control) unless supports?(:control)
+      reason ||= _("The VM is not powered on") unless current_state == "on"
+      unsupported_reason_add(:reset, reason) if reason
     end
-  end
 
-  def validate_standby_guest
-    validate_vm_control_powered_on
+    supports :standby_guest do
+      reason   = unsupported_reason(:control) unless supports?(:control)
+      reason ||= _("The VM is not powered on") unless current_state == "on"
+      unsupported_reason_add(:standby_guest, reason) if reason
+    end
   end
 
   def raw_shutdown_guest
