@@ -30,8 +30,8 @@ module ManageIQ::Providers
     include VimConnectMixin
     include CisConnectMixin
 
-    before_save :stop_event_monitor_queue_on_change
-    before_destroy :stop_event_monitor
+    before_save :stop_event_monitor_queue_on_change, :stop_refresh_worker_queue_on_change
+    before_destroy :stop_event_monitor, :stop_refresh_worker
 
     supports :metrics
     supports :provisioning
@@ -264,8 +264,17 @@ module ManageIQ::Providers
       raise(MiqException::RemoteConsoleNotSupportedError, "vCenter version #{api_version} does not support WebMKS remote console.") unless api_version >= "6.0"
     end
 
+    def after_update_authentication
+      super
+      stop_refresh_worker_queue_on_credential_change
+    end
+
     def self.event_monitor_class
       self::EventCatcher
+    end
+
+    def self.refresh_worker_class
+      self::RefreshWorker
     end
 
     def self.provision_class(via)
