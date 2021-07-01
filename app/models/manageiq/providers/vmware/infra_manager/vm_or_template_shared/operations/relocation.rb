@@ -1,6 +1,15 @@
 module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations::Relocation
   extend ActiveSupport::Concern
 
+  included do
+    supports :migrate do
+      reason   = _("Migrate not supported because VM is blank")    if blank?
+      reason ||= _("Migrate not supported because VM is orphaned") if orphaned?
+      reason ||= _("Migrate not supported because VM is archived") if archived?
+      unsupported_reason_add(:migrate, reason) if reason
+    end
+  end
+
   def raw_migrate(host, pool = nil, priority = "defaultPriority", state = nil)
     raise _("Host not specified, unable to migrate VM") unless host.kind_of?(Host)
 
