@@ -7,8 +7,7 @@ WorkingDirectory=/var/www/miq/vmdb
 Environment=BUNDLER_GROUPS=manageiq_default,ui_dependencies
 EnvironmentFile=/etc/default/manageiq*.properties
 ExecStart=/usr/bin/ruby lib/workers/bin/run_single_worker.rb ManageIQ::Providers::Vmware::InfraManager::EventCatcher --heartbeat --guid=%i
-Group=manageiq
-Umask=0002
+User=manageiq
 Restart=no
 Type=notify
 Slice=manageiq-providers-vmware_infra_manager_event_catcher.slice
