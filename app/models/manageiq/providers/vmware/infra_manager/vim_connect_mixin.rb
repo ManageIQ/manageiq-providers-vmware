@@ -52,7 +52,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
       validate_connection do
         vim = MiqVim.new(ip, user, pass)
+
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
+        raise MiqException::Error, _("vCenter version %{version} is unsupported") % {:version => vim.apiVersion} if !version_supported?(vim.apiVersion)
 
         # If the time on the vCenter is very far off from MIQ system time then
         # any comparison of last_refresh_on and VMware TaskInfo.completeTime can be
@@ -64,6 +66,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       ensure
         vim&.disconnect rescue nil
       end
+    end
+
+    def version_supported?(api_version)
+      Gem::Version.new(api_version) >= Gem::Version.new('6.0')
     end
 
     def validate_connection
