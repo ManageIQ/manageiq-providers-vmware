@@ -255,13 +255,11 @@ module ManageIQ::Providers
 
     def validate_remote_console_vmrc_support
       raise(MiqException::RemoteConsoleNotSupportedError, "vCenter needs to be refreshed to determine VMRC remote console support.")   unless self.remote_console_vmrc_support_known?
-      raise(MiqException::RemoteConsoleNotSupportedError, "vCenter version #{api_version} does not support VMRC remote console.") unless api_version >= "4.1"
-      raise(MiqException::RemoteConsoleNotSupportedError, "vCenter versions earlier than 5.x are not supported.  Found version #{api_version}.") unless api_version >= "5."
       true
     end
 
     def validate_remote_console_webmks_support
-      raise(MiqException::RemoteConsoleNotSupportedError, "vCenter version #{api_version} does not support WebMKS remote console.") unless api_version >= "6.0"
+      true
     end
 
     def after_update_authentication

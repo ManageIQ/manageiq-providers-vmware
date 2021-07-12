@@ -279,12 +279,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
           expect(@vm_prov.dest_storage_profile).to be_nil
         end
 
-        it "returns nil if ems api_version < 5.5" do
-          @vm_prov.source.ext_management_system.api_version = '5.1'
-          @vm_prov.options[:placement_storage_profile] = [storage_profile.id, storage_profile.name]
-          expect(@vm_prov.dest_storage_profile).to be_nil
-        end
-
         it "returns a storage profile" do
           @vm_prov.options[:placement_storage_profile] = [storage_profile.id, storage_profile.name]
           expect(@vm_prov.dest_storage_profile).to eq(storage_profile)
