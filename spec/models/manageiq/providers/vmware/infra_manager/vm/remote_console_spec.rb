@@ -146,11 +146,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
       vm.update_attribute(:raw_power_state, 'poweredOff')
       expect { vm.validate_remote_console_webmks_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
     end
-
-    it 'on VC 5.5' do
-      ems.update_attribute(:api_version, '5.5')
-      expect { vm.validate_remote_console_webmks_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
-    end
   end
 
   context '#remote_console_vmrc_acquire_ticket' do
@@ -200,11 +195,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
 
     it 'with vm off' do
       vm.update_attribute(:raw_power_state, 'poweredOff')
-      expect { vm.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
-    end
-
-    it 'on VC 4.0' do
-      ems.update_attribute(:api_version, '4.0')
       expect { vm.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
     end
   end

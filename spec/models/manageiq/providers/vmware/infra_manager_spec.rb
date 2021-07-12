@@ -144,21 +144,6 @@ describe ManageIQ::Providers::Vmware::InfraManager do
       @ems = FactoryBot.create(:ems_vmware)
     end
 
-    it "not raise for api_version == 5.0" do
-      @ems.update(:api_version => "5.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect { @ems.validate_remote_console_vmrc_support }.not_to raise_error
-    end
-
-    it "raise for api_version == 4.0" do
-      @ems.update(:api_version => "4.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect { @ems.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
-    end
-
-    it "raise for api_version == 4.1" do
-      @ems.update(:api_version => "4.1", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect { @ems.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
-    end
-
     it "raise for missing/blank values" do
       @ems.update(:api_version => "", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
       expect { @ems.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
