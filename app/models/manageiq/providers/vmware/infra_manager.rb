@@ -113,6 +113,20 @@ module ManageIQ::Providers
                           :validate   => [{:type => "required"}]
                         },
                         {
+                          :component    => 'text-field',
+                          :id           => 'endpoints.default.port',
+                          :name         => 'endpoints.default.port',
+                          :label        => _('Port (default 443)'),
+                          :initialValue => 443,
+                          :type         => 'number',
+                          :validate     => [
+                            {
+                              :type  => 'max-number-value',
+                              :value => 65_535,
+                            }
+                          ]
+                        },
+                        {
                           :component  => "text-field",
                           :id         => "authentications.default.userid",
                           :name       => "authentications.default.userid",

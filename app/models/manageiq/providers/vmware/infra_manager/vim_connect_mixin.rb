@@ -7,7 +7,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
     raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
-    options[:ip] ||= hostname
+    options[:ip]   ||= hostname
+    options[:port] ||= (port || 443)
     options[:user] ||= authentication_userid(options[:auth_type])
     options[:pass] ||= authentication_password(options[:auth_type])
 
@@ -20,7 +21,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
     Thread.current[:miq_vim][conn_key] ||= begin
       require 'VMwareWebService/MiqVim'
-      MiqVim.new(*options.values_at(:ip, :user, :pass, :cache_scope, :monitor_updates, :pre_load))
+      MiqVim.new(server: options[:ip], port: options[:port], username: options[:user], password: options[:password], cache_scope: options[:cache_scope], pre_load: options[:pre_load])
     end
   end
 
@@ -47,11 +48,13 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       require 'handsoap'
       require 'VMwareWebService/MiqVim'
 
-      ip, user = options.values_at(:ip, :user)
+      ip, user, port = options.values_at(:ip, :user, :port)
+      port ||= 443
+
       pass = ManageIQ::Password.try_decrypt(options[:pass])
 
       validate_connection do
-        vim = MiqVim.new(ip, user, pass)
+        vim = MiqVim.new(server: ip, port: port, username: user, password: pass)
 
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
         raise MiqException::Error, _("vCenter version %{version} is unsupported") % {:version => vim.apiVersion} if !version_supported?(vim.apiVersion)

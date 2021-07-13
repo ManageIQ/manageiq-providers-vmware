@@ -2,12 +2,13 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
   def event_monitor_handle
     require 'VMwareWebService/MiqVimEventMonitor'
     @event_monitor_handle ||= MiqVimEventMonitor.new(
-      @ems.hostname,
-      @ems.authentication_userid,
-      @ems.authentication_password,
-      nil,
-      worker_settings[:ems_event_page_size],
-      worker_settings[:ems_event_max_wait])
+      :server    => @ems.hostname,
+      :port      => @ems.port || 443,
+      :username  => @ems.authentication_userid,
+      :password  => @ems.authentication_password,
+      :page_size => worker_settings[:ems_event_page_size],
+      :max_wait  => worker_settings[:ems_event_max_wait]
+    )
   end
 
   def reset_event_monitor_handle
