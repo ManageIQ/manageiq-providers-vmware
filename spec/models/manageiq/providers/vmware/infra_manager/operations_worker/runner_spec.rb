@@ -27,7 +27,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner do
       require "VMwareWebService/MiqVim"
       expect(MiqVim)
         .to receive(:new)
-        .with(ems.hostname, ems.auth_user_pwd.first, ems.auth_user_pwd.last, nil, nil, nil)
+        .with(hash_including(:server => ems.hostname, :username => ems.auth_user_pwd.first, :password => ems.auth_user_pwd.last))
         .and_return(nil)
     end
 
