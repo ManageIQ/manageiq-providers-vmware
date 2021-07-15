@@ -127,6 +127,38 @@ module ManageIQ::Providers
                           ]
                         },
                         {
+                          :component    => "select",
+                          :id           => "endpoints.default.verify_ssl",
+                          :name         => "endpoints.default.verify_ssl",
+                          :label        => _("SSL verification"),
+                          :dataType     => "integer",
+                          :isRequired   => true,
+                          :initialValue => OpenSSL::SSL::VERIFY_PEER,
+                          :options      => [
+                            {
+                              :label => _('Do not verify'),
+                              :value => OpenSSL::SSL::VERIFY_NONE,
+                            },
+                            {
+                              :label => _('Verify'),
+                              :value => OpenSSL::SSL::VERIFY_PEER,
+                            },
+                          ]
+                        },
+                        {
+                          :component  => "textarea",
+                          :name       => "endpoints.default.certificate_authority",
+                          :id         => "endpoints.default.certificate_authority",
+                          :label      => _("Trusted CA Certificates"),
+                          :rows       => 10,
+                          :isRequired => false,
+                          :helperText => _('Paste here the trusted CA certificates, in PEM format.'),
+                          :condition  => {
+                            :when => 'endpoints.default.verify_ssl',
+                            :is   => OpenSSL::SSL::VERIFY_PEER,
+                          },
+                        },
+                        {
                           :component  => "text-field",
                           :id         => "authentications.default.userid",
                           :name       => "authentications.default.userid",
@@ -142,7 +174,7 @@ module ManageIQ::Providers
                           :type       => "password",
                           :isRequired => true,
                           :validate   => [{:type => "required"}]
-                        },
+                        }
                       ],
                     },
                   ],
@@ -214,7 +246,7 @@ module ManageIQ::Providers
 
     def self.verify_credentials(args)
       default_endpoint = args.dig("endpoints", "default")
-      hostname, port = default_endpoint&.values_at("hostname", "port")
+      hostname, port, verify_ssl, certificate_authority = default_endpoint&.values_at("hostname", "port", "verify_ssl", "certificate_authority")
 
       authtype = args.dig("authentications").keys.first
       authentication = args.dig("authentications", authtype)
@@ -223,7 +255,7 @@ module ManageIQ::Providers
       password = ManageIQ::Password.try_decrypt(password)
       password ||= find(args["id"]).authentication_password(authtype) if args['id']
 
-      !!raw_connect(:ip => hostname, :port => port, :user => userid, :pass => password)
+      !!raw_connect(:ip => hostname, :port => port, :user => userid, :pass => password, :verify_ssl => verify_ssl, :certificate_authority => certificate_authority)
     end
 
     def supported_auth_types
@@ -321,7 +353,7 @@ module ManageIQ::Providers
 
     def verify_credentials(auth_type = nil, _options = {})
       user, pwd = auth_user_pwd(auth_type)
-      self.class.raw_connect(:ip => hostname, :port => port, :user => user, :pass => pwd)
+      self.class.raw_connect(:ip => hostname, :port => port, :user => user, :pass => pwd, :verify_ssl => verify_ssl, :certificate_authority => certificate_authority)
     end
 
     def get_alarms

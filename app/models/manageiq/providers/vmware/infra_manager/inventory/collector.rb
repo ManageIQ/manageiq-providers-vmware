@@ -127,13 +127,20 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     port = ems.port || 443
     username, password = ems.auth_user_pwd
 
+    insecure = ems.verify_ssl == OpenSSL::SSL::VERIFY_NONE
+
+    ca_file  = Tempfile.new
+    ca_file.write(ems.certificate_authority)
+    ca_file.close
+
     _log.info("#{log_header} Connecting to #{username}@#{host}...")
 
     vim_opts = {
       :ns       => 'urn:vim25',
       :host     => host,
       :ssl      => true,
-      :insecure => true,
+      :insecure => insecure,
+      :ca_file  => ca_file.path,
       :path     => '/sdk',
       :port     => port,
       :rev      => '6.5',

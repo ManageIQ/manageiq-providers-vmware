@@ -12,6 +12,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     options[:user] ||= authentication_userid(options[:auth_type])
     options[:pass] ||= authentication_password(options[:auth_type])
 
+    options[:verify_ssl]            ||= verify_ssl
+    options[:certificate_authority] ||= certificate_authority
+
     conn_key = connection_key(options)
 
     Thread.current[:miq_vim] ||= {}
@@ -28,7 +31,11 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
         :password        => options[:pass],
         :cache_scope     => options[:cache_scope],
         :monitor_updates => options[:monitor_updates],
-        :pre_load        => options[:pre_load]
+        :pre_load        => options[:pre_load],
+        :ssl_options     => {
+          :verify_ssl => options[:verify_ssl],
+          :ca_file    => options[:certificate_authority]
+        }
       )
     end
   end
@@ -56,15 +63,20 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       require 'handsoap'
       require 'VMwareWebService/MiqVim'
 
-      ip, user, port = options.values_at(:ip, :user, :port)
+      ip, user, port, verify_ssl, certificate_authority = options.values_at(:ip, :user, :port, :verify_ssl, :certificate_authority)
+
       pass = ManageIQ::Password.try_decrypt(options[:pass])
 
       validate_connection do
         vim = MiqVim.new(
-          :server   => ip,
-          :port     => port,
-          :username => user,
-          :password => pass
+          :server      => ip,
+          :port        => port,
+          :username    => user,
+          :password    => pass,
+          :ssl_options => {
+            :verify_ssl => verify_ssl,
+            :ca_file    => certificate_authority
+          }
         )
 
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
