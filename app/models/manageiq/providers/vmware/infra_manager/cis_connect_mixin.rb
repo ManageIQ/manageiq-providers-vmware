@@ -5,7 +5,7 @@ module ManageIQ::Providers::Vmware::InfraManager::CisConnectMixin
     require 'vsphere-automation-cis'
 
     configuration = VSphereAutomation::Configuration.new.tap do |c|
-      c.host = hostname
+      c.host = "#{hostname}:#{port || 443}"
       c.username = auth_user_pwd.first
       c.password = auth_user_pwd.last
       c.scheme = 'https'

@@ -113,6 +113,20 @@ module ManageIQ::Providers
                           :validate   => [{:type => "required"}]
                         },
                         {
+                          :component    => 'text-field',
+                          :id           => 'endpoints.default.port',
+                          :name         => 'endpoints.default.port',
+                          :label        => _('API Port'),
+                          :initialValue => 443,
+                          :type         => 'number',
+                          :validate     => [
+                            {
+                              :type  => 'max-number-value',
+                              :value => 65_535,
+                            }
+                          ]
+                        },
+                        {
                           :component  => "text-field",
                           :id         => "authentications.default.userid",
                           :name       => "authentications.default.userid",
@@ -199,7 +213,8 @@ module ManageIQ::Providers
     end
 
     def self.verify_credentials(args)
-      hostname = args.dig("endpoints", 'default', 'hostname')
+      default_endpoint = args.dig("endpoints", "default")
+      hostname, port = default_endpoint&.values_at("hostname", "port")
 
       authtype = args.dig("authentications").keys.first
       authentication = args.dig("authentications", authtype)
@@ -208,7 +223,7 @@ module ManageIQ::Providers
       password = ManageIQ::Password.try_decrypt(password)
       password ||= find(args["id"]).authentication_password(authtype) if args['id']
 
-      !!raw_connect(:ip => hostname, :user => userid, :pass => password)
+      !!raw_connect(:ip => hostname, :port => port, :user => userid, :pass => password)
     end
 
     def supported_auth_types
@@ -306,7 +321,7 @@ module ManageIQ::Providers
 
     def verify_credentials(auth_type = nil, _options = {})
       user, pwd = auth_user_pwd(auth_type)
-      self.class.raw_connect(:ip => hostname, :user => user, :pass => pwd)
+      self.class.raw_connect(:ip => hostname, :port => port, :user => user, :pass => pwd)
     end
 
     def get_alarms

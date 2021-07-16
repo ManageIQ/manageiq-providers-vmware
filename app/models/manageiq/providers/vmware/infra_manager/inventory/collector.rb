@@ -124,6 +124,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def vim_connect
     host = ems.hostname
+    port = ems.port || 443
     username, password = ems.auth_user_pwd
 
     _log.info("#{log_header} Connecting to #{username}@#{host}...")
@@ -134,7 +135,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :ssl      => true,
       :insecure => true,
       :path     => '/sdk',
-      :port     => 443,
+      :port     => port,
       :rev      => '6.5',
     }
 
@@ -150,7 +151,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def pbm_connect(vim)
     require "rbvmomi/pbm"
-    RbVmomi::PBM.connect(vim, :insecure => true)
+    RbVmomi::PBM.connect(vim, :port => vim.http.port, :insecure => true)
   end
 
   def cis_connect(vim)
