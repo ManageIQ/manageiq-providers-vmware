@@ -129,10 +129,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     insecure = ems.verify_ssl == OpenSSL::SSL::VERIFY_NONE
 
-    ca_file  = Tempfile.new
-    ca_file.write(ems.certificate_authority)
-    ca_file.close
-
     _log.info("#{log_header} Connecting to #{username}@#{host}...")
 
     vim_opts = {
@@ -154,6 +150,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("#{log_header} Connected")
     conn
+  end
+
+  def ca_file
+    Tempfile.new.tap do |f|
+      f.write(ems.certificate_authority)
+      f.close
+    end
   end
 
   def pbm_connect(vim)
