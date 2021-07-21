@@ -108,7 +108,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       key, array_key = tag_and_key(key)
       if array_key
         array, idx = get_array_entry(h[key], array_key)
-        raise "hashTarget: Could not traverse tree through array element #{k}[#{array_key}] in #{key_string}" unless array
+        raise "hashTarget: Could not traverse tree through array element #{key}[#{array_key}] in #{key_string}" unless array
 
         h = array[idx]
       else
@@ -171,5 +171,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
         return array, n if entry_key.to_s == key
       end
     end
+
+    return nil, nil
   end
 end
