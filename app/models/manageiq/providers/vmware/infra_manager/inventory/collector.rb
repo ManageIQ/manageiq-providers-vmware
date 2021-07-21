@@ -37,7 +37,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     start
   end
 
-  attr_accessor :cache, :categories_by_id, :tags_by_id, :tag_ids_by_attached_object
+  attr_accessor :cache, :categories_by_id, :ca_file, :tags_by_id, :tag_ids_by_attached_object
 
   private
 
@@ -127,13 +127,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     port = ems.port || 443
     username, password = ems.auth_user_pwd
 
+    insecure = ems.verify_ssl == OpenSSL::SSL::VERIFY_NONE
+
     _log.info("#{log_header} Connecting to #{username}@#{host}...")
+
+    self.ca_file = build_ca_file
 
     vim_opts = {
       :ns       => 'urn:vim25',
       :host     => host,
       :ssl      => true,
-      :insecure => true,
+      :insecure => insecure,
+      :ca_file  => ca_file&.path,
       :path     => '/sdk',
       :port     => port,
       :rev      => '6.5',
@@ -147,6 +152,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     _log.info("#{log_header} Connected")
     conn
+  end
+
+  def build_ca_file
+    return if ems.certificate_authority.blank?
+
+    Tempfile.new.tap do |f|
+      f.write(ems.certificate_authority)
+      f.close
+    end
   end
 
   def pbm_connect(vim)
@@ -163,7 +177,15 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def disconnect(vim)
     return if vim.nil?
 
+    # sessionManager.Logout and close the http connection
     vim.close
+
+    # Cleanup the certificate authority file if it exists
+    if ca_file
+      ca_file.close
+      ca_file.unlink
+      self.ca_file = nil
+    end
   end
 
   def wait_for_updates(vim, version)
