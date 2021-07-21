@@ -331,6 +331,21 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(child_snapshot.parent).to eq(root_snapshot)
       end
 
+      it "datastore mount info with invalid host doesn't fail the refresh" do
+        run_targeted_refresh(
+          targeted_update_set(
+            [
+              RbVmomi::VIM.ObjectUpdate(
+                :kind      => "modify",
+                :obj       => RbVmomi::VIM.Datastore(vim, "datastore-15"),
+                :changeSet => [RbVmomi::VIM.PropertyChange(:name => "host[\"host-garbage\"].mountInfo", :op => "assign", :val => nil)]
+              )
+            ]
+          )
+        )
+        expect(ems.reload.last_refresh_error).to be_nil
+      end
+
       it "renaming a distributed virtual portgroup" do
         lan = ems.distributed_virtual_lans.first
         expect(lan.name).to eq("DC0_DVPG1")
