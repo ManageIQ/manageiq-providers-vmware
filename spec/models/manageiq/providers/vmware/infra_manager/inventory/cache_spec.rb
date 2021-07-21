@@ -18,21 +18,21 @@ describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache do
               :device             => [2000],
               :hotAddRemove       => true,
               :sharedBus          => "noSharing",
-              :scsiCtlrUnitNumber => 7,
+              :scsiCtlrUnitNumber => 7
             ),
             RbVmomi::VIM::VirtualDisk(
-              :key             => 2000,
-              :deviceInfo      => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
-              :backing         => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
+              :key           => 2000,
+              :deviceInfo    => RbVmomi::VIM::Description(:label => "Hard disk 1", :summary => "41,943,040 KB"),
+              :backing       => RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
                 :fileName        => "[datastore] vm1/vm1.vmdk",
                 :datastore       => RbVmomi::VIM::Datastore(nil, "datastore-1"),
                 :diskMode        => "persistent",
                 :thinProvisioned => true,
-                :uuid            => "6000C294-264b-3f91-8e5c-8c2ebac1bfe8",
+                :uuid            => "6000C294-264b-3f91-8e5c-8c2ebac1bfe8"
               ),
-              :controllerKey   => 1000,
-              :unitNumber      => 0,
-              :capacityInKB    => 41_943_040,
+              :controllerKey => 1000,
+              :unitNumber    => 0,
+              :capacityInKB  => 41_943_040
             ),
           ],
         },
