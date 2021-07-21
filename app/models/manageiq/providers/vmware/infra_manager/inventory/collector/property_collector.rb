@@ -98,6 +98,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
         h[tag] = prop_change.val
       end
     end
+  rescue => err
+    _log.warn("Failed to process property change #{prop_change.name}: #{err}")
   end
 
   def hash_target(base_hash, key_string)
@@ -108,7 +110,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
       key, array_key = tag_and_key(key)
       if array_key
         array, idx = get_array_entry(h[key], array_key)
-        raise "hashTarget: Could not traverse tree through array element #{key}[#{array_key}] in #{key_string}" unless array
+        raise "Could not traverse tree through array element #{key}[#{array_key}] in #{key_string}" unless array
 
         h = array[idx]
       else
