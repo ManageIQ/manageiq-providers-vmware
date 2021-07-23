@@ -5,14 +5,14 @@ require "pathname"
 require "sd_notify"
 
 class EventCatcher
-  def initialize(ems_id, hostname, username, password, port, messaging_host, messaging_port, page_size = 20)
+  def initialize(ems_id, default_endpoint, default_authentication, messaging_opts, page_size = 20)
     @ems_id         = ems_id
-    @hostname       = hostname
-    @username       = username
-    @password       = password
-    @port           = port
-    @messaging_host = messaging_host
-    @messaging_port = messaging_port
+    @hostname       = default_endpoint["hostname"]
+    @username       = default_authentication["userid"]
+    @password       = default_authentication["password"]
+    @port           = default_endpoint["port"]
+    @messaging_host = messaging_opts["host"]
+    @messaging_port = messaging_opts["port"]
     @page_size      = page_size
   end
 
@@ -24,16 +24,21 @@ class EventCatcher
     notify_started
 
     wait_for_updates(vim) do |property_change|
-      next unless property_change.name =~ /latestPage.*/
+      next unless property_change.name.match?(/latestPage.*/)
 
       events = Array(property_change.val).map { |event| parse_event(event) }
       publish_events(events)
     end
+  rescue Interrupt
+    # Catch SIGINT
   ensure
     notify_stopping
     property_filter&.DestroyPropertyFilter
     event_history_collector&.DestroyCollector
     vim&.close
+  end
+
+  def stop!
   end
 
   private
@@ -47,7 +52,7 @@ class EventCatcher
       :ssl      => true,
       :insecure => true,
       :path     => '/sdk',
-      :port     => 443,
+      :port     => port,
       :rev      => '6.5',
     }
 
@@ -69,13 +74,13 @@ class EventCatcher
 
   def create_property_filter(vim, event_history_collector)
     vim.propertyCollector.CreateFilter(
-      :spec => RbVmomi::VIM.PropertyFilterSpec(
-        :objectSet    => [
+      :spec           => RbVmomi::VIM.PropertyFilterSpec(
+        :objectSet => [
           RbVmomi::VIM.ObjectSpec(
             :obj => event_history_collector
           )
         ],
-        :propSet      => [
+        :propSet   => [
           RbVmomi::VIM.PropertySpec(
             :type    => event_history_collector.class.wsdl_name,
             :all     => false,
@@ -130,7 +135,7 @@ class EventCatcher
   def publish_events(events)
     events.each do |event|
       messaging_client.publish_topic(
-        :service => "manageiq.ems-events",
+        :service => "manageiq.ems",
         :sender  => ems_id,
         :event   => event[:event_type],
         :payload => event
@@ -155,28 +160,12 @@ class EventCatcher
   end
 
   def heartbeat
-    if ENV["NOTIFY_SOCKET"]
-      SdNotify.watchdog
-    else
-      heartbeat_file = File.join(ENV["APP_ROOT"], "tmp", "#{ENV["GUID"]}.hb")
-      timeout = 120
-      File.write(heartbeat_file, (Time.now.utc + timeout).to_s)
-    end
+    SdNotify.watchdog if ENV["NOTIFY_SOCKET"]
   end
 
   def notify_stopping
     SdNotify.stopping if ENV["NOTIFY_SOCKET"]
   end
-end
-
-def decrypt_env_vars
-  require "open3"
-  output, status = Open3.capture2("tools/decrypt_env_vars", :chdir => ENV["APP_ROOT"])
-
-  # Skip the ** ManageIQ master, codename: Lasker comment
-  output = output.split("\n")[1..-1].join("\n")
-
-  YAML.load(output)
 end
 
 def setproctitle
@@ -187,24 +176,17 @@ end
 def main(args)
   setproctitle
 
-  event_catcher = EventCatcher.new(*args.values_at(:ems_id, :hostname, :username, :password, :port, :messaging_host, :messaging_port))
+  default_endpoint = args["endpoints"]&.detect { |ep| ep["role"] == "default" }
+  default_authentication = args["authentications"]&.detect { |auth| auth["authtype"] == "default" }
+
+  event_catcher = EventCatcher.new(args["ems_id"], default_endpoint, default_authentication, args["messaging_opts"])
+
   event_catcher.run!
 end
 
 def parse_args
-  require "optimist"
-
-  env_vars = decrypt_env_vars
-
-  Optimist.options do
-    opt :ems_id,         "EMS ID",   :type => :int,          :default => env_vars["EMS_ID"]&.to_i,         :required => env_vars["EMS_ID"].nil?
-    opt :hostname,       "Hostname", :type => :string,       :default => env_vars["HOSTNAME"],             :required => env_vars["HOSTNAME"].nil?
-    opt :username,       "Username", :type => :string,       :default => env_vars["USERNAME"],             :required => env_vars["USERNAME"].nil?
-    opt :password,       "Password", :type => :string,       :default => env_vars["PASSWORD"],             :required => env_vars["PASSWORD"].nil?
-    opt :messaging_host, "Messaging Host", :type => :string, :default => env_vars["MESSAGING_HOST"],       :required => env_vars["MESSAGING_HOST"].nil?
-    opt :messaging_port, "Messaging Port", :type => :int,    :default => env_vars["MESSAGING_PORT"]&.to_i, :required => env_vars["MESSAGING_PORT"].nil?
-    opt :port,           "Port",     :type => :int,          :default => (env_vars["PORT"] || 443).to_i
-  end
+  require "json"
+  JSON.parse($stdin.read)
 end
 
 main(parse_args)
