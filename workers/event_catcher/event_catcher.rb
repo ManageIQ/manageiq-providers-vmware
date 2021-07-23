@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 require "manageiq-messaging"
 require "sd_notify"
 require "rbvmomi"
