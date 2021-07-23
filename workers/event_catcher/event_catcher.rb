@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 require "manageiq-messaging"
-require "pathname"
 require "sd_notify"
+require "rbvmomi"
 
 class EventCatcher
   def initialize(ems_id, default_endpoint, default_authentication, messaging_opts, page_size = 20)
@@ -56,7 +56,6 @@ class EventCatcher
       :rev      => '6.5',
     }
 
-    require 'rbvmomi'
     RbVmomi::VIM.new(vim_opts).tap do |vim|
       vim.rev = vim.serviceContent.about.apiVersion
       vim.serviceContent.sessionManager.Login(:userName => username, :password => password)
