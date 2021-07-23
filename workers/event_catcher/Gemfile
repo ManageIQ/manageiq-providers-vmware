@@ -1,7 +1,5 @@
 source "https://rubygems.org"
 
-gem "manageiq-messaging", "~> 0.1"
-gem "manageiq-password", "~> 0.3"
-gem "optimist", "~> 3.0"
-gem "rbvmomi", "~> 2.0"
+gem "manageiq-messaging", "~> 1.0"
+gem "rbvmomi", "~> 3.0"
 gem "sd_notify"
