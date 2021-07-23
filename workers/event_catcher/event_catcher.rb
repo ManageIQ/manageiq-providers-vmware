@@ -89,7 +89,7 @@ class EventCatcher
     )
   end
 
-  def wait_for_updates(vim)
+  def wait_for_updates(vim, &block)
     version = nil
     options = RbVmomi::VIM.WaitOptions(:maxWaitSeconds => 60)
 
@@ -104,9 +104,7 @@ class EventCatcher
         Array(property_filter_update.objectSet).each do |object_update|
           next unless object_update.kind == "modify"
 
-          Array(object_update.changeSet).each do |property_change|
-            yield property_change
-          end
+          Array(object_update.changeSet).each(&block)
         end
       end
     end
