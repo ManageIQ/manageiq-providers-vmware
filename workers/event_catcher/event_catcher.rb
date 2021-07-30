@@ -21,10 +21,13 @@ class EventCatcher
 
     notify_started
 
+    puts "Collecting events..."
     wait_for_updates(vim) do |property_change|
+      puts property_change.name
       next unless property_change.name.match?(/latestPage.*/)
 
       events = Array(property_change.val).map { |event| parse_event(event) }
+      puts events.to_json
       publish_events(events)
     end
   rescue Interrupt
@@ -171,10 +174,9 @@ end
 def main(args)
   setproctitle
 
-  default_endpoint = args["endpoints"]&.detect { |ep| ep["role"] == "default" }
-  default_authentication = args["authentications"]&.detect { |auth| auth["authtype"] == "default" }
+  connection_config = args["connection_config"]
 
-  event_catcher = EventCatcher.new(args["ems_id"], default_endpoint, default_authentication, args["messaging_opts"])
+  event_catcher = EventCatcher.new(args["ems_id"], connection_config["default"]["endpoint"], connection_config["default"]["authentication"], args["messaging_opts"])
 
   event_catcher.run!
 end
