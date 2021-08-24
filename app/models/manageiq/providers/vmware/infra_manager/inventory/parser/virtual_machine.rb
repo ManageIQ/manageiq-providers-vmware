@@ -140,10 +140,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def parse_virtual_machine_operating_system(vm, props)
-      guest_full_name = props.fetch_path(:summary, :config, :guestFullName)
+      summary = props.fetch(:summary, {})
+
+      guest_full_name   = summary.dig(:guest, :guestFullName).presence || summary.dig(:config, :guestFullName).presence
+      guest_full_name ||= "Other"
+
       persister.operating_systems.build(
         :vm_or_template => vm,
-        :product_name   => guest_full_name.presence || "Other"
+        :product_name   => guest_full_name
       )
     end
 
