@@ -43,6 +43,7 @@ base: &base
   - summary.config.uuid
   - summary.config.vmPathName
   - summary.customValue
+  - summary.guest.guestFullName
   - summary.guest.hostName
   - summary.guest.ipAddress
   - summary.guest.toolsStatus
