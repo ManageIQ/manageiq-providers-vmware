@@ -18,6 +18,30 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   end
   let(:saver)     { ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver.new(:threaded => false) }
   let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems, saver) }
+  let(:category) do
+    require "vsphere-automation-cis"
+    VSphereAutomation::CIS::CisTaggingCategoryModel.new(
+      :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+      :name        => "Category1",
+      :description => "Description",
+      :cardinality => "SINGLE",
+      :used_by     => []
+    )
+  end
+
+  let(:tag) do
+    require "vsphere-automation-cis"
+    VSphereAutomation::CIS::CisTaggingTagModel.new(
+      :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
+      :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
+      :name        => "Tag1",
+      :description => "Tag Description",
+      :used_by     => []
+    )
+  end
+
+  let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
+  let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
 
   context "#monitor_updates" do
     context "full refresh" do
@@ -43,31 +67,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
       context "with taggings and labels" do
         context "with a single tag per category" do
-          let(:category) do
-            require "vsphere-automation-cis"
-            VSphereAutomation::CIS::CisTaggingCategoryModel.new(
-              :id          => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
-              :name        => "Category1",
-              :description => "Description",
-              :cardinality => "SINGLE",
-              :used_by     => []
-            )
-          end
-
-          let(:tag) do
-            require "vsphere-automation-cis"
-            VSphereAutomation::CIS::CisTaggingTagModel.new(
-              :id          => "urn:vmomi:InventoryServiceTag:43b0c084-4e91-4950-8cc4-c81cb46b701f:GLOBAL",
-              :category_id => "urn:vmomi:InventoryServiceCategory:aece75c1-0157-498c-b7d9-43e0532ddce8:GLOBAL",
-              :name        => "Tag1",
-              :description => "Tag Description",
-              :used_by     => []
-            )
-          end
-
-          let!(:env_tag_mapping)         { FactoryBot.create(:tag_mapping_with_category, :label_name => "Category1") }
-          let(:env_tag_mapping_category) { env_tag_mapping.tag.classification }
-
           it "saves vm labels" do
             2.times do
               collector.categories_by_id           = {category.id => category}
@@ -174,6 +173,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       let(:property_filter) { RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]") }
 
       before do
+        collector.categories_by_id           = {category.id => category}
+        collector.tags_by_id                 = {tag.id => tag}
+        collector.tag_ids_by_attached_object = {"VirtualMachine" => {"vm-107" => [tag.id]}}
+
         # Use the VCR to prime the cache and do the initial save_inventory
         with_vcr { run_full_refresh }
       end
