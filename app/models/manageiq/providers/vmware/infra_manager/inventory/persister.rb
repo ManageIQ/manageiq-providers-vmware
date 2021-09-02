@@ -10,8 +10,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :distributed_virtual_lans)
     add_collection(infra, :clusters)
     add_collection(infra, :ems_custom_attributes, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :vm_and_template_labels, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :vm_and_template_taggings, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :vm_and_template_labels, :parent_inventory_collections => %i[vms_and_templates]) do |builder|
+      builder.add_properties(:complete => false) if targeted?
+    end
+    add_collection(infra, :vm_and_template_taggings, :parent_inventory_collections => %i[vms_and_templates]) do |builder|
+      builder.add_properties(:complete => false) if targeted?
+    end
     add_collection(infra, :ems_extensions)
     add_collection(infra, :ems_folders)
     add_collection(infra, :ems_licenses)
