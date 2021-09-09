@@ -54,7 +54,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         vm_hash[:uid_ems] = clean_guid(uuid) if uuid.present?
 
         name = summary_config[:name]
-        vm_hash[:name] = CGI.unescape(name) if name
+        vm_hash[:name] ||= CGI.unescape(name) if name
 
         pathname = summary_config[:vmPathName]
         begin
