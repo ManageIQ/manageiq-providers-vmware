@@ -378,10 +378,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       return
     end
 
+    name = CGI.unescape(props[:name]) if props[:name]
+
     vm_hash = {
       :ems_ref       => object._ref,
       :ems_ref_type  => object.class.wsdl_name,
       :vendor        => "vmware",
+      :name          => name,
       :parent        => lazy_find_managed_object(props[:parent]),
       :resource_pool => lazy_find_managed_object(props[:resourcePool]),
     }
