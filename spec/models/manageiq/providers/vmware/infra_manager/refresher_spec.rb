@@ -249,6 +249,13 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(ems.vms.pluck(:ems_ref)).to include("vm-999")
       end
 
+      it "new virtual machine without UUID" do
+        run_targeted_refresh(targeted_update_set([vm_create_no_uuid_object_update]))
+        expect(ems.vms.pluck(:ems_ref)).not_to include("vm-999")
+        run_targeted_refresh(targeted_update_set([vm_update_no_uuid_object_update]))
+        expect(ems.vms.pluck(:ems_ref)).to include("vm-999")
+      end
+
       context "reconnecting a virtual machine" do
         let!(:vm)     { FactoryBot.create(:vm_vmware, :ems_ref => ems_ref, :uid_ems => uid_ems) }
         let(:ems_ref) { "vm-456" }
@@ -660,7 +667,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
             RbVmomi::VIM.PropertyChange(
               :name => "summary.config.name",
               :op   => "assign",
-              :val  => "reconnected-vm"
+              :val  => name
             ),
             RbVmomi::VIM.PropertyChange(
               :name => "summary.config.uuid",
@@ -682,6 +689,56 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           :kind       => "modify",
           :obj        => RbVmomi::VIM.VirtualMachine(vim, ems_ref),
           :changeSet  => [],
+          :missingSet => []
+        )
+      end
+
+      def vm_create_no_uuid_object_update
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "enter",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-999"),
+          :changeSet  => [
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.version",
+              :op   => "assign",
+              :val  => "7"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "name",
+              :op   => "assign",
+              :val  => "new-vm-no-uuid"
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.name",
+              :op   => "assign",
+              :val  => "new-vm-no-uuid"
+            ),
+          ],
+          :missingSet => []
+        )
+      end
+
+      def vm_update_no_uuid_object_update
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-999"),
+          :changeSet  => [
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.uuid",
+              :op   => "assign",
+              :val  => SecureRandom.uuid
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.uuid",
+              :op   => "assign",
+              :val  => SecureRandom.uuid
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.vmPathName",
+              :op   => "assign",
+              :val  => "[GlobalDS_0] vm/vm.vmx"
+            ),
+          ],
           :missingSet => []
         )
       end
