@@ -8,3 +8,4 @@ addons:
   postgresql: '10'
 install: bin/setup
 after_script: bin/ci/after_script
+dist: bionic
