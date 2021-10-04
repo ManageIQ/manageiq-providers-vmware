@@ -36,6 +36,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   # intend to queue up save_inventory from multiple calling threads a mutex
   # must be added around ensure_saver_thread
   def queue_save_inventory(persister)
+    _log.debug { "queueing save_inventory [#{persister.tracking_uuid}]" }
+
     if threaded
       ensure_saver_thread
       queue.push(persister)
@@ -76,6 +78,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   end
 
   def save_inventory(persister)
+    _log.debug { "running save_inventory [#{persister.tracking_uuid}]" }
+
     save_inventory_start_time = Time.now.utc
     persister.persist!
     update_ems_refresh_stats(persister.manager)
