@@ -96,13 +96,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def targeted_refresh(vim, property_filter, version)
-    persister = targeted_persister_klass.new(ems)
-    parser    = parser_klass.new(self, persister)
-
     version, updated_objects = monitor_updates(vim, property_filter, version)
+    if updated_objects.any?
+      persister = targeted_persister_klass.new(ems)
+      parser    = parser_klass.new(self, persister)
 
-    parse_updates(vim, parser, updated_objects)
-    save_inventory(persister)
+      parse_updates(vim, parser, updated_objects)
+      save_inventory(persister)
+    end
 
     version
   end
