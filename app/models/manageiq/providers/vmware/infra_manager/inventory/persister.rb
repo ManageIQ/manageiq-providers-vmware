@@ -3,7 +3,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   require_nested :Full
   require_nested :Targeted
 
+  attr_reader :tracking_uuid
+
   def initialize_inventory_collections
+    # Build a UUID which can be used to track the collection and saving of this persister instance
+    @tracking_uuid = SecureRandom.uuid
+
     add_collection(infra, :customization_specs)
     add_collection(infra, :disks, :parent_inventory_collections => %i[vms_and_templates])
     add_collection(infra, :distributed_virtual_switches)
