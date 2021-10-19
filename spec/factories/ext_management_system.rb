@@ -28,4 +28,25 @@ FactoryBot.define do
       x.endpoints       << FactoryBot.create(:endpoint, :role => 'amqp')
     end
   end
+
+  factory :ems_vmware_tanzu, :class => "ManageIQ::Providers::Vmware::ContainerManager", :parent => :ems_container
+
+  factory :ems_vmware_tanzu_with_vcr_authentication, :parent => :ems_vmware_tanzu do
+    after(:create) do |ems|
+      userid   = Rails.application.secrets.vmware_tanzu[:userid]
+      password = Rails.application.secrets.vmware_tanzu[:password]
+
+      ems.default_endpoint.update!(
+        :hostname   => Rails.application.secrets.vmware_tanzu[:hostname],
+        :verify_ssl => OpenSSL::SSL::VERIFY_NONE
+      )
+
+      ems.authentications << FactoryBot.create(
+        :authentication,
+        :authtype => "default",
+        :userid   => userid,
+        :password => password
+      )
+    end
+  end
 end
