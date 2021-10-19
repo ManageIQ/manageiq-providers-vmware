@@ -29,7 +29,7 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
     hostname, username, password = options.values_at(:hostname, :username, :password)
     url = URI::HTTPS.build(:host => hostname, :path => "/wcp/login").to_s
 
-    verify_ssl, certificate_authority = options.values_at(:verify_ssl, :certificate_authority)
+    verify_ssl, certificate_authority = options.dig(:ssl_options).values_at(:verify_ssl, :certificate_authority)
     verify_ssl ||= OpenSSL::SSL::VERIFY_PEER
 
     require "rest-client"
@@ -53,9 +53,7 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
     default_endpoint = args.dig("endpoints", "default")
     raise MiqException::MiqInvalidCredentialsError, _("Unsupported endpoint") if default_endpoint.nil?
 
-    hostname, port, verify_ssl, certificate_authority = default_endpoint&.values_at(
-      "hostname", "port", "verify_ssl", "certificate_authority"
-    )
+    hostname, port, verify_ssl, certificate_authority = default_endpoint&.values_at("hostname", "port", "verify_ssl", "certificate_authority")
 
     default_authentication = args.dig("authentications", "default")
     username, password = default_authentication&.values_at("userid", "password")
