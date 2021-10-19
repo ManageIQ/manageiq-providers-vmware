@@ -11,6 +11,8 @@ require "manageiq-providers-vmware"
 VCR.configure do |config|
   config.ignore_hosts 'codeclimate.com' if ENV['CI']
   config.cassette_library_dir = File.join(ManageIQ::Providers::Vmware::Engine.root, 'spec/vcr_cassettes')
+
+  secrets = Rails.application.secrets
   config.define_cassette_placeholder(Rails.application.secrets.vmware_infra_defaults[:hostname]) do
     Rails.application.secrets.vmware_infra[:hostname]
   end
@@ -22,5 +24,8 @@ VCR.configure do |config|
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_INVALIDAUTHORIZATION") do
     Base64.encode64("#{Rails.application.secrets.vmware_cloud[:userid]}:invalid").chomp
+  end
+  secrets.vmware_tanzu.each do |key, val|
+    config.define_cassette_placeholder(secrets.vmware_tanzu_defaults[key]) { val }
   end
 end
