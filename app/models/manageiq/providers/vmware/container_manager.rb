@@ -183,6 +183,10 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
     :default
   end
 
+  def required_credential_fields(_type)
+    %i[userid password]
+  end
+
   def connect_options(options = {})
     super.merge(
       :hostanme              => hostname,
