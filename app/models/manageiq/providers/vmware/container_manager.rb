@@ -29,7 +29,7 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
     hostname, username, password = options.values_at(:hostname, :username, :password)
     url = URI::HTTPS.build(:host => hostname, :path => "/wcp/login").to_s
 
-    verify_ssl, certificate_authority = options.dig(:ssl_options).values_at(:verify_ssl, :certificate_authority)
+    verify_ssl, certificate_authority = options[:ssl_options].values_at(:verify_ssl, :certificate_authority)
     verify_ssl ||= OpenSSL::SSL::VERIFY_PEER
 
     require "rest-client"
