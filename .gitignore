@@ -11,6 +11,7 @@
 .rubocop-*
 /bundler.d/*
 !/bundler.d/.keep
+/config/secrets.yml
 /config/settings.local.yml
 /config/settings/*.local.yml
 /config/environments/*.local.yml
