@@ -19,6 +19,8 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
 
   before_create :ensure_managers
 
+  supports :catalog
+
   def ensure_network_manager
     build_network_manager(:type => 'ManageIQ::Providers::Vmware::NetworkManager') unless network_manager
   end
