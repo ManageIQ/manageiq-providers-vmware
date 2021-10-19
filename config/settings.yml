@@ -9,6 +9,12 @@
         :power:
           :critical:
 :ems_refresh:
+  :vmware_tanzu:
+    :refresh_interval: 24.hours
+    :streaming_refresh: true
+    :chunk_size: 1_000
+    :inventory_collections:
+      :saver_strategy: batch
   :vmware_cloud:
     :get_public_images: false
 :http_proxy:
@@ -39,6 +45,7 @@
         :amqp_port: 5672
         :amqp_heartbeat: 30
         :amqp_recovery_attempts: 4
+      :event_catcher_vmware_tanzu: {}
     :queue_worker_base:
       :ems_metrics_collector_worker:
         :ems_metrics_collector_worker_vmware: {}
@@ -49,3 +56,4 @@
         :ems_refresh_worker_vmware: {}
         :ems_refresh_worker_vmware_cloud: {}
         :ems_refresh_worker_vmware_cloud_network: {}
+        :ems_refresh_worker_vmware_tanzu: {}

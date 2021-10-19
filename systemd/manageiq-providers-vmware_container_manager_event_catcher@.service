@@ -1,0 +1,13 @@
+[Unit]
+PartOf=manageiq-providers-vmware_container_manager_event_catcher.target
+[Install]
+WantedBy=manageiq-providers-vmware_container_manager_event_catcher.target
+[Service]
+WorkingDirectory=/var/www/miq/vmdb
+Environment=BUNDLER_GROUPS=manageiq_default,ui_dependencies
+EnvironmentFile=/etc/default/manageiq*.properties
+ExecStart=/usr/bin/ruby lib/workers/bin/run_single_worker.rb ManageIQ::Providers::Vmware::ContainerManager::EventCatcher --heartbeat --guid=%i
+User=manageiq
+Restart=no
+Type=notify
+Slice=manageiq-providers-vmware_container_manager_event_catcher.slice

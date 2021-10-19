@@ -1,5 +1,6 @@
 class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inventory::Parser
   require_nested :CloudManager
+  require_nested :ContainerManager
   require_nested :NetworkManager
 
   def parse
