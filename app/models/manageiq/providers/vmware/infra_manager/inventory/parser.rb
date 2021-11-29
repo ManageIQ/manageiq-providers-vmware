@@ -250,13 +250,19 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
   alias parse_opaque_network parse_network
 
-  def parse_distributed_virtual_portgroup(_object, kind, props)
+  def parse_distributed_virtual_portgroup(object, kind, props)
     dvs = props.fetch_path(:config, :distributedVirtualSwitch)
 
     # If the dvportgroup is deleted we don't want to pass kind="leave" to the
     # switch parser because it will think the switch is being deleted
     kind = "update" if kind == "leave"
-    parse_distributed_virtual_switch(dvs, kind, cache.find(dvs))
+
+    dvs_props = cache.find(dvs)
+    if dvs_props.nil?
+      _log.warn("#{object.class.wsdl_name}:#{object._ref} DVSwitch [#{dvs._ref}] not found in cache...Skipping")
+    else
+      parse_distributed_virtual_switch(dvs, kind, dvs_props)
+    end
   end
 
   def parse_portgroups_internal(object, props)

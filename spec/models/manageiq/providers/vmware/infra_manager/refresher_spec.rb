@@ -429,6 +429,11 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(new_dvpg.switch.uid_ems).to eq("dvs-8")
       end
 
+      it "adding a new distributed virtual portgroup with an invalid DVS" do
+        expect { run_targeted_refresh(targeted_update_set([dvpg_create_invalid_object_update])) }
+          .not_to raise_error
+      end
+
       it "deleting a distributed virtual portgroup" do
         run_targeted_refresh(targeted_update_set([dvpg_delete_object_update]))
 
@@ -945,6 +950,23 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         :obj       => RbVmomi::VIM.DistributedVirtualPortgroup(vim, "dvportgroup-99"),
         :changeSet => [
           RbVmomi::VIM.PropertyChange(:name => "config.distributedVirtualSwitch", :op => "assign", :val => RbVmomi::VIM.VmwareDistributedVirtualSwitch(vim, "dvs-8")),
+          RbVmomi::VIM.PropertyChange(:name => "config.key",                      :op => "assign", :val => "dvportgroup-99"),
+          RbVmomi::VIM.PropertyChange(:name => "config.name",                     :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "host",                            :op => "assign", :val => []),
+          RbVmomi::VIM.PropertyChange(:name => "parent",                          :op => "assign", :val => RbVmomi::VIM.Folder(vim, "group-n6")),
+          RbVmomi::VIM.PropertyChange(:name => "name",                            :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "summary.name",                    :op => "assign", :val => "New DVPG"),
+          RbVmomi::VIM.PropertyChange(:name => "tag",                             :op => "assign", :val => [])
+        ]
+      )
+    end
+
+    def dvpg_create_invalid_object_update
+      RbVmomi::VIM.ObjectUpdate(
+        :kind      => "enter",
+        :obj       => RbVmomi::VIM.DistributedVirtualPortgroup(vim, "dvportgroup-99"),
+        :changeSet => [
+          RbVmomi::VIM.PropertyChange(:name => "config.distributedVirtualSwitch", :op => "assign", :val => RbVmomi::VIM.VmwareDistributedVirtualSwitch(vim, "dvs-9999999")),
           RbVmomi::VIM.PropertyChange(:name => "config.key",                      :op => "assign", :val => "dvportgroup-99"),
           RbVmomi::VIM.PropertyChange(:name => "config.name",                     :op => "assign", :val => "New DVPG"),
           RbVmomi::VIM.PropertyChange(:name => "host",                            :op => "assign", :val => []),
