@@ -53,7 +53,8 @@
         :ems_operations_worker_vmware:
           :memory_threshold: 1.gigabytes
       :ems_refresh_worker:
-        :ems_refresh_worker_vmware: {}
+        :ems_refresh_worker_vmware:
+          :threaded_saver: false
         :ems_refresh_worker_vmware_cloud: {}
         :ems_refresh_worker_vmware_cloud_network: {}
         :ems_refresh_worker_vmware_tanzu: {}
