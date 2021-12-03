@@ -6,6 +6,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     @ems            = ems
     @exit_requested = false
     @cache          = cache_klass.new
+    @saver          = saver_klass.new
     @vim_thread     = nil
   end
 
@@ -40,7 +41,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   private
 
-  attr_reader   :ems
+  attr_reader   :ems, :saver
   attr_accessor :exit_requested, :vim_thread, :last_full_refresh
 
   def vim_collector_thread
@@ -397,7 +398,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def save_inventory(persister)
-    saver_klass.save_inventory(persister)
+    saver.save_inventory(persister)
   end
 
   def log_header
