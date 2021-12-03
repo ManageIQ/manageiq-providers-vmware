@@ -5,7 +5,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def initialize(ems)
     @ems            = ems
     @exit_requested = false
-    @cache          = ems.class::Inventory::Cache.new
+    @cache          = ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache.new
     @vim_thread     = nil
   end
 
@@ -424,18 +424,18 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def full_persister_klass
-    @full_persister_klass ||= ems.class::Inventory::Persister::Full
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Full
   end
 
   def targeted_persister_klass
-    @targeted_persister_klass ||= ems.class::Inventory::Persister::Targeted
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Targeted
   end
 
   def parser_klass
-    @parser_klass ||= ems.class::Inventory::Parser
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   end
 
   def saver_klass
-    @saver_klass ||= self.class.module_parent::Saver
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   end
 end
