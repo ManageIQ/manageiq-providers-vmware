@@ -102,6 +102,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       parse_updates(vim, parser, updated_objects)
       save_inventory(persister)
+
+      # Prevent WaitForUpdatesEx from "spinning" in a tight loop if updates are
+      # constantly available.  This allows for more updates to be batched together
+      # making for more efficient saving and reducing the API call load on the VC.
+      sleep(refresh_settings.update_poll_interval)
     end
 
     version
@@ -420,7 +425,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def full_refresh_interval
-    (Settings.ems_refresh["vmwarews"].try(:refresh_interval) || Settings.ems_refresh.refresh_interval).to_i_with_method
+    (refresh_settings.refresh_interval || Settings.ems_refresh.refresh_interval).to_i_with_method
+  end
+
+  def refresh_settings
+    Settings.ems_refresh.vmwarews
   end
 
   def full_persister_klass
