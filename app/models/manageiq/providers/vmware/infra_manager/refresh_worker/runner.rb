@@ -34,12 +34,8 @@ class ManageIQ::Providers::Vmware::InfraManager::RefreshWorker::Runner < ManageI
 
   attr_accessor :ems, :collector
 
-  def saver
-    @saver ||= ems.class::Inventory::Saver.new(:threaded => worker_settings[:threaded_saver])
-  end
-
   def start_inventory_collector
-    self.collector = ems.class::Inventory::Collector.new(ems, saver)
+    self.collector = ems.class::Inventory::Collector.new(ems)
     collector.start
     _log.info("Started inventory collector")
   end

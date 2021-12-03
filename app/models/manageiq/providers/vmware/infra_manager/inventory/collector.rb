@@ -2,11 +2,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems, saver)
+  def initialize(ems)
     @ems            = ems
     @exit_requested = false
     @cache          = ems.class::Inventory::Cache.new
-    @saver          = saver
     @vim_thread     = nil
   end
 
@@ -41,7 +40,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   private
 
-  attr_reader   :ems, :saver
+  attr_reader   :ems
   attr_accessor :exit_requested, :vim_thread, :last_full_refresh
 
   def vim_collector_thread
@@ -393,7 +392,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def save_inventory(persister)
-    saver.queue_save_inventory(persister)
+    saver_klass.save_inventory(persister)
   end
 
   def log_header
@@ -434,5 +433,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def parser_klass
     @parser_klass ||= ems.class::Inventory::Parser
+  end
+
+  def saver_klass
+    @saver_klass ||= self.class.module_parent::Saver
   end
 end
