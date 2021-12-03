@@ -5,7 +5,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def initialize(ems)
     @ems            = ems
     @exit_requested = false
-    @cache          = ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache.new
+    @cache          = cache_klass.new
     @vim_thread     = nil
   end
 
@@ -430,6 +430,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
   def refresh_settings
     Settings.ems_refresh.vmwarews
+  end
+
+  def cache_klass
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
   end
 
   def full_persister_klass
