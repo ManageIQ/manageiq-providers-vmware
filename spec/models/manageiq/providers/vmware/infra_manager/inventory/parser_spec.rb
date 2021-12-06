@@ -1,7 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser do
   let(:ems)       { FactoryBot.create(:ems_vmware) }
-  let(:saver)     { ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver.new(:threaded => false) }
-  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems, saver) }
+  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems) }
   let(:persister) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Targeted.new(ems) }
   let(:parser)    { described_class.new(collector, persister) }
 
