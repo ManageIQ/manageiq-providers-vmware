@@ -8,6 +8,14 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
       reason ||= _("Migrate not supported because VM is archived") if archived?
       unsupported_reason_add(:migrate, reason) if reason
     end
+    supports :move_into_folder do
+      reason = _("Move not supported because VM is not active") if ext_management_system.nil?
+      unsupported_reason_add(:migrate, reason) if reason
+    end
+    supports :relocate do
+      reason = _("Relocate not supported because VM is not active") if ext_management_system.nil?
+      unsupported_reason_add(:migrate, reason) if reason
+    end
   end
 
   def raw_migrate(host, pool = nil, priority = "defaultPriority", state = nil)
