@@ -34,14 +34,14 @@ module ManageIQ::Providers
     before_destroy :stop_event_monitor, :stop_refresh_worker
 
     supports :catalog
+    supports :create
+    supports :label_mapping
     supports :metrics
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
       unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
     end
-
-    supports :label_mapping
 
     has_many :host_guest_devices, :through => :host_hardwares, :source => :guest_devices
     has_many :miq_scsi_targets, -> { distinct }, :through => :host_guest_devices
