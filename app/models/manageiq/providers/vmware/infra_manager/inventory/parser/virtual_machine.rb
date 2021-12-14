@@ -56,6 +56,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         name = summary_config[:name]
         vm_hash[:name] ||= CGI.unescape(name) if name
 
+        annotation = summary_config[:annotation]
+        vm_hash[:description] = annotation.presence
+
         pathname = summary_config[:vmPathName]
         begin
           _storage_name, location = VmOrTemplate.repository_parse_path(pathname)
