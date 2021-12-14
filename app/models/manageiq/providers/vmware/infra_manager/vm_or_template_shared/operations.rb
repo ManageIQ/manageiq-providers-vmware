@@ -45,6 +45,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     run_command_via_parent(:vm_rename, :new_name => new_name)
   end
 
+  def raw_set_description(new_description)
+    run_command_via_parent(:vm_set_description, new_description)
+  end
+
   def log_user_event(event_message)
     with_provider_object do |vim_vm|
       vim_vm.logUserEvent(event_message)

@@ -649,6 +649,14 @@ module ManageIQ::Providers
     end
     alias_method :host_quick_stats, :vm_quick_stats
 
+    def vm_set_description(vm, new_description, options = {})
+      options[:spec] = VimHash.new("VirtualMachineConfigSpec") do |spec|
+        spec.annotation = new_description
+      end
+
+      vm_reconfigure(vm, options)
+    end
+
     def invoke_vim_ws(cmd, obj, user_event = nil, *opts)
       log_header = "EMS: [#{name}] #{obj.class.name}: id [#{obj.id}], name [#{obj.name}], ems_ref [#{obj.ems_ref}]"
       result = nil
