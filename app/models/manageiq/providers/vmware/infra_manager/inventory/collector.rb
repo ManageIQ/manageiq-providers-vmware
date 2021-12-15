@@ -2,11 +2,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   include PropertyCollector
   include Vmdb::Logging
 
-  def initialize(ems, saver)
+  def initialize(ems)
     @ems            = ems
     @exit_requested = false
-    @cache          = ems.class::Inventory::Cache.new
-    @saver          = saver
+    @cache          = cache_klass.new
+    @saver          = saver_klass.new
     @vim_thread     = nil
   end
 
@@ -103,6 +103,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       parse_updates(vim, parser, updated_objects)
       save_inventory(persister)
+
+      # Prevent WaitForUpdatesEx from "spinning" in a tight loop if updates are
+      # constantly available.  This allows for more updates to be batched together
+      # making for more efficient saving and reducing the API call load on the VC.
+      sleep(refresh_settings.update_poll_interval)
     end
 
     version
@@ -393,7 +398,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def save_inventory(persister)
-    saver.queue_save_inventory(persister)
+    saver.save_inventory(persister)
   end
 
   def log_header
@@ -421,18 +426,30 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def full_refresh_interval
-    (Settings.ems_refresh["vmwarews"].try(:refresh_interval) || Settings.ems_refresh.refresh_interval).to_i_with_method
+    (refresh_settings.refresh_interval || Settings.ems_refresh.refresh_interval).to_i_with_method
+  end
+
+  def refresh_settings
+    Settings.ems_refresh.vmwarews
+  end
+
+  def cache_klass
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Cache
   end
 
   def full_persister_klass
-    @full_persister_klass ||= ems.class::Inventory::Persister::Full
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Full
   end
 
   def targeted_persister_klass
-    @targeted_persister_klass ||= ems.class::Inventory::Persister::Targeted
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister::Targeted
   end
 
   def parser_klass
-    @parser_klass ||= ems.class::Inventory::Parser
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
+  end
+
+  def saver_klass
+    ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   end
 end

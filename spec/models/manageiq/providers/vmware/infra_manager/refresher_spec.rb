@@ -16,8 +16,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       ems.update_authentication(:default => {:userid => username, :password => password})
     end
   end
-  let(:saver)     { ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver.new(:threaded => false) }
-  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems, saver) }
+  let(:collector) { ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector.new(ems) }
   let(:category) do
     require "vsphere-automation-cis"
     VSphereAutomation::CIS::CisTaggingCategoryModel.new(
