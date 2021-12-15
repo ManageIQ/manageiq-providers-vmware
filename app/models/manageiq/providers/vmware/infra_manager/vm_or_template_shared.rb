@@ -8,10 +8,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
   include_concern 'RefreshOnScan'
   include_concern 'Scanning'
 
-  included do
-    supports :set_description
-  end
-
   POWER_STATES = {
     "poweredOn"  => "on",
     "poweredOff" => "off",

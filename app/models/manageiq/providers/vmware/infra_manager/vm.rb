@@ -16,7 +16,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
     unsupported_reason_add(:reconfigure_disksize, 'Cannot resize disks of a VM with snapshots') unless snapshots.empty?
   end
   supports :reconfigure_cdroms
-
+  supports :set_description
   supports :rename
 
   def add_miq_alarm

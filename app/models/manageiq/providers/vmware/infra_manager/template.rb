@@ -13,4 +13,5 @@ class ManageIQ::Providers::Vmware::InfraManager::Template < ManageIQ::Providers:
 
   supports :terminate
   supports :rename
+  supports :set_description
 end
