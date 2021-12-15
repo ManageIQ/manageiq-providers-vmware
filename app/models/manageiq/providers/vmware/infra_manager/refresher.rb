@@ -1,6 +1,3 @@
-require 'VMwareWebService/MiqVim'
-require 'http-access2' # Required in case it is not already loaded
-
 module ManageIQ::Providers
   module Vmware
     class InfraManager::Refresher < ManageIQ::Providers::BaseManager::Refresher
@@ -16,8 +13,7 @@ module ManageIQ::Providers
         raise NotImplementedError, "not implemented in production mode" if Rails.env.production?
 
         ems_by_ems_id.each do |_ems_id, ems|
-          saver     = ems.class::Inventory::Saver.new(:threaded => false)
-          collector = ems.class::Inventory::Collector.new(ems, saver)
+          collector = ems.class::Inventory::Collector.new(ems)
           collector.refresh
         end
       end
