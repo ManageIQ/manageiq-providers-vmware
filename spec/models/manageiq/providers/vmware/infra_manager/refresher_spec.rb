@@ -445,9 +445,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         vm = ems.vms.find_by(:ems_ref => "vm-107")
         expect(vm.ems_custom_attributes).to be_empty
 
-        run_targeted_refresh(targeted_update_set([vm_add_new_custom_value_update]))
+        run_targeted_refresh(targeted_update_set([vm_add_new_custom_value_update(vm.ems_ref)]))
 
         custom_attrs = vm.reload.ems_custom_attributes
+        expect(custom_attrs.count).to eq(1)
+        expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "bar", :source => "VC")
+      end
+
+      it "adding a customValue to two VMs" do
+        vm1 = ems.vms.find_by(:ems_ref => "vm-107")
+        vm2 = ems.vms.find_by(:ems_ref => "vm-108")
+        expect(vm1.ems_custom_attributes).to be_empty
+
+        run_targeted_refresh(targeted_update_set([vm_add_new_custom_value_update(vm1.ems_ref), vm_add_new_custom_value_update(vm2.ems_ref)]))
+
+        custom_attrs = vm1.reload.ems_custom_attributes
+        expect(custom_attrs.count).to eq(1)
+        expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "bar", :source => "VC")
+
+        custom_attrs = vm2.reload.ems_custom_attributes
         expect(custom_attrs.count).to eq(1)
         expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "bar", :source => "VC")
       end
@@ -458,7 +474,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
         run_targeted_refresh(
           targeted_update_set(
-            [vm_add_new_custom_value_update, vm_edit_custom_value_update]
+            [vm_add_new_custom_value_update(vm.ems_ref), vm_edit_custom_value_update(vm.ems_ref)]
           )
         )
 
@@ -985,10 +1001,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       )
     end
 
-    def vm_add_new_custom_value_update
+    def vm_add_new_custom_value_update(vm)
       RbVmomi::VIM.ObjectUpdate(
         :kind      => "modify",
-        :obj       => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :obj       => RbVmomi::VIM.VirtualMachine(vim, vm),
         :changeSet => [
           RbVmomi::VIM.PropertyChange(:name => "availableField", :op => "assign", :val => [RbVmomi::VIM.CustomFieldDef(:key => 300, :managedObjectType => "VirtualMachine", :name => "foo", :type => "string")]),
           RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "add", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "bar"))
@@ -996,10 +1012,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
       )
     end
 
-    def vm_edit_custom_value_update
+    def vm_edit_custom_value_update(vm)
       RbVmomi::VIM.ObjectUpdate(
         :kind      => "modify",
-        :obj       => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+        :obj       => RbVmomi::VIM.VirtualMachine(vim, vm),
         :changeSet => [
           RbVmomi::VIM.PropertyChange(:name => "summary.customValue[300]", :op => "assign", :val => RbVmomi::VIM.CustomFieldStringValue(:key => 300, :value => "baz"))
         ]
