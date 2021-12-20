@@ -13,10 +13,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     end
 
     def validate_host_system_props(object, props)
-      if props.fetch_path(:config).nil? || props.fetch_path(:summary).nil? || props.fetch_path(:summary, :config, :product).nil?
-        [true, "Missing configuration for Host [#{object._ref}]"]
-      elsif props.fetch_path(:config, :network, :dnsConfig, :hostName).blank?
-        [true, "Missing hostname information for Host [#{object._ref}]"]
+      # We use summary and summary.config in order to set some required properties for hosts,
+      # if these are missing we won't have enough information to build a useful record.
+      if props.fetch_path(:summary, :config, :product).nil?
+        [true, "Missing summary for Host [#{object._ref}]"]
       else
         false
       end
