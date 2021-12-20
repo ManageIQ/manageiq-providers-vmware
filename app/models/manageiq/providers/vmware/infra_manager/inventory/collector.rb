@@ -96,6 +96,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   end
 
   def targeted_refresh(vim, property_filter, version)
+    monitor_updates_start = Time.now.utc
+
     version, updated_objects = monitor_updates(vim, property_filter, version)
     if updated_objects.any?
       persister = targeted_persister_klass.new(ems)
@@ -107,7 +109,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       # Prevent WaitForUpdatesEx from "spinning" in a tight loop if updates are
       # constantly available.  This allows for more updates to be batched together
       # making for more efficient saving and reducing the API call load on the VC.
-      sleep(refresh_settings.update_poll_interval)
+      wait_time  = Time.now.utc - monitor_updates_start
+      sleep_time = refresh_settings.update_poll_interval.to_i_with_method - wait_time
+
+      sleep(sleep_time) if sleep_time > 0
     end
 
     version
