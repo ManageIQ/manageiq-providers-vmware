@@ -54,9 +54,10 @@ class ManageIQ::Providers::Vmware::Inventory::Parser < ManageIQ::Providers::Inve
 
       if (resp = vm[:snapshot]) && (snapshot = resp.fetch_path(:body, :Snapshot))
         uid = "#{vm[:vm].id}_#{snapshot[:created]}"
-        persister.snapshots.find_or_build_by(:vm_or_template => parsed_vm, :ems_ref => uid).assign_attributes(
+        persister.snapshots.find_or_build_by(:vm_or_template => parsed_vm, :uid => uid).assign_attributes(
           :name        => "#{vm[:vm].name} (snapshot)",
           :uid         => uid,
+          :ems_ref     => uid,
           :parent_uid  => vm[:vm].id,
           :create_time => Time.zone.parse(snapshot[:created]),
           :total_size  => snapshot[:size]
