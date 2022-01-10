@@ -2,8 +2,11 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
   require_nested :CloudNetwork
   require_nested :CloudSubnet
   require_nested :LoadBalancer
+  require_nested :LoadBalancerHealthCheck
+  require_nested :LoadBalancerListener
   require_nested :LoadBalancerPool
   require_nested :LoadBalancerPoolMember
+
   require_nested :NetworkPort
   require_nested :Refresher
   require_nested :SecurityGroup
