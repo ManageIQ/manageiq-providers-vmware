@@ -51,7 +51,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :storage_profiles)
     add_collection(infra, :storage_profile_storages)
     add_collection(infra, :parent_blue_folders)
-    add_collection(infra, :vms_and_templates) do |builder|
+    add_collection(infra, :vms_and_templates, {}, {:without_sti => true}) do |builder|
       builder.vm_template_shared
       builder.add_properties(:custom_reconnect_block => vms_and_templates_reconnect_block)
     end
