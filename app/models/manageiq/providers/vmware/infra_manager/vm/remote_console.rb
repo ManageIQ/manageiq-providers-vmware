@@ -42,7 +42,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   def remote_console_vmrc_acquire_ticket(_userid = nil, _originating_server = nil)
     validate_remote_console_acquire_ticket("vmrc")
     ticket = ext_management_system.remote_console_vmrc_acquire_ticket
-    {:ticket => ticket, :remote_url => build_vmrc_url(ticket), :proto => 'remote'}
+
+    {
+      :ticket     => ticket.to_s, # Ensure ticket is a basic String not a VimString
+      :remote_url => build_vmrc_url(ticket),
+      :proto      => 'remote'
+    }
   end
 
   def validate_remote_console_vmrc_support
@@ -66,11 +71,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
       :vm_id      => id,
       :ssl        => true,
       :protocol   => 'webmks',
-      :secret     => ticket['ticket'],
+      :secret     => ticket['ticket'].to_s, # Ensure ticket is a basic String not a VimString
       :url_secret => SecureRandom.hex,
     }
 
-    SystemConsole.launch_proxy_if_not_local(console_args, originating_server, ticket['host'], ticket['port'].to_i)
+    SystemConsole.launch_proxy_if_not_local(console_args, originating_server, ticket['host'].to_s, ticket['port'].to_i)
   end
 
   def validate_remote_console_webmks_support
