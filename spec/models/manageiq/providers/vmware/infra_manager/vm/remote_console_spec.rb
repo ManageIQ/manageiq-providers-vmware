@@ -155,15 +155,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
       EvmSpecHelper.create_guid_miq_server_zone
       ems.update(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
       auth = FactoryBot.create(:authentication,
-                                :userid   => 'dev1',
-                                :password => 'dev1pass',
-                                :authtype => 'console')
+                               :userid   => 'dev1',
+                               :password => 'dev1pass',
+                               :authtype => 'console')
       ems.authentications = [auth]
       ticket = VCR.use_cassette(described_class.name.underscore) do
         vm.remote_console_vmrc_acquire_ticket
       end
+
       expect(ticket).to have_key(:ticket)
       expect(ticket[:ticket]).to match(/^[0-9\-A-Z]{40}$/)
+      expect(ticket[:ticket]).to be_instance_of(String) # Ensure that VimStrings aren't returned
     end
 
     it 'with vm off' do
