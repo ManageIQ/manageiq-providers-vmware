@@ -725,6 +725,7 @@ module ManageIQ::Providers
         :class_name  => self.class.name,
         :instance_id => id,
         :method_name => 'assign_ems_created_on',
+        :queue_name  => queue_name_for_ems_operations,
         :role        => 'ems_operations',
         :args        => [vm_ids],
         :priority    => MiqQueue::MIN_PRIORITY
