@@ -26,6 +26,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
       :class_name  => self.class.name,
       :instance_id => id,
       :method_name => 'remote_console_acquire_ticket',
+      :queue_name  => queue_name_for_ems_operations,
       :priority    => MiqQueue::HIGH_PRIORITY,
       :role        => 'ems_operations',
       :zone        => my_zone,
