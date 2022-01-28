@@ -169,3 +169,9 @@ base: &base
 "6.7":
   :VirtualMachine:
   - config.createDate
+"7.0":
+  :VirtualMachine:
+  - config.createDate
+  :DistributedVirtualPortgroup:
+  - config.backingType
+  - config.segmentId

@@ -268,7 +268,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   def parse_portgroups_internal(object, props)
     return if Array.wrap(props[:tag]).detect { |tag| tag.key == "SYSTEM/DVS.UPLINKPG" }
 
-    ref  = object._ref
+    backing_type, segment_id = props[:config]&.values_at(:backingType, :segmentId)
+    ref = if backing_type == "nsx" && segment_id.present?
+            segment_id.split('/').last
+          else
+            object._ref
+          end
+
     uid  = props.fetch_path(:config, :key)
     name = props.fetch_path(:summary, :name) || props.fetch_path(:config, :name)
     name = CGI.unescape(name) unless name.nil?
