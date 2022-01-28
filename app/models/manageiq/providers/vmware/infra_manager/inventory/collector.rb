@@ -234,6 +234,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
       retrieve_extra_props(managed_object, props)
 
+      clear_managed_object_connection!(managed_object)
+
       parser.parse(managed_object, update_kind, props)
     rescue => err
       _log.warn("Failed to parse #{managed_object.class.wsdl_name}:#{managed_object._ref}: #{err}")
@@ -376,6 +378,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   # to free up memory and prevent targeted refreshes from trying to map labels
   def clear_cis_taggings
     self.categories_by_id = self.tags_by_id = self.tag_ids_by_attached_object = nil
+  end
+
+  def clear_managed_object_connection!(managed_object)
+    managed_object.instance_variable_set(:@connection, nil)
+    managed_object.instance_variable_set(:@soap, nil)
   end
 
   def parse_storage_profiles(vim, parser)
