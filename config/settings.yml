@@ -11,6 +11,9 @@
 :ems_refresh:
   :vmware_cloud:
     :get_public_images: false
+  :vmwarews:
+    :refresh_interval: 24.hours
+    :update_poll_interval: 1.second
 :http_proxy:
   :vmware_cloud:
     :host:
