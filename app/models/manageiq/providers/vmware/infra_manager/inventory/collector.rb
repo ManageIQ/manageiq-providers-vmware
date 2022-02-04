@@ -189,7 +189,11 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if vim.nil?
 
     # sessionManager.Logout and close the http connection
-    vim.close
+    begin
+      vim.close
+    rescue => err
+      _log.warn("Failed to logout of session: #{err}")
+    end
 
     # Cleanup the certificate authority file if it exists
     if ca_file

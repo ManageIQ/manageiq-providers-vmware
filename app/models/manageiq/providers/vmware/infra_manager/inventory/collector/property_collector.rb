@@ -7,6 +7,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     return if property_filter.nil?
 
     property_filter.DestroyPropertyFilter
+  rescue RbVmomi::Fault => err
+    _log.warn("Failed to destroy property filter: #{err}") unless err.fault.kind_of?(RbVmomi::VIM::ManagedObjectNotFound)
   rescue => err
     _log.warn("Failed to destroy property filter: #{err}")
   end
