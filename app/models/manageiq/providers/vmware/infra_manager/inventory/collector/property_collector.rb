@@ -7,6 +7,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector::Property
     return if property_filter.nil?
 
     property_filter.DestroyPropertyFilter
+  rescue => err
+    _log.warn("Failed to destroy property filter: #{err}")
   end
 
   def ems_inventory_filter_spec(vim)

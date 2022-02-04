@@ -197,6 +197,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       ca_file.unlink
       self.ca_file = nil
     end
+  rescue => err
+    _log.warn("Failed to disconnect: #{err}")
   end
 
   def wait_for_updates(vim, version)
