@@ -1,6 +1,6 @@
 # ManageIQ::Providers::Vmware
 
-[![Build Status](https://travis-ci.com/ManageIQ/manageiq-providers-vmware.svg?branch=master)](https://travis-ci.com/github/ManageIQ/manageiq-providers-vmware)
+[![CI](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml/badge.svg)](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73bf62adcd9632fd9c7d/maintainability)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/73bf62adcd9632fd9c7d/test_coverage)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/test_coverage)
 
