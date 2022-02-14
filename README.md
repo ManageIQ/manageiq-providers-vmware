@@ -1,12 +1,12 @@
 # ManageIQ::Providers::Vmware
 
-[![CI](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml/badge.svg)](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml)
+[![CI](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml/badge.svg?branch=najdorf)](https://github.com/ManageIQ/manageiq-providers-vmware/actions/workflows/ci.yaml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73bf62adcd9632fd9c7d/maintainability)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/73bf62adcd9632fd9c7d/test_coverage)](https://codeclimate.com/github/ManageIQ/manageiq-providers-vmware/test_coverage)
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/manageiq-providers-vmware?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build history for master branch](https://buildstats.info/github/chart/ManageIQ/manageiq-providers-vmware?branch=master&buildCount=50&includeBuildsFromPullRequest=false&showstats=false)](https://github.com/ManageIQ/manageiq-providers-vmware/actions?query=branch%3Amaster)
+[![Build history for najdorf branch](https://buildstats.info/github/chart/ManageIQ/manageiq-providers-vmware?branch=najdorf&buildCount=50&includeBuildsFromPullRequest=false&showstats=false)](https://github.com/ManageIQ/manageiq-providers-vmware/actions?query=branch%3Amaster)
 
 ManageIQ plugin for the VMware provider.
 
