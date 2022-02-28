@@ -64,6 +64,29 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         end
       end
 
+      it "Handles VimFault errors when exiting" do
+        service_content = RbVmomi::VIM::ServiceContent(
+          :about => RbVmomi::VIM::AboutInfo(
+            :apiVersion   => "5.5",
+            :instanceUuid => "D6EB1D64-05B2-4937-BFF6-6F77C6E647B7"
+          )
+        )
+
+        vim = RbVmomi::VIM.new(:ns => "urn2", :rev => "6.5")
+        vim.instance_variable_set(:@serviceContent, service_content)
+
+        allow(vim).to receive(:propertyCollector).and_raise(RbVmomi::Fault.new("The session is not authenticated.", RbVmomi::VIM::NotAuthenticated.new))
+        allow(vim).to receive(:close).and_raise(RbVmomi::Fault.new("The session is not authenticated.", RbVmomi::VIM::NotAuthenticated.new))
+
+        property_filter = RbVmomi::VIM.PropertyFilter(vim, "session[6f2dcefd-41de-6dfb-0160-1ee1cc024553]")
+        allow(property_filter).to receive(:DestroyPropertyFilter).and_raise(RbVmomi::Fault.new("The object '#{property_filter}' has already been deleted or has not been completely created", RbVmomi::VIM::ManagedObjectNotFound.new))
+
+        allow(collector).to receive(:vim_connect).and_return(vim)
+        allow(collector).to receive(:create_property_filter).and_return(property_filter)
+
+        expect { collector.refresh }.not_to raise_error
+      end
+
       context "with taggings and labels" do
         context "with a single tag per category" do
           it "saves vm labels" do
