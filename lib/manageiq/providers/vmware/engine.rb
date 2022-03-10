@@ -26,6 +26,9 @@ module ManageIQ
         def self.init_loggers
           $vim_log ||= Vmdb::Loggers.create_logger("vim.log")
           $vcloud_log ||= Vmdb::Loggers.create_logger("vcloud.log")
+
+          require "rbvmomi"
+          RbVmomi.logger = $vim_log
         end
 
         def self.apply_logger_config(config)
