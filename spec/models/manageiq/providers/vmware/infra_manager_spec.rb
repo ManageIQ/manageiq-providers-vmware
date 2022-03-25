@@ -1,5 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager do
-  let(:ems) { FactoryBot.create(:ems_vmware) }
+  let(:ems) { FactoryBot.create(:ems_vmware, :api_version => api_version) }
+  let(:api_version) { "7.0.0" }
 
   it ".ems_type" do
     expect(described_class.ems_type).to eq('vmwarews')
@@ -19,6 +20,24 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   context "#supports?(:streaming_refresh)" do
     it "returns true for streaming_refresh" do
       expect(ems.supports?(:streaming_refresh)).to be_truthy
+    end
+  end
+
+  context "#console_url" do
+    context "6.0 vCenter" do
+      let(:api_version) { "6.0.0" }
+
+      it "returns flash console url" do
+        expect(ems.console_url).to eq("https://#{ems.hostname}/vsphere-client")
+      end
+    end
+
+    context "6.5 vcenter" do
+      let(:api_version) { "6.5.0" }
+
+      it "returns HTML5 console url" do
+        expect(ems.console_url).to eq("https://#{ems.hostname}/ui")
+      end
     end
   end
 
