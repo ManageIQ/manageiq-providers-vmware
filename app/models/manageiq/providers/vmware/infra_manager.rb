@@ -37,6 +37,7 @@ module ManageIQ::Providers
     supports :create
     supports :label_mapping
     supports :metrics
+    supports :native_console
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
@@ -277,6 +278,10 @@ module ManageIQ::Providers
 
     def queue_name_for_ems_operations
       queue_name
+    end
+
+    def console_url
+      Gem::Version.new(api_version) >= Gem::Version.new("6.5") ? "https://#{hostname}/ui" : "https://#{hostname}/vsphere-client"
     end
 
     def remote_console_vmrc_acquire_ticket
