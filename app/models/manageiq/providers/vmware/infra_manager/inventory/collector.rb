@@ -87,7 +87,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     parse_storage_profiles(vim, parser)
     parse_content_libraries(cis, parser) if cis.present?
 
-    save_inventory(persister)
+    save_inventory(vim, persister)
 
     self.last_full_refresh = Time.now.utc
     clear_cis_taggings
@@ -104,7 +104,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       parser    = parser_klass.new(self, persister)
 
       parse_updates(vim, parser, updated_objects)
-      save_inventory(persister)
+      save_inventory(vim, persister)
 
       # Prevent WaitForUpdatesEx from "spinning" in a tight loop if updates are
       # constantly available.  This allows for more updates to be batched together
@@ -408,8 +408,39 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     _log.warn("#{log_header} Unable to collect storage profiles: #{err}")
   end
 
-  def save_inventory(persister)
-    saver.save_inventory(persister)
+  def save_inventory(vim, persister)
+    with_heartbeat(vim) do
+      saver.save_inventory(persister)
+    end
+  end
+
+  def with_heartbeat(vim)
+    should_exit = Concurrent::AtomicBoolean.new
+    wakeup      = Concurrent::Event.new
+
+    heartbeat_thread = Thread.new do
+      loop do
+        # Check should_exit before making the API call in case save_inventory
+        # doesn't take a long time we don't want to waste an API call
+        wakeup.wait(2.minutes)
+        break if should_exit.true?
+
+        # Run an API call periodically to ensure vCenter doesn't
+        # timeout our session out from under us
+        vim.currentTime
+      end
+    end
+
+    begin
+      yield
+    ensure
+      should_exit.make_true
+      wakeup.set
+
+      # Give the thread a short duration to exit cleanly before
+      # killing it and moving on
+      heartbeat_thread.join(5) || heartbeat_thread.kill
+    end
   end
 
   def log_header

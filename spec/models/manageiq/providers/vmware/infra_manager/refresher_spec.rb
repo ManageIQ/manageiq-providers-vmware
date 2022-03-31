@@ -573,7 +573,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         updated_objects = collector.send(:process_update_set, property_filter, update_set)
 
         collector.send(:parse_updates, vim, parser, updated_objects)
-        collector.send(:save_inventory, persister)
+        collector.send(:save_inventory, vim, persister)
 
         expect(ems.reload.last_refresh_error).to be_nil
       end
