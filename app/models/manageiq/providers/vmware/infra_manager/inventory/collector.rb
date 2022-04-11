@@ -173,7 +173,13 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def disconnect(vim)
     return if vim.nil?
 
-    vim.close
+    begin
+      vim.close
+    rescue => err
+      _log.warn("Failed to logout of session: #{err}")
+    end
+  rescue => err
+    _log.warn("Failed to disconnect: #{err}")
   end
 
   def wait_for_updates(vim, version)
