@@ -434,7 +434,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
         # Run an API call periodically to ensure vCenter doesn't
         # timeout our session out from under us
-        vim.currentTime
+        vim.serviceInstance.CurrentTime
       end
     end
 
