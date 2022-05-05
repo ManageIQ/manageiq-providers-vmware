@@ -2,14 +2,39 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   supports :refresh_advanced_settings
   supports :refresh_firewall_rules
   supports :refresh_logs
-  supports :reboot { validate_active_with_power_state(:reboot, "on") }
-  supports :shutdown { validate_active_with_power_state(:shutdown, "on") }
-  supports :standby { validate_active_with_power_state(:standby, "on") }
-  supports :enter_maint_mode { validate_active_with_power_state(:enter_maint_mode, "on") }
-  supports :exit_maint_mode { validate_active_with_power_state(:exit_maint_mode, "maintenance") }
-  supports :enable_vmotion { validate_active_with_power_state(:enable_vmotion, "on") }
-  supports :disable_vmotion { validate_active_with_power_state(:disable_vmotion, "on") }
-  supports :vmotion { validate_active_with_power_state(:vmotion, "on") }
+  supports :start do
+    unsupported_reason_add(:reboot, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:reboot, _("The host is not in standby"))                      unless power_state == "standby"
+  end
+  supports :reboot do
+    unsupported_reason_add(:reboot, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:reboot, _("The host is not running"))                         unless power_state == "on"
+  end
+  supports :shutdown do
+    unsupported_reason_add(:shutdown, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:shutdown, _("The host is not running"))                         unless power_state == "on"
+  end
+  supports :standby do
+    unsupported_reason_add(:standby, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:standby, _("The host is not running"))                         unless power_state == "on"
+  end
+  supports :enter_maint_mode do
+    unsupported_reason_add(:enter_maint_mode, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:enter_maint_mode, _("The host is not running"))                         unless power_state == "on"
+  end
+  supports :exit_maint_mode do
+    unsupported_reason_add(:exit_maint_mode, _("The Host is not connected to an active Provider")) unless has_active_ems?
+    unsupported_reason_add(:exit_maint_mode, _("The host is not in maintenance mode"))             unless power_state == "maintenance"
+  end
+  supports :enable_vmotion do
+    validate_active_with_power_state(:enable_vmotion, "on")
+  end
+  supports :disable_vmotion do
+    validate_active_with_power_state(:disable_vmotion, "on")
+  end
+  supports :vmotion_enabled do
+    validate_active_with_power_state(:vmotion, "on")
+  end
 
   def vim_shutdown(force = false)
     with_provider_object do |vim_host|
