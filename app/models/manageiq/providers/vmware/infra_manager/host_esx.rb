@@ -2,6 +2,14 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   supports :refresh_advanced_settings
   supports :refresh_firewall_rules
   supports :refresh_logs
+  supports :reboot { validate_active_with_power_state(:reboot, "on") }
+  supports :shutdown { validate_active_with_power_state(:shutdown, "on") }
+  supports :standby { validate_active_with_power_state(:standby, "on") }
+  supports :enter_maint_mode { validate_active_with_power_state(:enter_maint_mode, "on") }
+  supports :exit_maint_mode { validate_active_with_power_state(:exit_maint_mode, "maintenance") }
+  supports :enable_vmotion { validate_active_with_power_state(:enable_vmotion, "on") }
+  supports :disable_vmotion { validate_active_with_power_state(:disable_vmotion, "on") }
+  supports :vmotion { validate_active_with_power_state(:vmotion, "on") }
 
   def vim_shutdown(force = false)
     with_provider_object do |vim_host|
@@ -176,5 +184,12 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   def thumbprint_sha1
     require 'VMwareWebService/esx_thumb_print'
     ESXThumbPrint.new(ipaddress, authentication_userid, authentication_password).to_sha1
+  end
+
+  private
+
+  def validate_active_with_power_state(feature, expected_power_state)
+    return unsupported_reason_add(feature, _("The Host is not connected to an active Provider"))   unless has_active_ems?
+    return unsupported_reason_add(feature, _("The host is not powered '#{expected_power_state}'")) unless expected_power_state == power_state
   end
 end
