@@ -264,10 +264,6 @@ module ManageIQ::Providers
       %w(default console)
     end
 
-    def supports_authentication?(authtype)
-      supported_auth_types.include?(authtype.to_s)
-    end
-
     def self.catalog_types
       {"vmware" => N_("VMware"), "generic_ovf_template" => N_("VMware Content Library OVF Template")}
     end
