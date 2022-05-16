@@ -296,10 +296,6 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     %w(default amqp)
   end
 
-  def supports_authentication?(authtype)
-    supported_auth_types.include?(authtype.to_s)
-  end
-
   def self.catalog_types
     {"vmware" => N_("VMware")}
   end
