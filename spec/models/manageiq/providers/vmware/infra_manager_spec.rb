@@ -131,17 +131,6 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
-  context ".supports_authentication?" do
-    it "returns true for supported auth types" do
-      expect(ems.supports_authentication?("default")).to be_truthy
-      expect(ems.supports_authentication?("console")).to be_truthy
-    end
-
-    it "returns false for non-supported auth types" do
-      expect(ems.supports_authentication?("metrics")).to be_falsey
-    end
-  end
-
   context "#queue_name_for_ems_operations" do
     it "returns the per-ems queue_name" do
       expect(ems.queue_name_for_ems_operations).to eq(ems.queue_name)
