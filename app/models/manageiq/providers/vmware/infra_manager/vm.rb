@@ -9,6 +9,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
   supports :clone do
     unsupported_reason_add(:clone, _('Clone operation is not supported')) if blank? || orphaned? || archived?
   end
+  supports :publish do
+    unsupported_reason_add(:publish, _('Publish operation is not supported')) if blank? || orphaned? || archived?
+  end
 
   supports :reconfigure_disks
   supports :reconfigure_network_adapters
