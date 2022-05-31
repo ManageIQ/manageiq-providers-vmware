@@ -18,7 +18,12 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Saver
   private
 
   def update_ems_refresh_stats(ems, error: nil)
-    ems.update(:last_refresh_error => error, :last_refresh_date => Time.now.utc)
+    refresh_date = Time.now.utc
+
+    ems.last_refresh_error        = error
+    ems.last_refresh_date         = refresh_date
+    ems.last_refresh_success_date = refresh_date if error.nil?
+    ems.save!
   end
 
   def post_refresh(ems, save_inventory_start_time)
