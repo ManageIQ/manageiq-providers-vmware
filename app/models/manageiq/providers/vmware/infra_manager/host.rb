@@ -2,8 +2,27 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
   include ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
 
+  # overrides base start to support "standby" powerstate
+  supports :start do
+    if !supports?(:ipmi)
+      unsupported_reason_add(:start, unsupported_reason(:ipmi))
+    elsif %w[off standby].exclude?(power_state)
+      unsupported_reason_add(:start, _("The Host is not in power state off or standby"))
+    end
+  end
+
   def connect(options = {})
     vim_connect(options)
+  end
+
+  def start
+    if verbose_supports?(:start)
+      if power_state == 'standby'
+        check_policy_prevent("request_host_start", "vim_power_up_from_standby")
+      else
+        super
+      end
+    end
   end
 
   def provider_object(connection)
