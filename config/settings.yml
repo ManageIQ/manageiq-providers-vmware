@@ -60,3 +60,6 @@
         :ems_refresh_worker_vmware_cloud: {}
         :ems_refresh_worker_vmware_cloud_network: {}
         :ems_refresh_worker_vmware_tanzu: {}
+:prototype:
+  :ems_vmware:
+    :allow_direct_hosts: false

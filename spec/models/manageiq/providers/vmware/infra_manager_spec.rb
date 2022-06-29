@@ -71,6 +71,14 @@ describe ManageIQ::Providers::Vmware::InfraManager do
         expect { described_class.verify_credentials(verify_params) }
           .to raise_error(MiqException::Error, "Adding ESX/ESXi Hosts is not supported")
       end
+
+      context "with allow_direct_hosts setting set to true" do
+        before { stub_settings_merge(:prototype => {:ems_vmware => {:allow_direct_hosts => true}}) }
+
+        it "is successful" do
+          expect(described_class.verify_credentials(verify_params)).to be_truthy
+        end
+      end
     end
 
     context "vCenter currentTime out of sync" do

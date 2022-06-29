@@ -79,7 +79,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
           }
         )
 
-        raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") unless vim.isVirtualCenter
+        raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") if !vim.isVirtualCenter && !Settings.prototype.ems_vmware.allow_direct_hosts
         raise MiqException::Error, _("vCenter version %{version} is unsupported") % {:version => vim.apiVersion} if !version_supported?(vim.apiVersion)
 
         # If the time on the vCenter is very far off from MIQ system time then
