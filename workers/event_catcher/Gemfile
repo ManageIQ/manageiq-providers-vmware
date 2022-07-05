@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
 gem "manageiq-messaging", "~> 1.0"
-gem "rbvmomi", "~> 3.0"
+gem "rbvmomi2", "~> 3.3"
 gem "sd_notify"

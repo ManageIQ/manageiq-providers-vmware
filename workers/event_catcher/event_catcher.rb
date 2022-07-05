@@ -1,6 +1,6 @@
 require "manageiq-messaging"
 require "sd_notify"
-require "rbvmomi"
+require "rbvmomi2"
 require "json"
 
 class EventCatcher
