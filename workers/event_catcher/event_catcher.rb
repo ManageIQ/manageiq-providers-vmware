@@ -9,8 +9,8 @@ class EventCatcher
     @username       = default_authentication["userid"]
     @password       = default_authentication["password"]
     @port           = default_endpoint["port"]
-    @messaging_host = messaging_opts["host"]
-    @messaging_port = messaging_opts["port"]
+    @messaging_host = messaging_opts["host"] || "localhost"
+    @messaging_port = messaging_opts["port"] || 9092
     @page_size      = page_size
   end
 
@@ -246,9 +246,12 @@ end
 def main(args)
   setproctitle
 
-  connection_config = args["connection_config"]
+  ems = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
 
-  event_catcher = EventCatcher.new(args["ems_id"], connection_config["default"]["endpoint"], connection_config["default"]["authentication"], args["messaging_opts"])
+  default_endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
+  default_authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
+
+  event_catcher = EventCatcher.new(ems["id"], default_endpoint, default_authentication, {}) # TODO: args["messaging_opts"])
 
   event_catcher.run!
 end
