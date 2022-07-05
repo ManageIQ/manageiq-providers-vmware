@@ -1,17 +1,15 @@
 require "manageiq-messaging"
 require "sd_notify"
 require "rbvmomi"
+require "json"
 
 class EventCatcher
-  def initialize(ems_id, default_endpoint, default_authentication, messaging_opts, page_size = 20)
-    @ems_id         = ems_id
-    @hostname       = default_endpoint["hostname"]
-    @username       = default_authentication["userid"]
-    @password       = default_authentication["password"]
-    @port           = default_endpoint["port"]
-    @messaging_host = messaging_opts["host"] || "localhost"
-    @messaging_port = messaging_opts["port"] || 9092
-    @page_size      = page_size
+  def initialize(ems_id, default_endpoint, default_authentication, messaging, page_size = 20)
+    @ems_id                 = ems_id
+    @default_endpoint       = default_endpoint
+    @default_authentication = default_authentication
+    @messaging              = messaging
+    @page_size              = page_size
   end
 
   def run!
@@ -44,22 +42,22 @@ class EventCatcher
 
   private
 
-  attr_reader :ems_id, :hostname, :messaging_host, :messaging_port, :password, :port, :page_size, :username
+  attr_reader :ems_id, :default_endpoint, :default_authentication, :messaging, :page_size
 
   def connect
     vim_opts = {
       :ns       => 'urn:vim25',
-      :host     => hostname,
+      :host     => default_endpoint["hostname"],
       :ssl      => true,
-      :insecure => true,
+      :insecure => default_endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
       :path     => '/sdk',
-      :port     => port,
-      :rev      => '6.5',
+      :port     => default_endpoint["port"],
+      :rev      => '7.0',
     }
 
     RbVmomi::VIM.new(vim_opts).tap do |vim|
       vim.rev = vim.serviceContent.about.apiVersion
-      vim.serviceContent.sessionManager.Login(:userName => username, :password => password)
+      vim.serviceContent.sessionManager.Login(:userName => default_authentication["userid"], :password => default_authentication["password"])
     end
   end
 
@@ -217,8 +215,8 @@ class EventCatcher
 
   def messaging_client
     @messaging_client ||= ManageIQ::Messaging::Client.open(
-      :host       => messaging_host,
-      :port       => messaging_port,
+      :host       => messaging["host"],
+      :port       => messaging["port"],
       :protocol   => :Kafka,
       :encoding   => "json",
       :client_ref => "vmware-event-catcher-#{ems_id}"
@@ -246,18 +244,17 @@ end
 def main(args)
   setproctitle
 
-  ems = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
-
+  ems                    = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
   default_endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
   default_authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
+  messaging              = args["messaging"]
 
-  event_catcher = EventCatcher.new(ems["id"], default_endpoint, default_authentication, {}) # TODO: args["messaging_opts"])
+  event_catcher = EventCatcher.new(ems["id"], default_endpoint, default_authentication, messaging)
 
   event_catcher.run!
 end
 
 def parse_args
-  require "json"
   JSON.parse($stdin.read)
 end
 
