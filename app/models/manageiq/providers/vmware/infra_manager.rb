@@ -59,7 +59,7 @@ module ManageIQ::Providers
     end
 
     def self.params_for_create
-      @params_for_create ||= {
+      {
         :fields => [
           {
             :component => 'text-field',
@@ -222,7 +222,7 @@ module ManageIQ::Providers
                           :component  => "text-field",
                           :id         => "authentications.console.userid",
                           :name       => "authentications.console.userid",
-                          :label      => "Username",
+                          :label      => _("Username"),
                           :isRequired => true,
                           :validate   => [{:type => "required"}],
                         },
@@ -230,7 +230,7 @@ module ManageIQ::Providers
                           :component  => "password-field",
                           :id         => "authentications.console.password",
                           :name       => "authentications.console.password",
-                          :label      => "Password",
+                          :label      => _("Password"),
                           :type       => "password",
                           :isRequired => true,
                           :validate   => [{:type => "required"}],
