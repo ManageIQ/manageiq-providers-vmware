@@ -82,7 +82,7 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
   end
 
   def self.params_for_create
-    @params_for_create ||= {
+    {
       :fields => [
         {
           :component => 'sub-form',

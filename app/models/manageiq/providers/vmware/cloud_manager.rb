@@ -35,7 +35,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   end
 
   def self.params_for_create
-    @params_for_create ||= {
+    {
       :fields => [
         {
           :component    => "select",
@@ -208,7 +208,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :component  => "text-field",
                         :id         => "authentications.amqp.userid",
                         :name       => "authentications.amqp.userid",
-                        :label      => "Username",
+                        :label      => _("Username"),
                         :isRequired => true,
                         :validate   => [{:type => "required"}],
                       },
@@ -216,7 +216,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                         :component  => "password-field",
                         :id         => "authentications.amqp.password",
                         :name       => "authentications.amqp.password",
-                        :label      => "Password",
+                        :label      => _("Password"),
                         :type       => "password",
                         :isRequired => true,
                         :validate   => [{:type => "required"}],
