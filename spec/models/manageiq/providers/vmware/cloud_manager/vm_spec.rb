@@ -1,5 +1,5 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Vm do
-  context "#is_available?" do
+  context "#supports?" do
     let(:ems)                   { FactoryBot.create(:ems_vmware_cloud) }
     let(:vm)                    { FactoryBot.create(:vm_vmware_cloud, :ext_management_system => ems) }
     let(:power_state_on)        { "on" }
