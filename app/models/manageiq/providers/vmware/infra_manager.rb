@@ -56,28 +56,6 @@ module ManageIQ::Providers
       {
         :fields => [
           {
-            :component => 'text-field',
-            :id        => 'host_default_vnc_port_start',
-            :name      => 'host_default_vnc_port_start',
-            :label     => _('Host Default VNC Start Port'),
-            :type      => 'number',
-            :validate  => [{
-              :type  => 'max-number-value',
-              :value => 65_535,
-            }]
-          },
-          {
-            :component => 'text-field',
-            :id        => 'host_default_vnc_port_end',
-            :name      => 'host_default_vnc_port_end',
-            :label     => _('Host Default VNC End Port'),
-            :type      => 'number',
-            :validate  => [{
-              :type  => 'max-number-value',
-              :value => 65_535,
-            }]
-          },
-          {
             :component => 'sub-form',
             :id        => 'endpoints-subform',
             :name      => 'endpoints-subform',
@@ -233,6 +211,63 @@ module ManageIQ::Providers
                     },
                   ],
                 },
+                {
+                  :component => 'tab-item',
+                  :id        => 'vnc-console-tab',
+                  :name      => 'vnc-console-tab',
+                  :title     => _('VNC Console Ports'),
+                  :fields    => [
+                    {
+                      :component    => 'protocol-selector',
+                      :id           => 'vnc-console',
+                      :name         => 'vnc-console',
+                      :skipSubmit   => true,
+                      :label        => _('VNC Console Ports'),
+                      :initialValue => 'none',
+                      :options      => [
+                        {
+                          :label => _("Disabled"),
+                          :value => 'none',
+                        },
+                        {
+                          :label => _("Enabled"),
+                          :value => "enabled",
+                          :pivot => "host_default_vnc_port_start",
+                        },
+                      ]
+                    },
+                    {
+                      :component => 'text-field',
+                      :id        => 'host_default_vnc_port_start',
+                      :name      => 'host_default_vnc_port_start',
+                      :label     => _('Host Default VNC Start Port'),
+                      :type      => 'number',
+                      :condition => {
+                        :when => 'vnc-console',
+                        :is   => 'enabled',
+                      },
+                      :validate  => [{
+                        :type  => 'max-number-value',
+                        :value => 65_535,
+                      }]
+                    },
+                    {
+                      :component => 'text-field',
+                      :id        => 'host_default_vnc_port_end',
+                      :name      => 'host_default_vnc_port_end',
+                      :label     => _('Host Default VNC End Port'),
+                      :type      => 'number',
+                      :condition => {
+                        :when => 'vnc-console',
+                        :is   => 'enabled',
+                      },
+                      :validate  => [{
+                        :type  => 'max-number-value',
+                        :value => 65_535,
+                      }]
+                    }
+                  ]
+                }
               ]
             ]
           },
