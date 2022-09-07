@@ -4,7 +4,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
   before(:each) do
     MiqRegion.seed
 
-    guid, server, @zone = EvmSpecHelper.create_guid_miq_server_zone
+    @zone = EvmSpecHelper.local_miq_server.zone
 
     Timecop.freeze(Time.parse("2011-08-12T23:33:00Z").utc)
   end

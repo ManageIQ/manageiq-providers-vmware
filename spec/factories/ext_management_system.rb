@@ -1,9 +1,6 @@
 FactoryBot.define do
   factory :ems_vmware_with_vcr_authentication, :parent => :ems_vmware_cloud do
-    zone do
-      _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
-      zone
-    end
+    zone { EvmSpecHelper.local_miq_server.zone }
 
     after(:build) do |ems|
       ems.hostname = Rails.application.secrets.vmware_cloud[:host]

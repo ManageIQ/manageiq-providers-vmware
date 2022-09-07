@@ -4,7 +4,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
   include Spec::Support::EmsRefreshHelper
 
   let!(:ems) do
-    _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
+    zone = EvmSpecHelper.local_miq_server.zone
     hostname = Rails.application.secrets.vmware_infra[:hostname]
     FactoryBot.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
       # NOTE: VCR filter_sensitive_data was replacing rootFolder with VMWARE_USERNAME and
