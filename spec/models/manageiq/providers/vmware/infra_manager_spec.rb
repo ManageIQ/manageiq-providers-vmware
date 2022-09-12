@@ -204,7 +204,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "#remote_console_vmrc_acquire_ticket" do
     let(:ems) do
-      _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
+      zone = EvmSpecHelper.local_miq_server.zone
       FactoryBot.create(:ems_vmware, :zone => zone)
     end
 
@@ -241,7 +241,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "handling changes that may require EventCatcher restart" do
     before(:each) do
-      guid, server, zone = EvmSpecHelper.create_guid_miq_server_zone
+      zone = EvmSpecHelper.local_miq_server.zone
       @ems = FactoryBot.create(:ems_vmware, :zone => zone)
     end
 

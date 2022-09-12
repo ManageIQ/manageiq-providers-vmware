@@ -6,7 +6,7 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
     @hostname = host_uri.host
     @port = host_uri.port == 443 ? nil : host_uri.port
 
-    _guid, _server, zone = EvmSpecHelper.create_guid_miq_server_zone
+    zone = EvmSpecHelper.local_miq_server.zone
     @ems = FactoryBot.create(
       :ems_vmware_cloud,
       :zone        => zone,
