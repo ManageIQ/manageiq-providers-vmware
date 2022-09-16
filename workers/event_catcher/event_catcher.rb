@@ -124,11 +124,7 @@ class EventCatcher
 
   def messaging_client
     @messaging_client ||= ManageIQ::Messaging::Client.open(
-      :host       => messaging["host"],
-      :port       => messaging["port"],
-      :protocol   => :Kafka,
-      :encoding   => "json",
-      :client_ref => "vmware-event-catcher-#{ems_id}"
+      messaging.merge(:client_ref => "vmware-event-catcher-#{ems_id}")
     )
   end
 

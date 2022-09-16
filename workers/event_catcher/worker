@@ -24,7 +24,7 @@ def main(args)
   ems                    = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
   default_endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
   default_authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
-  messaging              = args["messaging"]
+  messaging              = args["messaging"].symbolize_keys
 
   EventCatcher.new(ems["id"], default_endpoint, default_authentication, messaging).run!
 end
