@@ -1,7 +1,15 @@
-require "manageiq-messaging"
-require "sd_notify"
-require "rbvmomi2"
-require "json"
+#!/usr/bin/env ruby
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+
+  gem "manageiq-messaging", "~> 1.0"
+  gem "rbvmomi2", "~> 3.3"
+  gem "sd_notify"
+  gem "json"
+end
 
 class EventCatcher
   def initialize(ems_id, default_endpoint, default_authentication, messaging, page_size = 20)
@@ -51,7 +59,7 @@ class EventCatcher
       :ssl      => true,
       :insecure => default_endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
       :path     => '/sdk',
-      :port     => default_endpoint["port"],
+      :port     => default_endpoint["port"] || 443,
       :rev      => '7.0',
     }
 
