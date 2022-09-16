@@ -8,7 +8,10 @@ gemfile(false) do
   gem "manageiq-loggers", "~>1.0"
   gem "manageiq-messaging", "~> 1.0"
   gem "rbvmomi2", "~> 3.3"
-  gem "sd_notify" if ENV.fetch("NOTIFY_SOCKET", nil)
+  if ENV.fetch("APPLIANCE", nil)
+    gem "sd_notify"
+    gem "systemd-journal"
+  end
   gem "json"
 end
 
@@ -20,7 +23,13 @@ def setproctitle
 end
 
 def build_logger
-  ManageIQ::Loggers::Base.new($stdout) # TODO: build container/journal/base logger
+  if ENV.fetch("CONTAINER", nil)
+    ManageIQ::Loggers::Container.new
+  elsif ENV.fetch("APPLIANCE", nil)
+    ManageIQ::Loggers::Journald.new
+  else
+    ManageIQ::Loggers::Base.new($stdout)
+  end
 end
 
 def main(args)
