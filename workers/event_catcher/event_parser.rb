@@ -13,7 +13,6 @@ class EventParser
         sub_event_type   = "PowerOnVM_Task"    if event.fullFormattedMessage.to_s.downcase == "task: power on virtual machine"
         sub_event_type ||= "DrsMigrateVM_Task" if event.info&.descriptionId == "Drm.ExecuteVMotionLRO"
         if sub_event_type.nil?
-          puts "Event Type cannot be determined for TaskEvent.  Using generic eventType [TaskEvent] instead"
           sub_event_type = "TaskEvent"
         end
       when "Rename_Task", "Destroy_Task"

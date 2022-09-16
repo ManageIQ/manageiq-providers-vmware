@@ -5,6 +5,7 @@ require "bundler/inline"
 gemfile do
   source "https://rubygems.org"
 
+  gem "manageiq-loggers", "~>1.0"
   gem "manageiq-messaging", "~> 1.0"
   gem "rbvmomi2", "~> 3.3"
   gem "sd_notify"
@@ -18,15 +19,20 @@ def setproctitle
   Process.setproctitle(proc_title)
 end
 
+def build_logger
+  ManageIQ::Loggers::Base.new($stdout) # TODO: build container/journal/base logger
+end
+
 def main(args)
   setproctitle
 
-  ems                    = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
-  default_endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
-  default_authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
-  messaging              = args["messaging"].symbolize_keys
+  logger         = build_logger
+  ems            = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
+  messaging      = args["messaging"].symbolize_keys
+  endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
+  authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
 
-  EventCatcher.new(ems["id"], default_endpoint, default_authentication, messaging).run!
+  EventCatcher.new(ems, endpoint, authentication, messaging, logger).run!
 end
 
 def parse_args

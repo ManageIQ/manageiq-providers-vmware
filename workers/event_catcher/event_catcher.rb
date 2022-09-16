@@ -1,10 +1,11 @@
 require_relative "event_parser"
 
 class EventCatcher
-  def initialize(ems_id, default_endpoint, default_authentication, messaging, page_size = 20)
-    @ems_id                 = ems_id
+  def initialize(ems, default_endpoint, default_authentication, messaging, logger, page_size = 20)
+    @ems_id                 = ems["id"]
     @default_endpoint       = default_endpoint
     @default_authentication = default_authentication
+    @logger                 = logger
     @messaging              = messaging
     @page_size              = page_size
   end
@@ -16,13 +17,13 @@ class EventCatcher
 
     notify_started
 
-    puts "Collecting events..."
+    logger.info("Collecting events...")
     wait_for_updates(vim) do |property_change|
-      puts property_change.name
+      logger.info(property_change.name)
       next unless property_change.name.match?(/latestPage.*/)
 
       events = Array(property_change.val).map { |event| EventParser.parse_event(event).merge(:ems_id => ems_id) }
-      puts events.to_json
+      logger.info(events.to_json)
       publish_events(events)
     end
   rescue Interrupt
@@ -39,7 +40,7 @@ class EventCatcher
 
   private
 
-  attr_reader :ems_id, :default_endpoint, :default_authentication, :messaging, :page_size
+  attr_reader :ems_id, :default_endpoint, :default_authentication, :logger, :messaging, :page_size
 
   def connect
     vim_opts = {
