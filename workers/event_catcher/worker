@@ -2,13 +2,13 @@
 
 require "bundler/inline"
 
-gemfile do
+gemfile(false) do
   source "https://rubygems.org"
 
   gem "manageiq-loggers", "~>1.0"
   gem "manageiq-messaging", "~> 1.0"
   gem "rbvmomi2", "~> 3.3"
-  gem "sd_notify"
+  gem "sd_notify" if ENV.fetch("NOTIFY_SOCKET", nil)
   gem "json"
 end
 

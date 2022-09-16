@@ -135,14 +135,14 @@ class EventCatcher
   end
 
   def notify_started
-    SdNotify.ready
+    SdNotify.ready if ENV.fetch("NOTIFY_SOCKET", nil)
   end
 
   def heartbeat
-    SdNotify.watchdog
+    SdNotify.watchdog if ENV.fetch("NOTIFY_SOCKET", nil)
   end
 
   def notify_stopping
-    SdNotify.stopping
+    SdNotify.stopping if ENV.fetch("NOTIFY_SOCKET", nil)
   end
 end
