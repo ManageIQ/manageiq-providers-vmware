@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+
+  gem "manageiq-messaging", "~> 1.0"
+  gem "rbvmomi2", "~> 3.3"
+  gem "sd_notify"
+  gem "json"
+end
+
+require_relative "event_catcher"
+
+def setproctitle
+  proc_title = "MIQ: Vmware::InfraManager::EventCatcher guid: #{ENV.fetch("GUID", nil)}"
+  Process.setproctitle(proc_title)
+end
+
+def main(args)
+  setproctitle
+
+  ems                    = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
+  default_endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
+  default_authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
+  messaging              = args["messaging"]
+
+  EventCatcher.new(ems["id"], default_endpoint, default_authentication, messaging).run!
+end
+
+def parse_args
+  JSON.parse($stdin.read)
+rescue JSON::ParserError
+  abort("Invalid argument format")
+end
+
+main(parse_args)
