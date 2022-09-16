@@ -1,13 +1,13 @@
 require_relative "event_parser"
 
 class EventCatcher
-  def initialize(ems, default_endpoint, default_authentication, messaging, logger, page_size = 20)
-    @ems_id                 = ems["id"]
-    @default_endpoint       = default_endpoint
-    @default_authentication = default_authentication
-    @logger                 = logger
-    @messaging              = messaging
-    @page_size              = page_size
+  def initialize(ems, endpoint, authentication, messaging, logger, page_size = 20)
+    @ems            = ems
+    @endpoint       = endpoint
+    @authentication = authentication
+    @logger         = logger
+    @messaging      = messaging
+    @page_size      = page_size
   end
 
   def run!
@@ -18,12 +18,17 @@ class EventCatcher
     notify_started
 
     logger.info("Collecting events...")
+
     wait_for_updates(vim) do |property_change|
       logger.info(property_change.name)
       next unless property_change.name.match?(/latestPage.*/)
 
-      events = Array(property_change.val).map { |event| EventParser.parse_event(event).merge(:ems_id => ems_id) }
+      events = Array(property_change.val).map do |event|
+        EventParser.parse_event(event).merge(:ems_id => ems["id"])
+      end
+
       logger.info(events.to_json)
+
       publish_events(events)
     end
   rescue Interrupt
@@ -40,15 +45,15 @@ class EventCatcher
 
   private
 
-  attr_reader :ems_id, :default_endpoint, :default_authentication, :logger, :messaging, :page_size
+  attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size
 
   def connect
     vim_opts = {
       :ns       => 'urn:vim25',
       :ssl      => true,
-      :host     => default_endpoint["hostname"],
-      :port     => default_endpoint["port"] || 443,
-      :insecure => default_endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
+      :host     => endpoint["hostname"],
+      :port     => endpoint["port"] || 443,
+      :insecure => endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
       :path     => '/sdk',
       :rev      => '7.0',
     }
@@ -56,8 +61,8 @@ class EventCatcher
     RbVmomi::VIM.new(vim_opts).tap do |vim|
       vim.rev = vim.serviceContent.about.apiVersion
       vim.serviceContent.sessionManager.Login(
-        :userName => default_authentication["userid"],
-        :password => default_authentication["password"]
+        :userName => authentication["userid"],
+        :password => authentication["password"]
       )
     end
   end
@@ -116,7 +121,7 @@ class EventCatcher
     events.each do |event|
       messaging_client.publish_topic(
         :service => "manageiq.ems",
-        :sender  => ems_id,
+        :sender  => ems["id"],
         :event   => event[:event_type],
         :payload => event
       )
@@ -125,19 +130,19 @@ class EventCatcher
 
   def messaging_client
     @messaging_client ||= ManageIQ::Messaging::Client.open(
-      messaging.merge(:client_ref => "vmware-event-catcher-#{ems_id}")
+      messaging.merge(:client_ref => "vmware-event-catcher-#{ems["id"]}")
     )
   end
 
   def notify_started
-    SdNotify.ready if ENV["NOTIFY_SOCKET"]
+    SdNotify.ready
   end
 
   def heartbeat
-    SdNotify.watchdog if ENV["NOTIFY_SOCKET"]
+    SdNotify.watchdog
   end
 
   def notify_stopping
-    SdNotify.stopping if ENV["NOTIFY_SOCKET"]
+    SdNotify.stopping
   end
 end
