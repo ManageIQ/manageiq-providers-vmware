@@ -384,6 +384,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
         expect(vm.snapshots.count).to eq(1)
         expect(vm.snapshots.first).to have_attributes(
+          :type        => "ManageIQ::Providers::Vmware::InfraManager::Snapshot",
           :uid_ems     => "2018-05-19T06:47:56.000000Z",
           :uid         => "2018-05-19T06:47:56.000000Z",
           :parent_uid  => nil,

@@ -117,16 +117,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
     [:config, :customization, :linked_clone].each { |key| vim_clone_options[key] = clone_options[key] }
 
-    [:folder, :host, :pool].each do |key|
+    %i[folder host pool snapshot].each do |key|
       ci = clone_options[key]
       next if ci.nil?
 
       vim_clone_options[key] = ci.ems_ref_obj
-    end
-
-    if clone_options[:snapshot]
-      ci = clone_options[:snapshot]
-      vim_clone_options[:snapshot] = VimString.new(ci.ems_ref, ci.ems_ref_type, :ManagedObjectReference) if ci.ems_ref.present? && ci.ems_ref_type.present?
     end
 
     vim_clone_options[:datastore]       = datastore_ems_ref(clone_options)

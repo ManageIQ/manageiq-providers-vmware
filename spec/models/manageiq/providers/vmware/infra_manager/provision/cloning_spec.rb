@@ -41,7 +41,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning do
     let(:folder)    { FactoryBot.create(:vmware_folder_vm, :ext_management_system => ems) }
     let(:host)      { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems, :ems_ref => "host-1") }
     let(:pool)      { FactoryBot.create(:resource_pool_vmware, :ext_management_system => ems) }
-    let(:snapshot)  { FactoryBot.create(:snapshot, :ems_ref => "snapshot-1", :ems_ref_type => "Snapshot") }
+    let(:snapshot)  { FactoryBot.create(:snapshot_vmware) }
     let(:datastore) { FactoryBot.create(:storage_vmware, :ext_management_system => ems) }
 
     let(:clone_options) do
