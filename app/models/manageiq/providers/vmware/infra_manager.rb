@@ -22,6 +22,7 @@ module ManageIQ::Providers
     require_nested :Refresher
     require_nested :RefreshWorker
     require_nested :ResourcePool
+    require_nested :Snapshot
     require_nested :Storage
     require_nested :StorageCluster
     require_nested :Template
