@@ -42,46 +42,42 @@ class EventParser
     result[:username] = event.userName if event.userName.present?
 
     # Get the vm information
-    vm_key = "vm"          if event.props.key?("vm")
-    vm_key = "sourceVm"    if event.props.key?("sourceVm")
-    vm_key = "srcTemplate" if event.props.key?("srcTemplate")
+    vm_key = :vm          if event.props.key?(:vm)
+    vm_key = :sourceVm    if event.props.key?(:sourceVm)
+    vm_key = :srcTemplate if event.props.key?(:srcTemplate)
     if vm_key
-      vm_data = event.send(vm_key)
-
-      result[:vm_ems_ref]  = vm_data&.vm                 if vm_data&.vm
-      result[:vm_name]     = CGI.unescape(vm_data&.name) if vm_data&.name
-      result[:vm_location] = vm_data&.path               if vm_data&.path
-      result[:vm_uid_ems]  = vm_data&.uuid               if vm_data&.uuid
-
-      result
+      vm = event.send(vm_key)
+      if vm
+        result[:vm_ems_ref] = vm.vm._ref                   if vm.vm
+        result[:vm_name]    = CGI.unescape(vm.name)        if vm.name
+      end
     end
 
     # Get the dest vm information
     has_dest = false
     if %w[sourceVm srcTemplate].include?(vm_key)
-      vm_data = event.vm
-      if vm_data
-        result[:dest_vm_ems_ref]  = vm_data&.vm                 if vm_data&.vm
-        result[:dest_vm_name]     = CGI.unescape(vm_data&.name) if vm_data&.name
-        result[:dest_vm_location] = vm_data&.path               if vm_data&.path
+      vm = event.vm
+      if vm
+        result[:dest_vm_ems_ref] = vm.vm._ref                   if vm.vm
+        result[:dest_vm_name]    = CGI.unescape(vm.name)        if vm.name
       end
 
       has_dest = true
-    elsif event.props.key?("destName")
+    elsif event.props.key?(:destName)
       result[:dest_vm_name] = event.destName
       has_dest = true
     end
 
     if event.props.key?(:host)
       result[:host_name]    = event.host.name
-      result[:host_ems_ref] = event.host.host
+      result[:host_ems_ref] = event.host.host._ref
     end
 
     if has_dest
-      host_data = event.props["destHost"] || event.props["host"]
+      host_data = event.props[:destHost] || event.props[:host]
       if host_data
-        result[:dest_host_ems_ref] = host_data["host"]
-        result[:dest_host_name]    = host_data["name"]
+        result[:dest_host_ems_ref] = host_data[:host]
+        result[:dest_host_name]    = host_data[:name]
       end
     end
 

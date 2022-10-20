@@ -1,0 +1,13 @@
+--- !ruby/object:RbVmomi::VIM::UserLoginSessionEvent
+props:
+  :key: 13782694
+  :chainId: 13782694
+  :createdTime: 2022-10-20 19:05:38.988613000 Z
+  :userName: root
+  :fullFormattedMessage: User root logged in as
+    HTTPClient/1.0 (2.8.3, ruby 2.7.6 (2022-04-12))
+  :changeTag: ''
+  :ipAddress: 127.0.0.1
+  :userAgent: HTTPClient/1.0 (2.8.3, ruby 2.7.6 (2022-04-12))
+  :locale: en
+  :sessionId: 52cbdd94-bf4a-ed81-2a2f-698e5bd83fe6
