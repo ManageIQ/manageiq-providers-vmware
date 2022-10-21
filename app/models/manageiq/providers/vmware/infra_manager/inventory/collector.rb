@@ -32,7 +32,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     if vim_thread
       # Give the collector thread a chance to exit cleanly, then kill it to
       # ensure we don't have multiple collector threads running.
-      result = vim_thread.join(join_timeout)
+      result = vim_thread.join(join_timeout.to_f)
       vim_thread.kill if result.nil?
     end
 
