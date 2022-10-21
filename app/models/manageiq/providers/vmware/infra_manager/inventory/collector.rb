@@ -28,7 +28,14 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
 
     # The WaitOptions for WaitForUpdatesEx call sets maxWaitSeconds to 60 seconds
     self.exit_requested = true
-    vim_thread&.join(join_timeout)
+
+    if vim_thread
+      # Give the collector thread a chance to exit cleanly, then kill it to
+      # ensure we don't have multiple collector threads running.
+      result = vim_thread.join(join_timeout)
+      vim_thread.kill if result.nil?
+    end
+
     self.exit_requested = false
   end
 
