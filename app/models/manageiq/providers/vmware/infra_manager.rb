@@ -302,6 +302,10 @@ module ManageIQ::Providers
       true
     end
 
+    def allow_targeted_refresh?
+      true
+    end
+
     def queue_name_for_ems_operations
       queue_name
     end
