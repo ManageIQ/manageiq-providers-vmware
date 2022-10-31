@@ -8,6 +8,7 @@
           :critical:
         :power:
           :critical:
+    :capture_batch_size: 250
 :ems_refresh:
   :vmware_tanzu:
     :refresh_interval: 24.hours
