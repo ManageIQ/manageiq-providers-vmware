@@ -42,7 +42,7 @@
         :flooding_monitor_enabled: true
         :poll: 1.seconds
         :ems_event_max_wait: 60
-        :rails_worker: false
+        :rails_worker: true
       :event_catcher_vmware_cloud:
         :poll: 15.seconds
         :duration: 10.seconds
