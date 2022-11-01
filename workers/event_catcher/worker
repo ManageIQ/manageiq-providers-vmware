@@ -5,8 +5,10 @@ require "bundler/inline"
 gemfile(false) do
   source "https://rubygems.org"
 
+  gem "activesupport", "~>6.1.6"
   gem "manageiq-loggers", "~>1.0"
   gem "manageiq-messaging", "~> 1.0"
+  gem "more_core_extensions"
   gem "rbvmomi2", "~> 3.3"
   if ENV.fetch("APPLIANCE", nil)
     gem "sd_notify"
@@ -40,8 +42,9 @@ def main(args)
   messaging      = args["messaging"].symbolize_keys
   endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
   authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
+  settings       = args["settings"]
 
-  EventCatcher.new(ems, endpoint, authentication, messaging, logger).run!
+  EventCatcher.new(ems, endpoint, authentication, settings, messaging, logger).run!
 end
 
 def parse_args
