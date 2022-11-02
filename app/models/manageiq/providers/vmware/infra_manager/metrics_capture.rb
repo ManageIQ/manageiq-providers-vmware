@@ -234,7 +234,6 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     ret
   end
 
-  alias targets target
   def initialize(target, ems = nil)
     super(Array(target), ems || Array(target).first&.ext_management_system)
 
@@ -388,16 +387,6 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     return counters_by_mor, counter_values_by_mor_and_ts
-  end
-
-  private
-
-  def log_targets
-    if targets.size == 1
-      "[#{targets.first.class.name}], [#{targets.first.id}], [#{targets.first.name}]"
-    else
-      "[#{targets.map { |obj| obj.class.name }.uniq.join(", ")}], [#{targets.size} targets]"
-    end
   end
 
   class << self

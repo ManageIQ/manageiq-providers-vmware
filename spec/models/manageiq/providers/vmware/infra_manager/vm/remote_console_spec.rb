@@ -152,7 +152,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     let(:vm) { FactoryBot.create(:vm_with_ref, :ext_management_system => ems, :host => host) }
 
     it 'normal case' do
-      EvmSpecHelper.create_guid_miq_server_zone
+      EvmSpecHelper.local_miq_server
       ems.update(:ipaddress => '192.168.252.14', :hostname => '192.168.252.14')
       auth = FactoryBot.create(:authentication,
                                :userid   => 'dev1',

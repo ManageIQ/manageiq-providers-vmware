@@ -117,7 +117,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
     [:config, :customization, :linked_clone].each { |key| vim_clone_options[key] = clone_options[key] }
 
-    [:folder, :host, :pool].each do |key|
+    %i[folder host pool snapshot].each do |key|
       ci = clone_options[key]
       next if ci.nil?
 

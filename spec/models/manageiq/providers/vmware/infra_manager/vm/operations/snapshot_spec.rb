@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Snapshot do
   let(:vm) do
-    _, _, zone = EvmSpecHelper.create_guid_miq_server_zone
+    zone = EvmSpecHelper.local_miq_server.zone
     ems = FactoryBot.create(:ems_vmware, :zone => zone)
     host = FactoryBot.create(:host_vmware, :ext_management_system => ems)
     FactoryBot.create(:vm_vmware, :ext_management_system => ems, :host => host)

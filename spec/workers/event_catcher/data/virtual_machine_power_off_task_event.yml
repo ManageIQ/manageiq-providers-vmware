@@ -1,0 +1,59 @@
+--- !ruby/object:RbVmomi::VIM::TaskEvent
+props:
+  :key: 13783975
+  :chainId: 13783975
+  :createdTime: 2022-10-20 19:16:30.085025000 Z
+  :userName: root
+  :datacenter: !ruby/object:RbVmomi::VIM::DatacenterEventArgument
+    props:
+      :name: DC1
+      :datacenter: !ruby/object:RbVmomi::VIM::Datacenter
+        connection: nil
+        soap: nil
+        ref: datacenter-6548
+  :computeResource: !ruby/object:RbVmomi::VIM::ComputeResourceEventArgument
+    props:
+      :name: Cluster1
+      :computeResource: !ruby/object:RbVmomi::VIM::ClusterComputeResource
+        connection: nil
+        soap: nil
+        ref: domain-c6564
+  :host: !ruby/object:RbVmomi::VIM::HostEventArgument
+    props:
+      :name: esx1
+      :host: !ruby/object:RbVmomi::VIM::HostSystem
+        connection: nil
+        soap: nil
+        ref: host-6528
+  :vm: !ruby/object:RbVmomi::VIM::VmEventArgument
+    props:
+      :name: event_test
+      :vm: !ruby/object:RbVmomi::VIM::VirtualMachine
+        connection: nil
+        soap: nil
+        ref: vm-67544
+  :fullFormattedMessage: 'Task: Power Off virtual machine'
+  :changeTag: ''
+  :info: !ruby/object:RbVmomi::VIM::TaskInfo
+    props:
+      :key: task-783502
+      :task: !ruby/object:RbVmomi::VIM::Task
+        connection: nil
+        soap: nil
+        ref: task-783502
+      :name: PowerOffVM_Task
+      :descriptionId: VirtualMachine.powerOff
+      :entity: !ruby/object:RbVmomi::VIM::VirtualMachine
+        connection: nil
+        soap: nil
+        ref: vm-67544
+      :entityName: event_test
+      :locked: []
+      :state: queued
+      :cancelled: false
+      :cancelable: true
+      :reason: !ruby/object:RbVmomi::VIM::TaskReasonUser
+        props:
+          :userName: root
+      :queueTime: 2022-10-20 19:16:30.084901000 Z
+      :eventChainId: 0

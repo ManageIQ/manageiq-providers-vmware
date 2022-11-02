@@ -3,7 +3,7 @@ describe ManageIQ::Providers::Vmware::ContainerManager::Refresher do
     expect(described_class.ems_type).to eq(:vmware_tanzu)
   end
 
-  let(:zone) { EvmSpecHelper.create_guid_miq_server_zone.last }
+  let(:zone) { EvmSpecHelper.local_miq_server.zone }
   let!(:ems) { FactoryBot.create(:ems_vmware_tanzu_with_vcr_authentication, :zone => zone) }
 
   it "will perform a full refresh" do

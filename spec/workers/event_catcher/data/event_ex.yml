@@ -1,0 +1,32 @@
+--- !ruby/object:RbVmomi::VIM::EventEx
+props:
+  :key: 13784001
+  :chainId: 13784001
+  :createdTime: 2022-10-20 19:16:43.173941000 Z
+  :userName: ''
+  :datacenter: !ruby/object:RbVmomi::VIM::DatacenterEventArgument
+    props:
+      :name: DC1
+      :datacenter: !ruby/object:RbVmomi::VIM::Datacenter
+        connection: nil
+        ref: datacenter-6548
+  :computeResource: !ruby/object:RbVmomi::VIM::ComputeResourceEventArgument
+    props:
+      :name: Cluster1
+      :computeResource: !ruby/object:RbVmomi::VIM::ClusterComputeResource
+        connection: nil
+        soap: nil
+        ref: domain-c6564
+  :host: !ruby/object:RbVmomi::VIM::HostEventArgument
+    props:
+      :name: esx1
+      :host: !ruby/object:RbVmomi::VIM::HostSystem
+        connection: nil
+        soap: nil
+        ref: host-6528
+  :fullFormattedMessage: ''
+  :changeTag: ''
+  :eventTypeId: ''
+  :arguments: []
+  :objectId: ha-eventmgr
+  :objectType: HostSystem

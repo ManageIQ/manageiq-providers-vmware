@@ -97,4 +97,21 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
 
     [sub_event_type, display_name]
   end
+
+  private
+
+  def worker_options
+    super.merge(
+      :ems => [
+        @ems.attributes.merge(
+          "endpoints"       => @ems.endpoints,
+          "authentications" => @ems.authentications
+        )
+      ]
+    )
+  end
+
+  def worker_cmdline
+    ManageIQ::Providers::Vmware::Engine.root.join("workers/event_catcher/worker").to_s
+  end
 end

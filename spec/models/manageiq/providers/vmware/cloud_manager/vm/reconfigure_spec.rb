@@ -1,5 +1,5 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Vm::Reconfigure do
-  before { EvmSpecHelper.create_guid_miq_server_zone }
+  before { EvmSpecHelper.local_miq_server }
   let(:vm) do
     FactoryBot.create(
       :vm_vmware_cloud,

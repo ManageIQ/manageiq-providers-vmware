@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+require "bundler/inline"
+
+gemfile(false) do
+  source "https://rubygems.org"
+
+  gem "activesupport", "~>6.1.6"
+  gem "manageiq-loggers", "~>1.0"
+  gem "manageiq-messaging", "~> 1.0"
+  gem "more_core_extensions"
+  gem "rbvmomi2", "~> 3.3"
+  if ENV.fetch("APPLIANCE", nil)
+    gem "sd_notify"
+    gem "systemd-journal"
+  end
+  gem "json"
+end
+
+require_relative "event_catcher"
+
+def setproctitle
+  proc_title = "MIQ: Vmware::InfraManager::EventCatcher guid: #{ENV.fetch("GUID", nil)}"
+  Process.setproctitle(proc_title)
+end
+
+def build_logger
+  if ENV.fetch("CONTAINER", nil)
+    ManageIQ::Loggers::Container.new
+  elsif ENV.fetch("APPLIANCE", nil)
+    ManageIQ::Loggers::Journald.new
+  else
+    ManageIQ::Loggers::Base.new($stdout)
+  end
+end
+
+def main(args)
+  setproctitle
+
+  logger         = build_logger
+  ems            = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
+  messaging      = args["messaging"].symbolize_keys
+  endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
+  authentication = ems["authentications"].detect { |auth| auth["authtype"] == "default" }
+  settings       = args["settings"]
+
+  EventCatcher.new(ems, endpoint, authentication, settings, messaging, logger).run!
+end
+
+def parse_args
+  JSON.parse($stdin.read)
+rescue JSON::ParserError
+  abort("Invalid argument format")
+end
+
+main(parse_args)
