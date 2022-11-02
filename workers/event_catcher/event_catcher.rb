@@ -1,13 +1,16 @@
 require_relative "event_parser"
+require "active_support/core_ext/numeric/time"
+require "more_core_extensions/core_ext/string/to_i_with_method"
 
 class EventCatcher
-  def initialize(ems, endpoint, authentication, messaging, logger, page_size = 20)
+  def initialize(ems, endpoint, authentication, settings, messaging, logger, page_size = 20)
     @ems            = ems
     @endpoint       = endpoint
     @authentication = authentication
     @logger         = logger
     @messaging      = messaging
     @page_size      = page_size
+    @settings       = settings
   end
 
   def run!
@@ -45,7 +48,7 @@ class EventCatcher
 
   private
 
-  attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size
+  attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size, :settings
 
   def connect
     vim_opts = {
@@ -135,14 +138,36 @@ class EventCatcher
   end
 
   def notify_started
-    SdNotify.ready if ENV.fetch("NOTIFY_SOCKET", nil)
+    if ENV.fetch("NOTIFY_SOCKET", nil)
+      SdNotify.ready
+    elsif ENV.fetch("WORKER_HEARTBEAT_FILE", nil)
+      heartbeat_to_file
+    end
   end
 
   def heartbeat
-    SdNotify.watchdog if ENV.fetch("NOTIFY_SOCKET", nil)
+    if ENV.fetch("NOTIFY_SOCKET", nil)
+      SdNotify.watchdog
+    elsif ENV.fetch("WORKER_HEARTBEAT_FILE", nil)
+      heartbeat_to_file
+    end
   end
 
   def notify_stopping
     SdNotify.stopping if ENV.fetch("NOTIFY_SOCKET", nil)
+  end
+
+  def heartbeat_to_file
+    heartbeat_file = ENV.fetch("WORKER_HEARTBEAT_FILE")
+
+    File.write(heartbeat_file, heartbeat_timeout)
+  end
+
+  def heartbeat_timeout
+    timeout   = settings.dig(:workers, :worker_base, :event_catcher, :event_catcher_vmware, :heartbeat_timeout)
+    timeout ||= settings.dig(:workers, :worker_base, :defaults, :heartbeat_timeout)
+    timeout ||= "2.minutes"
+
+    Time.now.to_i + timeout.to_i_with_method
   end
 end
