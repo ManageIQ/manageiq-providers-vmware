@@ -7,11 +7,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
       @admin = FactoryBot.create(:user_admin)
       @target_vm_name = 'clone test'
       @options = {
-        :pass          => 1,
-        :vm_name       => @target_vm_name,
-        :number_of_vms => 1,
-        :cpu_limit     => -1,
-        :cpu_reserve   => 0
+        :pass                   => 1,
+        :vm_name                => @target_vm_name,
+        :number_of_vms          => 1,
+        :cpu_limit              => -1,
+        :cpu_reserve            => 0,
+        :allocated_disk_storage => 16
       }
     end
 
@@ -76,12 +77,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         end
       end
 
-      it "should detect when a reconfigure_hardware_on_destination call is required" do
-        target_vm = FactoryBot.create(:vm_vmware, :name => "target_vm1", :location => "abc/def.vmx", :cpu_limit => @vm_prov.options[:cpu_limit])
-        @vm_prov.destination = target_vm
-        expect(@vm_prov.reconfigure_hardware_on_destination?).to eq(false)
+      it "should detect when reconfigure container or disk calls are required" do
+        target_vm1 = FactoryBot.create(:vm_vmware, :name => "target_vm1", :location => "abc/def.vmx", :cpu_limit => @vm_prov.options[:cpu_limit],
+                                      :hardware => FactoryBot.create(:hardware, :disks => FactoryBot.create(:disks, [:device_type => "disk", :size => 16 * 1.gigabyte])))
+        target_vm2 = FactoryBot.create(:vm_vmware, :name => "target_vm1", :location => "abc/def.vmx", :cpu_limit => @vm_prov.options[:cpu_limit],
+                                       :hardware => FactoryBot.create(:hardware, :disks => FactoryBot.create(:disks, [{:device_type => "disk", :size => 16 * 1.gigabyte},
+                                                                                                                      {:device_type => "disk", :size => 16 * 1.gigabyte}])))
+        @vm_prov.destination = target_vm1
+        expect(@vm_prov.reconfigure_container_on_destination?).to eq(false)
         @vm_prov.options[:cpu_limit] = 100
-        expect(@vm_prov.reconfigure_hardware_on_destination?).to eq(true)
+        expect(@vm_prov.reconfigure_container_on_destination?).to eq(true)
+        @vm_prov.options[:allocated_disk_storage] = 20
+        expect(@vm_prov.reconfigure_disk_on_destination?).to eq(true)
+        @vm_prov.destination = target_vm2
+        expect(@vm_prov.reconfigure_disk_on_destination?).to eq(false)
       end
 
       it "should delete unneeded network cards" do

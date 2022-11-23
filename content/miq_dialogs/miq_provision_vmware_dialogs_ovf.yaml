@@ -677,6 +677,13 @@
           :display: :edit
           :default: unchanged
           :data_type: :string
+        :allocated_disk_storage:
+          :description: Allocated Disk Storage (GB)
+          :required: false
+          :display: :edit
+          :data_type: :string
+          :notes: (default taken from template, custom can only be larger)
+          :notes_display: :show
         :cpu_limit:
           :description: CPU (MHz)
           :required: false

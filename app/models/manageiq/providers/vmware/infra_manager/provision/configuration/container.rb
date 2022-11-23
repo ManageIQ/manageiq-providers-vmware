@@ -107,25 +107,19 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Cont
     @new_device_idx -= 1
   end
 
-  def set_cpu_and_memory_allocation(vm)
-    config_spec = VimHash.new("VirtualMachineConfigSpec") do |vmcs|
-      vmcs.cpuAllocation    = VimHash.new("ResourceAllocationInfo") do |rai|
-        set_spec_option(rai, :limit,       :cpu_limit,   nil, :to_i)
-        set_spec_option(rai, :reservation, :cpu_reserve, nil, :to_i)
-      end
-
-      vmcs.memoryAllocation = VimHash.new("ResourceAllocationInfo") do |rai|
-        set_spec_option(rai, :limit,       :memory_limit,   nil, :to_i)
-        set_spec_option(rai, :reservation, :memory_reserve, nil, :to_i)
-      end
-
-      # Only explicitly disable #MemoryReservationLockedToMax if the memory reserve
-      # is less than the total vm memory
-      vmcs.memoryReservationLockedToMax = false if get_option(:memory_reserve).to_i < get_option(:vm_memory).to_i
+  def set_cpu_and_memory_allocation(vmcs)
+    vmcs.cpuAllocation = VimHash.new("ResourceAllocationInfo") do |rai|
+      set_spec_option(rai, :limit,       :cpu_limit,   nil, :to_i)
+      set_spec_option(rai, :reservation, :cpu_reserve, nil, :to_i)
     end
 
-    _log.info("Calling VM reconfiguration")
-    dump_obj(config_spec, "#{_log.prefix} Post-create Config spec: ", $log, :info)
-    vm.spec_reconfigure(config_spec)
+    vmcs.memoryAllocation = VimHash.new("ResourceAllocationInfo") do |rai|
+      set_spec_option(rai, :limit,       :memory_limit,   nil, :to_i)
+      set_spec_option(rai, :reservation, :memory_reserve, nil, :to_i)
+    end
+
+    # Only explicitly disable #MemoryReservationLockedToMax if the memory reserve
+    # is less than the total vm memory
+    vmcs.memoryReservationLockedToMax = false if get_option(:memory_reserve).to_i < get_option(:vm_memory).to_i
   end
 end

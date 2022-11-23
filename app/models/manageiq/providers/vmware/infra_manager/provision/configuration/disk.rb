@@ -105,6 +105,23 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Disk
     end
   end
 
+  def set_disk_allocation(vm, vmcs)
+    disk = vm.hardware.disks.find_by(:device_type => "disk")
+    vm.with_provider_object do |vim_obj|
+      device = vim_obj.getDeviceByLabel(disk.device_name)
+      new_capacity_in_kb = (get_option(:allocated_disk_storage).to_f * 1.megabyte).to_i
+      add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Edit) do |vdcs|
+        vdcs.device = VimHash.new("VirtualDisk") do |dev|
+          dev.key           = device.key
+          dev.capacityInKB  = new_capacity_in_kb
+          dev.controllerKey = device.controllerKey
+          dev.unitNumber    = device.unitNumber
+          dev.backing       = device.backing
+        end
+      end
+    end
+  end
+
   private
 
   def devices
