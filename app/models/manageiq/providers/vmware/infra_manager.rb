@@ -31,7 +31,6 @@ module ManageIQ::Providers
     include VimConnectMixin
     include CisConnectMixin
 
-    before_save :stop_event_monitor_queue_on_change, :stop_refresh_worker_queue_on_change
     before_destroy :stop_event_monitor, :stop_refresh_worker
 
     supports :catalog
@@ -348,6 +347,11 @@ module ManageIQ::Providers
     def after_update_authentication
       super
       stop_refresh_worker_queue_on_credential_change
+    end
+
+    def after_update_endpoints
+      super
+      stop_refresh_worker_queue_on_change
     end
 
     def self.event_monitor_class
