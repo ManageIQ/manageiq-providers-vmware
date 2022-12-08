@@ -3,8 +3,7 @@ module ManageIQ::Providers::Vmware::InfraManager::ProvisionViaPxe::StateMachine
     _log.info("Post-processing #{destination_type} id: [#{destination.id}], name: [#{dest_name}]")
     update_and_notify_parent(:message => "Starting New #{destination_type} Customization")
 
-    set_cpu_and_memory_allocation(destination) if reconfigure_hardware_on_destination?
-
+    reconfigure_hardware
     signal :create_pxe_configuration_file
   end
 
