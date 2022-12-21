@@ -26,7 +26,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :ems_licenses)
     add_collection(infra, :ext_management_system)
     add_collection(infra, :guest_devices, :parent_inventory_collections => %i[vms_and_templates])
-    add_collection(infra, :hardwares, :parent_inventory_collections => %i[vms_and_templates])
+    add_collection(infra, :hardwares, :parent_inventory_collections => %i[vms_and_templates]) do |builder|
+      builder.add_properties(:track_record_changes => %i[cpu_sockets memory_mb cpu_cores_per_socket cpu_total_cores])
+    end
+
     add_collection(infra, :hosts) do |builder|
       builder.add_properties(:custom_reconnect_block => hosts_reconnect_block)
     end
@@ -60,6 +63,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     add_collection(infra, :root_folder_relationship)
     add_collection(infra, :orchestration_templates)
     vms_and_templates_assign_created_on if ::Settings.ems_refresh.capture_vm_created_on_date
+    track_vm_cpu_memory_changes
   end
 
   def vim_class_to_collection(managed_object)
@@ -78,6 +82,23 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
   end
 
   private
+
+  def track_vm_cpu_memory_changes
+    custom_save_block = lambda do |ems, inventory_collection|
+      hardwares = inventory_collection.dependency_attributes[:hardwares]&.first
+      return if hardwares.nil?
+      return if hardwares.record_changes.blank?
+
+      # TODO raise an event
+    end
+
+    settings = {:without_model_class => true, :auto_inventory_attributes => false}
+
+    add_collection(infra, :track_vm_cpu_memory_changes, {}, settings) do |builder|
+      builder.add_custom_save_block(custom_save_block)
+      builder.add_dependency_attributes(:hardwares => ->(persister) { [persister.hardwares] })
+    end
+  end
 
   def vms_and_templates_assign_created_on
     custom_save_block = lambda do |ems, inventory_collection|

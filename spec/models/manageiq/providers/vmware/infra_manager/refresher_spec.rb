@@ -367,6 +367,12 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(prev_respool.reload.children).not_to include(vm)
       end
 
+      it "changing the cpu and memory" do
+        vm = ems.vms.find_by(:ems_ref => "vm-107")
+
+        run_targeted_refresh(targeted_update_set(vm_change_cpu_memory))
+      end
+
       it "skip disconnected vms" do
         run_targeted_refresh(targeted_update_set(vm_disconnected_object_updates))
 
@@ -768,6 +774,33 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
           ),
         ]
       end
+    end
+
+    def vm_change_cpu_memory
+      [
+        RbVmomi::VIM.ObjectUpdate(
+          :kind       => "modify",
+          :obj        => RbVmomi::VIM.VirtualMachine(vim, "vm-107"),
+          :changeSet  => [
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.memorySizeMB",
+              :op   => "assign",
+              :val  => 1024
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "summary.config.numCpu",
+              :op   => "assign",
+              :val  => 4
+            ),
+            RbVmomi::VIM.PropertyChange(
+              :name => "config.hardware.numCoresPerSocket",
+              :op   => "assign",
+              :val  => 2
+            ),
+          ],
+          :missingSet => []
+        )
+      ]
     end
 
     def vm_create_snapshot_object_update
