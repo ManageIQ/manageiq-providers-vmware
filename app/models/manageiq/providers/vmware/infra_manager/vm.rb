@@ -6,6 +6,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::Infra
   include_concern 'Reconfigure'
   include_concern 'Scanning'
 
+  supports :capture
   supports :clone do
     unsupported_reason_add(:clone, _('Clone operation is not supported')) if blank? || orphaned? || archived?
   end
