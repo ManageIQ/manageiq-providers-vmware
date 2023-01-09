@@ -2,6 +2,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
   include ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
 
+  supports :capture
+
   # overrides base start to support "standby" powerstate
   supports :start do
     if !supports?(:ipmi)
