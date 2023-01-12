@@ -1,6 +1,4 @@
 require_relative "event_parser"
-require "active_support/core_ext/numeric/time"
-require "more_core_extensions/core_ext/string/to_i_with_method"
 
 class EventCatcher
   def initialize(ems, endpoint, authentication, settings, messaging, logger, page_size = 20)
@@ -164,10 +162,6 @@ class EventCatcher
   end
 
   def heartbeat_timeout
-    timeout   = settings.dig(:workers, :worker_base, :event_catcher, :event_catcher_vmware, :heartbeat_timeout)
-    timeout ||= settings.dig(:workers, :worker_base, :defaults, :heartbeat_timeout)
-    timeout ||= "2.minutes"
-
-    Time.now.to_i + timeout.to_i_with_method
+    Time.now.to_i + (settings.dig("worker_settings", "heartbeat_timeout") || 120)
   end
 end
