@@ -144,6 +144,7 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   def verify_credentials_with_ws(auth_type = nil)
     raise "No credentials defined" if self.missing_credentials?(auth_type)
 
+    require "handsoap"
     begin
       with_provider_connection(:use_broker => false, :auth_type => auth_type) {}
     rescue SocketError, Errno::EHOSTUNREACH, Errno::ENETUNREACH => err
