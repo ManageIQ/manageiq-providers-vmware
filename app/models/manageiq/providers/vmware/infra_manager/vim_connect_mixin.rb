@@ -8,12 +8,12 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
     options[:ip]   ||= hostname
-    options[:port] ||= port || 443
+    options[:port] ||= try(:port) || 443
     options[:user] ||= authentication_userid(options[:auth_type])
     options[:pass] ||= authentication_password(options[:auth_type])
 
-    options[:verify_ssl]            ||= verify_ssl
-    options[:certificate_authority] ||= certificate_authority
+    options[:verify_ssl]            = try(:verify_ssl)            unless options.key?(:verify_ssl)
+    options[:certificate_authority] = try(:certificate_authority) unless options.key?(:certificate_authority)
 
     conn_key = connection_key(options)
 
