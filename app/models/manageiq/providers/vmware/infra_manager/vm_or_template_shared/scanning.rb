@@ -68,7 +68,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
         begin
           require 'VMwareWebService/MiqVim'
           # TODO: Should this move to the EMS?
-          ost.miqVim = MiqVim.new(host_address, miqVimHost[:username], password_decrypt)
+          ost.miqVim = MiqVim.new(:server => host_address, :username => miqVimHost[:username], :password => password_decrypt)
           # ost.snapId = opts.snapId if opts.snapId
           $log.info "Connection to [#{ems_display_text}] completed for VM:[#{@vmCfgFile}] in [#{Time.now - st}] seconds"
         rescue Timeout::Error => err
