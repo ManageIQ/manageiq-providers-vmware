@@ -3,6 +3,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
   include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
 
   supports :capture
+  supports :update
 
   # overrides base start to support "standby" powerstate
   supports :start do
@@ -99,5 +100,94 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
 
   def self.display_name(number = 1)
     n_('Host (Vmware)', 'Hosts (Vmware)', number)
+  end
+
+  def params_for_update
+    {
+      :fields => [
+        {
+          :component => 'sub-form',
+          :id        => 'endpoints-subform',
+          :name      => 'endpoints-subform',
+          :title     => _("Endpoints"),
+          :fields    => [
+            :component => 'tabs',
+            :name      => 'tabs',
+            :fields    => [
+              {
+                :component => 'tab-item',
+                :id        => 'ws-tab',
+                :name      => 'ws-tab',
+                :title     => _('Web Service'),
+                :fields    => [
+                  {
+                    :component  => 'validate-host-credentials',
+                    :id         => 'endpoints.ws.valid',
+                    :name       => 'endpoints.ws.valid',
+                    :skipSubmit => true,
+                    :isRequired => true,
+                    :fields     => [
+                      {
+                        :component  => "text-field",
+                        :id         => "authentications.ws.userid",
+                        :name       => "authentications.ws.userid",
+                        :label      => _("Username"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required"}],
+                      },
+                      {
+                        :component  => "password-field",
+                        :id         => "authentications.ws.password",
+                        :name       => "authentications.ws.password",
+                        :label      => _("Password"),
+                        :type       => "password",
+                        :isRequired => true,
+                        :validate   => [{:type => "required"}],
+                        :helperText => _('Used for access to Web Services.')
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                :component => 'tab-item',
+                :id        => 'remote-tab',
+                :name      => 'remote-tab',
+                :title     => _('Remote'),
+                :fields    => [
+                  {
+                    :component  => 'validate-remote-credentials',
+                    :id         => 'endpoints.remote.valid',
+                    :name       => 'endpoints.remote.valid',
+                    :skipSubmit => true,
+                    :isRequired => true,
+                    :fields     => [
+                      {
+                        :component  => "text-field",
+                        :id         => "authentications.remote.userid",
+                        :name       => "authentications.remote.userid",
+                        :label      => _("Username"),
+                        :isRequired => true,
+                        :validate   => [{:type => "required"}],
+                      },
+                      {
+                        :component  => "password-field",
+                        :id         => "authentications.remote.password",
+                        :name       => "authentications.remote.password",
+                        :label      => _("Password"),
+                        :type       => "password",
+                        :isRequired => true,
+                        :validate   => [{:type => "required"}],
+                        :helperText => _('Used for SSH login.')
+                      },
+                    ],
+                  },
+                ],
+              },
+            ]
+          ]
+        },
+      ]
+    }
   end
 end
