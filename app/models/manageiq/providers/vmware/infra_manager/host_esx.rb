@@ -164,6 +164,10 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
     end
   end
 
+  def verify_credentials_default(auth_type, _options)
+    verify_credentials_with_ws(auth_type)
+  end
+
   def refresh_logs
     if self.missing_credentials?
       _log.warn "No credentials defined for Host [#{name}]"
