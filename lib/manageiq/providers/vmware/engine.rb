@@ -29,6 +29,9 @@ module ManageIQ
 
           require "rbvmomi"
           RbVmomi.logger = $vim_log
+
+          require "vmware_web_service"
+          VMwareWebService.logger = $vim_log
         end
 
         def self.apply_logger_config(config)
