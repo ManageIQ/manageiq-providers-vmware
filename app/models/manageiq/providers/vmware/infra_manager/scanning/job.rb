@@ -191,7 +191,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Scanning::Job < VmScan
         begin
           password_decrypt = ManageIQ::Password.decrypt(miqVimHost[:password])
           require 'VMwareWebService/MiqVim'
-          miqVim = MiqVim.new(server, miqVimHost[:username], password_decrypt)
+          miqVim = MiqVim.new(:server => server, :username => miqVimHost[:username], :password => password_decrypt)
 
           vimVm = miqVim.getVimVm(vm.path)
           vimVm.removeSnapshotByDescription(mor, true) unless vimVm.nil?
