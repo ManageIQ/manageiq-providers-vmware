@@ -1,6 +1,12 @@
 module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
-  def console_supported?(type)
-    %w(VMRC VNC WEBMKS).include?(type.upcase)
+  extend ActiveSupport::Concern
+
+  included do
+    supports :console
+    supports :html5_console
+    supports :vmrc_console
+    supports :vnc_console
+    supports :webmks_console
   end
 
   def validate_remote_console_acquire_ticket(protocol, options = {})
