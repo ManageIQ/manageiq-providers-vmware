@@ -168,7 +168,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
 
   context "#supports?(:vmrc_console)" do
     before(:each) do
-      @ems = FactoryBot.create(:ems_vmware)
+      @ems = FactoryBot.create(:ems_vmware_with_authentication, :authtype => 'console')
     end
 
     it "true with nothing missing/blank" do

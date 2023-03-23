@@ -40,7 +40,11 @@ module ManageIQ::Providers
     supports :metrics
     supports :native_console
     supports :vmrc_console do
-      "vCenter needs to be refreshed to determine remote console support." if api_version.blank? || hostname.blank? || uid_ems.blank?
+      if api_version.blank? || hostname.blank? || uid_ems.blank?
+        "vCenter needs to be refreshed to determine remote console support."
+      elsif ext_management_system.authentication_type(:console).nil?
+        "remote console requires console credentials"
+      end
     end
     supports :webmks_console
 

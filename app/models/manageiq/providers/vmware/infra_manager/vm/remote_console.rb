@@ -2,20 +2,23 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   extend ActiveSupport::Concern
 
   included do
-    supports :console
-    supports :html5_console
-    supports :vmrc_console
-    supports :vnc_console
-    supports :webmks_console
-  end
-
-  def validate_remote_console_acquire_ticket(protocol, options = {})
-    raise(MiqException::RemoteConsoleNotSupportedError, "#{protocol} remote console requires the vm to be registered with a management system.") if ext_management_system.nil?
-
-    raise(MiqException::RemoteConsoleNotSupportedError, "remote console requires console credentials") if ext_management_system.authentication_type(:console).nil? && protocol == "vmrc"
-
-    options[:check_if_running] = true unless options.key?(:check_if_running)
-    raise(MiqException::RemoteConsoleNotSupportedError, "#{protocol} remote console requires the vm to be running.") if options[:check_if_running] && state != "on"
+    supports :console do
+      if ext_management_system.nil?
+        "VM must be registered with a management system."
+      elsif state != "on"
+        "VM must be running."
+      end
+    end
+    supports(:html5_console) { unsupported_reason(:console) }
+    supports :vmrc_console do
+      unsupported_reason(:console) ||
+        ext_management_system.unsupported_reason(:vmrc_console)
+    end
+    supports :vnc_console { unsupported_reason(:console) }
+    supports :webmks_console do
+      unsupported_reason(:console) ||
+        ext_management_system.unsupported_reason(:webmks_console)
+    end
   end
 
   def remote_console_acquire_ticket(userid, originating_server, protocol)
@@ -47,7 +50,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   #
 
   def remote_console_vmrc_acquire_ticket(_userid = nil, _originating_server = nil)
-    validate_remote_console_acquire_ticket("vmrc")
+    validate_supports(:vmrc_console)
     ticket = ext_management_system.remote_console_vmrc_acquire_ticket
 
     {
@@ -57,18 +60,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     }
   end
 
-  def validate_remote_console_vmrc_support
-    validate_remote_console_acquire_ticket("vmrc")
-    validate_supports(ext_management_system.unsupported_reason(:vmrc_console))
-    true
-  end
-
   #
   # WebMKS
   #
 
   def remote_console_webmks_acquire_ticket(userid, originating_server = nil)
-    validate_remote_console_acquire_ticket("webmks")
+    validate_supports(:webmks_console)
     ticket = ext_management_system.vm_remote_console_webmks_acquire_ticket(self)
 
     SystemConsole.force_vm_invalid_token(id)
@@ -85,12 +82,6 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
     SystemConsole.launch_proxy_if_not_local(console_args, originating_server, ticket['host'].to_s, ticket['port'].to_i)
   end
 
-  def validate_remote_console_webmks_support
-    validate_remote_console_acquire_ticket("webmks")
-    validate_supports(ext_management_system.unsupported_reason(:webmks_console))
-    true
-  end
-
   #
   # HTML5 selects the best available console type (VNC or WebMKS)
   #
@@ -105,7 +96,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   def remote_console_vnc_acquire_ticket(userid, originating_server)
     require 'securerandom'
 
-    validate_remote_console_acquire_ticket("vnc")
+    validate_supports(:vnc_console)
 
     password     = SecureRandom.base64[0, 8] # Random password from the Base64 character set
     host_port    = host.reserve_next_available_vnc_port
@@ -144,12 +135,10 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
 
   private
 
-  # @param unsupported_reason [Nil,String, Symbol]
-  #        a symbol will lookup the unsupported reason
-  #        otherwise, will raise an error if there is a reason to
-  def validate_supports(unsupported_reason)
-    unsupported_reason = unsupported_reason(unsupported_reason) if unsupported_reason.kind_of?(Symbol)
-    raise(MiqException::RemoteConsoleNotSupportedError, unsupported_reason) if unsupported_reason
+  def validate_supports(feature)
+    if (unsupported_reason = unsupported_reason(feature))
+      raise(MiqException::RemoteConsoleNotSupportedError, unsupported_reason)
+    end
   end
 
   # Method to generate the remote URI for the VMRC console
