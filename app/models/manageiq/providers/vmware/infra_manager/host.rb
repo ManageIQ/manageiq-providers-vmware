@@ -131,11 +131,32 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
                 :title     => _('Remote'),
                 :fields    => [
                   {
-                    :component  => 'validate-remote-credentials',
+                    :component    => 'protocol-selector',
+                    :id           => 'remoteEnabled',
+                    :name         => 'remoteEnabled',
+                    :skipSubmit   => true,
+                    :initialValue => 'disabled',
+                    :label        => _('Enabled'),
+                    :options      => [
+                      {
+                        :label => _('Disabled'),
+                        :value => 'disabled'
+                      },
+                      {
+                        :label => _('Enabled'),
+                        :value => 'enabled',
+                      },
+                    ],
+                  },
+                  {
+                    :component  => 'validate-host-credentials',
                     :id         => 'endpoints.remote.valid',
                     :name       => 'endpoints.remote.valid',
                     :skipSubmit => true,
-                    :isRequired => true,
+                    :condition  => {
+                      :when => 'remoteEnabled',
+                      :is   => 'enabled',
+                    },
                     :fields     => [
                       {
                         :component  => "text-field",
