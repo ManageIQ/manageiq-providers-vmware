@@ -59,7 +59,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
 
   def validate_remote_console_vmrc_support
     validate_remote_console_acquire_ticket("vmrc")
-    ext_management_system.validate_remote_console_vmrc_support
+    validate_supports(ext_management_system.unsupported_reason(:vmrc_console))
     true
   end
 
@@ -87,7 +87,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
 
   def validate_remote_console_webmks_support
     validate_remote_console_acquire_ticket("webmks")
-    ext_management_system.validate_remote_console_webmks_support
+    validate_supports(ext_management_system.unsupported_reason(:webmks_console))
     true
   end
 
@@ -143,6 +143,14 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole
   end
 
   private
+
+  # @param unsupported_reason [Nil,String, Symbol]
+  #        a symbol will lookup the unsupported reason
+  #        otherwise, will raise an error if there is a reason to
+  def validate_supports(unsupported_reason)
+    unsupported_reason = unsupported_reason(unsupported_reason) if unsupported_reason.kind_of?(Symbol)
+    raise(MiqException::RemoteConsoleNotSupportedError, unsupported_reason) if unsupported_reason
+  end
 
   # Method to generate the remote URI for the VMRC console
   def build_vmrc_url(ticket)
