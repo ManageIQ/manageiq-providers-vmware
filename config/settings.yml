@@ -8,7 +8,10 @@
           :critical:
         :power:
           :critical:
-    :capture_batch_size: 250
+    :concurrent_requests:
+      :historical: 100
+      :hourly: 250
+      :realtime: 100
 :ems_refresh:
   :vmware_tanzu:
     :refresh_interval: 24.hours
