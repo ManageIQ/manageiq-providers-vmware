@@ -371,7 +371,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_queries] = params.length
     _log.debug { "Total item(s) to be requested: [#{params.length}], #{params.inspect}" }
 
-    query_size = Metric::Capture.concurrent_requests(interval_name)
+    query_size = concurrent_requests(interval_name)
     vim_trips = 0
     params.each_slice(query_size) do |query|
       vim_trips += 1
@@ -387,6 +387,13 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     return counters_by_mor, counter_values_by_mor_and_ts
+  end
+
+  def concurrent_requests(interval_name)
+    query_size = super
+    # even when batching is turned off, still want to send multiple realtime records
+    query_size = 20 if query_size < 20 && interval_name == "realtime"
+    query_size
   end
 
   class << self
