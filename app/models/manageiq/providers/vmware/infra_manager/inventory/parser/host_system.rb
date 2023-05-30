@@ -46,7 +46,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
         hostname    = dns_config[:hostName]
         domain_name = dns_config[:domainName]
 
-        hostname = "#{hostname}.#{domain_name}" if domain_name
+        hostname = "#{hostname}.#{domain_name}" if domain_name.present?
 
         host_hash[:name]     = hostname
         host_hash[:hostname] = hostname

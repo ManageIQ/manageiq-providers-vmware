@@ -281,7 +281,7 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
       counter_info,    = Benchmark.realtime_block(:counter_info)       { self.class.counter_info_by_counter_id(ems, @perf_vim_hist) }
       interval_by_mor, = Benchmark.realtime_block(:capture_intervals)  { perf_capture_intervals(targets_by_mor.keys, interval_name) }
       query_params,    = Benchmark.realtime_block(:build_query_params) { perf_build_query_params(interval_by_mor, counter_info, start_time, end_time) }
-      counters_by_mor, counter_values_by_mor_and_ts = perf_query(query_params, counter_info, interval_name)
+      counters_by_mor, counter_values_by_mor_and_ts = perf_query(query_params, counter_info)
 
       return counters_by_mor, counter_values_by_mor_and_ts
     rescue HTTPClient::ReceiveTimeoutError => err
@@ -363,28 +363,20 @@ class ManageIQ::Providers::Vmware::InfraManager::MetricsCapture < ManageIQ::Prov
     params
   end
 
-  def perf_query(params, counter_info, interval_name)
+  def perf_query(params, counter_info)
     counters_by_mor = {}
     counter_values_by_mor_and_ts = {}
     return counter_values_by_mor_and_ts if params.blank?
 
     Benchmark.current_realtime[:num_vim_queries] = params.length
-    _log.debug { "Total item(s) to be requested: [#{params.length}], #{params.inspect}" }
 
-    query_size = Metric::Capture.concurrent_requests(interval_name)
-    vim_trips = 0
-    params.each_slice(query_size) do |query|
-      vim_trips += 1
+    _log.debug { "Starting request for [#{params.length}] item(s), #{params.inspect}" }
+    data, = Benchmark.realtime_block(:vim_execute_time) { @perf_vim_hist.queryPerfMulti(params) }
+    _log.debug { "Finished request for [#{params.length}] item(s)" }
 
-      _log.debug { "Starting request for [#{query.length}] item(s), #{query.inspect}" }
-      data, = Benchmark.realtime_block(:vim_execute_time) { @perf_vim_hist.queryPerfMulti(query) }
-      _log.debug { "Finished request for [#{query.length}] item(s)" }
-
-      Benchmark.realtime_block(:perf_processing) do
-        self.class.preprocess_data(data, counter_info, counters_by_mor, counter_values_by_mor_and_ts)
-      end
+    Benchmark.realtime_block(:perf_processing) do
+      self.class.preprocess_data(data, counter_info, counters_by_mor, counter_values_by_mor_and_ts)
     end
-    Benchmark.current_realtime[:num_vim_trips] = vim_trips
 
     return counters_by_mor, counter_values_by_mor_and_ts
   end
