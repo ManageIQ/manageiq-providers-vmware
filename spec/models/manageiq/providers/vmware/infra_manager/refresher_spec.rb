@@ -506,6 +506,15 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         expect(custom_attrs.first).to have_attributes(:name => "foo", :value => "baz", :source => "VC")
       end
 
+      it "with a host without a vendor sets vmm_vendor to unknown" do
+        host_system = RbVmomi::VIM.HostSystem(vim, "host-41")
+        host_config_storage_device_stub(host_system)
+        run_targeted_refresh(targeted_update_set([host_missing_vendor_object_update(host_system)]))
+
+        host = ems.hosts.find_by(:ems_ref => "host-41")
+        expect(host).to have_attributes(:vmm_vendor => "unknown")
+      end
+
       it "deleting a host" do
         managed_object_not_found_fault = RbVmomi::Fault.new(
           "The object 'vim.HostSystem:host-41' has already been deleted or has not been completely created",
@@ -1073,6 +1082,18 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
               )
             ]
           )
+        ],
+        :missingSet => []
+      )
+    end
+
+    def host_missing_vendor_object_update(host)
+      RbVmomi::VIM.ObjectUpdate(
+        :kind       => "enter",
+        :obj        => host,
+        :changeSet  => [
+          RbVmomi::VIM.PropertyChange(:name => "config.network.dnsConfig", :op => "assign", :val => {:domainName => "example.com", :hostName => "myhost"}),
+          RbVmomi::VIM.PropertyChange(:name => "summary.config.product",   :op => "assign", :val => {:build => "5.0.0.19", :name => "VMware ESX", :osType => "vmnix-x86", :version => "5.0.0"}),
         ],
         :missingSet => []
       )
