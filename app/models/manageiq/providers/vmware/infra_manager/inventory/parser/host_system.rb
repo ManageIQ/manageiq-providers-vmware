@@ -113,14 +113,21 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
       product = props.fetch_path(:summary, :config, :product)
       return if product.nil?
 
-      vendor = product[:vendor].split(",").first.to_s.downcase
-      vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
-      host_hash[:vmm_vendor] = vendor
+      host_hash[:vmm_vendor] = host_system_vendor(product[:vendor])
 
       product_name = product[:name]
       host_hash[:vmm_product]     = product_name.nil? ? nil : product_name.to_s.gsub(/^VMware\s*/i, "")
       host_hash[:vmm_version]     = product[:version]
       host_hash[:vmm_buildnumber] = product[:build]
+    end
+
+    def host_system_vendor(vendor)
+      return "unknown" if vendor.nil?
+
+      vendor = vendor.split(",").first.to_s.downcase
+      vendor = "unknown" unless Host::VENDOR_TYPES.include?(vendor)
+
+      vendor
     end
 
     def parse_host_system_runtime(host_hash, props)
