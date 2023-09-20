@@ -27,8 +27,10 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
       case sub_event_type
       when nil
         # Handle cases where event name is missing
-        sub_event_type = 'PowerOnVM_Task'    if event['fullFormattedMessage'].to_s.downcase == 'task: power on virtual machine'
-        sub_event_type = 'DrsMigrateVM_Task' if sub_event_type.nil? && event.fetch_path('info', 'descriptionId') == 'Drm.ExecuteVMotionLRO'
+        sub_event_type = 'PowerOnVM_Task'       if event['fullFormattedMessage'].to_s.downcase == 'task: power on virtual machine'
+        sub_event_type = 'DrsMigrateVM_Task'    if sub_event_type.nil? && event.fetch_path('info', 'descriptionId') == 'Drm.ExecuteVMotionLRO'
+        sub_event_type = 'CnsUpdateVolume_Task' if sub_event_type.nil? && event.fetch_path('info', 'descriptionId') == 'com.vmware.cns.tasks.updatevolume'
+
         if sub_event_type.nil?
           _log.warn("#{log_header}Event Type cannot be determined for TaskEvent. Using generic eventType [TaskEvent] instead. event: [#{event.inspect}]")
           sub_event_type = 'TaskEvent'
