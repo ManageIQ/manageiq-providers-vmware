@@ -14,6 +14,14 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
   include ManageIQ::Providers::Vmware::CloudManager::ManagerEventsMixin
   include HasNetworkManagerMixin
 
+  # override the relation defined in HasNetowrkManagerMixin
+  has_one :network_manager,
+          :foreign_key => :parent_ems_id,
+          :class_name  => "ManageIQ::Providers::Vmware::NetworkManager",
+          :autosave    => true,
+          :dependent   => :destroy,
+          :inverse_of  => :parent_manager
+
   has_many :orchestration_templates, :foreign_key => :ems_id, :inverse_of => :ext_management_system, :dependent => :destroy
   has_many :snapshots, :through => :vms_and_templates
 
@@ -21,10 +29,6 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
 
   supports :create
   supports :catalog
-
-  def ensure_network_manager
-    build_network_manager(:type => 'ManageIQ::Providers::Vmware::NetworkManager') unless network_manager
-  end
 
   def self.ems_type
     @ems_type ||= "vmware_cloud".freeze
