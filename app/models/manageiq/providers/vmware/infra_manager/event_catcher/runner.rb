@@ -110,8 +110,4 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
       ]
     )
   end
-
-  def worker_cmdline
-    ManageIQ::Providers::Vmware::Engine.root.join("workers/event_catcher/worker").to_s
-  end
 end
