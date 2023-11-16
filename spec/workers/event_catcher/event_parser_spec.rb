@@ -80,7 +80,7 @@ RSpec.describe EventParser do
   private
 
   def load_event(event_name)
-    YAML.load_file(event_data_dir.join("#{event_name}.yml"))
+    YAML.unsafe_load(File.read(event_data_dir.join("#{event_name}.yml")))
   end
 
   def event_data_dir
