@@ -606,7 +606,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
         storage_device_yml = vcr_cassettes_dir.join(*described_class.name.underscore.split("::"), "host_storageDevice.yml")
         allow(host).to receive(:collect!)
           .with("config.storageDevice.hostBusAdapter", "config.storageDevice.scsiLun", "config.storageDevice.scsiTopology.adapter")
-          .and_return(YAML.load_file(storage_device_yml))
+          .and_return(YAML.unsafe_load(File.read(storage_device_yml)))
       end
 
       def vm_power_off_object_update
