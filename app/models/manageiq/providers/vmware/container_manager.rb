@@ -3,6 +3,7 @@ ManageIQ::Providers::Kubernetes::ContainerManager.include(ActsAsStiLeafClass)
 class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kubernetes::ContainerManager
   require_nested :Container
   require_nested :ContainerGroup
+  require_nested :ContainerImage
   require_nested :ContainerNode
   require_nested :ContainerTemplate
   require_nested :EventCatcher
