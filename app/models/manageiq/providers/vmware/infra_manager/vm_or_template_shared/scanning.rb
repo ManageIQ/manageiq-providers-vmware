@@ -7,6 +7,11 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Scanning
       unless feature_supported
         unsupported_reason_add(:smartstate_analysis, reason)
       end
+      if storage.nil?
+        unsupported_reason_add(:smartstate_analysis, "Vm is not located on a storage")
+      elsif !storage.storage_type_supported_for_ssa?
+        unsupported_reason_add(:smartstate_analysis, "Smartstate Analysis unsupported for storage type %{store_type}" % {:store_type => storage.store_type})
+      end
     end
   end
 
