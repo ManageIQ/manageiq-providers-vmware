@@ -185,7 +185,7 @@ module ManageIQ::Providers
                       :name                   => 'endpoints.console.valid',
                       :skipSubmit             => true,
                       :isRequired             => true,
-                      :validationDependencies => %w[type endpoints.default.hostname],
+                      :validationDependencies => %w[type zone_id endpoints.default.hostname],
                       :condition              => {
                         :when => 'vmrc_console',
                         :is   => 'enabled',

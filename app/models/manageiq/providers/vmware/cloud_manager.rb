@@ -161,7 +161,7 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
                     :name                   => 'endpoints.amqp.valid',
                     :skipSubmit             => true,
                     :isRequired             => true,
-                    :validationDependencies => %w[type event_stream_selection],
+                    :validationDependencies => %w[type zone_id event_stream_selection],
                     :condition              => {
                       :when => 'event_stream_selection',
                       :is   => 'amqp',
