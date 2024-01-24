@@ -9,12 +9,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
     run_command_via_parent(:vm_set_custom_field, :attribute => attribute, :value => value)
   end
 
-  included do
-    supports :terminate do
-      unsupported_reason_add(:terminate, unsupported_reason(:control)) unless supports?(:control)
-    end
-  end
-
   def raw_clone(name, folder, pool = nil, host = nil, datastore = nil, powerOn = false, template_flag = false, transform = nil, config = nil, customization = nil, disk = nil)
     folder_mor    = folder.ems_ref_obj    if folder.respond_to?(:ems_ref_obj)
     pool_mor      = pool.ems_ref_obj      if pool.respond_to?(:ems_ref_obj)

@@ -5,7 +5,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
   let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems) }
   let(:vm)   { FactoryBot.create(:vm_vmware, :ext_management_system => ems, :host => host) }
   let(:power_state_on)        { "poweredOn" }
-  let(:power_state_suspended) { "poweredOff" }
+  let(:power_state_off)       { "poweredOff" }
+  let(:power_state_suspended) { "suspended" }
 
   context "#supports?" do
     context("with :start") do
@@ -49,7 +50,25 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     let(:op) { 'shutdown_guest' }
 
     context "when powered off" do
-      let(:vm_status) { {:raw_power_state => power_state_suspended} }
+      let(:vm_status) { {:raw_power_state => power_state_off} }
+
+      it 'is not available if tools is not installed' do
+        vm_status[:tools_status] = 'toolsNotInstalled'
+        vm.update(vm_status)
+        expect(vm.supports?(op)).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+
+      it 'is not available even if tools is installed' do
+        vm_status[:tools_status] = nil
+        vm.update(vm_status)
+        expect(vm.supports?(op)).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+    end
+
+    context "when suspended" do
+      let(:vm_status) { {:raw_power_state => power_state_off} }
 
       it 'is not available if tools is not installed' do
         vm_status[:tools_status] = 'toolsNotInstalled'
@@ -87,6 +106,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     let(:op) { 'reboot_guest' }
 
     context "when powered off" do
+      let(:vm_status) { {:raw_power_state => power_state_off} }
+
+      it 'is not available if tools is not installed' do
+        vm_status[:tools_status] = 'toolsNotInstalled'
+        vm.update(vm_status)
+        expect(vm.supports?(op)).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+
+      it 'is not available even if tools is installed' do
+        vm_status[:tools_status] = nil
+        vm.update(vm_status)
+        expect(vm.supports?(op)).to be false
+        expect(vm.unsupported_reason(op)).to include("power")
+      end
+    end
+
+    context "when suspended" do
       let(:vm_status) { {:raw_power_state => power_state_suspended} }
 
       it 'is not available if tools is not installed' do
@@ -132,7 +169,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
     end
 
     context "when powered off" do
+      let(:power_state) {{:raw_power_state => power_state_off}}
+
+      it "is not allowed" do
+        vm.update(power_state)
+        expect(vm.snapshotting_memory_allowed?).to be_falsy
+      end
+    end
+
+    context "when suspended" do
       let(:power_state) {{:raw_power_state => power_state_suspended}}
+
       it "is not allowed" do
         vm.update(power_state)
         expect(vm.snapshotting_memory_allowed?).to be_falsy
@@ -141,9 +188,33 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm do
   end
 
   describe "#supports?(:terminate)" do
-    context "when connected to a provider" do
-      it "returns true" do
-        expect(vm.supports?(:terminate)).to be_truthy
+    context "when powered on" do
+      let(:power_state) { {:raw_power_state => power_state_on} }
+
+      it "returns false" do
+        vm.update(power_state)
+        expect(vm.supports?(:terminate)).to be_falsey
+        expect(vm.unsupported_reason(:terminate)).to eq("The VM is not powered off")
+      end
+    end
+
+    context "when suspended" do
+      let(:power_state) { {:raw_power_state => power_state_suspended} }
+
+      it "returns false" do
+        vm.update(power_state)
+        expect(vm.supports?(:terminate)).to be_falsey
+        expect(vm.unsupported_reason(:terminate)).to eq("The VM is not powered off")
+      end
+    end
+
+    context "when powered off" do
+      let(:power_state) { {:raw_power_state => power_state_off} }
+      context "when connected to a provider" do
+        it "returns true" do
+          vm.update(power_state)
+          expect(vm.supports?(:terminate)).to be_truthy
+        end
       end
     end
 
