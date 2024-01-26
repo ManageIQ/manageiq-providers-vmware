@@ -2,13 +2,12 @@ require 'VMwareWebService/VimTypes'
 
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
   include Vmdb::Logging
-
-  include_concern :ComputeResource
-  include_concern :Datastore
-  include_concern :DistributedVirtualSwitch
-  include_concern :HostSystem
-  include_concern :ResourcePool
-  include_concern :VirtualMachine
+  include ComputeResource
+  include Datastore
+  include DistributedVirtualSwitch
+  include HostSystem
+  include ResourcePool
+  include VirtualMachine
 
   attr_reader :cache, :collector, :persister
   private     :cache, :collector, :persister

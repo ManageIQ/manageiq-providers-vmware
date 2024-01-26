@@ -1,9 +1,9 @@
 module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
   extend ActiveSupport::Concern
 
-  include_concern "Configuration"
-  include_concern "Power"
-  include_concern "Relocation"
+  include Configuration
+  include Power
+  include Relocation
 
   def raw_set_custom_field(attribute, value)
     run_command_via_parent(:vm_set_custom_field, :attribute => attribute, :value => value)

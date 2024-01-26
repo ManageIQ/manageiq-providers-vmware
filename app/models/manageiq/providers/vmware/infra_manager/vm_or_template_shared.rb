@@ -2,11 +2,10 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
   extend ActiveSupport::Concern
 
   include ManageIQ::Providers::Vmware::InfraManager::EmsRefObjMixin
-
-  include_concern 'Disconnect'
-  include_concern 'Operations'
-  include_concern 'RefreshOnScan'
-  include_concern 'Scanning'
+  include Disconnect
+  include Operations
+  include RefreshOnScan
+  include Scanning
 
   POWER_STATES = {
     "poweredOn"  => "on",

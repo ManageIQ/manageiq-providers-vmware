@@ -1,9 +1,8 @@
 module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration
   extend ActiveSupport::Concern
-
-  include_concern 'Container'
-  include_concern 'Network'
-  include_concern 'Disk'
+  include Container
+  include Network
+  include Disk
 
   def reconfigure_container_on_destination?
     # Do we need to perform a post-clone hardware reconfigure on the new VM?

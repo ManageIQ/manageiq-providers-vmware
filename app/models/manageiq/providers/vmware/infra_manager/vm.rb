@@ -1,10 +1,9 @@
 class ManageIQ::Providers::Vmware::InfraManager::Vm < ManageIQ::Providers::InfraManager::Vm
-  include_concern 'ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared'
-
-  include_concern 'Operations'
-  include_concern 'RemoteConsole'
-  include_concern 'Reconfigure'
-  include_concern 'Scanning'
+  include ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
+  include Operations
+  include RemoteConsole
+  include Reconfigure
+  include Scanning
 
   supports :capture
   supports :clone do
