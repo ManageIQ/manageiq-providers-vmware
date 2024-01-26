@@ -1,33 +1,5 @@
 module ManageIQ::Providers
   class Vmware::InfraManager < InfraManager
-    require_nested :Cluster
-    require_nested :Datacenter
-    require_nested :DistributedVirtualSwitch
-    require_nested :EventCatcher
-    require_nested :EventParser
-    require_nested :Folder
-    require_nested :Host
-    require_nested :HostEsx
-    require_nested :HostVirtualSwitch
-    require_nested :Inventory
-    require_nested :MetricsCapture
-    require_nested :MetricsCollectorWorker
-    require_nested :OpaqueSwitch
-    require_nested :OperationsWorker
-    require_nested :OrchestrationTemplate
-    require_nested :Provision
-    require_nested :ProvisionViaPxe
-    require_nested :ProvisionWorkflow
-    require_nested :RefreshParser # This has to be before Refresher because that includes RefreshParser::Filter
-    require_nested :Refresher
-    require_nested :RefreshWorker
-    require_nested :ResourcePool
-    require_nested :Snapshot
-    require_nested :Storage
-    require_nested :StorageCluster
-    require_nested :Template
-    require_nested :Vm
-
     include VimConnectMixin
     include CisConnectMixin
 
