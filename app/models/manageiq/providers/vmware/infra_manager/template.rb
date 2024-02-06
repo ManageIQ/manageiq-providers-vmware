@@ -1,7 +1,6 @@
 class ManageIQ::Providers::Vmware::InfraManager::Template < ManageIQ::Providers::InfraManager::Template
-  include_concern 'ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared'
-
-  include_concern 'Scanning'
+  include ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared
+  include Scanning
 
   supports :provisioning do
     if ext_management_system

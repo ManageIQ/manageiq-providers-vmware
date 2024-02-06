@@ -1,8 +1,4 @@
 class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ::Providers::Inventory::Persister
-  require_nested :Batch
-  require_nested :Full
-  require_nested :Targeted
-
   attr_reader :tracking_uuid
 
   def initialize_inventory_collections

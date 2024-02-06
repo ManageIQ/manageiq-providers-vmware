@@ -1,6 +1,4 @@
 class ManageIQ::Providers::Vmware::CloudManager::OrchestrationStack < ManageIQ::Providers::CloudManager::OrchestrationStack
-  require_nested :Status
-
   def self.raw_create_stack(orchestration_manager, stack_name, template, options = {})
     log_prefix = "stack=[#{stack_name}]"
     orchestration_manager.with_provider_connection do |service|

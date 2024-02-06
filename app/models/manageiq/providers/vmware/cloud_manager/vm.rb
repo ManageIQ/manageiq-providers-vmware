@@ -1,7 +1,7 @@
 class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::CloudManager::Vm
-  include_concern 'Operations'
-  include_concern 'RemoteConsole'
-  include_concern 'Reconfigure'
+  include Operations
+  include RemoteConsole
+  include Reconfigure
 
   supports :snapshots
   supports :remove_all_snapshots

@@ -1,6 +1,4 @@
 class ManageIQ::Providers::Vmware::CloudManager::EventCatcher < ::MiqEventCatcher
-  require_nested :Runner
-
   def self.settings_name
     :event_catcher_vmware_cloud
   end
