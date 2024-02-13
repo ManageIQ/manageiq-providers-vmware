@@ -97,23 +97,23 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
                 :fields    => [
                   {
                     :component  => 'validate-host-credentials',
-                    :id         => 'endpoints.ws.valid',
-                    :name       => 'endpoints.ws.valid',
+                    :id         => 'authentications.default.valid',
+                    :name       => 'authentications.default.valid',
                     :skipSubmit => true,
                     :isRequired => true,
                     :fields     => [
                       {
                         :component  => "text-field",
-                        :id         => "authentications.ws.userid",
-                        :name       => "authentications.ws.userid",
+                        :id         => "authentications.default.userid",
+                        :name       => "authentications.default.userid",
                         :label      => _("Username"),
                         :isRequired => true,
                         :validate   => [{:type => "required"}],
                       },
                       {
                         :component  => "password-field",
-                        :id         => "authentications.ws.password",
-                        :name       => "authentications.ws.password",
+                        :id         => "authentications.default.password",
+                        :name       => "authentications.default.password",
                         :label      => _("Password"),
                         :type       => "password",
                         :isRequired => true,
@@ -150,8 +150,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
                   },
                   {
                     :component  => 'validate-host-credentials',
-                    :id         => 'endpoints.remote.valid',
-                    :name       => 'endpoints.remote.valid',
+                    :id         => 'authentications.remote.valid',
+                    :name       => 'authentications.remote.valid',
                     :skipSubmit => true,
                     :condition  => {
                       :when => 'remoteEnabled',

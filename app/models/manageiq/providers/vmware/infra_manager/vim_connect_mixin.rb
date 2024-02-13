@@ -2,8 +2,6 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   extend ActiveSupport::Concern
 
   def vim_connect(options = {})
-    options[:auth_type] ||= :ws
-
     raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
     raise _("no credentials defined") if missing_credentials?(options[:auth_type])
 
