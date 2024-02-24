@@ -7,10 +7,10 @@ class ManageIQ::Providers::Vmware::InfraManager::Host < ::Host
 
   # overrides base start to support "standby" powerstate
   supports :start do
-    if !supports?(:ipmi)
-      unsupported_reason_add(:start, unsupported_reason(:ipmi))
-    elsif %w[off standby].exclude?(power_state)
-      unsupported_reason_add(:start, _("The Host is not in power state off or standby"))
+    if %w[off standby].exclude?(power_state)
+      _("The Host is not in power state off or standby")
+    else
+      unsupported_reason(:ipmi)
     end
   end
 

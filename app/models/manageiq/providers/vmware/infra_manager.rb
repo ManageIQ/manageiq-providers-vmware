@@ -14,7 +14,7 @@ module ManageIQ::Providers
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
-      unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
+      _("Streaming refresh not enabled") unless streaming_refresh_enabled?
     end
 
     def self.ems_type

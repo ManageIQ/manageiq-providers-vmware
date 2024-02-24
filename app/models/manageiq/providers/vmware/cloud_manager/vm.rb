@@ -10,7 +10,7 @@ class ManageIQ::Providers::Vmware::CloudManager::Vm < ManageIQ::Providers::Cloud
   supports :revert_to_snapshot
   supports :reconfigure_disks
   supports :reconfigure_disksize do
-    unsupported_reason_add(:reconfigure_disksize, 'Cannot resize disks of a VM with snapshots') unless snapshots.empty?
+    _("Cannot resize disks of a VM with snapshots") unless snapshots.empty?
   end
   supports :reconfigure_network_adapters
 
