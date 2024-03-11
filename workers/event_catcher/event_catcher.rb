@@ -18,17 +18,18 @@ class EventCatcher
 
     notify_started
 
-    logger.info("Collecting events...")
+    log_prefix = "MIQ(ManageIQ::Providers::Vmware::InfraManager::EventCatcher)".freeze
+    logger.info("#{log_prefix} Collecting events...")
 
     wait_for_updates(vim) do |property_change|
-      logger.info(property_change.name)
+      logger.info("#{log_prefix} #{property_change.name}")
       next unless property_change.name.match?(/latestPage.*/)
 
       events = Array(property_change.val).map do |event|
         EventParser.parse_event(event).merge(:ems_id => ems["id"])
       end
 
-      logger.info(events.to_json)
+      logger.info("#{log_prefix} events: [#{events.to_json}]")
 
       publish_events(events)
     end
