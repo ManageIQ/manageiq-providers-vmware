@@ -35,7 +35,9 @@ end
 def main(args)
   setproctitle
 
-  logger         = build_logger
+  logger = build_logger
+  logger.progname = "evm"
+
   ems            = args["ems"].detect { |e| e["type"] == "ManageIQ::Providers::Vmware::InfraManager" }
   messaging      = args["messaging"].symbolize_keys
   endpoint       = ems["endpoints"].detect { |ep| ep["role"] == "default" }
