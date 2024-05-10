@@ -1,5 +1,3 @@
-require 'bunny'
-
 # Listens to RabbitMQ events
 class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
   include Vmdb::Logging
@@ -22,6 +20,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
   end
 
   def self.connect(connection_options = {})
+    require 'bunny'
     Bunny.new(connection_options)
   end
 
@@ -70,6 +69,7 @@ class ManageIQ::Providers::Vmware::CloudManager::EventCatcher::Stream
   end
 
   def initialize_queues(channel)
+    require 'bunny'
     @queues = {}
     @options[:queues].each do |queue_name|
       begin
