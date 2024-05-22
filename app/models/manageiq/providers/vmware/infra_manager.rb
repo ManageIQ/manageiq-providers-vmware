@@ -14,7 +14,7 @@ module ManageIQ::Providers
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
-      unsupported_reason_add(:streaming_refresh, "Streaming refresh not enabled") unless streaming_refresh_enabled?
+      _("Streaming refresh not enabled") unless streaming_refresh_enabled?
     end
 
     def self.ems_type
@@ -670,7 +670,13 @@ module ManageIQ::Providers
 
       if obj.kind_of?(self.class::Vm) || obj.kind_of?(self.class::Template) || obj.kind_of?(self.class::Host) || obj.kind_of?(EmsCluster) || obj.kind_of?(EmsFolder)
         obj.with_provider_object do |vim_obj|
-          vim_obj.logUserEvent(user_event) if user_event && obj.kind_of?(Vm)
+          if user_event && obj.kind_of?(Vm)
+            begin
+              vim_obj.logUserEvent(user_event)
+            rescue Handsoap::Fault => err
+              _log.warn("#{log_header} Failed to log user event [#{err}]")
+            end
+          end
 
           _log.info("#{log_header} Invoking [#{cmd}]...")
           result = vim_obj.send(cmd, *opts)

@@ -11,8 +11,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Host do
 
     context "when it does not support ipmi" do
       before do
-        stub_supports_all_others(Host)
-        stub_supports_not(Host, :ipmi)
+        stub_supports_all_others(described_class)
+        stub_supports_not(described_class, :ipmi)
       end
 
       let(:power_state) { "off" }
@@ -21,8 +21,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::Host do
 
     context "when it supports ipmi" do
       before do
-        stub_supports_all_others(Host)
-        stub_supports(Host, :ipmi)
+        stub_supports_all_others(described_class)
+        stub_supports(described_class, :ipmi)
       end
 
       context "when off" do

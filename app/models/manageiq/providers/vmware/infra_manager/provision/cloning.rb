@@ -168,7 +168,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Cloning
 
   def datastore_ems_ref(clone_opts)
     datastore = Storage.find_by(:id => clone_opts[:datastore].id)
-    datastore.try(:ems_ref)
+    datastore.try(:ems_ref_obj)
   end
 
   def get_selected_snapshot

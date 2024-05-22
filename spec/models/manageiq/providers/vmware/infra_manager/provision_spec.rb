@@ -298,7 +298,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         before(:each) do
           Array.new(2) do |i|
             ds_mor = "datastore-#{i}"
-            storage = FactoryBot.create(:storage_nfs, :ems_ref => ds_mor, :ems_ref_type => "Datastore")
+            storage = FactoryBot.create(:storage_vmware, :ems_ref => ds_mor, :ems_ref_type => "Datastore")
 
             cluster_mor = "cluster-#{i}"
             cluster     = FactoryBot.create(:ems_cluster, :ems_ref => cluster_mor)

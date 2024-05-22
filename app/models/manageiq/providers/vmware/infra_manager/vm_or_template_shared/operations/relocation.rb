@@ -6,15 +6,13 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
       reason   = _("Migrate not supported because VM is blank")    if blank?
       reason ||= _("Migrate not supported because VM is orphaned") if orphaned?
       reason ||= _("Migrate not supported because VM is archived") if archived?
-      unsupported_reason_add(:migrate, reason) if reason
+      reason
     end
     supports :move_into_folder do
-      reason = _("Move not supported because VM is not active") if ext_management_system.nil?
-      unsupported_reason_add(:migrate, reason) if reason
+      _("Move not supported because VM is not active") if ext_management_system.nil?
     end
     supports :relocate do
-      reason = _("Relocate not supported because VM is not active") if ext_management_system.nil?
-      unsupported_reason_add(:migrate, reason) if reason
+      _("Relocate not supported because VM is not active") if ext_management_system.nil?
     end
   end
 

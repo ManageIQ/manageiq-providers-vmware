@@ -3,37 +3,45 @@ module ManageIQ::Providers::Vmware::InfraManager::Vm::Operations::Guest
 
   included do
     supports :reboot_guest do
-      unsupported_reason_add(:reboot_guest, unsupported_reason(:control)) unless supports?(:control)
+      reason = unsupported_reason(:control)
+      return reason if reason
+
       if current_state == "on"
         if tools_status == 'toolsNotInstalled'
-          unsupported_reason_add(:reboot_guest, _("The VM tools is not installed"))
+          _("The VM tools is not installed")
         end
       else
-        unsupported_reason_add(:reboot_guest, _("The VM is not powered on"))
+        _("The VM is not powered on")
       end
     end
 
     supports :shutdown_guest do
-      unsupported_reason_add(:shutdown_guest, unsupported_reason(:control)) unless supports?(:control)
+      reason = unsupported_reason(:control)
+      return reason if reason
+
       if current_state == "on"
         if tools_status == 'toolsNotInstalled'
-          unsupported_reason_add(:shutdown_guest, _("The VM tools is not installed"))
+          _("The VM tools is not installed")
         end
       else
-        unsupported_reason_add(:shutdown_guest, _("The VM is not powered on"))
+        _("The VM is not powered on")
       end
     end
 
     supports :reset do
-      reason   = unsupported_reason(:control) unless supports?(:control)
-      reason ||= _("The VM is not powered on") unless current_state == "on"
-      unsupported_reason_add(:reset, reason) if reason
+      if current_state != "on"
+        _("The VM is not powered on")
+      else
+        unsupported_reason(:control)
+      end
     end
 
     supports :standby_guest do
-      reason   = unsupported_reason(:control) unless supports?(:control)
-      reason ||= _("The VM is not powered on") unless current_state == "on"
-      unsupported_reason_add(:standby_guest, reason) if reason
+      if current_state != "on"
+        _("The VM is not powered on")
+      else
+        unsupported_reason(:control)
+      end
     end
   end
 
