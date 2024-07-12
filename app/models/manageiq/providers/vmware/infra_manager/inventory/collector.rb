@@ -190,6 +190,9 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     return if vim.rev < '6.0' || vim.serviceContent.about.apiType != 'VirtualCenter'
 
     ems.connect(:service => :cis)
+  rescue => err
+    _log.warn("Failed to connect to CIS API: #{err}")
+    nil
   end
 
   def disconnect(vim)
