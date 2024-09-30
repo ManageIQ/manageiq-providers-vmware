@@ -40,7 +40,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VmOrTemplateShared::Operations
   end
 
   def raw_set_description(new_description)
-    run_command_via_parent(:vm_set_description, new_description)
+    run_command_via_parent(:vm_set_description, :new_description => new_description)
   end
 
   def log_user_event(event_message)
