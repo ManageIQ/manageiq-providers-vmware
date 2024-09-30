@@ -656,9 +656,9 @@ module ManageIQ::Providers
     end
     alias_method :host_quick_stats, :vm_quick_stats
 
-    def vm_set_description(vm, new_description, options = {})
+    def vm_set_description(vm, options = {})
       options[:spec] = VimHash.new("VirtualMachineConfigSpec") do |spec|
-        spec.annotation = new_description
+        spec.annotation = options.delete(:new_description)
       end
 
       vm_reconfigure(vm, options)
