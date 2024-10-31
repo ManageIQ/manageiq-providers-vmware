@@ -20,6 +20,10 @@ class ManageIQ::Providers::Vmware::NetworkManager < ManageIQ::Providers::Network
            :to        => :parent_manager,
            :allow_nil => true
 
+  class << self
+    delegate :refresh_ems, :to => ManageIQ::Providers::Vmware::CloudManager
+  end
+
   def self.ems_type
     @ems_type ||= "vmware_cloud_network".freeze
   end
