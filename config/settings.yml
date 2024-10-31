@@ -21,6 +21,8 @@
       :saver_strategy: batch
   :vmware_cloud:
     :get_public_images: false
+  :vmware_cloud_network:
+    :refresh_interval: 0
   :vmwarews:
     :refresh_interval: 24.hours
     :update_poll_interval: 1.second
