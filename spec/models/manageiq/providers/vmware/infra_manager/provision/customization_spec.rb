@@ -73,6 +73,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
     vh['nicSettingMap']    = []
     vh
   end
+  let(:nic_settings_map) { [] }
   let(:new_spec) do
     {
       "identity"         => {
@@ -86,7 +87,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
         }
       },
       "globalIPSettings" => {},
-      "nicSettingMap"    => [],
+      "nicSettingMap"    => nic_settings_map,
       "options"          => {}
     }
   end
@@ -128,6 +129,43 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
       options[:sysprep_organization] = 'sysprep_organization_value'
       expect(prov_vm).not_to receive(:load_customization_spec)
       expect(prov_vm.build_customization_spec).to(eq(new_spec))
+    end
+
+    context "with network options" do
+      context "set at the top level of options" do
+        let(:ip_addr)          { "192.168.1.10" }
+        let(:gateway)          { "192.168.1.1" }
+        let(:dns_domain)       { "localdomain" }
+        let(:nic_settings_map) { [{"adapter" => {"dnsDomain" => dns_domain, "gateway" => [gateway], "ip" => {"ipAddress" => ip_addr}}}] }
+
+        it 'sets the nicSettingMap on the new spec' do
+          options[:sysprep_custom_spec]  = ''
+          options[:sysprep_full_name]    = 'sysprep_full_name_value'
+          options[:sysprep_organization] = 'sysprep_organization_value'
+          options[:requested_network_adapter_count] = 1
+          options[:ip_addr]    = ip_addr
+          options[:gateway]    = gateway
+          options[:dns_domain] = dns_domain
+
+          expect(prov_vm).not_to receive(:load_customization_spec)
+          expect(prov_vm.build_customization_spec).to(eq(new_spec))
+        end
+      end
+
+      context "with a nic_settings array in options" do
+        let(:nic_settings_map) { [{"adapter" => {"ip" => {"ipAddress" => "192.168.1.10"}}}, {"adapter" => {"ip" => {"ipAddress" => "192.168.2.10"}}}] }
+
+        it 'sets network settings for multiple nics' do
+          options[:sysprep_custom_spec]  = ''
+          options[:sysprep_full_name]    = 'sysprep_full_name_value'
+          options[:sysprep_organization] = 'sysprep_organization_value'
+          options[:requested_network_adapter_count] = 2
+          options[:nic_settings] = [{:ip_addr => "192.168.1.10"}, {:ip_addr => "192.168.2.10"}]
+
+          expect(prov_vm).not_to receive(:load_customization_spec)
+          expect(prov_vm.build_customization_spec).to(eq(new_spec))
+        end
+      end
     end
   end
 end
