@@ -110,8 +110,11 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     nics = Array.wrap(options[:nic_settings])
     nic = nics[0]
     nic = {} if nic.blank?
-    [:dns_domain, :dns_servers, :sysprep_netbios_mode, :wins_servers, :addr_mode,
-     :gateway, :subnet_mask, :ip_addr].each { |key| nic[key] = options[key] }
+
+    %i[dns_domain dns_servers sysprep_netbios_mode wins_servers addr_mode gateway subnet_mask ip_addr].each do |key|
+      nic[key] ||= options[key] if options.key?(key)
+    end
+
     nics[0] = nic
 
     options[:nic_settings] = nics
