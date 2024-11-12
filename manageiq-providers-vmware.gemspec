@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "ffi-vix_disk_lib",       "~>1.3", ">= 1.3.1"
+  spec.add_dependency "ffi-vix_disk_lib",       "~>1.4"
   spec.add_dependency "fog-vcloud-director",    "~> 0.3.0"
   spec.add_dependency "rbvmomi2",               "~>3.8"
   spec.add_dependency "vmware_web_service",     "~>3.3"
