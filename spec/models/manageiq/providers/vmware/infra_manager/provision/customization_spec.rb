@@ -160,7 +160,6 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision::Customization do
           options[:sysprep_full_name]    = 'sysprep_full_name_value'
           options[:sysprep_organization] = 'sysprep_organization_value'
           options[:requested_network_adapter_count] = 2
-          options[:ip_addr]      = "192.168.1.10" # NOTE: Shouldn't have to set nic_settings and ip_addr
           options[:nic_settings] = [{:ip_addr => "192.168.1.10"}, {:ip_addr => "192.168.2.10"}]
 
           expect(prov_vm).not_to receive(:load_customization_spec)
