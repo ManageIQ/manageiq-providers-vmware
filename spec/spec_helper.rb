@@ -14,60 +14,19 @@ RSpec.configure do |config|
   end
 end
 
-def credentials_infra_defaults_hostname
-  @credentials_infra_defaults_hostname ||= "HOSTNAME".freeze
+TEST_CREDENTIALS_DEFAULTS = {
+  :vmware_cloud_defaults => {:host => "vmwarecloudhost", :userid => "VMWARE_CLOUD_USERID", :password => "VMWARE_CLOUD_PASSWORD"},
+  :vmware_infra_defaults => {:hostname => "HOSTNAME"},
+  :vmware_tanzu_defaults => {:hostname => "vmware-tanzu-hostname", :userid => "VMWARE_TANZU_USERID", :password => "VMWARE_TANZU_PASSWORD"}
+}.freeze
+
+def test_credentials(*args)
+  Rails.application.credentials.dig(*args) || test_credentials_defaults(*args)
 end
 
-def credentials_infra_hostname
-  Rails.application.credentials.dig("vmware_infra", "hostname") || credentials_infra_defaults_hostname
-end
-
-def credentials_cloud_defaults_host
-  @credentials_cloud_defaults_host ||= "vmwarecloudhost".freeze
-end
-
-def credentials_cloud_host
-  Rails.application.credentials.dig("vmware_cloud", "host") || credentials_cloud_defaults_host
-end
-
-def credentials_cloud_defaults_userid
-  @credentials_cloud_defaults_userid ||= "VMWARE_CLOUD_USERID".freeze
-end
-
-def credentials_cloud_userid
-  Rails.application.credentials.dig(:vmware_cloud, :userid) || credentials_cloud_defaults_userid
-end
-
-def credentials_cloud_defaults_password
-  @credentials_cloud_defaults_password ||= "VMWARE_CLOUD_PASSWORD".freeze
-end
-
-def credentials_cloud_password
-  Rails.application.credentials.dig(:vmware_cloud, :password) || credentials_cloud_defaults_password
-end
-
-def credentials_tanzu_defaults_hostname
-  @credentials_tanzu_defaults_hostname ||= "vmware-tanzu-hostname".freeze
-end
-
-def credentials_tanzu_hostname
-  Rails.application.credentials.dig("vmware_tanzu", "hostname") || credentials_tanzu_defaults_hostname
-end
-
-def credentials_tanzu_defaults_userid
-  @credentials_tanzu_defaults_userid ||= "VMWARE_TANZU_USERID".freeze
-end
-
-def credentials_tanzu_userid
-  Rails.application.credentials.dig("vmware_tanzu", "userid") || credentials_tanzu_defaults_userid
-end
-
-def credentials_tanzu_defaults_password
-  @credentials_tanzu_defaults_password ||= "VMWARE_TANZU_PASSWORD".freeze
-end
-
-def credentials_tanzu_password
-  Rails.application.credentials.dig("vmware_tanzu", "password") || credentials_tanzu_defaults_password
+def test_credentials_defaults(*args)
+  args[0] = "#{args[0]}_defaults".to_sym
+  TEST_CREDENTIALS_DEFAULTS.dig(*args)
 end
 
 VCR.configure do |config|
@@ -76,20 +35,20 @@ VCR.configure do |config|
   config.ignore_hosts 'codeclimate.com' if ENV['CI']
   config.cassette_library_dir = File.join(ManageIQ::Providers::Vmware::Engine.root, 'spec/vcr_cassettes')
 
-  config.define_cassette_placeholder(credentials_infra_defaults_hostname) do
-    credentials_infra_hostname
+  config.define_cassette_placeholder(test_credentials_defaults(:vmware_infra_defaults, :hostname)) do
+    test_credentials(:vmware_infra, :hostname)
   end
-  config.define_cassette_placeholder(credentials_cloud_defaults_host) do
-    credentials_cloud_host
+  config.define_cassette_placeholder(test_credentials_defaults(:vmware_cloud, :host)) do
+    test_credentials(:vmware_cloud, :host)
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_AUTHORIZATION") do
-    Base64.encode64("#{credentials_cloud_userid}:#{credentials_cloud_password}").chomp
+    Base64.encode64("#{test_credentials(:vmware_cloud, :userid)}:#{test_credentials(:vmware_cloud, :password)}").chomp
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_INVALIDAUTHORIZATION") do
-    Base64.encode64("#{credentials_cloud_userid}:invalid").chomp
+    Base64.encode64("#{test_credentials(:vmware_cloud, :userid)}:invalid").chomp
   end
 
-  config.define_cassette_placeholder(credentials_tanzu_defaults_hostname) { credentials_tanzu_hostname }
-  config.define_cassette_placeholder(credentials_tanzu_defaults_userid) { credentials_tanzu_userid }
-  config.define_cassette_placeholder(credentials_tanzu_defaults_password) { credentials_tanzu_password }
+  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :hostname)) { test_credentials(:vmware_tanzu, :hostname) }
+  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :userid))   { test_credentials(:vmware_tanzu, :userid) }
+  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :password)) { test_credentials(:vmware_tanzu, :password) }
 end

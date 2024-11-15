@@ -3,12 +3,12 @@ FactoryBot.define do
     zone { EvmSpecHelper.local_miq_server.zone }
 
     after(:build) do |ems|
-      ems.hostname = credentials_cloud_host
+      ems.hostname = test_credentials(:vmware_cloud, :host)
     end
 
     after(:create) do |ems|
-      userid   = credentials_cloud_userid
-      password = credentials_cloud_password
+      userid   = test_credentials(:vmware_cloud, :userid)
+      password = test_credentials(:vmware_cloud, :password)
 
       cred = {
         :userid   => userid,
@@ -30,11 +30,11 @@ FactoryBot.define do
 
   factory :ems_vmware_tanzu_with_vcr_authentication, :parent => :ems_vmware_tanzu do
     after(:create) do |ems|
-      userid   = credentials_tanzu_userid
-      password = credentials_tanzu_password
+      userid   = test_credentials(:vmware_tanzu, :userid)
+      password = test_credentials(:vmware_tanzu, :password)
 
       ems.default_endpoint.update!(
-        :hostname   => credentials_tanzu_hostname,
+        :hostname   => test_credentials(:vmware_tanzu, :hostname),
         :verify_ssl => OpenSSL::SSL::VERIFY_NONE
       )
 

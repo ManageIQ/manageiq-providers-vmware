@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   before do
-    @host = credentials_cloud_host
+    @host = test_credentials(:vmware_cloud, :host)
     host_uri = URI.parse("https://#{@host}")
 
     @hostname = host_uri.host
@@ -15,8 +15,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :api_version => '5.5'
     )
 
-    @userid = credentials_cloud_userid
-    @password = credentials_cloud_password
+    @userid = test_credentials(:vmware_cloud, :userid)
+    @password = test_credentials(:vmware_cloud, :password)
 
     cred = {
       :userid   => @userid,

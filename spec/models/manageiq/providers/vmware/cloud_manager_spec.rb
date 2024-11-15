@@ -1,13 +1,13 @@
 describe ManageIQ::Providers::Vmware::CloudManager do
   before(:context) do
-    @host = credentials_cloud_host
+    @host = test_credentials(:vmware_cloud, :host)
     host_uri = URI.parse("https://#{@host}")
 
     @hostname = host_uri.host
     @port = host_uri.port == 443 ? nil : host_uri.port
 
-    @userid = credentials_cloud_userid
-    @password = credentials_cloud_password
+    @userid = test_credentials(:vmware_cloud, :userid)
+    @password = test_credentials(:vmware_cloud, :password)
   end
 
   before(:example) do
