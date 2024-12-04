@@ -6,6 +6,7 @@ class ManageIQ::Providers::Vmware::InfraManager::OperationsWorker::Runner < Mana
     MiqVim.cacheScope = :cache_scope_core
     MiqVim.monitor_updates = true
     MiqVim.pre_load = true
+    MiqVim.on_log_body { |body| $vim_log.debug(body) } if Settings.ems.ems_vmware.debug_vim_requests
 
     # Prime the cache before starting the do_work loop
     ems.connect

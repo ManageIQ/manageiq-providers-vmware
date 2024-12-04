@@ -160,6 +160,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :path     => '/sdk',
       :port     => port,
       :rev      => '6.5',
+      :debug    => Settings.ems.ems_vmware.debug_vim_requests
     }
 
     require 'rbvmomi'
