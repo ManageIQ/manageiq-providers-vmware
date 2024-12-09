@@ -5,7 +5,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Refresher do
 
   let!(:ems) do
     zone = EvmSpecHelper.local_miq_server.zone
-    hostname = test_credentials(:vmware_infra, :hostname)
+    hostname = vcr_secret_by_key_path(:vmware_infra, :hostname)
     FactoryBot.create(:ems_vmware_with_authentication, :hostname => hostname, :zone => zone).tap do |ems|
       # NOTE: VCR filter_sensitive_data was replacing rootFolder with VMWARE_USERNAME and
       # vmware_soap_string_abcdef with VMWARE_PASSWORD_string_abcdef, given these are the

@@ -14,19 +14,31 @@ RSpec.configure do |config|
   end
 end
 
-TEST_CREDENTIALS_DEFAULTS = {
-  :vmware_cloud_defaults => {:host => "vmwarecloudhost", :userid => "VMWARE_CLOUD_USERID", :password => "VMWARE_CLOUD_PASSWORD"},
-  :vmware_infra_defaults => {:hostname => "HOSTNAME"},
-  :vmware_tanzu_defaults => {:hostname => "vmware-tanzu-hostname", :userid => "VMWARE_TANZU_USERID", :password => "VMWARE_TANZU_PASSWORD"}
-}.freeze
+DEFAULT_VCR_SECRETS_PATH = Pathname.new(__dir__).join("../config/secrets.defaults.yml")
+VCR_SECRETS_PATH         = Pathname.new(__dir__).join("../config/secrets.yml")
 
-def test_credentials(*args)
-  Rails.application.credentials.dig(*args) || test_credentials_defaults(*args)
+def load_vcr_secrets(pathname)
+  if pathname.exist?
+    YAML.load_file(pathname)
+  else
+    {}
+  end
 end
 
-def test_credentials_defaults(*args)
-  args[0] = "#{args[0]}_defaults".to_sym
-  TEST_CREDENTIALS_DEFAULTS.dig(*args)
+def default_vcr_secrets
+  @default_vcr_secrets ||= load_vcr_secrets(DEFAULT_VCR_SECRETS_PATH)
+end
+
+def vcr_secrets
+  @vcr_secrets ||= load_vcr_secrets(VCR_SECRETS_PATH)
+end
+
+def default_vcr_secret_by_key_path(*args)
+  default_vcr_secrets.dig(*args)
+end
+
+def vcr_secret_by_key_path(*args)
+  vcr_secrets.dig(*args) || default_vcr_secret_by_key_path(*args)
 end
 
 VCR.configure do |config|
@@ -35,20 +47,20 @@ VCR.configure do |config|
   config.ignore_hosts 'codeclimate.com' if ENV['CI']
   config.cassette_library_dir = File.join(ManageIQ::Providers::Vmware::Engine.root, 'spec/vcr_cassettes')
 
-  config.define_cassette_placeholder(test_credentials_defaults(:vmware_infra_defaults, :hostname)) do
-    test_credentials(:vmware_infra, :hostname)
+  config.define_cassette_placeholder(default_vcr_secret_by_key_path(:vmware_infra, :hostname)) do
+    vcr_secret_by_key_path(:vmware_infra, :hostname)
   end
-  config.define_cassette_placeholder(test_credentials_defaults(:vmware_cloud, :host)) do
-    test_credentials(:vmware_cloud, :host)
+  config.define_cassette_placeholder(default_vcr_secret_by_key_path(:vmware_cloud, :host)) do
+    vcr_secret_by_key_path(:vmware_cloud, :host)
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_AUTHORIZATION") do
-    Base64.encode64("#{test_credentials(:vmware_cloud, :userid)}:#{test_credentials(:vmware_cloud, :password)}").chomp
+    Base64.encode64("#{vcr_secret_by_key_path(:vmware_cloud, :userid)}:#{vcr_secret_by_key_path(:vmware_cloud, :password)}").chomp
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_INVALIDAUTHORIZATION") do
-    Base64.encode64("#{test_credentials(:vmware_cloud, :userid)}:invalid").chomp
+    Base64.encode64("#{vcr_secret_by_key_path(:vmware_cloud, :userid)}:invalid").chomp
   end
 
-  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :hostname)) { test_credentials(:vmware_tanzu, :hostname) }
-  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :userid))   { test_credentials(:vmware_tanzu, :userid) }
-  config.define_cassette_placeholder(test_credentials_defaults(:vmware_tanzu, :password)) { test_credentials(:vmware_tanzu, :password) }
+  config.define_cassette_placeholder(default_vcr_secret_by_key_path(:vmware_tanzu, :hostname)) { vcr_secret_by_key_path(:vmware_tanzu, :hostname) }
+  config.define_cassette_placeholder(default_vcr_secret_by_key_path(:vmware_tanzu, :userid))   { vcr_secret_by_key_path(:vmware_tanzu, :userid) }
+  config.define_cassette_placeholder(default_vcr_secret_by_key_path(:vmware_tanzu, :password)) { vcr_secret_by_key_path(:vmware_tanzu, :password) }
 end

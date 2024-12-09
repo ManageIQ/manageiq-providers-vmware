@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   before do
-    @host = test_credentials(:vmware_cloud, :host)
+    @host = vcr_secret_by_key_path(:vmware_cloud, :host)
     host_uri = URI.parse("https://#{@host}")
 
     @hostname = host_uri.host
@@ -15,8 +15,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :api_version => '5.5'
     )
 
-    @userid = test_credentials(:vmware_cloud, :userid)
-    @password = test_credentials(:vmware_cloud, :password)
+    @userid = vcr_secret_by_key_path(:vmware_cloud, :userid)
+    @password = vcr_secret_by_key_path(:vmware_cloud, :password)
 
     cred = {
       :userid   => @userid,
