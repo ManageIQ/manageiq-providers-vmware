@@ -2,6 +2,7 @@
 :ems:
   :ems_vmware:
     :blacklisted_event_names: []
+    :debug_vim_requests: false
     :event_handling:
       :event_groups:
         :addition:
