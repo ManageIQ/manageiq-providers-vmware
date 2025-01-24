@@ -101,13 +101,14 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
   private
 
   def worker_options
-    super.merge(
-      :ems => [
+    super.tap do |options|
+      options[:ems] = [
         @ems.attributes.merge(
           "endpoints"       => @ems.endpoints,
           "authentications" => @ems.authentications
         )
       ]
-    )
+      options.store_path(:settings, :ems, :ems_vmware, :blacklisted_event_names, @ems.blacklisted_event_names)
+    end
   end
 end
