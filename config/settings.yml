@@ -1,7 +1,22 @@
 ---
 :ems:
   :ems_vmware:
-    :blacklisted_event_names: []
+    :blacklisted_event_names:
+    - AlarmActionTriggeredEvent
+    - AlarmCreatedEvent
+    - AlarmEmailCompletedEvent
+    - AlarmEmailFailedEvent
+    - AlarmReconfiguredEvent
+    - AlarmRemovedEvent
+    - AlarmScriptCompleteEvent
+    - AlarmScriptFailedEvent
+    - AlarmSnmpCompletedEvent
+    - AlarmSnmpFailedEvent
+    - AlarmStatusChangedEvent
+    - AlreadyAuthenticatedSessionEvent
+    - EventEx
+    - UserLoginSessionEvent
+    - UserLogoutSessionEvent
     :debug_vim_requests: false
     :event_handling:
       :event_groups:
