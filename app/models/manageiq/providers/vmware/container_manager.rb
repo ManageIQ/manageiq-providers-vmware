@@ -15,6 +15,10 @@ class ManageIQ::Providers::Vmware::ContainerManager < ManageIQ::Providers::Kuber
     n_('Container Provider (Vmware)', 'Container Providers (Vmware)', number)
   end
 
+  def self.default_blacklisted_event_names
+    Settings.ems["ems_#{ems_type}"].blacklisted_event_names
+  end
+
   def self.kubernetes_auth_options(options)
     {:bearer_token => options[:bearer] || wcp_login(options)}
   end
