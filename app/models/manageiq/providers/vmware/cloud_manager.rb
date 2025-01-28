@@ -27,6 +27,10 @@ class ManageIQ::Providers::Vmware::CloudManager < ManageIQ::Providers::CloudMana
     @description ||= "VMware vCloud".freeze
   end
 
+  def self.default_blacklisted_event_names
+    Settings.ems["ems_#{ems_type}"].blacklisted_event_names
+  end
+
   def self.params_for_create
     {
       :fields => [
