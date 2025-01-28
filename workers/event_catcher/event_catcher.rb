@@ -2,13 +2,16 @@ require_relative "event_parser"
 
 class EventCatcher
   def initialize(ems, endpoint, authentication, settings, messaging, logger, page_size = 20)
-    @ems            = ems
-    @endpoint       = endpoint
-    @authentication = authentication
-    @logger         = logger
-    @messaging      = messaging
-    @page_size      = page_size
-    @settings       = settings
+    @ems             = ems
+    @endpoint        = endpoint
+    @authentication  = authentication
+    @logger          = logger
+    @messaging       = messaging
+    @page_size       = page_size
+    @settings        = settings
+    @filtered_events = settings.dig("ems", "ems_vmware", "blacklisted_event_names") || []
+
+    logger.info("#{log_prefix} Filtered events: [#{filtered_events.join(", ")}]")
   end
 
   def run!
@@ -18,7 +21,6 @@ class EventCatcher
 
     notify_started
 
-    log_prefix = "MIQ(ManageIQ::Providers::Vmware::InfraManager::EventCatcher)".freeze
     logger.info("#{log_prefix} Collecting events...")
 
     wait_for_updates(vim) do |property_change|
@@ -29,7 +31,11 @@ class EventCatcher
         EventParser.parse_event(event).merge(:ems_id => ems["id"])
       end
 
-      logger.info("#{log_prefix} events: [#{events.to_json}]")
+      events.reject! { |event| filtered?(event) }
+
+      next if events.empty?
+
+      logger.info("#{log_prefix} caught events: [#{events.to_json}]")
 
       publish_events(events)
     end
@@ -47,7 +53,11 @@ class EventCatcher
 
   private
 
-  attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size, :settings
+  attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size, :settings, :filtered_events
+
+  def log_prefix
+    "MIQ(ManageIQ::Providers::Vmware::InfraManager::EventCatcher)".freeze
+  end
 
   def connect
     vim_opts = {
@@ -117,6 +127,10 @@ class EventCatcher
         end
       end
     end
+  end
+
+  def filtered?(event)
+    filtered_events.include?(event[:event_type])
   end
 
   def publish_events(events)

@@ -337,26 +337,6 @@ module ManageIQ::Providers
       end
     end
 
-    def self.default_blacklisted_event_names
-      %w(
-        AlarmActionTriggeredEvent
-        AlarmCreatedEvent
-        AlarmEmailCompletedEvent
-        AlarmEmailFailedEvent
-        AlarmReconfiguredEvent
-        AlarmRemovedEvent
-        AlarmScriptCompleteEvent
-        AlarmScriptFailedEvent
-        AlarmSnmpCompletedEvent
-        AlarmSnmpFailedEvent
-        AlarmStatusChangedEvent
-        AlreadyAuthenticatedSessionEvent
-        EventEx
-        UserLoginSessionEvent
-        UserLogoutSessionEvent
-      )
-    end
-
     def verify_credentials(auth_type = nil, _options = {})
       user, pwd = auth_user_pwd(auth_type)
       self.class.raw_connect(:ip => hostname, :port => port, :user => user, :pass => pwd, :verify_ssl => verify_ssl, :certificate_authority => certificate_authority)
