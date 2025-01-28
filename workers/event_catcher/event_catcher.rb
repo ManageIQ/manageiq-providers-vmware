@@ -11,7 +11,7 @@ class EventCatcher
     @settings        = settings
     @filtered_events = settings.dig("ems", "ems_vmware", "blacklisted_event_names") || []
 
-    logger.info("Filtered events: [#{filtered_events.join(", ")}]")
+    logger.info("#{log_prefix} Filtered events: [#{filtered_events.join(", ")}]")
   end
 
   def run!
@@ -21,7 +21,6 @@ class EventCatcher
 
     notify_started
 
-    log_prefix = "MIQ(ManageIQ::Providers::Vmware::InfraManager::EventCatcher)".freeze
     logger.info("#{log_prefix} Collecting events...")
 
     wait_for_updates(vim) do |property_change|
@@ -55,6 +54,10 @@ class EventCatcher
   private
 
   attr_reader :ems, :endpoint, :authentication, :logger, :messaging, :page_size, :settings, :filtered_events
+
+  def log_prefix
+    "MIQ(ManageIQ::Providers::Vmware::InfraManager::EventCatcher)".freeze
+  end
 
   def connect
     vim_opts = {
