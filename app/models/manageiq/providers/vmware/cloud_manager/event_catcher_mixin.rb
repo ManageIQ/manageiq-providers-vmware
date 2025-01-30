@@ -59,6 +59,6 @@ module ManageIQ::Providers::Vmware::CloudManager::EventCatcherMixin
   end
 
   def filtered?(event)
-    filtered_events.include?(event.type)
+    @ems.filtered_event_namess.include?(event.type)
   end
 end
