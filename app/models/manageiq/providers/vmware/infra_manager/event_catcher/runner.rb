@@ -66,7 +66,7 @@ class ManageIQ::Providers::Vmware::InfraManager::EventCatcher::Runner < ManageIQ
 
     sub_event_type, display_name = sub_type_and_name(event)
 
-    return false unless filtered_events.include?(event_type) || filtered_events.include?(sub_event_type)
+    return false unless @ems.filtered_event_names.include?(event_type) || @ems.filtered_event_names.include?(sub_event_type)
 
     _log.info("#{log_prefix} Skipping caught event [#{display_name}] chainId [#{event['chainId']}]")
     true

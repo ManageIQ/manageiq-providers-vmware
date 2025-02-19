@@ -337,7 +337,10 @@ module ManageIQ::Providers
       end
     end
 
-    def self.default_blacklisted_event_names
+    # Override the .filtered_event_names method from core
+    # because ems_type is :vmwarews but the Settings key
+    # is ems_vmware
+    def self.filtered_event_names
       Settings.ems.ems_vmware.blacklisted_event_names
     end
 
