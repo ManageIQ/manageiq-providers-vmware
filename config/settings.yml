@@ -30,8 +30,6 @@
       :realtime: 100
   :ems_vmware_cloud:
     :blacklisted_event_names: []
-  :ems_vmware_cloud_network:
-    :blacklisted_event_names: []
   :ems_vmware_tanzu:
     :blacklisted_event_names: []
 :ems_refresh:
