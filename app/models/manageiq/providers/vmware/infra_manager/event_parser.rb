@@ -86,7 +86,7 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
       vm_ems_ref = vm_data['vm']
       result[:vm_ems_ref] = vm_ems_ref.to_s unless vm_ems_ref.nil?
       vm_name = vm_data['name']
-      result[:vm_name] = URI::DEFAULT_PARSER.unescape(vm_name) unless vm_name.nil?
+      result[:vm_name] = URI::RFC2396_PARSER.unescape(vm_name) unless vm_name.nil?
       vm_location = vm_data['path']
       result[:vm_location] = vm_location unless vm_location.nil?
       vm_uid_ems = vm_data['uuid']
@@ -101,7 +101,7 @@ module ManageIQ::Providers::Vmware::InfraManager::EventParser
         vm_ems_ref = vm_data['vm']
         result[:dest_vm_ems_ref] = vm_ems_ref.to_s unless vm_ems_ref.nil?
         vm_name = vm_data['name']
-        result[:dest_vm_name] = URI::DEFAULT_PARSER.unescape(vm_name) unless vm_name.nil?
+        result[:dest_vm_name] = URI::RFC2396_PARSER.unescape(vm_name) unless vm_name.nil?
         vm_location = vm_data['path']
         result[:dest_vm_location] = vm_location unless vm_location.nil?
       end
