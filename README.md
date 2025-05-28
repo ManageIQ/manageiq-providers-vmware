@@ -6,8 +6,6 @@
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/manageiq-providers-vmware?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build history for master branch](https://buildstats.info/github/chart/ManageIQ/manageiq-providers-vmware?branch=master&buildCount=50&includeBuildsFromPullRequest=false&showstats=false)](https://github.com/ManageIQ/manageiq-providers-vmware/actions?query=branch%3Amaster)
-
 ManageIQ plugin for the VMware provider.
 
 ## Development
