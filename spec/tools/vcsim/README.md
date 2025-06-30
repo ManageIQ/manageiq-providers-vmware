@@ -15,4 +15,4 @@ This will restart the vpx daemon and start populating the vc database with simul
 
 Once this process is complete it will be able to be used for spec tests.
 
-Then you just need to set vmware.hostname in Rails.application.secrets to the ip address or hostname of your simulator, `rm -r spec/vcr_cassettes/manageiq/providers/vmware/infra_manager/inventory` and re-run the specs.
+Then you just need to set vmware_infra.hostname in VcrSecrets to the ip address or hostname of your simulator, `rm -r spec/vcr_cassettes/manageiq/providers/vmware/infra_manager/inventory` and re-run the specs.
