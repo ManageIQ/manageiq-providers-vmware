@@ -1,6 +1,6 @@
 describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
   before do
-    @host = Rails.application.secrets.vmware_cloud[:host]
+    @host = "vmwarecloudhost"
     host_uri = URI.parse("https://#{@host}")
 
     @hostname = host_uri.host
@@ -15,8 +15,8 @@ describe ManageIQ::Providers::Vmware::CloudManager::Refresher do
       :api_version => '5.5'
     )
 
-    @userid = Rails.application.secrets.vmware_cloud[:userid]
-    @password = Rails.application.secrets.vmware_cloud[:password]
+    @userid = "VMWARE_CLOUD_USERID"
+    @password = "VMWARE_CLOUD_PASSWORD"
 
     cred = {
       :userid   => @userid,

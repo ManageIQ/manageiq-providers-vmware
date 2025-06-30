@@ -1,13 +1,13 @@
 describe ManageIQ::Providers::Vmware::CloudManager do
   before(:context) do
-    @host = Rails.application.secrets.vmware_cloud[:host]
+    @host = "vmwarecloudhost"
     host_uri = URI.parse("https://#{@host}")
 
     @hostname = host_uri.host
     @port = host_uri.port == 443 ? nil : host_uri.port
 
-    @userid = Rails.application.secrets.vmware_cloud[:userid]
-    @password = Rails.application.secrets.vmware_cloud[:password]
+    @userid = "VMWARE_CLOUD_USERID"
+    @password = "VMWARE_CLOUD_PASSWORD"
   end
 
   before(:example) do
