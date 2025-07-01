@@ -18,20 +18,14 @@ VCR.configure do |config|
   config.ignore_hosts 'codeclimate.com' if ENV['CI']
   config.cassette_library_dir = File.join(ManageIQ::Providers::Vmware::Engine.root, 'spec/vcr_cassettes')
 
-  secrets = Rails.application.secrets
-  config.define_cassette_placeholder(Rails.application.secrets.vmware_infra_defaults[:hostname]) do
-    Rails.application.secrets.vmware_infra[:hostname]
-  end
-  config.define_cassette_placeholder(Rails.application.secrets.vmware_cloud_defaults[:host]) do
-    Rails.application.secrets.vmware_cloud[:host]
-  end
+  VcrSecrets.define_all_cassette_placeholders(config, :vmware_infra)
+  VcrSecrets.define_all_cassette_placeholders(config, :vmware_cloud)
+  VcrSecrets.define_all_cassette_placeholders(config, :vmware_tanzu)
+
   config.define_cassette_placeholder("VMWARE_CLOUD_AUTHORIZATION") do
-    Base64.encode64("#{Rails.application.secrets.vmware_cloud[:userid]}:#{Rails.application.secrets.vmware_cloud[:password]}").chomp
+    Base64.encode64("#{VcrSecrets.vmware_cloud.userid}:#{VcrSecrets.vmware_cloud.password}").chomp
   end
   config.define_cassette_placeholder("VMWARE_CLOUD_INVALIDAUTHORIZATION") do
-    Base64.encode64("#{Rails.application.secrets.vmware_cloud[:userid]}:invalid").chomp
-  end
-  secrets.vmware_tanzu.each do |key, val|
-    config.define_cassette_placeholder(secrets.vmware_tanzu_defaults[key]) { val }
+    Base64.encode64("#{VcrSecrets.vmware_cloud.userid}:invalid").chomp
   end
 end
