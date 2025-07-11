@@ -96,12 +96,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   end
 
   context 'provisioning a VM' do
-    let(:ems)      { FactoryBot.create(:ems_vmware) }
-    let!(:host1)   { FactoryBot.create(:host_vmware, :ems_id => ems.id) }
-    let!(:host2)   { FactoryBot.create(:host_vmware, :ems_id => ems.id) }
-    let!(:src_vm)  { FactoryBot.create(:vm_vmware, :host => host1, :ems_id => ems.id) }
+    let(:ems)         { FactoryBot.create(:ems_vmware).tap { |ems| build_vmware_folder_structure!(ems) } }
+    let(:ds1)         { FactoryBot.create(:storage_vmware, :ems_id => ems.id) }
+    let(:ds2)         { FactoryBot.create(:storage_vmware, :ems_id => ems.id) }
+    let!(:host1)      { FactoryBot.create(:host_vmware, :ems_id => ems.id, :storages => [ds1]).tap { |h| host_folder.add_child(h) } }
+    let!(:host2)      { FactoryBot.create(:host_vmware, :ems_id => ems.id, :storages => [ds2]).tap { |h| host_folder.add_child(h) } }
+    let!(:src_vm)     { FactoryBot.create(:vm_vmware, :host => host1, :ems_id => ems.id, :hardware => hardware).tap { |vm| vm_blue1.add_child(vm) } }
+    let(:vm_blue1)    { ems.ems_folders.find_by(:name => "blue1") }
+    let(:host_folder) { ems.ems_folders.find_by(:name => "host") }
+    let(:hardware)    { FactoryBot.create(:hardware) }
+    let(:workflow)    { described_class.new({}, admin.userid) }
 
-    let(:workflow) { described_class.new({}, admin.userid) }
     before do
       stub_dialog(:get_dialogs)
       workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => src_vm.id)
@@ -163,6 +168,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         workflow.set_on_vm_id_changed
         values = workflow.instance_variable_get(:@values)
         expect(values[:placement_storage_profile]).to be_nil
+      end
+    end
+
+    context "host selection" do
+      context "with a template that has an attached ISO datastore file" do
+        let(:cdrom)    { FactoryBot.create(:disk, :device_name => "CD/DVD drive 1", :device_type => "cdrom-image", :location => "0:0", :storage => ds1) }
+        let(:hardware) { FactoryBot.create(:hardware, :disks => [cdrom]) }
+
+        it "only returns hosts that have that datastore mounted" do
+          expect(workflow.allowed_hosts.pluck(:id)).to eq([host1.id])
+        end
       end
     end
 
