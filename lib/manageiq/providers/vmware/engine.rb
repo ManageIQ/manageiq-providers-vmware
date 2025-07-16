@@ -4,7 +4,7 @@ module ManageIQ
       class Engine < ::Rails::Engine
         isolate_namespace ManageIQ::Providers::Vmware
 
-        config.autoload_paths << root.join('lib').to_s
+        config.autoload_paths << root.join('lib')
 
         def self.vmdb_plugin?
           true
