@@ -3,16 +3,13 @@ FactoryBot.define do
     zone { EvmSpecHelper.local_miq_server.zone }
 
     after(:build) do |ems|
-      ems.hostname = Rails.application.secrets.vmware_cloud[:host]
+      ems.hostname = VcrSecrets.vmware_cloud.host
     end
 
     after(:create) do |ems|
-      userid   = Rails.application.secrets.vmware_cloud[:userid]
-      password = Rails.application.secrets.vmware_cloud[:password]
-
       cred = {
-        :userid   => userid,
-        :password => password
+        :userid   => VcrSecrets.vmware_cloud.userid,
+        :password => VcrSecrets.vmware_cloud.password
       }
 
       ems.authentications << FactoryBot.create(:authentication, cred)
@@ -30,19 +27,16 @@ FactoryBot.define do
 
   factory :ems_vmware_tanzu_with_vcr_authentication, :parent => :ems_vmware_tanzu do
     after(:create) do |ems|
-      userid   = Rails.application.secrets.vmware_tanzu[:userid]
-      password = Rails.application.secrets.vmware_tanzu[:password]
-
       ems.default_endpoint.update!(
-        :hostname   => Rails.application.secrets.vmware_tanzu[:hostname],
+        :hostname   => VcrSecrets.vmware_tanzu.hostname,
         :verify_ssl => OpenSSL::SSL::VERIFY_NONE
       )
 
       ems.authentications << FactoryBot.create(
         :authentication,
         :authtype => "default",
-        :userid   => userid,
-        :password => password
+        :userid   => VcrSecrets.vmware_tanzu.userid,
+        :password => VcrSecrets.vmware_tanzu.password
       )
     end
   end
