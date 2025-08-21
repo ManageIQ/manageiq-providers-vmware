@@ -22,6 +22,8 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
 
     spec = VimHash.new("CustomizationSpec") if spec.nil?
 
+    spec.encryptionKey = encryption_key if encrypt_passwords?
+
     # Create customization spec based on platform
     case source.platform
     when 'linux', 'windows'
@@ -217,6 +219,16 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
       _log.warn("Failed to load customization spec [#{cs.name}]: #{err}")
       nil
     end
+  end
+
+  def encryption_key
+    @encryption_key ||= source.ext_management_system.with_provider_connection do |vim|
+      vim.getVimCustomizationSpecManager&.encryptionKey&.map(&:to_i)
+    end
+  end
+
+  def encrypt_passwords?
+    !!get_option(:sysprep_encrypt_passwords)
   end
 
   def find_build_spec_path(spec, end_type, *path)
