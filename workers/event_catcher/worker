@@ -5,12 +5,12 @@ require "bundler/inline"
 gemfile(false) do
   source "https://rubygems.org"
 
-  gem "manageiq-loggers", "~>1.0"
-  gem "manageiq-messaging", "~> 1.0"
-  gem "rbvmomi2", "~> 3.3"
+  gem "manageiq-loggers", "~>1.2"
+  gem "manageiq-messaging", "~> 2.0"
+  gem "rbvmomi2", "~>3.8"
   if ENV.fetch("APPLIANCE", nil)
-    gem "sd_notify"
-    gem "systemd-journal"
+    gem "sd_notify", "~>0.1.0"
+    gem "systemd-journal", "~>1.4.2"
   end
   gem "json"
 end
