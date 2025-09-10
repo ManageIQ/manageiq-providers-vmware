@@ -1,4 +1,5 @@
 class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::Providers::InfraManager::ProvisionWorkflow
+  include CloudInitTemplateMixin
   include DialogFieldValidation
 
   def self.default_dialog_file
@@ -15,6 +16,13 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
 
   def supports_pxe?
     get_value(@values[:provision_type]).to_s == 'pxe'
+  end
+
+  def supports_cloud_init?
+    ems_id = get_value(values[:src_ems_id])
+    ems = ExtManagementSystem.find(ems_id) if ems_id
+
+    ems&.api_version && Gem::Version.new(ems&.api_version) >= Gem::Version.new('7.0.3')
   end
 
   def dialog_name_from_automate(message = 'get_dialog_name')
@@ -171,6 +179,12 @@ class ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow < ManageIQ::P
       unless (ems = load_ar_obj(src[:ems])).nil?
         ems.storage_profiles.each_with_object({}) { |s, m| m[s.id] = s.name }
       end
+  end
+
+  def allowed_customization_templates(options = {})
+    return [] unless supports_cloud_init?
+
+    allowed_cloud_init_customization_templates(options)
   end
 
   def set_on_vm_id_changed
