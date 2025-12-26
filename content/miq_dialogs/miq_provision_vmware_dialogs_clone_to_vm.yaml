@@ -240,6 +240,14 @@
           :display: :edit
           :default: false
           :data_type: :boolean
+        :customization_template_id:
+          :values_from:
+            :method: :allowed_customization_templates
+          :auto_select_single: false
+          :description: Script Name
+          :required: false
+          :display: :edit
+          :data_type: :integer
         :addr_mode:
           :values:
             static: Static
