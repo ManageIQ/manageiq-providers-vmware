@@ -147,6 +147,73 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
     end
 
+    context '#supports_cloud_init?' do
+      let(:ems) { FactoryBot.create(:ems_vmware_with_authentication, :api_version => api_version) }
+      let(:template) { FactoryBot.create(:template_vmware, :ext_management_system => ems) }
+      before do
+        workflow.instance_variable_set(:@values, :src_vm_id => template.id, :src_ems_id => ems.id)
+      end
+
+      context "with a 7.0.0 vcenter" do
+        let(:api_version) { "7.0.0" }
+
+        it "returns not supported" do
+          expect(workflow.supports_cloud_init?).to be_falsey
+        end
+      end
+
+      context "with a 7.0.3 vcenter" do
+        let(:api_version) { "7.0.3" }
+
+        it "returns supported" do
+          expect(workflow.supports_cloud_init?).to be_truthy
+        end
+      end
+    end
+
+    context '#allowed_customization_templates' do
+      let(:ems) { FactoryBot.create(:ems_vmware_with_authentication, :api_version => api_version) }
+      let(:template) { FactoryBot.create(:template_vmware, :ext_management_system => ems) }
+      before do
+        workflow.instance_variable_set(:@values, :src_vm_id => template.id, :src_ems_id => ems.id)
+      end
+
+      context "with a 7.0.0 vcenter" do
+        let(:api_version) { "7.0.0" }
+
+        it "returns an empty array" do
+          expect(workflow.allowed_customization_templates).to be_empty
+        end
+      end
+
+      context "with a 7.0.3 vcenter" do
+        let(:api_version) { "7.0.3" }
+
+        context "with no cloud-init customizaion templates" do
+          let!(:kickstart_template) { FactoryBot.create(:customization_template_kickstart) }
+
+          it "returns an empty array" do
+            expect(workflow.allowed_customization_templates).to be_empty
+          end
+        end
+
+        context "with a cloud-init customization template" do
+          let!(:cloud_init_template) { FactoryBot.create(:customization_template_cloud_init) }
+
+          it "returns an the template" do
+            expect(workflow.allowed_customization_templates.count).to eq(1)
+
+            template = workflow.allowed_customization_templates.first
+            expect(template).to have_attributes(
+              :evm_object_class => :CustomizationTemplate,
+              :id               => cloud_init_template.id,
+              :name             => cloud_init_template.name
+            )
+          end
+        end
+      end
+    end
+
     context '#set_on_vm_id_changed' do
       before(:each) do
         workflow.instance_variable_set(:@filters, :Host => {21 => "ESX 6.0"}, :StorageProfile => {1 => "Tag 1"})
