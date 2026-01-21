@@ -155,50 +155,50 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
-  context "#validate_remote_console_vmrc_support" do
+  context "#supports?(:vmrc_console)" do
     before(:each) do
       @ems = FactoryBot.create(:ems_vmware)
     end
 
     it "raise for missing/blank values" do
       @ems.update(:api_version => "", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect { @ems.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      expect(@ems.supports?(:vmrc_console)).to be_falsey
     end
   end
 
-  context "#remote_console_vmrc_support_known?" do
+  context "#supports?(:vmrc_console)" do
     before(:each) do
-      @ems = FactoryBot.create(:ems_vmware)
+      @ems = FactoryBot.create(:ems_vmware_with_authentication, :authtype => 'console')
     end
 
     it "true with nothing missing/blank" do
       @ems.update(:api_version => "5.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect(@ems.remote_console_vmrc_support_known?).to be_truthy
+      expect(@ems.supports?(:vmrc_console)).to be_truthy
     end
 
     it "false for blank hostname" do
       @ems.update(:hostname => "", :api_version => "5.0", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
+      expect(@ems.supports?(:vmrc_console)).not_to be_truthy
     end
 
     it "false for missing api_version" do
       @ems.update(:api_version => nil, :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
+      expect(@ems.supports?(:vmrc_console)).not_to be_truthy
     end
 
     it "false for blank api_version" do
       @ems.update(:api_version => "", :uid_ems => "2E1C1E82-BD83-4E54-9271-630C6DFAD4D1")
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
+      expect(@ems.supports?(:vmrc_console)).not_to be_truthy
     end
 
     it "false for missing uid_ems" do
       @ems.update(:api_version => "5.0", :uid_ems => nil)
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
+      expect(@ems.supports?(:vmrc_console)).not_to be_truthy
     end
 
     it "false for blank uid_ems" do
       @ems.update(:api_version => "5.0", :uid_ems => "")
-      expect(@ems.remote_console_vmrc_support_known?).not_to be_truthy
+      expect(@ems.supports?(:vmrc_console)).not_to be_truthy
     end
   end
 

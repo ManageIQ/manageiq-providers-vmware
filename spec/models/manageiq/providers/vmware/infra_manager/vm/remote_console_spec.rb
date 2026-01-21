@@ -126,25 +126,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     end
   end
 
-  context '#validate_remote_console_webmks_support' do
+  context '#supports?(:webmks_console)' do
     before do
       ems.authentications << FactoryBot.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
     end
 
     it 'normal case' do
       ems.update_attribute(:api_version, '6.0')
-      expect(vm.validate_remote_console_webmks_support).to be_truthy
+      expect(vm.supports?(:webmks_console)).to be_truthy
     end
 
     it 'with vm with no ems' do
-      vm.ext_management_system = nil
-      vm.save!
-      expect { vm.validate_remote_console_webmks_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      vm.update!(:ext_management_system => nil)
+      expect(vm.supports?(:webmks_console)).to be_falsey
     end
 
     it 'with vm off' do
-      vm.update_attribute(:raw_power_state, 'poweredOff')
-      expect { vm.validate_remote_console_webmks_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      vm.update(:raw_power_state => 'poweredOff')
+      expect(vm.supports?(:webmks_console)).to be_falsey
     end
   end
 
@@ -180,24 +179,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::Vm::RemoteConsole do
     end
   end
 
-  context '#validate_remote_console_vmrc_support' do
+  context '#supports?(:vmrc_console)' do
     before do
       ems.authentications << FactoryBot.create(:authentication, :authtype => :console, :userid => "root", :password => "vmware")
     end
 
     it 'normal case' do
-      expect(vm.validate_remote_console_vmrc_support).to be_truthy
+      expect(vm.supports?(:vmrc_console)).to be_truthy
     end
 
     it 'with vm with no ems' do
       vm.ext_management_system = nil
       vm.save!
-      expect { vm.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      expect(vm.supports?(:vmrc_console)).to be_falsey
     end
 
     it 'with vm off' do
       vm.update_attribute(:raw_power_state, 'poweredOff')
-      expect { vm.validate_remote_console_vmrc_support }.to raise_error MiqException::RemoteConsoleNotSupportedError
+      expect(vm.supports?(:vmrc_console)).to be_falsey
     end
   end
 
