@@ -15,6 +15,12 @@ RSpec.configure do |config|
 end
 
 VCR.configure do |config|
+  # Allow connections to a local vcsim
+  config.ignore_request do |req|
+    uri = URI(req.uri)
+    uri.host == "localhost" && uri.port = 8989
+  end
+
   config.ignore_hosts 'codeclimate.com' if ENV['CI']
   config.cassette_library_dir = File.join(ManageIQ::Providers::Vmware::Engine.root, 'spec/vcr_cassettes')
 
