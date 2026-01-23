@@ -5,7 +5,8 @@ module ManageIQ
   module Providers
     module Vmware
       def self.seed
-        MiqServer.my_server.update!(:has_vix_disk_lib => vix_disk_lib_installed?)
+        MiqServer.my_server.capabilities["vix_disk_lib"] = vix_disk_lib_installed?
+        MiqServer.my_server.save!
       end
 
       def self.vix_disk_lib_installed?
