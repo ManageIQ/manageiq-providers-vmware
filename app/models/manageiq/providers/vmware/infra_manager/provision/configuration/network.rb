@@ -39,23 +39,87 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
   end
 
   def build_config_spec_vlan(network, vnicDev, vmcs)
-    operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
-    add_device_config_spec(vmcs, operation) do |vdcs|
-      vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
+    target_type = network[:devicetype]
+    is_e1000_target = ['VirtualE1000', 'VirtualE1000e'].include?(target_type.to_s)
 
-      _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
+    # e1000-specific handling is needed in vSphere 8 due to strict schema validation enforcement.
+    # 'uptCompatibilityEnabled' is a valid property for VMXNET3 but INVALID for e1000/e1000e.
+    # When cloning a VMXNET3 template to an e1000 VM, the standard 'Edit' operation inherits this property
+    # from the source, causing an "Invalid configuration for device '0'" error.
+    #
+    # Technically, uptCompatibilityEnabled existing with a 'false' value would not break things in the current
+    # version of the vSphere API. However, due to the VirtualE1000 schema not containing uptCompatibilityEnabled,
+    # we should prevent it for all e1000 target NICs.
+    #
+    # We cannot simply 'edit' the device because vCenter persists uptCompatibilityEnabled (even after attempting to delete the key prior).
+    # We must explicitly REMOVE the old VMXNET3 device and ADD a fresh e1000 device.
+    upt_enabled_in_source = false
+    if vnicDev
+      if vnicDev.respond_to?(:uptCompatibilityEnabled)
+        upt_enabled_in_source = true
+      elsif vnicDev.kind_of?(Hash) && (vnicDev.key?('uptCompatibilityEnabled') || vnicDev.key?(:uptCompatibilityEnabled))
+        upt_enabled_in_source = true
+      end
+    end
 
-      vdcs.device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |vecnbi|
-        vecnbi.deviceName = network[:network]
+    if is_e1000_target && upt_enabled_in_source
+      _log.info("[NIC-FIX] DETECTED UPT_COMPATIBILITY_ENABLED INHERITANCE FOR VMXNET3 -> #{target_type}. Switching to REMOVE + ADD strategy.")
+
+      # REMOVE the old device
+      add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
+        vdcs.device = vnicDev
       end
 
-      #
-      # Manually assign MAC address to target VM.
-      #
-      mac_addr = network[:mac_address]
-      unless mac_addr.blank?
-        vdcs.device.macAddress = mac_addr
-        vdcs.device.addressType = 'Manual'
+      # ADD the new device (fresh object to ensure no uptCompatibilityEnabled key)
+      add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
+        vdcs.device = VimHash.new(target_type) do |dev|
+          dev.key = -1 # tells vCenter to create a new device
+
+          dev.deviceInfo = VimHash.new('Description') do |info|
+            info.label = vnicDev['deviceInfo']['label'] rescue "Network Adapter"
+            info.summary = "Network Adapter"
+          end
+
+          # standard connectivity settings
+          dev.connectable = vnicDev['connectable'] rescue vnicDev.connectable
+          dev.wakeOnLanEnabled = vnicDev['wakeOnLanEnabled'] rescue vnicDev.wakeOnLanEnabled
+
+          # IMPT: preserve MAC address
+          dev.macAddress = vnicDev['macAddress'] rescue vnicDev.macAddress
+          dev.addressType = vnicDev['addressType'] rescue vnicDev.addressType
+
+          ext_id = vnicDev['externalId'] rescue (vnicDev.externalId rescue nil)
+          if ext_id
+            dev.externalId = ext_id
+          end
+        end
+
+        # Apply Backing
+        set_backing_standard(vdcs.device, network)
+      end
+
+    else
+      # STANDARD PATH
+      # Used for:
+      # 1. New NICs (Add)
+      # 2. Same-driver updates (VMXNET3->VMXNET3 or E1000->E1000)
+      # 3. E1000->VMXNET3 (Safe because VMXNET3 supports the properties E1000 lacks)
+      operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
+      add_device_config_spec(vmcs, operation) do |vdcs|
+        vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
+
+        _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
+
+        set_backing_standard(vdcs.device, network)
+
+        #
+        # Manually assign MAC address to target VM.
+        #
+        mac_addr = network[:mac_address]
+        unless mac_addr.blank?
+          vdcs.device.macAddress = mac_addr
+          vdcs.device.addressType = 'Manual'
+        end
       end
     end
   end
@@ -69,37 +133,86 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
     raise MiqException::MiqProvisionError, "Port group [#{network[:network]}] is not available on target" if lan.nil?
     _log.info("portgroupName: #{lan.name}, portgroupKey: #{lan.uid_ems}, switchUuid: #{lan.switch.switch_uuid}")
 
-    operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
-    add_device_config_spec(vmcs, operation) do |vdcs|
-      vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
-      _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
+    target_type = network[:devicetype]
+    is_e1000_target = ['VirtualE1000', 'VirtualE1000e'].include?(target_type.to_s)
 
-      #
-      # Change the port group of the target VM.
-      #
+    # e1000-specific handling is needed in vSphere 8 due to strict schema validation enforcement.
+    # 'uptCompatibilityEnabled' is a valid property for VMXNET3 but INVALID for e1000/e1000e.
+    # When cloning a VMXNET3 template to an e1000 VM, the standard 'Edit' operation inherits this property
+    # from the source, causing an "Invalid configuration for device '0'" error.
+    #
+    # Technically, uptCompatibilityEnabled existing with a 'false' value would not break things in the current
+    # version of the vSphere API. However, due to the VirtualE1000 schema not containing uptCompatibilityEnabled,
+    # we should prevent it for all e1000 target NICs.
+    #
+    # We cannot simply 'edit' the device because vCenter persists uptCompatibilityEnabled (even after attempting to delete the key prior).
+    # We must explicitly REMOVE the old VMXNET3 device and ADD a fresh e1000 device.
+    upt_enabled_in_source = false
+    if vnicDev
+      if vnicDev.respond_to?(:uptCompatibilityEnabled)
+        upt_enabled_in_source = true
+      elsif vnicDev.kind_of?(Hash) && (vnicDev.key?('uptCompatibilityEnabled') || vnicDev.key?(:uptCompatibilityEnabled))
+        upt_enabled_in_source = true
+      end
+    end
 
-      vdcs.device.backing =
-        if network[:is_dvs]
-          VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
-            vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
-              dvspc.switchUuid   = lan.switch.switch_uuid
-              dvspc.portgroupKey = lan.uid_ems
-            end
+    if is_e1000_target && upt_enabled_in_source
+      _log.info("[NIC-FIX] DETECTED UPT_COMPATIBILITY_ENABLED INHERITANCE FOR VMXNET3 -> #{target_type}. Switching to REMOVE + ADD strategy.")
+
+      # REMOVE the old device
+      add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Remove) do |vdcs|
+        vdcs.device = vnicDev
+      end
+
+      # ADD the new device (fresh object to ensure no uptCompatibilityEnabled key)
+      add_device_config_spec(vmcs, VirtualDeviceConfigSpecOperation::Add) do |vdcs|
+        vdcs.device = VimHash.new(target_type) do |dev|
+          dev.key = -1 # New Device
+
+          dev.deviceInfo = VimHash.new('Description') do |info|
+            info.label = vnicDev['deviceInfo']['label'] rescue "Network Adapter"
+            info.summary = "Network Adapter"
           end
-        else
-          VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |vecdvpbi|
-            vecdvpbi.opaqueNetworkId = lan.uid_ems
-            vecdvpbi.opaqueNetworkType = 'nsx.LogicalSwitch'
+
+          # standard connectivity settings
+          dev.connectable = vnicDev['connectable'] rescue vnicDev.connectable
+          dev.wakeOnLanEnabled = vnicDev['wakeOnLanEnabled'] rescue vnicDev.wakeOnLanEnabled
+
+          # IMPT: preserve MAC address
+          dev.macAddress = vnicDev['macAddress'] rescue vnicDev.macAddress
+          dev.addressType = vnicDev['addressType'] rescue vnicDev.addressType
+
+          ext_id = vnicDev['externalId'] rescue (vnicDev.externalId rescue nil)
+          if ext_id
+            dev.externalId = ext_id
           end
         end
 
-      #
-      # Manually assign MAC address to target VM.
-      #
-      mac_addr = network[:mac_address]
-      unless mac_addr.blank?
-        vdcs.device.macAddress = mac_addr
-        vdcs.device.addressType = 'Manual'
+        # Apply Backing
+        set_backing_advanced(vdcs.device, network, lan)
+      end
+
+    else
+      # STANDARD PATH
+      # Used for:
+      # 1. New NICs (Add)
+      # 2. Same-driver updates (VMXNET3->VMXNET3 or E1000->E1000)
+      # 3. E1000->VMXNET3 (Safe because VMXNET3 supports the properties E1000 lacks)
+      operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
+      add_device_config_spec(vmcs, operation) do |vdcs|
+        vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
+        _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
+
+        set_backing_advanced(vdcs.device, network, lan)
+
+        #
+        # Manually assign MAC address to target VM.
+        #
+        mac_addr = network[:mac_address]
+        unless mac_addr.blank?
+          vdcs.device.macAddress = mac_addr
+          vdcs.device.addressType = 'Manual'
+        end
       end
     end
   end
@@ -195,5 +308,32 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
   private def convert_network_hash_to_vlan_options
     net = options[:networks].first
     options[:vlan] = [net[:is_dvs] == true ? "dvs_#{net[:network]}" : net[:network], net[:network]]
+  end
+
+  # helper for build_config_spec_vlan dup logic
+  private def set_backing_standard(device, network)
+    device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |info|
+      info.deviceName = network[:network]
+    end
+  end
+
+  # helper for build_config_spec_advanced_lan dup logic
+  private def set_backing_advanced(device, network, lan)
+    #
+    # Change the port group of the target VM.
+    #
+    device.backing = if network[:is_dvs]
+      VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |info|
+        info.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |conn|
+          conn.switchUuid   = lan.switch.switch_uuid
+          conn.portgroupKey = lan.uid_ems
+        end
+      end
+    else
+      VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |info|
+        info.opaqueNetworkId = lan.uid_ems
+        info.opaqueNetworkType = 'nsx.LogicalSwitch'
+      end
+    end
   end
 end
