@@ -105,6 +105,56 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
         expect { @vm_prov.build_config_network_adapters(vmcs) }.not_to raise_error
       end
 
+      context "with a distributed virtual lan" do
+        let(:dvs)   { FactoryBot.create(:switch_distributed_vmware, :switch_uuid => SecureRandom.uuid) }
+        let(:dvlan) { FactoryBot.create(:lan, :switch => dvs, :name => "dvProd", :uid_ems => SecureRandom.uuid) }
+
+        it "should replace network card backing" do
+          requested_network = {:network => "dvProd", :is_dvs => true, :devicetype => "VirtualE1000"}
+          template_network  = VimHash.new("VirtualVmxnet3") do |vnic|
+            vnic.backing    = VimHash.new("VirtualEthernetCardNetworkBackingInfo") do |backing|
+              backing.network = "Prod"
+            end
+          end
+
+          allow(@vm_prov).to receive(:normalize_network_adapter_settings).and_return([requested_network])
+          allow(@vm_prov).to receive(:get_network_adapters).and_return([template_network])
+          allow(@vm_prov).to receive(:find_lan_by_name).and_return(dvlan)
+
+          vmcs = VimHash.new("VirtualMachineConfigSpec")
+          @vm_prov.build_config_network_adapters(vmcs)
+
+          vnic = vmcs["deviceChange"][0]["device"]
+          expect(vnic["backing"].xsiType).to eq("VirtualEthernetCardDistributedVirtualPortBackingInfo")
+          expect(vnic["backing"]["port"]).to include("switchUuid" => dvs.switch_uuid, "portgroupKey" => dvlan.uid_ems)
+        end
+      end
+
+      context "with an nsx-t lan" do
+        let(:dvs)   { FactoryBot.create(:switch_distributed_vmware, :switch_uuid => SecureRandom.uuid) }
+        let(:dvlan) { FactoryBot.create(:lan, :switch => dvs, :name => "dvProd", :uid_ems => SecureRandom.uuid) }
+
+        it "should replace network card backing" do
+          requested_network = {:network => "dvProd", :is_opaque => true, :devicetype => "VirtualE1000"}
+          template_network  = VimHash.new("VirtualVmxnet3") do |vnic|
+            vnic.backing    = VimHash.new("VirtualEthernetCardNetworkBackingInfo") do |backing|
+              backing.network = "Prod"
+            end
+          end
+
+          allow(@vm_prov).to receive(:normalize_network_adapter_settings).and_return([requested_network])
+          allow(@vm_prov).to receive(:get_network_adapters).and_return([template_network])
+          allow(@vm_prov).to receive(:find_lan_by_name).and_return(dvlan)
+
+          vmcs = VimHash.new("VirtualMachineConfigSpec")
+          @vm_prov.build_config_network_adapters(vmcs)
+
+          vnic = vmcs["deviceChange"][0]["device"]
+          expect(vnic["backing"].xsiType).to eq("VirtualEthernetCardOpaqueNetworkBackingInfo")
+          expect(vnic["backing"]).to include("opaqueNetworkType" => "nsx.LogicalSwitch", "opaqueNetworkId" => dvlan.uid_ems)
+        end
+      end
+
       it "should replace network card backing" do
         requested_network = {:network => "Prod", :devicetype => "VirtualE1000"}
         template_network  = VimHash.new("VirtualVmxnet3") do |vnic|

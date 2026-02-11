@@ -11,11 +11,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
       requested_networks.each_with_index do |net, idx|
         vim_net_adapter = template_networks[idx]
 
-        if net[:is_dvs] || net[:is_opaque]
-          build_config_spec_advanced_lan(net, vim_net_adapter, vmcs)
-        else
-          build_config_spec_vlan(net, vim_net_adapter, vmcs)
-        end
+        build_config_spec_vlan(net, vim_net_adapter, vmcs)
       end
 
       # Remove any unneeded template networks
@@ -42,65 +38,51 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
     operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
     add_device_config_spec(vmcs, operation) do |vdcs|
       vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
-
       _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
 
-      vdcs.device.backing = VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |vecnbi|
-        vecnbi.deviceName = network[:network]
-      end
+      vdcs.device.backing = create_vlan_backing(network)
 
       #
       # Manually assign MAC address to target VM.
       #
       mac_addr = network[:mac_address]
-      unless mac_addr.blank?
+      if mac_addr.present?
         vdcs.device.macAddress = mac_addr
         vdcs.device.addressType = 'Manual'
       end
     end
   end
 
-  def build_config_spec_advanced_lan(network, vnicDev, vmcs)
-    # A DistributedVirtualPortgroup name is unique in a datacenter so look for a Lan with this name
-    # on all switches in the cluster
-    hosts = dest_cluster.try(:hosts) || dest_host
-    lan = Lan.find_by(:name => network[:network], :switch_id => HostSwitch.where(:host_id => hosts).pluck(:switch_id))
+  def create_vlan_backing(network)
+    if network[:is_dvs]
+      VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
+        lan = find_lan_by_name(network)
 
-    raise MiqException::MiqProvisionError, "Port group [#{network[:network]}] is not available on target" if lan.nil?
-    _log.info("portgroupName: #{lan.name}, portgroupKey: #{lan.uid_ems}, switchUuid: #{lan.switch.switch_uuid}")
-
-    operation = vnicDev.nil? ? VirtualDeviceConfigSpecOperation::Add : VirtualDeviceConfigSpecOperation::Edit
-    add_device_config_spec(vmcs, operation) do |vdcs|
-      vdcs.device = vnicDev ? edit_vlan_device(network, vnicDev) : create_vlan_device(network)
-      _log.info "Setting target network device to Device Name:<#{network[:network]}>  Device:<#{vdcs.device.inspect}>"
-
-      #
-      # Change the port group of the target VM.
-      #
-
-      vdcs.device.backing =
-        if network[:is_dvs]
-          VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
-            vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
-              dvspc.switchUuid   = lan.switch.switch_uuid
-              dvspc.portgroupKey = lan.uid_ems
-            end
-          end
-        else
-          VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |vecdvpbi|
-            vecdvpbi.opaqueNetworkId = lan.uid_ems
-            vecdvpbi.opaqueNetworkType = 'nsx.LogicalSwitch'
-          end
+        vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
+          dvspc.switchUuid   = lan.switch.switch_uuid
+          dvspc.portgroupKey = lan.uid_ems
         end
-
-      #
-      # Manually assign MAC address to target VM.
-      #
-      mac_addr = network[:mac_address]
-      unless mac_addr.blank?
-        vdcs.device.macAddress = mac_addr
-        vdcs.device.addressType = 'Manual'
       end
+    elsif network[:is_opaque]
+      lan = find_lan_by_name(network)
+
+      VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |vecdvpbi|
+        vecdvpbi.opaqueNetworkId = lan.uid_ems
+        vecdvpbi.opaqueNetworkType = 'nsx.LogicalSwitch'
+      end
+    else
+      VimHash.new('VirtualEthernetCardNetworkBackingInfo') do |vecnbi|
+        vecnbi.deviceName = network[:network]
+      end
+    end
+  end
+
+  def find_lan_by_name(network)
+    hosts = dest_cluster.try(:hosts) || dest_host
+    Lan.find_by(:name => network[:network], :switch_id => HostSwitch.where(:host_id => hosts).pluck(:switch_id)).tap do |lan|
+      raise MiqException::MiqProvisionError, "Port group [#{network[:network]}] is not available on target" if lan.nil?
+
+      _log.info("portgroupName: #{lan.name}, portgroupKey: #{lan.uid_ems}, switchUuid: #{lan.switch.switch_uuid}")
     end
   end
 
