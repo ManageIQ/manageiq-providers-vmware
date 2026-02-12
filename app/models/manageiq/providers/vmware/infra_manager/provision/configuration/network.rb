@@ -56,7 +56,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
   def create_vlan_backing(network)
     if network[:is_dvs]
       VimHash.new('VirtualEthernetCardDistributedVirtualPortBackingInfo') do |vecdvpbi|
-        lan = find_lan_by_name(network)
+        lan = find_lan_by_name!(network)
 
         vecdvpbi.port = VimHash.new('DistributedVirtualSwitchPortConnection') do |dvspc|
           dvspc.switchUuid   = lan.switch.switch_uuid
@@ -64,9 +64,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
         end
       end
     elsif network[:is_opaque]
-      lan = find_lan_by_name(network)
-
       VimHash.new('VirtualEthernetCardOpaqueNetworkBackingInfo') do |vecdvpbi|
+        lan = find_lan_by_name!(network)
+
         vecdvpbi.opaqueNetworkId = lan.uid_ems
         vecdvpbi.opaqueNetworkType = 'nsx.LogicalSwitch'
       end
@@ -77,7 +77,7 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Configuration::Netw
     end
   end
 
-  def find_lan_by_name(network)
+  def find_lan_by_name!(network)
     hosts = dest_cluster.try(:hosts) || dest_host
     Lan.find_by(:name => network[:network], :switch_id => HostSwitch.where(:host_id => hosts).pluck(:switch_id)).tap do |lan|
       raise MiqException::MiqProvisionError, "Port group [#{network[:network]}] is not available on target" if lan.nil?

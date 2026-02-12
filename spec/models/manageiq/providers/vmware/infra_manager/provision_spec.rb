@@ -119,7 +119,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
           allow(@vm_prov).to receive(:normalize_network_adapter_settings).and_return([requested_network])
           allow(@vm_prov).to receive(:get_network_adapters).and_return([template_network])
-          allow(@vm_prov).to receive(:find_lan_by_name).and_return(dvlan)
+          allow(@vm_prov).to receive(:find_lan_by_name!).and_return(dvlan)
 
           vmcs = VimHash.new("VirtualMachineConfigSpec")
           @vm_prov.build_config_network_adapters(vmcs)
@@ -144,7 +144,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::Provision do
 
           allow(@vm_prov).to receive(:normalize_network_adapter_settings).and_return([requested_network])
           allow(@vm_prov).to receive(:get_network_adapters).and_return([template_network])
-          allow(@vm_prov).to receive(:find_lan_by_name).and_return(dvlan)
+          allow(@vm_prov).to receive(:find_lan_by_name!).and_return(dvlan)
 
           vmcs = VimHash.new("VirtualMachineConfigSpec")
           @vm_prov.build_config_network_adapters(vmcs)
