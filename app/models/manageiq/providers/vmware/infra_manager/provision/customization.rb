@@ -23,8 +23,9 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     spec = VimHash.new("CustomizationSpec") if spec.nil?
 
     # Create customization spec based on platform
-    case source.platform
-    when 'linux', 'windows'
+    if customization_template
+      identity = customization_identity_cloud_init(spec)
+    elsif %w[linux windows].include?(source.platform)
       identity = send("customization_identity_#{source.platform}", spec)
       return if identity.nil?
       spec.identity = identity
@@ -103,6 +104,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     identity = find_build_spec_path(spec, 'CustomizationLinuxPrep', 'identity')
     set_spec_option(identity, :domain, :linux_domain_name)
     identity.hostName = customization_hostname
+    identity
+  end
+
+  def customization_identity_cloud_init(spec)
+    identity = find_build_spec_path(spec, "CustomizationCloudinitPrep", "identity")
+    identity.userdata = userdata_payload
     identity
   end
 
@@ -272,5 +279,12 @@ module ManageIQ::Providers::Vmware::InfraManager::Provision::Customization
     else
       _log.info "#{property} was NOT set due to blank values"
     end
+  end
+
+  def userdata_payload
+    return nil unless customization_template
+
+    options = prepare_customization_template_substitution_options
+    customization_template.script_with_substitution(options)
   end
 end
