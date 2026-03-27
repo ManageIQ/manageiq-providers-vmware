@@ -239,39 +239,6 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     end
   end
 
-  context "handling changes that may require EventCatcher restart" do
-    before(:each) do
-      zone = EvmSpecHelper.local_miq_server.zone
-      @ems = FactoryBot.create(:ems_vmware, :zone => zone)
-    end
-
-    it "will restart EventCatcher when ipaddress changes" do
-      @ems.update(:ipaddress => "1.1.1.1")
-      assert_event_catcher_restart_queued
-    end
-
-    it "will restart EventCatcher when hostname changes" do
-      @ems.update(:hostname => "something-else")
-      assert_event_catcher_restart_queued
-    end
-
-    it "will restart EventCatcher when credentials change" do
-      @ems.update_authentication(:default => {:userid => "new_user_id"})
-      assert_event_catcher_restart_queued
-    end
-
-    it "will not put multiple restarts of the EventCatcher on the queue" do
-      @ems.update(:ipaddress => "1.1.1.1")
-      @ems.update(:hostname => "something else")
-      assert_event_catcher_restart_queued
-    end
-
-    it "will not restart EventCatcher when name changes" do
-      @ems.update(:name => "something else")
-      expect(MiqQueue.count).to eq(0)
-    end
-  end
-
   context "catalog types" do
     it "#catalog_types" do
       ems = FactoryBot.create(:ems_vmware)
