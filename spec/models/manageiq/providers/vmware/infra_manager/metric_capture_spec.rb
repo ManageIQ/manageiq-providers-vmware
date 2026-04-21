@@ -48,7 +48,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
   end
 
   describe "#perf_collect_metrics" do
-    let(:vm) { FactoryBot.create(:vm_perf, :ext_management_system => ems, :ems_ref => "vm-1085") }
+    let(:cassette_name) { "#{described_class.name}::#{interval_name}".underscore }
+    let(:vm)            { FactoryBot.create(:vm_perf, :ext_management_system => ems, :ems_ref => "vm-1085") }
     let(:ems) do
       secrets = VcrSecrets.vmware_infra
       FactoryBot.create(:ems_vmware_with_authentication, :hostname => secrets.hostname, :verify_ssl => false, :zone => zone).tap do |ems|
@@ -63,7 +64,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
       it "should have collected counters and values" do
         counters_by_mor, counter_values_by_mor_and_ts = nil, nil
 
-        VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
+        VCR.use_cassette(cassette_name, :match_requests_on => [:body]) do
           counters_by_mor, counter_values_by_mor_and_ts = vm.perf_collect_metrics(interval_name, Time.parse(start_time).utc)
         end
 
@@ -137,8 +138,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
       end
 
       it "should have collected performances" do
-        VCR.use_cassette(described_class.name.underscore, :match_requests_on => [:body]) do
-          vm.perf_capture_realtime(Time.parse(start_time).utc)
+        VCR.use_cassette(cassette_name, :match_requests_on => [:body]) do
+          vm.perf_capture(interval_name, Time.parse(start_time).utc)
         end
 
         # Check Vm record was updated
@@ -173,6 +174,24 @@ describe ManageIQ::Providers::Vmware::InfraManager::MetricsCapture do
             end
           end
         end
+      end
+    end
+
+    context "interval_name=hourly" do
+      let(:interval_name) { "hourly" }
+      let(:start_time)    { "2026-04-21T012:00:00Z" }
+
+      it "should have collected hourly metrics" do
+        VCR.use_cassette(cassette_name, :match_requests_on => [:body]) do
+          vm.perf_capture(interval_name, Time.parse(start_time).utc)
+        end
+
+        expect(vm.reload.last_perf_capture_on).to eq("2026-04-21T14:00:00Z")
+        expect(vm.metric_rollups.count).to eq(5)
+
+        expect(MetricRollup.order(:timestamp).pluck(:cpu_usage_rate_average)).to     match_array([2.42, 2.37, 2.45, 2.395, 2.41])
+        expect(MetricRollup.order(:timestamp).pluck(:cpu_usagemhz_rate_average)).to  match_array([55.0, 54.0, 56.0, 54.5, 55.0])
+        expect(MetricRollup.order(:timestamp).pluck(:mem_usage_absolute_average)).to match_array([0.99, 0.99, 0.99, 0.99, 0.99])
       end
     end
   end
