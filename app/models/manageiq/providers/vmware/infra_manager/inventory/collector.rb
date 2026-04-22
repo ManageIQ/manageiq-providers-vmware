@@ -58,7 +58,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
   def vim_collector
     _log.info("#{log_header} Monitor updates thread started")
 
-    vim = vim_connect
+    vim = ems.vim_connect_rbvmomi
     property_filter = create_property_filter(vim, ems_inventory_filter_spec(vim))
 
     _log.info("#{log_header} Refreshing initial inventory")
@@ -138,38 +138,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     end
 
     return version, updated_objects
-  end
-
-  def vim_connect
-    host = ems.hostname
-    port = ems.port || 443
-    username, password = ems.auth_user_pwd
-
-    insecure = ems.verify_ssl == OpenSSL::SSL::VERIFY_NONE
-    settings = Settings.ems.ems_vmware
-
-    _log.info("#{log_header} Connecting to #{username}@#{host}...")
-
-    vim_opts = {
-      :ns       => 'urn:vim25',
-      :host     => host,
-      :ssl      => true,
-      :insecure => insecure,
-      :ca_cert  => ems.certificate_authority,
-      :path     => '/sdk',
-      :port     => port,
-      :rev      => settings.minimum_supported_version,
-      :debug    => settings.debug_vim_requests
-    }
-
-    require 'rbvmomi'
-    conn = RbVmomi::VIM.new(vim_opts).tap do |vim|
-      vim.rev = vim.serviceContent.about.apiVersion
-      vim.serviceContent.sessionManager.Login(:userName => username, :password => password)
-    end
-
-    _log.info("#{log_header} Connected")
-    conn
   end
 
   def pbm_connect(vim)
