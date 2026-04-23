@@ -93,7 +93,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     end
 
     def version_supported?(api_version)
-      Gem::Version.new(api_version) >= Gem::Version.new('6.0')
+      Gem::Version.new(api_version) >= Gem::Version.new('7.0')
     end
 
     def validate_connection

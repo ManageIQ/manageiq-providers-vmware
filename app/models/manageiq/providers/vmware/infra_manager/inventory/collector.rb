@@ -157,7 +157,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :ca_cert  => ems.certificate_authority,
       :path     => '/sdk',
       :port     => port,
-      :rev      => '6.5',
+      :rev      => '7.0',
       :debug    => Settings.ems.ems_vmware.debug_vim_requests
     }
 

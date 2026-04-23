@@ -45,7 +45,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "vcenter"}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
     let(:current_time)  { Time.now.utc.to_s }
     let(:is_virtual_center) { true }
-    let(:api_version) { '6.5.0' }
+    let(:api_version) { '7.0.0' }
 
     before do
       miq_vim = double("VMwareWebService/MiqVim")
@@ -103,7 +103,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   context "#verify_credentials" do
     let(:ems) { FactoryBot.create(:ems_vmware_with_authentication) }
     let(:current_time) { Time.now.utc.to_s }
-    let(:api_version) { '6.5.0' }
+    let(:api_version) { '7.0.0' }
 
     before do
       miq_vim = double("VMwareWebService/MiqVim")
