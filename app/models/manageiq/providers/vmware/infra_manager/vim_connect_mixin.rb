@@ -57,6 +57,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   end
 
   module ClassMethods
+    MINIMUM_SUPPORTED_VERSION = "7.0".freeze
+
     def raw_connect(options)
       require 'handsoap'
       require 'VMwareWebService/MiqVim'
@@ -79,6 +81,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") if !vim.isVirtualCenter && !Settings.prototype.ems_vmware.allow_direct_hosts
         raise MiqException::Error, _("vCenter version %{version} is unsupported") % {:version => vim.apiVersion} if !version_supported?(vim.apiVersion)
+        if Gem::Version.new(vim.apiVersion) < Gem::Version.new(MINIMUM_SUPPORTED_VERSION)
+          _log.warn("vCenter version [#{vim.apiVersion}] is below the minimum supported version [#{MINIMUM_SUPPORTED_VERSION}]")
+        end
 
         # If the time on the vCenter is very far off from MIQ system time then
         # any comparison of last_refresh_on and VMware TaskInfo.completeTime can be
@@ -93,7 +98,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     end
 
     def version_supported?(api_version)
-      Gem::Version.new(api_version) >= Gem::Version.new('7.0')
+      minimum_version = Settings.ems.ems_vmware.minimum_supported_version || MINIMUM_SUPPORTED_VERSION
+      Gem::Version.new(api_version) >= Gem::Version.new(minimum_version)
     end
 
     def validate_connection

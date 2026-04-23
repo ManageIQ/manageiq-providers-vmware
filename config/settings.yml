@@ -28,6 +28,7 @@
       :historical: 100
       :hourly: 250
       :realtime: 100
+    :minimum_supported_version: "7.0"
   :ems_vmware_cloud:
     :blacklisted_event_names: []
   :ems_vmware_tanzu:
