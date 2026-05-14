@@ -66,6 +66,7 @@ class EventCatcher
       :host     => endpoint["hostname"],
       :port     => endpoint["port"] || 443,
       :insecure => endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
+      :ca_cert  => endpoint["certificate_authority"],
       :path     => '/sdk',
       :rev      => '7.0',
     }
