@@ -42,21 +42,10 @@ describe ManageIQ::Providers::Vmware::InfraManager do
   end
 
   context ".verify_credentials" do
-    let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "vcenter"}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
+    let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "localhost", "port" => 8989}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
     let(:current_time)  { Time.now.utc.to_s }
     let(:is_virtual_center) { true }
     let(:api_version) { '6.5.0' }
-
-    before do
-      miq_vim = double("VMwareWebService/MiqVim")
-      allow(miq_vim).to receive(:isVirtualCenter).and_return(is_virtual_center)
-      allow(miq_vim).to receive(:currentTime).and_return(current_time)
-      allow(miq_vim).to receive(:apiVersion).and_return(api_version)
-      allow(miq_vim).to receive(:disconnect)
-
-      require "VMwareWebService/MiqVim"
-      expect(MiqVim).to receive(:new).and_return(miq_vim)
-    end
 
     context "virtual-center" do
       it "is successful" do
