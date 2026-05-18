@@ -146,6 +146,7 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
     username, password = ems.auth_user_pwd
 
     insecure = ems.verify_ssl == OpenSSL::SSL::VERIFY_NONE
+    settings = Settings.ems.ems_vmware
 
     _log.info("#{log_header} Connecting to #{username}@#{host}...")
 
@@ -157,8 +158,8 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Collector
       :ca_cert  => ems.certificate_authority,
       :path     => '/sdk',
       :port     => port,
-      :rev      => '6.5',
-      :debug    => Settings.ems.ems_vmware.debug_vim_requests
+      :rev      => settings.minimum_supported_version,
+      :debug    => settings.debug_vim_requests
     }
 
     require 'rbvmomi'

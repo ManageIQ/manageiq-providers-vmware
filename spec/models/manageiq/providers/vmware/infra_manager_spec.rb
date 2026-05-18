@@ -45,7 +45,7 @@ describe ManageIQ::Providers::Vmware::InfraManager do
     let(:verify_params) { {"endpoints" => {"default" => {"hostname" => "vcenter"}}, "authentications" => {"default" => {"username" => "root", "password" => "vmware"}}} }
     let(:current_time)  { Time.now.utc.to_s }
     let(:is_virtual_center) { true }
-    let(:api_version) { '6.5.0' }
+    let(:api_version) { '7.0.0' }
 
     before do
       miq_vim = double("VMwareWebService/MiqVim")
@@ -98,12 +98,48 @@ describe ManageIQ::Providers::Vmware::InfraManager do
           .to raise_error(MiqException::Error, "vCenter version #{api_version} is unsupported")
       end
     end
+
+    context "vCenter version below recommended minimum" do
+      let(:api_version) { '6.5.0' }
+
+      before do
+        stub_settings_merge(:ems => {:ems_vmware => {:minimum_supported_version => "6.0"}})
+      end
+
+      it "is successful but logs a warning" do
+        expect(described_class._log).to receive(:warn).with("vCenter version [6.5.0] is below the minimum supported version [7.0]")
+        expect(described_class.verify_credentials(verify_params)).to be_truthy
+      end
+    end
+  end
+
+  describe ".version_supported?" do
+    it "returns true for version equal to minimum_supported_version" do
+      stub_settings_merge(:ems => {:ems_vmware => {:minimum_supported_version => "6.5"}})
+      expect(described_class.version_supported?("6.5.0")).to be_truthy
+    end
+
+    it "returns true for version greater than minimum_supported_version" do
+      stub_settings_merge(:ems => {:ems_vmware => {:minimum_supported_version => "6.5"}})
+      expect(described_class.version_supported?("7.0.0")).to be_truthy
+    end
+
+    it "returns false for version less than minimum_supported_version" do
+      stub_settings_merge(:ems => {:ems_vmware => {:minimum_supported_version => "6.5"}})
+      expect(described_class.version_supported?("6.0.0")).to be_falsey
+    end
+
+    it "uses the configured minimum_supported_version setting" do
+      stub_settings_merge(:ems => {:ems_vmware => {:minimum_supported_version => "7.0"}})
+      expect(described_class.version_supported?("6.5.0")).to be_falsey
+      expect(described_class.version_supported?("7.0.0")).to be_truthy
+    end
   end
 
   context "#verify_credentials" do
     let(:ems) { FactoryBot.create(:ems_vmware_with_authentication) }
     let(:current_time) { Time.now.utc.to_s }
-    let(:api_version) { '6.5.0' }
+    let(:api_version) { '7.0.0' }
 
     before do
       miq_vim = double("VMwareWebService/MiqVim")
