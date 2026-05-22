@@ -96,14 +96,20 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   end
 
   context 'provisioning a VM' do
-    let(:workflow) { described_class.new({}, admin.userid) }
+    let(:ems)         { FactoryBot.create(:ems_vmware).tap { |ems| build_vmware_folder_structure!(ems) } }
+    let(:ds1)         { FactoryBot.create(:storage_vmware, :ems_id => ems.id) }
+    let(:ds2)         { FactoryBot.create(:storage_vmware, :ems_id => ems.id) }
+    let!(:host1)      { FactoryBot.create(:host_vmware, :ems_id => ems.id, :storages => [ds1]).tap { |h| host_folder.add_child(h) } }
+    let!(:host2)      { FactoryBot.create(:host_vmware, :ems_id => ems.id, :storages => [ds2]).tap { |h| host_folder.add_child(h) } }
+    let!(:src_vm)     { FactoryBot.create(:vm_vmware, :host => host1, :ems_id => ems.id, :hardware => hardware).tap { |vm| vm_blue1.add_child(vm) } }
+    let(:vm_blue1)    { ems.ems_folders.find_by(:name => "blue1") }
+    let(:host_folder) { ems.ems_folders.find_by(:name => "host") }
+    let(:hardware)    { FactoryBot.create(:hardware) }
+    let(:workflow)    { described_class.new({}, admin.userid) }
+
     before do
-      @ems    = FactoryBot.create(:ems_vmware)
-      @host1  = FactoryBot.create(:host_vmware, :ems_id => @ems.id)
-      @host2  = FactoryBot.create(:host_vmware, :ems_id => @ems.id)
-      @src_vm = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
       stub_dialog(:get_dialogs)
-      workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => @src_vm.id)
+      workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => src_vm.id)
       workflow.instance_variable_set(:@target_resource, nil)
     end
 
@@ -119,7 +125,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
 
       context 'when storage_profile selection is not set' do
         it 'set storage_profile selection to [nil, nil] if template has no storage_profile' do
-          template = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id)
+          template = FactoryBot.create(:vm_vmware, :host => host1, :ems_id => ems.id)
           workflow.instance_variable_set(:@values, :src_vm_id => template.id, :placement_storage_profile => nil)
           workflow.allowed_storage_profiles
           values = workflow.instance_variable_get(:@values)
@@ -127,7 +133,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         end
 
         it 'set storage_profile selection to that of template if template has one' do
-          template = FactoryBot.create(:vm_vmware, :host => @host1, :ems_id => @ems.id, :storage_profile => profile)
+          template = FactoryBot.create(:vm_vmware, :host => host1, :ems_id => ems.id, :storage_profile => profile)
           workflow.instance_variable_set(:@values, :src_vm_id => template.id, :placement_storage_profile => nil)
           workflow.allowed_storage_profiles
           values = workflow.instance_variable_get(:@values)
@@ -150,8 +156,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
     context '#set_on_vm_id_changed' do
       before(:each) do
         workflow.instance_variable_set(:@filters, :Host => {21 => "ESX 6.0"}, :StorageProfile => {1 => "Tag 1"})
-        workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :placement_storage_profile => [])
-        allow(workflow).to receive(:set_or_default_hardware_field_values).with(@src_vm)
+        workflow.instance_variable_set(:@values, :src_vm_id => src_vm.id, :placement_storage_profile => [])
+        allow(workflow).to receive(:set_or_default_hardware_field_values).with(src_vm)
       end
       it 'clears StorageProfile filter' do
         workflow.set_on_vm_id_changed
@@ -162,6 +168,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
         workflow.set_on_vm_id_changed
         values = workflow.instance_variable_get(:@values)
         expect(values[:placement_storage_profile]).to be_nil
+      end
+    end
+
+    context "host selection" do
+      context "with a template that has an attached ISO datastore file" do
+        let(:cdrom)    { FactoryBot.create(:disk, :device_name => "CD/DVD drive 1", :device_type => "cdrom-image", :location => "0:0", :storage => ds1) }
+        let(:hardware) { FactoryBot.create(:hardware, :disks => [cdrom]) }
+
+        it "only returns hosts that have that datastore mounted" do
+          expect(workflow.allowed_hosts.pluck(:id)).to eq([host1.id])
+        end
       end
     end
 
@@ -185,8 +202,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it '#allowed_vlans' do
-        @host1.switches = [s11, s12, s13]
-        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(@host1)])
+        host1.switches = [s11, s12, s13]
+        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(host1)])
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         lan_keys   = [@lan11.name, @lan13.name, @lan12.name]
         lan_values = [@lan11.name, @lan13.name, @lan12.name]
@@ -195,8 +212,8 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it 'concatenates dvswitches of the same portgroup name' do
-        @host1.switches = [s11, s12, s13, s14, s15]
-        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(@host1)])
+        host1.switches = [s11, s12, s13, s14, s15]
+        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(host1)])
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         lan_keys = [@lan11.name, @lan13.name, @lan12.name, "dvs_#{@lan14.name}"]
         switches = [s14.name, s15.name].sort.join('/')
@@ -206,10 +223,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it 'concatenates dvswitches of the same portgroup name from different hosts' do
-        @host1.switches = [s11, s12, s13, s14, s15]
-        @host2.switches = [s15, s21]
+        host1.switches = [s11, s12, s13, s14, s15]
+        host2.switches = [s15, s21]
         allow(workflow).to receive(:allowed_hosts).with(no_args).and_return(
-          [workflow.host_to_hash_struct(@host1), workflow.host_to_hash_struct(@host2)]
+          [workflow.host_to_hash_struct(host1), workflow.host_to_hash_struct(host2)]
         )
 
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
@@ -221,10 +238,10 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it 'excludes dvs if told so' do
-        @host1.switches = [s11, s12, s13, s14, s15]
-        @host2.switches = [s15, s21]
+        host1.switches = [s11, s12, s13, s14, s15]
+        host2.switches = [s15, s21]
         allow(workflow).to receive(:allowed_hosts).with(no_args).and_return(
-          [workflow.host_to_hash_struct(@host1), workflow.host_to_hash_struct(@host2)]
+          [workflow.host_to_hash_struct(host1), workflow.host_to_hash_struct(host2)]
         )
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => false)
         lan_keys = [@lan11.name, @lan13.name, @lan12.name]
@@ -233,9 +250,9 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it 'concatenates dvswitches of the same portgroup name from different hosts when autoplacement is on' do
-        @host1.switches = [s11, s12, s13, s14, s15]
-        @host2.switches = [s21]
-        workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => @src_vm.id, :placement_auto => true)
+        host1.switches = [s11, s12, s13, s14, s15]
+        host2.switches = [s21]
+        workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => src_vm.id, :placement_auto => true)
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         lan_keys = [@lan11.name, @lan13.name, @lan12.name, "dvs_#{@lan14.name}"]
         switches = [s14.name, s15.name, s21.name].sort.join('/')
@@ -245,17 +262,17 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
       end
 
       it 'returns no vlans when autoplacement is off and no allowed_hosts' do
-        @host1.switches = [s11, s12, s13, s14, s15]
-        @host2.switches = [s21]
-        workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => @src_vm.id, :placement_auto => false)
+        host1.switches = [s11, s12, s13, s14, s15]
+        host2.switches = [s21]
+        workflow.instance_variable_set(:@values, :vm_tags => [], :src_vm_id => src_vm.id, :placement_auto => false)
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
         expect(vlans.keys).to match_array([])
         expect(vlans.values).to match_array([])
       end
 
       it 'Returns both dvportgroup and lan with the same name' do
-        @host1.switches = [s11, s22]
-        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(@host1)])
+        host1.switches = [s11, s22]
+        allow(workflow).to receive(:allowed_hosts).with(no_args).and_return([workflow.host_to_hash_struct(host1)])
         vlans, _hosts = workflow.allowed_vlans(:vlans => true, :dvs => true)
 
         lan_keys   = [@lan11.name, "dvs_#{@lan22.name}"]
@@ -266,29 +283,29 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
 
       context '#allowed_hosts_obj' do
         before do
-          allow(workflow).to receive(:find_all_ems_of_type).and_return([@host1, @host2])
+          allow(workflow).to receive(:find_all_ems_of_type).and_return([host1, host2])
           allow(Rbac).to receive(:search) do |hash|
             [Array.wrap(hash[:targets])]
           end
         end
 
         it 'finds all hosts with no selected network' do
-          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id)
-          expect(workflow.allowed_hosts_obj).to match_array([@host1, @host2])
+          workflow.instance_variable_set(:@values, :src_vm_id => src_vm.id)
+          expect(workflow.allowed_hosts_obj).to match_array([host1, host2])
         end
 
         it 'finds only the hosts that can access the selected vSwitch network' do
-          @host1.switches = [s11]
-          @host2.switches = [s22]
-          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :vlan => [@lan11.name, @lan11.name])
-          expect(workflow.allowed_hosts_obj).to match_array([@host1])
+          host1.switches = [s11]
+          host2.switches = [s22]
+          workflow.instance_variable_set(:@values, :src_vm_id => src_vm.id, :vlan => [@lan11.name, @lan11.name])
+          expect(workflow.allowed_hosts_obj).to match_array([host1])
         end
 
         it 'finds only the hosts that can access the selected dvSwitch network' do
-          @host1.switches = [s11]
-          @host2.switches = [s22]
-          workflow.instance_variable_set(:@values, :src_vm_id => @src_vm.id, :vlan => ["dvs_#{@lan22.name}", @lan22.name])
-          expect(workflow.allowed_hosts_obj).to match_array([@host2])
+          host1.switches = [s11]
+          host2.switches = [s22]
+          workflow.instance_variable_set(:@values, :src_vm_id => src_vm.id, :vlan => ["dvs_#{@lan22.name}", @lan22.name])
+          expect(workflow.allowed_hosts_obj).to match_array([host2])
           expect(workflow.instance_variable_get(:@values)[:vlan]).to match_array(["dvs_#{@lan22.name}", @lan22.name])
         end
       end
