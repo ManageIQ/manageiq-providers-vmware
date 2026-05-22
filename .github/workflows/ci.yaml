@@ -30,6 +30,10 @@ jobs:
         options: "--health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries 5"
         ports:
         - 5432:5432
+      vcsim:
+        image: vmware/vcsim
+        ports:
+        - 8989:8989
     env:
       PGHOST: localhost
       PGPASSWORD: smartvm
