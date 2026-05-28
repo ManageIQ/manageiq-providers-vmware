@@ -135,7 +135,7 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
     def validate_connection
       yield
-    rescue SocketError, Errno::EHOSTUNREACH, Errno::ENETUNREACH
+    rescue SocketError, Errno::EHOSTUNREACH, Errno::ENETUNREACH, OpenSSL::SSL::SSLError
       _log.warn($!.inspect)
       raise MiqException::MiqUnreachableError, $!.message
     rescue Handsoap::Fault
