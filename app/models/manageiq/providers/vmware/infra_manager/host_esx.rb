@@ -3,28 +3,46 @@ class ManageIQ::Providers::Vmware::InfraManager::HostEsx < ManageIQ::Providers::
   supports :refresh_firewall_rules
   supports :refresh_logs
   supports :start do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not in standby")                      unless power_state == "standby"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not in standby") unless power_state == "standby"
+    end
   end
   supports :reboot do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not running")                         unless power_state == "on"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not running") unless power_state == "on"
+    end
   end
   supports :shutdown do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not running")                         unless power_state == "on"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not running") unless power_state == "on"
+    end
   end
   supports :standby do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not running")                         unless power_state == "on"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not running") unless power_state == "on"
+    end
   end
   supports :enter_maint_mode do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not running")                         unless power_state == "on"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not running") unless power_state == "on"
+    end
   end
   supports :exit_maint_mode do
-    return _("The Host is not connected to an active Provider") unless has_active_ems?
-    return _("The host is not in maintenance mode")             unless power_state == "maintenance"
+    if !has_active_ems?
+      _("The Host is not connected to an active Provider")
+    else
+      _("The host is not in maintenance mode") unless power_state == "maintenance"
+    end
   end
   supports :enable_vmotion do
     validate_active_with_power_state
