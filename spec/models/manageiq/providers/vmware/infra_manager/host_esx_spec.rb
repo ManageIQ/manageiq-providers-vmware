@@ -1,7 +1,9 @@
 describe ManageIQ::Providers::Vmware::InfraManager::HostEsx do
-  let(:ems)  { FactoryBot.create(:ems_vmware_with_authentication) }
-  let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems) }
+  include Spec::Support::SupportsHelper
 
+  let(:ems)          { FactoryBot.create(:ems_vmware_with_authentication) }
+  let(:host)         { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems, :power_state => power_state) }
+  let(:power_state)  { "on" }
   let(:miq_vim)      { double("VMwareWebService/MiqVim") }
   let(:miq_vim_host) { MiqVimHost.new(miq_vim, "summary" => {"config" => {}}) }
 
@@ -12,6 +14,277 @@ describe ManageIQ::Providers::Vmware::InfraManager::HostEsx do
     allow(miq_vim).to receive(:sic)
     allow(miq_vim).to receive(:about).and_return("apiType" => "VirtualCenter")
     allow(miq_vim).to receive(:getVimHostByMor).and_return(miq_vim_host)
+  end
+
+  describe "supports features" do
+    before { EvmSpecHelper.local_miq_server }
+
+    describe ":refresh_advanced_settings" do
+      it "is supported" do
+        expect(host.supports?(:refresh_advanced_settings)).to be_truthy
+      end
+    end
+
+    describe ":refresh_firewall_rules" do
+      it "is supported" do
+        expect(host.supports?(:refresh_firewall_rules)).to be_truthy
+      end
+    end
+
+    describe ":refresh_logs" do
+      it "is supported" do
+        expect(host.supports?(:refresh_logs)).to be_truthy
+      end
+    end
+
+    describe ":start" do
+      context "when host is in standby" do
+        let(:power_state) { "standby" }
+
+        it "is supported" do
+          expect(host.supports?(:start)).to be_truthy
+        end
+      end
+
+      context "when host is on" do
+        let(:power_state) { "on" }
+
+        it "is not supported" do
+          expect(host.supports?(:start)).to be_falsey
+          expect(host.unsupported_reason(:start)).to eq("The host is not in standby")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:start)).to be_falsey
+          expect(host.unsupported_reason(:start)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":reboot" do
+      context "when host is on" do
+        let(:power_state) { "on" }
+
+        it "is supported" do
+          expect(host.supports?(:reboot)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:reboot)).to be_falsey
+          expect(host.unsupported_reason(:reboot)).to eq("The host is not running")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:reboot)).to be_falsey
+          expect(host.unsupported_reason(:reboot)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":shutdown" do
+      context "when host is on" do
+        let(:power_state) { "on" }
+
+        it "is supported" do
+          expect(host.supports?(:shutdown)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:shutdown)).to be_falsey
+          expect(host.unsupported_reason(:shutdown)).to eq("The host is not running")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:shutdown)).to be_falsey
+          expect(host.unsupported_reason(:shutdown)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":standby" do
+      context "when host is on" do
+        let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems, :power_state => "on") }
+
+        it "is supported" do
+          expect(host.supports?(:standby)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => ems, :power_state => "off") }
+
+        it "is not supported" do
+          expect(host.supports?(:standby)).to be_falsey
+          expect(host.unsupported_reason(:standby)).to eq("The host is not running")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:host) { FactoryBot.create(:host_vmware_esx, :ext_management_system => nil, :power_state => "on") }
+
+        it "is not supported" do
+          expect(host.supports?(:standby)).to be_falsey
+          expect(host.unsupported_reason(:standby)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":enter_maint_mode" do
+      context "when host is on" do
+        let(:power_state) { "on" }
+
+        it "is supported" do
+          expect(host.supports?(:enter_maint_mode)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:enter_maint_mode)).to be_falsey
+          expect(host.unsupported_reason(:enter_maint_mode)).to eq("The host is not running")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:enter_maint_mode)).to be_falsey
+          expect(host.unsupported_reason(:enter_maint_mode)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":exit_maint_mode" do
+      context "when host is in maintenance mode" do
+        let(:power_state) { "maintenance" }
+
+        it "is supported" do
+          expect(host.supports?(:exit_maint_mode)).to be_truthy
+        end
+      end
+
+      context "when host is on but not in maintenance mode" do
+        let(:power_state) { "on" }
+
+        it "is not supported" do
+          expect(host.supports?(:exit_maint_mode)).to be_falsey
+          expect(host.unsupported_reason(:exit_maint_mode)).to eq("The host is not in maintenance mode")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:power_state) { "maintenance" }
+        let(:ems)         { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:exit_maint_mode)).to be_falsey
+          expect(host.unsupported_reason(:exit_maint_mode)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":enable_vmotion" do
+      context "when host is on with active provider" do
+        it "is supported" do
+          expect(host.supports?(:enable_vmotion)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:enable_vmotion)).to be_falsey
+          expect(host.unsupported_reason(:enable_vmotion)).to eq("The host is not powered 'on'")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:enable_vmotion)).to be_falsey
+          expect(host.unsupported_reason(:enable_vmotion)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":disable_vmotion" do
+      context "when host is on with active provider" do
+        it "is supported" do
+          expect(host.supports?(:disable_vmotion)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:disable_vmotion)).to be_falsey
+          expect(host.unsupported_reason(:disable_vmotion)).to eq("The host is not powered 'on'")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:disable_vmotion)).to be_falsey
+          expect(host.unsupported_reason(:disable_vmotion)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
+
+    describe ":vmotion_enabled" do
+      context "when host is on with active provider" do
+        let(:power_state) { "on" }
+
+        it "is supported" do
+          expect(host.supports?(:vmotion_enabled)).to be_truthy
+        end
+      end
+
+      context "when host is off" do
+        let(:power_state) { "off" }
+
+        it "is not supported" do
+          expect(host.supports?(:vmotion_enabled)).to be_falsey
+          expect(host.unsupported_reason(:vmotion_enabled)).to eq("The host is not powered 'on'")
+        end
+      end
+
+      context "when host has no active provider" do
+        let(:ems) { nil }
+
+        it "is not supported" do
+          expect(host.supports?(:vmotion_enabled)).to be_falsey
+          expect(host.unsupported_reason(:vmotion_enabled)).to eq("The Host is not connected to an active Provider")
+        end
+      end
+    end
   end
 
   describe "#vim_firewall_rules" do
