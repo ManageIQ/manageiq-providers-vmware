@@ -10,7 +10,7 @@ module ManageIQ::Providers
     supports :create
     supports :label_mapping
     supports :metrics
-    supports :native_console
+    supports :management_console
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
