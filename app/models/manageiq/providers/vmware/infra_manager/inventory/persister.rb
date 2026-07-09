@@ -53,7 +53,6 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Persister < ManageIQ
     end
     add_collection(infra, :vm_parent_blue_folders)
     add_collection(infra, :vm_resource_pools)
-    add_collection(infra, :root_folder_relationship)
     add_collection(infra, :orchestration_templates)
     vms_and_templates_assign_created_on if ::Settings.ems_refresh.capture_vm_created_on_date
   end
