@@ -1,17 +1,13 @@
-require 'parser/current'
+require 'prism'
 
 RSpec.describe "Worker Gemfile Sync" do
   let(:worker_file_path) { ManageIQ::Providers::Vmware::Engine.root.join("workers/event_catcher/worker") }
   let(:gemfile_lock_path) { ManageIQ::Providers::Vmware::Engine.root.join("Gemfile.lock") }
 
   def parse_inline_gemfile(file_path)
-    content = File.read(file_path)
-
-    # Parse the Ruby file into an AST
-    buffer = Parser::Source::Buffer.new(file_path.to_s)
-    buffer.source = content
-    parser = Parser::CurrentRuby.new
-    ast = parser.parse(buffer)
+    # Parse the Ruby file into an AST using Prism
+    result = Prism.parse_file(file_path.to_s)
+    ast = result.value
 
     # Find the gemfile block and extract gem declarations
     gems = {:required => {}, :conditional => {}}
@@ -23,12 +19,24 @@ RSpec.describe "Worker Gemfile Sync" do
   end
 
   def find_gemfile_block(node, gems, in_conditional: false, condition: nil)
-    return unless node.kind_of?(Parser::AST::Node)
+    return unless node.kind_of?(Prism::Node)
 
     # Look for method calls to 'gem'
-    if node.type == :send && node.children[1] == :gem
-      gem_name = node.children[2]&.children&.first
-      gem_version = node.children[3]&.children&.first
+    if node.kind_of?(Prism::CallNode) && node.name == :gem
+      # Extract gem name from first argument
+      gem_name = nil
+      gem_version = nil
+
+      if node.arguments && !node.arguments.arguments.empty?
+        first_arg = node.arguments.arguments[0]
+        gem_name = first_arg.unescaped if first_arg.kind_of?(Prism::StringNode)
+
+        # Extract version from second argument if present
+        if node.arguments.arguments.length > 1
+          second_arg = node.arguments.arguments[1]
+          gem_version = second_arg.unescaped if second_arg.kind_of?(Prism::StringNode)
+        end
+      end
 
       if gem_name
         if in_conditional
@@ -40,24 +48,32 @@ RSpec.describe "Worker Gemfile Sync" do
     end
 
     # Look for conditional blocks (if ENV.fetch(...))
-    if node.type == :if
-      condition_node = node.children[0]
-      # Check if this is an ENV.fetch call
-      if condition_node.type == :send &&
-         condition_node.children[0]&.type == :const &&
-         condition_node.children[0]&.children&.last == :ENV &&
-         condition_node.children[1] == :fetch
+    if node.kind_of?(Prism::IfNode)
+      predicate = node.predicate
 
-        env_var = condition_node.children[2]&.children&.first
-        # Process the then branch (body of the if)
-        then_branch = node.children[1]
-        find_gemfile_block(then_branch, gems, :in_conditional => true, :condition => env_var)
+      # Check if this is an ENV.fetch call
+      if predicate.kind_of?(Prism::CallNode) &&
+         predicate.receiver.kind_of?(Prism::ConstantReadNode) &&
+         predicate.receiver.name == :ENV &&
+         predicate.name == :fetch
+
+        # Extract the environment variable name
+        env_var = nil
+        if predicate.arguments && !predicate.arguments.arguments.empty?
+          first_arg = predicate.arguments.arguments[0]
+          env_var = first_arg.unescaped if first_arg.kind_of?(Prism::StringNode)
+        end
+
+        # Process the then branch (statements of the if)
+        if node.statements
+          find_gemfile_block(node.statements, gems, :in_conditional => true, :condition => env_var)
+        end
         return
       end
     end
 
     # Recursively process child nodes
-    node.children.each do |child|
+    node.compact_child_nodes.each do |child|
       find_gemfile_block(child, gems, :in_conditional => in_conditional, :condition => condition)
     end
   end
