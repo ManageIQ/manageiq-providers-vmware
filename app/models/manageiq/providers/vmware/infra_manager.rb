@@ -11,6 +11,15 @@ module ManageIQ::Providers
     supports :label_mapping
     supports :metrics
     supports :native_console
+    supports :vmrc_console do
+      if api_version.blank? || hostname.blank? || uid_ems.blank?
+        "vCenter needs to be refreshed to determine remote console support."
+      elsif ext_management_system.authentication_type(:console).nil?
+        "remote console requires console credentials"
+      end
+    end
+    supports :webmks_console
+
     supports :provisioning
     supports :smartstate_analysis
     supports :streaming_refresh do
@@ -302,19 +311,6 @@ module ManageIQ::Providers
       end
 
       ticket
-    end
-
-    def remote_console_vmrc_support_known?
-      !api_version.blank? && !hostname.blank? && !uid_ems.blank?
-    end
-
-    def validate_remote_console_vmrc_support
-      raise(MiqException::RemoteConsoleNotSupportedError, "vCenter needs to be refreshed to determine VMRC remote console support.")   unless self.remote_console_vmrc_support_known?
-      true
-    end
-
-    def validate_remote_console_webmks_support
-      true
     end
 
     def after_update_authentication
