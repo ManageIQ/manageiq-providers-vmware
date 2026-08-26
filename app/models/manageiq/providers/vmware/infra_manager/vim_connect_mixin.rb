@@ -38,6 +38,37 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     end
   end
 
+  def vim_connect_rbvmomi(options = {})
+    raise _("no console credentials defined") if options[:auth_type] == :console && !authentication_type(options[:auth_type])
+    raise _("no credentials defined")         if missing_credentials?(options[:auth_type])
+
+    options[:ip]   ||= hostname
+    options[:port] ||= try(:port) || 443
+    options[:user] ||= authentication_userid(options[:auth_type])
+    options[:pass] ||= authentication_password(options[:auth_type])
+
+    options[:verify_ssl]            = try(:verify_ssl)            unless options.key?(:verify_ssl)
+    options[:certificate_authority] = try(:certificate_authority) unless options.key?(:certificate_authority)
+
+    require 'rbvmomi'
+
+    vim_opts = {
+      :ns       => 'urn:vim25',
+      :host     => options[:ip],
+      :ssl      => true,
+      :insecure => options[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE,
+      :ca_cert  => options[:certificate_authority],
+      :path     => '/sdk',
+      :port     => options[:port],
+      :rev      => '6.5'
+    }
+
+    RbVmomi::VIM.new(vim_opts).tap do |vim|
+      vim.rev = vim.serviceContent.about.apiVersion
+      vim.serviceContent.sessionManager.Login(:userName => options[:user], :password => options[:pass])
+    end
+  end
+
   def with_provider_connection(options = {})
     raise _("no block given") unless block_given?
     _log.info("Connecting through #{self.class.name}: [#{name}]")
@@ -57,6 +88,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
   end
 
   module ClassMethods
+    MINIMUM_SUPPORTED_VERSION = "7.0".freeze
+
     def raw_connect(options)
       require 'handsoap'
       require 'VMwareWebService/MiqVim'
@@ -79,6 +112,9 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
 
         raise MiqException::Error, _("Adding ESX/ESXi Hosts is not supported") if !vim.isVirtualCenter && !Settings.prototype.ems_vmware.allow_direct_hosts
         raise MiqException::Error, _("vCenter version %{version} is unsupported") % {:version => vim.apiVersion} if !version_supported?(vim.apiVersion)
+        if Gem::Version.new(vim.apiVersion) < Gem::Version.new(MINIMUM_SUPPORTED_VERSION)
+          _log.warn("vCenter version [#{vim.apiVersion}] is below the minimum supported version [#{MINIMUM_SUPPORTED_VERSION}]")
+        end
 
         # If the time on the vCenter is very far off from MIQ system time then
         # any comparison of last_refresh_on and VMware TaskInfo.completeTime can be
@@ -93,7 +129,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
     end
 
     def version_supported?(api_version)
-      Gem::Version.new(api_version) >= Gem::Version.new('6.0')
+      minimum_version = Settings.ems.ems_vmware.minimum_supported_version || MINIMUM_SUPPORTED_VERSION
+      Gem::Version.new(api_version) >= Gem::Version.new(minimum_version)
     end
 
     def validate_connection

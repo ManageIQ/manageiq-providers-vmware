@@ -167,13 +167,16 @@ class ManageIQ::Providers::Vmware::InfraManager::Inventory::Parser
     # host, network, vm)
     hidden = props[:parent].nil? || props[:parent].kind_of?(RbVmomi::VIM::Datacenter)
 
+    parent   = lazy_find_managed_object(props[:parent]) if props[:parent]
+    parent ||= persister.ext_management_system.lazy_find(persister.manager.guid)
+
     folder_hash = {
       :ems_ref      => object._ref,
       :ems_ref_type => object.class.wsdl_name,
       :type         => "ManageIQ::Providers::Vmware::InfraManager::Folder",
       :uid_ems      => object._ref,
       :name         => CGI.unescape(props[:name]),
-      :parent       => lazy_find_managed_object(props[:parent]),
+      :parent       => parent,
       :hidden       => hidden,
     }
 

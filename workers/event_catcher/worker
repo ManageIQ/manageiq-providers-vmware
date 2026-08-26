@@ -5,8 +5,8 @@ require "bundler/inline"
 gemfile(false) do
   source "https://rubygems.org"
 
-  gem "manageiq-loggers", "~>1.2"
-  gem "manageiq-messaging", "~>2.0"
+  gem "manageiq-loggers", "~>2.0"
+  gem "manageiq-messaging", "~>2.1"
   gem "rbvmomi2", "~>3.10"
   if ENV.fetch("APPLIANCE", nil)
     gem "sd_notify", "~>0.1.0"

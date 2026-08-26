@@ -68,7 +68,7 @@ class EventCatcher
       :insecure => endpoint["verify_ssl"] == OpenSSL::SSL::VERIFY_NONE,
       :ca_cert  => endpoint["certificate_authority"],
       :path     => '/sdk',
-      :rev      => '7.0',
+      :rev      => settings.dig("ems", "ems_vmware", "minimum_supported_version") || "7.0",
     }
 
     RbVmomi::VIM.new(vim_opts).tap do |vim|
