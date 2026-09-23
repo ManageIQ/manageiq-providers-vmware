@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile(false) do
+  source 'https://rubygems.org'
+  gem 'kubeclient',                    '~> 4.7'
+  gem 'rest-client',                   '~> 2.1'
+  gem 'recursive-open-struct',         '~> 1.1'
+  gem 'manageiq-messaging',            '~> 2.1'
+  gem 'manageiq-loggers',              '~> 2.0'
+  gem 'manageiq-providers-kubernetes', '~> 0.1'
+  gem 'sd_notify', '~> 0.1.0' if ENV['APPLIANCE']
+end
+
+require 'json'
+require 'uri'
+require_relative 'event_catcher'
+
+def build_logger
+  if ENV['CONTAINER']
+    ManageIQ::Loggers::Container.new
+  elsif ENV['APPLIANCE']
+    ManageIQ::Loggers::Journald.new
+  else
+    ManageIQ::Loggers::Base.new($stdout)
+  end
+end
+
+def parse_args
+  JSON.parse($stdin.read)
+rescue JSON::ParserError
+  abort('Invalid argument format')
+end
+
+args           = parse_args
+ems            = args['ems'].find { |m| m['type'] == 'ManageIQ::Providers::Vmware::ContainerManager' }
+endpoint       = ems['endpoints'].find { |e| e['role'] == 'default' }
+authentication = ems['authentications'].find { |a| a['authtype'] == 'default' }
+logger         = build_logger
+logger.progname = 'evm'
+
+EventCatcher.new(ems, endpoint, authentication, args['settings'], args['messaging']&.transform_keys(&:to_sym) || {}, logger).run!
