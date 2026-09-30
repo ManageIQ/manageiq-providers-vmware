@@ -1,20 +1,5 @@
 #!/usr/bin/env ruby
 
-require "bundler/inline"
-
-gemfile(false) do
-  source "https://rubygems.org"
-
-  gem "manageiq-loggers", "~>2.0"
-  gem "manageiq-messaging", "~>2.1"
-  gem "rbvmomi2", "~>3.10"
-  if ENV.fetch("APPLIANCE", nil)
-    gem "sd_notify", "~>0.1.0"
-    gem "systemd-journal", "~>1.4.2"
-  end
-  gem "json"
-end
-
 require_relative "event_catcher"
 
 def setproctitle
@@ -23,9 +8,12 @@ def setproctitle
 end
 
 def build_logger
+  require "manageiq-loggers"
+
   if ENV.fetch("CONTAINER", nil)
     ManageIQ::Loggers::Container.new
   elsif ENV.fetch("APPLIANCE", nil)
+    require "systemd-journal"
     ManageIQ::Loggers::Journald.new
   else
     ManageIQ::Loggers::Base.new($stdout)
@@ -48,6 +36,8 @@ def main(args)
 end
 
 def parse_args
+  require "json"
+
   JSON.parse($stdin.read)
 rescue JSON::ParserError
   abort("Invalid argument format")
