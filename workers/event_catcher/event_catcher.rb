@@ -1,5 +1,8 @@
 require_relative "event_parser"
 
+require "manageiq-messaging"
+require "rbvmomi"
+
 class EventCatcher
   def initialize(ems, endpoint, authentication, settings, messaging, logger, page_size = 20)
     @ems             = ems
@@ -153,6 +156,8 @@ class EventCatcher
 
   def notify_started
     if ENV.fetch("NOTIFY_SOCKET", nil)
+      require "sd_notify"
+
       SdNotify.ready
     elsif ENV.fetch("WORKER_HEARTBEAT_FILE", nil)
       heartbeat_to_file
