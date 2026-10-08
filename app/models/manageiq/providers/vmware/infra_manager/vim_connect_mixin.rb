@@ -60,7 +60,8 @@ module ManageIQ::Providers::Vmware::InfraManager::VimConnectMixin
       :ca_cert  => options[:certificate_authority],
       :path     => '/sdk',
       :port     => options[:port],
-      :rev      => '6.5'
+      :rev      => '6.5',
+      :debug    => Settings.ems.ems_vmware.debug_vim_requests
     }
 
     RbVmomi::VIM.new(vim_opts).tap do |vim|
