@@ -29,7 +29,7 @@ describe ManageIQ::Providers::Vmware::InfraManager::ProvisionWorkflow do
   end
 
   describe "#init_from_dialog" do
-    let(:user)     { FactoryBot.create(:user_with_email, :role => 'super_administrator', :password => 'x') }
+    let(:user)     { FactoryBot.create(:user_with_email, :role => 'super_administrator') }
     let(:ems)      { FactoryBot.create(:ems_vmware_with_authentication) }
     let(:template) { FactoryBot.create(:template_vmware, :ext_management_system => ems) }
     let(:req)      { FactoryBot.create(:miq_provision_request, :requester => user, :source => template) }
