@@ -47,3 +47,14 @@ jobs:
       run: bin/setup
     - name: Run tests
       run: bundle exec rake
+  event_catcher_go:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: workers/event_catcher/go.mod
+        cache-dependency-path: workers/event_catcher/go.sum
+    - name: Run Go checks
+      run: make -C workers/event_catcher check

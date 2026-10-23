@@ -16,3 +16,5 @@
 /config/environments/*.local.yml
 /spec/config/secrets.yml
 /spec/manageiq
+/workers/event_catcher/bin/
+/workers/event_catcher/worker
