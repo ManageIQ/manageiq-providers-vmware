@@ -1,10 +1,8 @@
-#namespace :manageiq do
-#  namespace :providers do
-#    namespace :vmware do
-#      desc "Explaining what the task does"
-#      task :your_task do
-#        # Task goes here
-#      end
-#    end
-#  end
-#end
+namespace :update do
+  desc "Build the Go event catcher worker (workers/event_catcher/worker)"
+  task :workers => :environment do
+    Dir.chdir(File.expand_path("../../workers/event_catcher", __dir__)) do
+      system("make build") || abort("\n== make build failed for the vmware event catcher ==")
+    end
+  end
+end
